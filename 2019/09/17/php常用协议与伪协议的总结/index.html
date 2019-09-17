@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言：最近打比赛，经常遇到php各种协议和伪协议的运用，因此抽时间总结一波。 php中支持的常用的协议有这些：123456789101112file:// — 访问本地文件系统http:// — 访问 HTTP(s) 网址ftp:// — 访问 FTP(s) URLsphp:// — 访问各个输入/输出流（I/O streams）zlib:// — 压缩流data:// — 数据（RFC 2397">
+<meta property="og:type" content="article">
+<meta property="og:title" content="php常用协议与伪协议的总结">
+<meta property="og:url" content="http://yoursite.com/2019/09/17/php常用协议与伪协议的总结/index.html">
+<meta property="og:site_name" content="L&#39;s Blog">
+<meta property="og:description" content="前言：最近打比赛，经常遇到php各种协议和伪协议的运用，因此抽时间总结一波。 php中支持的常用的协议有这些：123456789101112file:// — 访问本地文件系统http:// — 访问 HTTP(s) 网址ftp:// — 访问 FTP(s) URLsphp:// — 访问各个输入/输出流（I/O streams）zlib:// — 压缩流data:// — 数据（RFC 2397">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-09-17T12:13:44.609Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="php常用协议与伪协议的总结">
+<meta name="twitter:description" content="前言：最近打比赛，经常遇到php各种协议和伪协议的运用，因此抽时间总结一波。 php中支持的常用的协议有这些：123456789101112file:// — 访问本地文件系统http:// — 访问 HTTP(s) 网址ftp:// — 访问 FTP(s) URLsphp:// — 访问各个输入/输出流（I/O streams）zlib:// — 压缩流data:// — 数据（RFC 2397">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/17/php常用协议与伪协议的总结/">
+
+
+
+
+
+  <title>php常用协议与伪协议的总结 | L's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">L's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">share with you</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/17/php常用协议与伪协议的总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ljdd520">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="L's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">php常用协议与伪协议的总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-17T20:10:18+08:00">
+                2019-09-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3.9k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  17
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h3><p>最近打比赛，经常遇到php各种协议和伪协议的运用，因此抽时间总结一波。</p>
+<h4 id="php中支持的常用的协议有这些："><a href="#php中支持的常用的协议有这些：" class="headerlink" title="php中支持的常用的协议有这些："></a>php中支持的常用的协议有这些：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">file:// — 访问本地文件系统</span><br><span class="line">http:// — 访问 HTTP(s) 网址</span><br><span class="line">ftp:// — 访问 FTP(s) URLs</span><br><span class="line">php:// — 访问各个输入/输出流（I/O streams）</span><br><span class="line">zlib:// — 压缩流</span><br><span class="line">data:// — 数据（RFC 2397）</span><br><span class="line">glob:// — 查找匹配的文件路径模式</span><br><span class="line">phar:// — PHP 归档</span><br><span class="line">ssh2:// — Secure Shell 2</span><br><span class="line">rar:// — RAR</span><br><span class="line">ogg:// — 音频流</span><br><span class="line">expect:// — 处理交互式的流</span><br></pre></td></tr></table></figure>
+
+<h4 id="file-协议："><a href="#file-协议：" class="headerlink" title="file://协议："></a>file://协议：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">PHP.ini：</span><br><span class="line">file:// 协议在双off的情况下也可以正常使用；</span><br><span class="line">allow_url_fopen ：off/on</span><br><span class="line">allow_url_include：off/on</span><br></pre></td></tr></table></figure>
+
+<h4 id="file-访问本地文件系统："><a href="#file-访问本地文件系统：" class="headerlink" title="file:// 访问本地文件系统："></a>file:// 访问本地文件系统：</h4><h3 id="说明："><a href="#说明：" class="headerlink" title="说明："></a>说明：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">文件系统 是 PHP 使用的默认封装协议，展现了本地文件系统。 当指定了一个相对路径（不以/、\、\\或 Windows 盘符开头的路径）提供的路径将基于当前的工作目录。 在很多情况下是脚本所在的目录，除非被修改了。 使用 CLI 的时候，目录默认是脚本被调用时所在的目录。</span><br><span class="line">在某些函数里，例如 fopen() 和 file_get_contents()， include_path 会可选地搜索，也作为相对的路径。</span><br><span class="line">在ctf比赛中通常用来读取本地文件并且不受allow_url_fopen与allow_url_include的影响。</span><br></pre></td></tr></table></figure>
+
+<h4 id="例如下面的index-php："><a href="#例如下面的index-php：" class="headerlink" title="例如下面的index.php："></a>例如下面的index.php：</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">@<span class="keyword">include</span>(<span class="string">"$_GET[cmd]"</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="用下面的方式包含："><a href="#用下面的方式包含：" class="headerlink" title="用下面的方式包含："></a>用下面的方式包含：</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="comment">//localhost/test/index.php?cmd=file:///D:/PhpStudy/PHPTutorial/WWW/phpinfo.php</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="http-由于见的太多了就不总结了。"><a href="#http-由于见的太多了就不总结了。" class="headerlink" title="http://由于见的太多了就不总结了。"></a>http://由于见的太多了就不总结了。</h4><h4 id="ftp-–-ftps-—-访问-FTP-s-URLs协议："><a href="#ftp-–-ftps-—-访问-FTP-s-URLs协议：" class="headerlink" title="ftp:// – ftps:// — 访问 FTP(s) URLs协议："></a>ftp:// – ftps:// — 访问 FTP(s) URLs协议：</h4><h3 id="说明：-1"><a href="#说明：-1" class="headerlink" title="说明："></a>说明：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">允许通过 FTP 读取存在的文件，以及创建新文件。 </span><br><span class="line">如果服务器不支持被动（passive）模式的 FTP，连接会失败。</span><br><span class="line">打开文件后你既可以读也可以写，但是不能同时进行。 </span><br><span class="line">当远程文件已经存在于 ftp 服务器上，如果尝试打开并写入文件的时候， 未指定上下文（context）选项 overwrite，连接会失败。 </span><br><span class="line">如果要通过 FTP 覆盖存在的文件， 指定上下文（context）的 overwrite 选项来打开、写入。 </span><br><span class="line">另外可使用 FTP 扩展来代替。</span><br><span class="line">如果你设置了 php.ini 中的 from 指令， 这个值会作为匿名（anonymous）ftp 的密码。</span><br><span class="line">受allow_url_fopen影响，必须开启。</span><br></pre></td></tr></table></figure>
+
+<h3 id="用法："><a href="#用法：" class="headerlink" title="用法："></a>用法：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ftp://example.com/pub/file.txt</span><br><span class="line">ftp://user:password@example.com/pub/file.txt</span><br><span class="line">ftps://example.com/pub/file.txt</span><br><span class="line">ftps://user:password@example.com/pub/file.txt</span><br></pre></td></tr></table></figure>
+
+<h4 id="php-协议："><a href="#php-协议：" class="headerlink" title="php://协议："></a>php://协议：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">php://filter在双off的情况下也可以正常使用；</span><br><span class="line">条件：</span><br><span class="line">不需要开启allow_url_fopen，仅php://input、 php://stdin、 php://memory 和 php://temp 需要开启allow_url_include。</span><br></pre></td></tr></table></figure>
+
+<h3 id="说明：-2"><a href="#说明：-2" class="headerlink" title="说明："></a>说明：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PHP 提供了一些杂项输入/输出（IO）流，允许访问 PHP 的输入输出流、标准输入输出和错误描述符， 内存中、磁盘备份的临时文件流以及可以操作其他读取写入文件资源的过滤器。</span><br><span class="line">在CTF比赛中经常使用的是php://filter和php://input，php://filter用于读取源码，php://input用于执行php代码。</span><br></pre></td></tr></table></figure>
+
+<h4 id="php-filter："><a href="#php-filter：" class="headerlink" title="php://filter："></a>php://filter：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">php://filter 是一种元封装器， 设计用于数据流打开时的筛选过滤应用。 </span><br><span class="line">这对于一体式（all-in-one）的文件函数非常有用，类似 readfile()、 file() 和 file_get_contents()， 在数据流内容读取之前没有机会应用其他过滤器。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">resource=&lt;要过滤的数据流&gt;     这个参数是必须的。它指定了你要筛选过滤的数据流。</span><br><span class="line">read=&lt;读链的筛选列表&gt;         该参数可选。可以设定一个或多个过滤器名称，以管道符（|）分隔。</span><br><span class="line">write=&lt;写链的筛选列表&gt;    该参数可选。可以设定一个或多个过滤器名称，以管道符（|）分隔。</span><br><span class="line">&lt;；两个链的筛选列表&gt;        任何没有以 read= 或 write= 作前缀 的筛选器列表会视情况应用于读或写链。</span><br></pre></td></tr></table></figure>
+
+<h4 id="举个例子："><a href="#举个例子：" class="headerlink" title="举个例子："></a>举个例子：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">php://filter/read=convert.base64-encode/resource=upload.php</span><br><span class="line">这里读的过滤器为convert.base64-encode，就和字面上的意思一样，把输入流base64-encode。</span><br><span class="line">resource=upload.php，代表读取upload.php的内容</span><br></pre></td></tr></table></figure>
+
+<h3 id="过滤器："><a href="#过滤器：" class="headerlink" title="过滤器："></a>过滤器：</h3><h4 id="过滤器有很多种，有字符串过滤器、转换过滤器、压缩过滤器、加密过滤器-lt-字符串过滤器-gt"><a href="#过滤器有很多种，有字符串过滤器、转换过滤器、压缩过滤器、加密过滤器-lt-字符串过滤器-gt" class="headerlink" title="过滤器有很多种，有字符串过滤器、转换过滤器、压缩过滤器、加密过滤器 &lt;字符串过滤器&gt;"></a>过滤器有很多种，有字符串过滤器、转换过滤器、压缩过滤器、加密过滤器 &lt;字符串过滤器&gt;</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">string.rot13</span><br><span class="line">进行rot13转换</span><br><span class="line">string.toupper</span><br><span class="line">将字符全部大写</span><br><span class="line">string.tolower</span><br><span class="line">将字符全部小写</span><br><span class="line">string.strip_tags</span><br><span class="line">去除空字符、HTML 和 PHP 标记后的结果。</span><br><span class="line">功能类似于strip_tags()函数，若不想某些字符不被消除，后面跟上字符，可利用字符串或是数组两种方式。</span><br></pre></td></tr></table></figure>
+
+<h4 id="例子如下："><a href="#例子如下：" class="headerlink" title="例子如下："></a>例子如下：</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$fp = fopen(<span class="string">'php://output'</span>, <span class="string">'w'</span>);</span><br><span class="line">stream_filter_append($fp, <span class="string">'string.rot13'</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"rot13:"</span>;</span><br><span class="line">fwrite($fp, <span class="string">"This is a test.\n"</span>);</span><br><span class="line">fclose($fp);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line"></span><br><span class="line">$fp = fopen(<span class="string">'php://output'</span>, <span class="string">'w'</span>);</span><br><span class="line">stream_filter_append($fp, <span class="string">'string.toupper'</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"Upper:"</span>;</span><br><span class="line">fwrite($fp, <span class="string">"This is a test.\n"</span>);</span><br><span class="line">fclose($fp);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line"></span><br><span class="line">$fp = fopen(<span class="string">'php://output'</span>, <span class="string">'w'</span>);</span><br><span class="line">stream_filter_append($fp, <span class="string">'string.tolower'</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"Lower:"</span>;</span><br><span class="line">fwrite($fp, <span class="string">"This is a test.\n"</span>);</span><br><span class="line">fclose($fp);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line"></span><br><span class="line">$fp = fopen(<span class="string">'php://output'</span>, <span class="string">'w'</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"Del1:"</span>;</span><br><span class="line">stream_filter_append($fp, <span class="string">'string.strip_tags'</span>, STREAM_FILTER_WRITE);</span><br><span class="line">fwrite($fp, <span class="string">"&lt;b&gt;This is a test.&lt;/b&gt;!!!!&lt;h1&gt;~~~~&lt;/h1&gt;\n"</span>);</span><br><span class="line">fclose($fp);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line"></span><br><span class="line">$fp = fopen(<span class="string">'php://output'</span>, <span class="string">'w'</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"Del2:"</span>;</span><br><span class="line">stream_filter_append($fp, <span class="string">'string.strip_tags'</span>, STREAM_FILTER_WRITE, <span class="string">"&lt;b&gt;"</span>);</span><br><span class="line">fwrite($fp, <span class="string">"&lt;b&gt;This is a test.&lt;/b&gt;!!!!&lt;h1&gt;~~~~&lt;/h1&gt;\n"</span>);</span><br><span class="line">fclose($fp);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line"></span><br><span class="line">$fp = fopen(<span class="string">'php://output'</span>, <span class="string">'w'</span>);</span><br><span class="line">stream_filter_append($fp, <span class="string">'string.strip_tags'</span>, STREAM_FILTER_WRITE, <span class="keyword">array</span>(<span class="string">'b'</span>, <span class="string">'h1'</span>));</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"Del3:"</span>;</span><br><span class="line">fwrite($fp, <span class="string">"&lt;b&gt;This is a test.&lt;/b&gt;!!!!&lt;h1&gt;~~~~&lt;/h1&gt;\n"</span>);</span><br><span class="line">fclose($fp);</span><br></pre></td></tr></table></figure>
+
+<h4 id="结果如下："><a href="#结果如下：" class="headerlink" title="结果如下："></a>结果如下：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">rot13:Guvf vf n grfg.</span><br><span class="line">Upper:THIS IS A TEST.</span><br><span class="line">Lower:this is a test.</span><br><span class="line">Del1:This is a test.!!!!~~~~</span><br><span class="line">Del2:This is a test.!!!!~~~~</span><br><span class="line">Del3:This is a test.!!!!</span><br><span class="line">~~~~</span><br></pre></td></tr></table></figure>
+
+<h4 id="转换过滤器："><a href="#转换过滤器：" class="headerlink" title="转换过滤器："></a>转换过滤器：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">如同 string.* 过滤器，convert.* 过滤器的作用就和其名字一样。</span><br><span class="line">转换过滤器是 PHP 5.0.0 添加的。对于指定过滤器的更多信息，请参考该函数的手册页。</span><br><span class="line">convert.base64-encode和 convert.base64-decode使用这两个过滤器等同于分别用 base64_encode()和 base64_decode()函数处理所有的流数据。 </span><br><span class="line">convert.base64-encode支持以一个关联数组给出的参数。</span><br><span class="line">如果给出了 line-length，base64 输出将被用 line-length个字符为 长度而截成块。</span><br><span class="line">如果给出了 line-break-chars，每块将被用给出的字符隔开。</span><br><span class="line">这些参数的效果和用 base64_encode()再加上 chunk_split()相同。</span><br></pre></td></tr></table></figure>
+
+<h4 id="例子如下：-1"><a href="#例子如下：-1" class="headerlink" title="例子如下："></a>例子如下：</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$fp= fopen(<span class="string">'php://output'</span>, <span class="string">'w'</span>);</span><br><span class="line">stream_filter_append($fp, <span class="string">'convert.base64-encode'</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"base64-encode:"</span>;</span><br><span class="line">fwrite($fp, <span class="string">"This is a test.\n"</span>);</span><br><span class="line">fclose($fp);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line"></span><br><span class="line">$param = <span class="keyword">array</span>(<span class="string">'line-length'</span> =&gt; <span class="number">8</span>, <span class="string">'line-break-chars'</span> =&gt; <span class="string">"\n"</span>);</span><br><span class="line">$fp = fopen(<span class="string">'php://output'</span>, <span class="string">'w'</span>);</span><br><span class="line">stream_filter_append($fp, <span class="string">'convert.base64-encode'</span>, STREAM_FILTER_WRITE, $param);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"\nbase64-encode-split:\n"</span>;</span><br><span class="line">fwrite($fp, <span class="string">"This is a test.\n"</span>);</span><br><span class="line">fclose($fp);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line"></span><br><span class="line">$fp = fopen(<span class="string">'php://output'</span>, <span class="string">'w'</span>);</span><br><span class="line">stream_filter_append($fp, <span class="string">'convert.base64-decode'</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"\nbase64-decode:"</span>;</span><br><span class="line">fwrite($fp, <span class="string">"VGhpcyBpcyBhIHRlc3QuCg==\n"</span>);</span><br><span class="line">fclose($fp);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line"></span><br><span class="line">$fp = fopen(<span class="string">'php://output'</span>, <span class="string">'w'</span>);</span><br><span class="line">stream_filter_append($fp, <span class="string">'convert.quoted-printable-encode'</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"quoted-printable-encode:"</span>;</span><br><span class="line">fwrite($fp, <span class="string">"This is a test.\n"</span>);</span><br><span class="line">fclose($fp);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line"></span><br><span class="line">$fp = fopen(<span class="string">'php://output'</span>, <span class="string">'w'</span>);</span><br><span class="line">stream_filter_append($fp, <span class="string">'convert.quoted-printable-decode'</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"\nquoted-printable-decode:"</span>;</span><br><span class="line">fwrite($fp, <span class="string">"This is a test.=0A"</span>);</span><br><span class="line">fclose($fp);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="结果如下：-1"><a href="#结果如下：-1" class="headerlink" title="结果如下："></a>结果如下：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">base64-encode:VGhpcyBpcyBhIHRlc3QuCg==</span><br><span class="line">base64-encode-split: VGhpcyBp cyBhIHRl c3QuCg==</span><br><span class="line">base64-decode:This is a test.</span><br><span class="line">quoted-printable-encode:This is a test.=0A</span><br><span class="line">quoted-printable-decode:This is a test.</span><br></pre></td></tr></table></figure>
+
+<h4 id="压缩过滤器："><a href="#压缩过滤器：" class="headerlink" title="压缩过滤器："></a>压缩过滤器：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">虽然 压缩封装协议提供了在本地文件系统中 创建 gzip 和 bz2 兼容文件的方法，但不代表可以在网络的流中提供通用压缩的意思，也不代表可以将一个非压缩的流转换成一个压缩流。</span><br><span class="line">对此，压缩过滤器可以在任何时候应用于任何流资源。</span><br><span class="line"></span><br><span class="line">Note: 压缩过滤器 不产生命令行工具如 gzip的头和尾信息。只是压缩和解压数据流中的有效载荷部分。</span><br><span class="line"></span><br><span class="line">zlib.deflate（压缩）和 zlib.inflate（解压）实现了定义与 » RFC 1951的压缩算法。 </span><br><span class="line">deflate过滤器可以接受以一个关联数组传递的最多三个参数。 level定义了压缩强度（1-9）。数字更高通常会产生更小的载荷，但要消耗更多的处理时间。存在两个特殊压缩等级：0（完全不压缩）和 -1（zlib 内部默认值，目前是 6）。 window是压缩回溯窗口大小，以二的次方表示。更高的值（大到 15 —— 32768 字节）产生更好的压缩效果但消耗更多内存，低的值（低到 9 —— 512 字节）产生产生较差的压缩效果但内存消耗低。</span><br><span class="line">目前默认的 window大小是 15。 </span><br><span class="line">memory用来指示要分配多少工作内存。</span><br><span class="line">合法的数值范围是从 1（最小分配）到 9（最大分配）。</span><br><span class="line">内存分配仅影响速度，不会影响生成的载荷的大小。</span><br><span class="line"></span><br><span class="line">Note: 因为最常用的参数是压缩等级，也可以提供一个整数值作为此参数（而不用数组）。</span><br><span class="line"></span><br><span class="line">zlib.* 压缩过滤器自 PHP 版本 5.1.0起可用，在激活 zlib的前提下。</span><br><span class="line">也可以通过安装来自 » PECL的 » zlib_filter包作为一个后门在 5.0.x版中使用。</span><br><span class="line">此过滤器在 PHP 4 中 不可用。</span><br></pre></td></tr></table></figure>
+
+<h4 id="例子如下：-2"><a href="#例子如下：-2" class="headerlink" title="例子如下："></a>例子如下：</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$params = <span class="keyword">array</span>(<span class="string">'level'</span> =&gt; <span class="number">6</span>, <span class="string">'window'</span> =&gt; <span class="number">15</span>, <span class="string">'memory'</span> =&gt; <span class="number">9</span>);</span><br><span class="line">$original_text = <span class="string">"This is a test.\nThis is only a test.\nThis is not an important string.\n"</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"The original text is "</span> . strlen($original_text) . <span class="string">" characters long.\n"</span>;</span><br><span class="line">$fp = fopen(<span class="string">'test.deflated'</span>, <span class="string">'w'</span>);</span><br><span class="line">stream_filter_append($fp, <span class="string">'zlib.deflate'</span>, STREAM_FILTER_WRITE, $params);</span><br><span class="line">fwrite($fp, $original_text);</span><br><span class="line">fclose($fp);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"The compressed file is "</span> . filesize(<span class="string">'test.deflated'</span>) . <span class="string">" bytes long.\n"</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"The original text was:\n"</span>;</span><br><span class="line"><span class="comment">/* Use readfile and zlib.inflate to decompress on the fly */</span></span><br><span class="line">readfile(<span class="string">'php://filter/zlib.inflate/resource=test.deflated'</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="运行的结果如下："><a href="#运行的结果如下：" class="headerlink" title="运行的结果如下："></a>运行的结果如下：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">The original text is 70 characters long.</span><br><span class="line">The compressed file is 56 bytes long.</span><br><span class="line">The original text was:</span><br><span class="line">This is a test.</span><br><span class="line">This is only a test.</span><br><span class="line">This is not an important string.</span><br></pre></td></tr></table></figure>
+
+<h4 id="加密过滤器："><a href="#加密过滤器：" class="headerlink" title="加密过滤器："></a>加密过滤器：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mcrypt.*和 mdecrypt.*使用 libmcrypt 提供了对称的加密和解密。这两组过滤器都支持 mcrypt 扩展库中相同的算法，格式为 mcrypt.ciphername，其中 ciphername是密码的名字，将被传递给 mcrypt_module_open()。有以下五个过滤器参数可用：</span><br><span class="line"></span><br><span class="line">mcrypt 过滤器参数</span><br><span class="line">参数	是否必须	默认值	取值举例</span><br><span class="line">mode	可选	cbc	cbc, cfb, ecb, nofb, ofb, stream</span><br><span class="line">algorithms_dir	可选	ini_get(&apos;mcrypt.algorithms_dir&apos;)	algorithms 模块的目录</span><br><span class="line">modes_dir	可选	ini_get(&apos;mcrypt.modes_dir&apos;)	modes 模块的目录</span><br><span class="line">iv	必须	N/A	典型为 8，16 或 32 字节的二进制数据。根据密码而定</span><br><span class="line">key	必须	N/A	典型为 8，16 或 32 字节的二进制数据。根据密码而定</span><br></pre></td></tr></table></figure>
+
+<h4 id="加密过滤器的读写："><a href="#加密过滤器的读写：" class="headerlink" title="加密过滤器的读写："></a>加密过滤器的读写：</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$passphrase = <span class="string">'My secret'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* Turn a human readable passphrase</span></span><br><span class="line"><span class="comment"> * into a reproducable iv/key pair</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">$iv = substr(md5(<span class="string">'iv'</span>.$passphrase, <span class="keyword">true</span>), <span class="number">0</span>, <span class="number">8</span>);</span><br><span class="line">$key = substr(md5(<span class="string">'pass1'</span>.$passphrase, <span class="keyword">true</span>) .</span><br><span class="line">    md5(<span class="string">'pass2'</span>.$passphrase, <span class="keyword">true</span>), <span class="number">0</span>, <span class="number">24</span>);</span><br><span class="line">$opts = <span class="keyword">array</span>(<span class="string">'iv'</span>=&gt;$iv, <span class="string">'key'</span>=&gt;$key);</span><br><span class="line"></span><br><span class="line">$fp = fopen(<span class="string">'secert-file.enc'</span>, <span class="string">'wb'</span>);</span><br><span class="line">stream_filter_append($fp, <span class="string">'mcrypt.tripledes'</span>, STREAM_FILTER_WRITE, $opts);</span><br><span class="line">fwrite($fp, <span class="string">'Secret secret secret data'</span>);</span><br><span class="line">fclose($fp);</span><br><span class="line"></span><br><span class="line">$passphrase = <span class="string">'My secret'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* Turn a human readable passphrase</span></span><br><span class="line"><span class="comment"> * into a reproducable iv/key pair</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">$iv = substr(md5(<span class="string">'iv'</span>.$passphrase, <span class="keyword">true</span>), <span class="number">0</span>, <span class="number">8</span>);</span><br><span class="line">$key = substr(md5(<span class="string">'pass1'</span>.$passphrase, <span class="keyword">true</span>) .</span><br><span class="line">    md5(<span class="string">'pass2'</span>.$passphrase, <span class="keyword">true</span>), <span class="number">0</span>, <span class="number">24</span>);</span><br><span class="line">$opts = <span class="keyword">array</span>(<span class="string">'iv'</span>=&gt;$iv, <span class="string">'key'</span>=&gt;$key);</span><br><span class="line"></span><br><span class="line">$fp = fopen(<span class="string">'secert-file.enc'</span>, <span class="string">'rb'</span>);</span><br><span class="line">stream_filter_append($fp, <span class="string">'mdecrypt.tripledes'</span>, STREAM_FILTER_WRITE, $opts);</span><br><span class="line">$data = rtrim(stream_get_contents($fp));</span><br><span class="line">fclose($fp);</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> $data;</span><br></pre></td></tr></table></figure>
+
+<h4 id="如下php-filter读取以base64："><a href="#如下php-filter读取以base64：" class="headerlink" title="如下php://filter读取以base64："></a>如下php://filter读取以base64：</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">echo</span> @file_get_contents($_GET[<span class="string">"cmd"</span>]);</span><br></pre></td></tr></table></figure>
+
+<h4 id="读取的内容如下："><a href="#读取的内容如下：" class="headerlink" title="读取的内容如下："></a>读取的内容如下：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PD9waHANCiRmbGFnPSJmbGFne2xpYW5namllfSI7DQo=</span><br></pre></td></tr></table></figure>
+
+<h4 id="在php中一般变量用单引号解析为字符串，而双引号如："><a href="#在php中一般变量用单引号解析为字符串，而双引号如：" class="headerlink" title="在php中一般变量用单引号解析为字符串，而双引号如："></a>在php中一般变量用单引号解析为字符串，而双引号如：</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$ljdd520 = <span class="number">121</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"$ljdd520"</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">'$ljdd520'</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="运行的结果如下：-1"><a href="#运行的结果如下：-1" class="headerlink" title="运行的结果如下："></a>运行的结果如下：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">121</span><br><span class="line">$ljdd520</span><br></pre></td></tr></table></figure>
+
+<h4 id="php-input协议："><a href="#php-input协议：" class="headerlink" title="php://input协议："></a>php://input协议：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">php://input 是个可以访问请求的原始数据的只读流,可以读取到post没有解析的原始数据, 将post请求中的数据作为PHP代码执行。</span><br><span class="line">因为它不依赖于特定的 php.ini 指令。</span><br><span class="line">注意：enctype=”multipart/form-data” 的时候 php://input 是无效的。</span><br></pre></td></tr></table></figure>
+
+<h4 id="需要的环境："><a href="#需要的环境：" class="headerlink" title="需要的环境："></a>需要的环境：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">PHP.ini:</span><br><span class="line">allow_url_fopen ：off/on</span><br><span class="line">allow_url_include：on</span><br></pre></td></tr></table></figure>
+
+<h4 id="例如："><a href="#例如：" class="headerlink" title="例如："></a>例如：</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$user = $_GET[<span class="string">"user"</span>];</span><br><span class="line">$file = $_GET[<span class="string">"file"</span>];</span><br><span class="line">$pass = $_GET[<span class="string">"pass"</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($user)&amp;&amp;(file_get_contents($user,<span class="string">'r'</span>)===<span class="string">"the user is admin"</span>))&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"hello admin!&lt;br&gt;"</span>;</span><br><span class="line">    <span class="comment">//class.php</span></span><br><span class="line">    <span class="keyword">include</span>($file);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"you are not admin ! "</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 解法为  url/index.php?user=php://input  </span></span><br><span class="line"><span class="comment">// [POSTDATA] the user is admin</span></span><br><span class="line"><span class="comment">// 最后输出为hello admin!并且包含对应文件</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="php-output协议："><a href="#php-output协议：" class="headerlink" title="php://output协议："></a>php://output协议：</h4><h3 id="说明：-3"><a href="#说明：-3" class="headerlink" title="说明："></a>说明：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">php://output 是一个只写的数据流， 允许你以 print 和 echo 一样的方式 写入到输出缓冲区。</span><br><span class="line">``` </span><br><span class="line">#### 例如：</span><br><span class="line">```php</span><br><span class="line">&lt;?php</span><br><span class="line">@file_put_contents($_GET[&apos;cmd&apos;], &quot;ljdd520&quot;);</span><br></pre></td></tr></table></figure>
+
+<h4 id="运行的结果如下：-2"><a href="#运行的结果如下：-2" class="headerlink" title="运行的结果如下："></a>运行的结果如下：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">通过访问：http://localhost/test/index.php/?cmd=php://output</span><br><span class="line">ljdd520</span><br></pre></td></tr></table></figure>
+
+<h4 id="zip-bzip2-zlib-协议："><a href="#zip-bzip2-zlib-协议：" class="headerlink" title="zip://, bzip2://, zlib://协议："></a>zip://, bzip2://, zlib://协议：</h4><h4 id="使用环境："><a href="#使用环境：" class="headerlink" title="使用环境："></a>使用环境：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">PHP.ini：</span><br><span class="line">zip://, bzip2://, zlib://协议在双off的情况下也可以正常使用；</span><br><span class="line">allow_url_fopen ：off/on</span><br><span class="line">allow_url_include：off/on</span><br></pre></td></tr></table></figure>
+
+<h4 id="他们处理的文件："><a href="#他们处理的文件：" class="headerlink" title="他们处理的文件："></a>他们处理的文件：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">3个封装协议，都是直接打开压缩文件。</span><br><span class="line">compress.zlib://file.gz - 处理的是 &apos;.gz&apos; 后缀的压缩包</span><br><span class="line">compress.bzip2://file.bz2 - 处理的是 &apos;.bz2&apos; 后缀的压缩包</span><br><span class="line">zip://archive.zip#dir/file.txt - 处理的是 &apos;.zip&apos; 后缀的压缩包里的文件</span><br><span class="line">zip://, bzip2://, zlib:// 均属于压缩流，可以访问压缩文件中的子文件，更重要的是不需要指定后缀名。</span><br></pre></td></tr></table></figure>
+
+<h4 id="zip-协议："><a href="#zip-协议：" class="headerlink" title="zip://协议："></a>zip://协议：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">php 版本大于等于 php5.3.0</span><br><span class="line">使用方法：</span><br><span class="line">zip://archive.zip#dir/file.txt</span><br><span class="line">zip:// [压缩文件绝对路径]#[压缩文件内的子文件名]**</span><br><span class="line">要用绝对路径+url编码#</span><br></pre></td></tr></table></figure>
+
+<h4 id="测试："><a href="#测试：" class="headerlink" title="测试："></a>测试：</h4><h5 id="新建一个zip-txt文件其中写入-lt-php-phpinfo-gt-压缩成zip文件然后改名为zip-jpg用如下的payload进行测试："><a href="#新建一个zip-txt文件其中写入-lt-php-phpinfo-gt-压缩成zip文件然后改名为zip-jpg用如下的payload进行测试：" class="headerlink" title="新建一个zip.txt文件其中写入&lt;?php phpinfo();?&gt;压缩成zip文件然后改名为zip.jpg用如下的payload进行测试："></a>新建一个zip.txt文件其中写入&lt;?php phpinfo();?&gt;压缩成zip文件然后改名为zip.jpg用如下的payload进行测试：</h5><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">@<span class="keyword">include</span>(<span class="string">"$_GET[cmd]"</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line">http:<span class="comment">//localhost/test/index.php/?cmd=zip://C:/Users/ljdd520/Desktop/zip.jpg%23zip.txt</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="最后执行成功："><a href="#最后执行成功：" class="headerlink" title="最后执行成功："></a>最后执行成功：</h4><h4 id="bzip2-协议："><a href="#bzip2-协议：" class="headerlink" title="bzip2://协议："></a>bzip2://协议：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">使用方法：</span><br><span class="line">compress.bzip2://file.bz2</span><br><span class="line">相对路径也可以</span><br><span class="line"></span><br><span class="line">测试</span><br><span class="line">用7-zip生成一个bz2压缩文件。</span><br><span class="line">访问：http://localhost/test/index.php/?cmd=compress.bzip2://C:/Users/liangjie/Desktop/zip.txt.bz2</span><br><span class="line">或者文件改为jpg后缀</span><br><span class="line">http://localhost/test/index.php/?cmd=compress.bzip2://C:/Users/liangjie/Desktop/zip.jpg</span><br></pre></td></tr></table></figure>
+
+<h4 id="由于没有什么疑问就没有截图了："><a href="#由于没有什么疑问就没有截图了：" class="headerlink" title="由于没有什么疑问就没有截图了："></a>由于没有什么疑问就没有截图了：</h4><h4 id="data-协议："><a href="#data-协议：" class="headerlink" title="data://协议："></a>data://协议：</h4><h3 id="说明：-4"><a href="#说明：-4" class="headerlink" title="说明："></a>说明：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">data:资源类型;编码,内容</span><br><span class="line">数据流封装器</span><br><span class="line">当allow_url_include 打开的时候，任意文件包含就会成为任意命令执行</span><br></pre></td></tr></table></figure>
+
+<h4 id="需要的环境：-1"><a href="#需要的环境：-1" class="headerlink" title="需要的环境："></a>需要的环境：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">PHP.ini：</span><br><span class="line">data://协议必须双在on才能正常使用；</span><br><span class="line">allow_url_fopen ：on</span><br><span class="line">allow_url_include：on</span><br><span class="line">php 版本大于等于 php5.2</span><br></pre></td></tr></table></figure>
+
+<h4 id="测试代码："><a href="#测试代码：" class="headerlink" title="测试代码："></a>测试代码：</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">@<span class="keyword">include</span>(<span class="string">"$_GET[cmd]"</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="如下测试payload"><a href="#如下测试payload" class="headerlink" title="如下测试payload:"></a>如下测试payload:</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1: http://localhost/test/index.php/?cmd=data://text/plain,%3C?php%20phpinfo()?%3E</span><br><span class="line">2: http://localhost/test/index.php/?cmd=data://text/plain;base64,PD9waHAgcGhwaW5mbygpPz4=</span><br><span class="line">3: http://localhost/test/index.php/?cmd=data:text/plain,&lt;?php phpinfo()?&gt;</span><br><span class="line">4: http://localhost/test/index.php/?cmd=data:text/plain;base64,PD9waHAgcGhwaW5mbygpPz4=</span><br></pre></td></tr></table></figure>
+
+<h4 id="上面的payload都是可以访问到phpinfo的。"><a href="#上面的payload都是可以访问到phpinfo的。" class="headerlink" title="上面的payload都是可以访问到phpinfo的。"></a>上面的payload都是可以访问到phpinfo的。</h4><h4 id="举个例子通过data-协议进行xss"><a href="#举个例子通过data-协议进行xss" class="headerlink" title="举个例子通过data://协议进行xss:"></a>举个例子通过data://协议进行xss:</h4><h4 id="测试代码如下："><a href="#测试代码如下：" class="headerlink" title="测试代码如下："></a>测试代码如下：</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">@$url=$_GET[<span class="string">'url'</span>];</span><br><span class="line"><span class="comment">// 通过filter_var进行了url的校验，并且用正则对url进行了绑定。</span></span><br><span class="line"><span class="keyword">if</span>(filter_var($url, FILTER_VALIDATE_URL)) &#123;</span><br><span class="line">    <span class="comment">// parse URL</span></span><br><span class="line">    $r = parse_url($url);</span><br><span class="line">    print_r($r);</span><br><span class="line">    <span class="comment">// check if host ends with google.com</span></span><br><span class="line">    <span class="keyword">if</span>(preg_match(<span class="string">'/baidu\.com$/'</span>, $r[<span class="string">'host'</span>])) &#123;</span><br><span class="line">        <span class="comment">// get page from URL</span></span><br><span class="line">        $a = file_get_contents($url);</span><br><span class="line">        <span class="keyword">echo</span>($a);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"Error: Host not allowed"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"Error: Invalid URL"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="我们可以用下面的payload绕过并通过返回-lt-script-gt-alert-1-lt-script-gt-给页面造成xss："><a href="#我们可以用下面的payload绕过并通过返回-lt-script-gt-alert-1-lt-script-gt-给页面造成xss：" class="headerlink" title="我们可以用下面的payload绕过并通过返回&lt;script&gt;alert(1)&lt;/script&gt;给页面造成xss："></a>我们可以用下面的payload绕过并通过返回&lt;script&gt;alert(1)&lt;/script&gt;给页面造成xss：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/test/index.php?url=data://baidu.com/plain;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pgo=</span><br></pre></td></tr></table></figure>
+
+<h4 id="bytectf的一道题目："><a href="#bytectf的一道题目：" class="headerlink" title="bytectf的一道题目："></a>bytectf的一道题目：</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">is_valid_url</span><span class="params">($url)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (filter_var($url, FILTER_VALIDATE_URL)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (preg_match(<span class="string">'/data:\/\//i'</span>, $url)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>($_POST[<span class="string">'url'</span>])) &#123;</span><br><span class="line">    $url = $_POST[<span class="string">'url'</span>];</span><br><span class="line">    <span class="keyword">if</span> (is_valid_url($url)) &#123;</span><br><span class="line">        $r = parse_url($url);</span><br><span class="line">        <span class="keyword">if</span> (preg_match(<span class="string">'/baidu\.com$/'</span>, $r[<span class="string">'host'</span>])) &#123;</span><br><span class="line">            $code = file_get_contents($url);</span><br><span class="line">            <span class="keyword">if</span> (<span class="string">';'</span> === preg_replace(<span class="string">'/[a-z]+\((?R)?\)/'</span>, <span class="keyword">NULL</span>, $code)) &#123;</span><br><span class="line">                <span class="keyword">if</span> (preg_match(<span class="string">'/et|na|nt|strlen|info|path|rand|dec|bin|hex|oct|pi|exp|log/i'</span>, $code)) &#123;</span><br><span class="line">                    <span class="keyword">echo</span> <span class="string">'bye~'</span>;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">eval</span>($code);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">"error: host not allowed"</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"error: invalid url"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="第一要绕过域名的限制，第二只能执行如a-b-c-这样的函数："><a href="#第一要绕过域名的限制，第二只能执行如a-b-c-这样的函数：" class="headerlink" title="第一要绕过域名的限制，第二只能执行如a(b(c()))这样的函数："></a>第一要绕过域名的限制，第二只能执行如a(b(c()))这样的函数：</h4><h4 id="可以通过买一个xxxbaidu-com这样的baidu-com结尾的域名来绕过第一步："><a href="#可以通过买一个xxxbaidu-com这样的baidu-com结尾的域名来绕过第一步：" class="headerlink" title="可以通过买一个xxxbaidu.com这样的baidu.com结尾的域名来绕过第一步："></a>可以通过买一个xxxbaidu.com这样的baidu.com结尾的域名来绕过第一步：</h4><h4 id="绕过第二步可以参考一叶飘零的总结https-skysec-top-2019-03-29-PHP-Parametric-Function-RCE"><a href="#绕过第二步可以参考一叶飘零的总结https-skysec-top-2019-03-29-PHP-Parametric-Function-RCE" class="headerlink" title="绕过第二步可以参考一叶飘零的总结https://skysec.top/2019/03/29/PHP-Parametric-Function-RCE/:"></a>绕过第二步可以参考一叶飘零的总结<a href="https://skysec.top/2019/03/29/PHP-Parametric-Function-RCE/" target="_blank" rel="noopener">https://skysec.top/2019/03/29/PHP-Parametric-Function-RCE/</a>:</h4><h4 id="感觉做题还是要多读文档。"><a href="#感觉做题还是要多读文档。" class="headerlink" title="感觉做题还是要多读文档。"></a>感觉做题还是要多读文档。</h4><h4 id="glob-协议："><a href="#glob-协议：" class="headerlink" title="glob://协议："></a>glob://协议：</h4><h3 id="说明：-5"><a href="#说明：-5" class="headerlink" title="说明："></a>说明：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">glob:// — 查找匹配的文件路径模式</span><br><span class="line">glob: 数据流包装器自 PHP 5.3.0 起开始有效。</span><br></pre></td></tr></table></figure>
+
+<h4 id="代码示例："><a href="#代码示例：" class="headerlink" title="代码示例："></a>代码示例：</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$it=<span class="keyword">new</span> DirectoryIterator(<span class="string">"glob://D:/PhpStudy/PHPTutorial/WWW/*.php"</span>);</span><br><span class="line"><span class="keyword">foreach</span> ($it <span class="keyword">as</span> $f)&#123;</span><br><span class="line">    printf(<span class="string">"%s: %.1FK\n"</span>,$f-&gt;getFilename(),$f-&gt;getSize()/<span class="number">1024</span>);</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="运行的结果如下：-3"><a href="#运行的结果如下：-3" class="headerlink" title="运行的结果如下："></a>运行的结果如下：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">index.php: 0.0K</span><br><span class="line">l.php: 20.7K</span><br><span class="line">phpinfo.php: 0.0K</span><br></pre></td></tr></table></figure>
+
+<h4 id="受allow-url-fopen，allow-url-include的影响。"><a href="#受allow-url-fopen，allow-url-include的影响。" class="headerlink" title="受allow_url_fopen，allow_url_include的影响。"></a>受allow_url_fopen，allow_url_include的影响。</h4><h4 id="phar-协议以后再总结了。"><a href="#phar-协议以后再总结了。" class="headerlink" title="phar://协议以后再总结了。"></a>phar://协议以后再总结了。</h4>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/29/php反序列化魔术方法的利用/" rel="next" title="php反序列化魔术方法的利用">
+                <i class="fa fa-chevron-left"></i> php反序列化魔术方法的利用
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Ljdd520">
+            
+              <p class="site-author-name" itemprop="name">Ljdd520</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:yourname@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://blog.wonderkun.cc/" title="wonderkun" target="_blank">wonderkun</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言："><span class="nav-number">1.</span> <span class="nav-text">前言：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#php中支持的常用的协议有这些："><span class="nav-number">1.1.</span> <span class="nav-text">php中支持的常用的协议有这些：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#file-协议："><span class="nav-number">1.2.</span> <span class="nav-text">file://协议：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#file-访问本地文件系统："><span class="nav-number">1.3.</span> <span class="nav-text">file:// 访问本地文件系统：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#说明："><span class="nav-number">2.</span> <span class="nav-text">说明：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#例如下面的index-php："><span class="nav-number">2.1.</span> <span class="nav-text">例如下面的index.php：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#用下面的方式包含："><span class="nav-number">2.2.</span> <span class="nav-text">用下面的方式包含：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#http-由于见的太多了就不总结了。"><span class="nav-number">2.3.</span> <span class="nav-text">http://由于见的太多了就不总结了。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ftp-–-ftps-—-访问-FTP-s-URLs协议："><span class="nav-number">2.4.</span> <span class="nav-text">ftp:// – ftps:// — 访问 FTP(s) URLs协议：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#说明：-1"><span class="nav-number">3.</span> <span class="nav-text">说明：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用法："><span class="nav-number">4.</span> <span class="nav-text">用法：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#php-协议："><span class="nav-number">4.1.</span> <span class="nav-text">php://协议：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#说明：-2"><span class="nav-number">5.</span> <span class="nav-text">说明：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#php-filter："><span class="nav-number">5.1.</span> <span class="nav-text">php://filter：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#举个例子："><span class="nav-number">5.2.</span> <span class="nav-text">举个例子：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#过滤器："><span class="nav-number">6.</span> <span class="nav-text">过滤器：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#过滤器有很多种，有字符串过滤器、转换过滤器、压缩过滤器、加密过滤器-lt-字符串过滤器-gt"><span class="nav-number">6.1.</span> <span class="nav-text">过滤器有很多种，有字符串过滤器、转换过滤器、压缩过滤器、加密过滤器 &lt;字符串过滤器&gt;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#例子如下："><span class="nav-number">6.2.</span> <span class="nav-text">例子如下：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#结果如下："><span class="nav-number">6.3.</span> <span class="nav-text">结果如下：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#转换过滤器："><span class="nav-number">6.4.</span> <span class="nav-text">转换过滤器：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#例子如下：-1"><span class="nav-number">6.5.</span> <span class="nav-text">例子如下：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#结果如下：-1"><span class="nav-number">6.6.</span> <span class="nav-text">结果如下：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#压缩过滤器："><span class="nav-number">6.7.</span> <span class="nav-text">压缩过滤器：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#例子如下：-2"><span class="nav-number">6.8.</span> <span class="nav-text">例子如下：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#运行的结果如下："><span class="nav-number">6.9.</span> <span class="nav-text">运行的结果如下：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#加密过滤器："><span class="nav-number">6.10.</span> <span class="nav-text">加密过滤器：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#加密过滤器的读写："><span class="nav-number">6.11.</span> <span class="nav-text">加密过滤器的读写：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#如下php-filter读取以base64："><span class="nav-number">6.12.</span> <span class="nav-text">如下php://filter读取以base64：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#读取的内容如下："><span class="nav-number">6.13.</span> <span class="nav-text">读取的内容如下：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#在php中一般变量用单引号解析为字符串，而双引号如："><span class="nav-number">6.14.</span> <span class="nav-text">在php中一般变量用单引号解析为字符串，而双引号如：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#运行的结果如下：-1"><span class="nav-number">6.15.</span> <span class="nav-text">运行的结果如下：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#php-input协议："><span class="nav-number">6.16.</span> <span class="nav-text">php://input协议：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#需要的环境："><span class="nav-number">6.17.</span> <span class="nav-text">需要的环境：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#例如："><span class="nav-number">6.18.</span> <span class="nav-text">例如：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#php-output协议："><span class="nav-number">6.19.</span> <span class="nav-text">php://output协议：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#说明：-3"><span class="nav-number">7.</span> <span class="nav-text">说明：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#运行的结果如下：-2"><span class="nav-number">7.1.</span> <span class="nav-text">运行的结果如下：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#zip-bzip2-zlib-协议："><span class="nav-number">7.2.</span> <span class="nav-text">zip://, bzip2://, zlib://协议：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用环境："><span class="nav-number">7.3.</span> <span class="nav-text">使用环境：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#他们处理的文件："><span class="nav-number">7.4.</span> <span class="nav-text">他们处理的文件：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#zip-协议："><span class="nav-number">7.5.</span> <span class="nav-text">zip://协议：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#测试："><span class="nav-number">7.6.</span> <span class="nav-text">测试：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#新建一个zip-txt文件其中写入-lt-php-phpinfo-gt-压缩成zip文件然后改名为zip-jpg用如下的payload进行测试："><span class="nav-number">7.6.1.</span> <span class="nav-text">新建一个zip.txt文件其中写入&lt;?php phpinfo();?&gt;压缩成zip文件然后改名为zip.jpg用如下的payload进行测试：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#最后执行成功："><span class="nav-number">7.7.</span> <span class="nav-text">最后执行成功：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#bzip2-协议："><span class="nav-number">7.8.</span> <span class="nav-text">bzip2://协议：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#由于没有什么疑问就没有截图了："><span class="nav-number">7.9.</span> <span class="nav-text">由于没有什么疑问就没有截图了：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#data-协议："><span class="nav-number">7.10.</span> <span class="nav-text">data://协议：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#说明：-4"><span class="nav-number">8.</span> <span class="nav-text">说明：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#需要的环境：-1"><span class="nav-number">8.1.</span> <span class="nav-text">需要的环境：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#测试代码："><span class="nav-number">8.2.</span> <span class="nav-text">测试代码：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#如下测试payload"><span class="nav-number">8.3.</span> <span class="nav-text">如下测试payload:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#上面的payload都是可以访问到phpinfo的。"><span class="nav-number">8.4.</span> <span class="nav-text">上面的payload都是可以访问到phpinfo的。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#举个例子通过data-协议进行xss"><span class="nav-number">8.5.</span> <span class="nav-text">举个例子通过data://协议进行xss:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#测试代码如下："><span class="nav-number">8.6.</span> <span class="nav-text">测试代码如下：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#我们可以用下面的payload绕过并通过返回-lt-script-gt-alert-1-lt-script-gt-给页面造成xss："><span class="nav-number">8.7.</span> <span class="nav-text">我们可以用下面的payload绕过并通过返回&lt;script&gt;alert(1)&lt;/script&gt;给页面造成xss：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#bytectf的一道题目："><span class="nav-number">8.8.</span> <span class="nav-text">bytectf的一道题目：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#第一要绕过域名的限制，第二只能执行如a-b-c-这样的函数："><span class="nav-number">8.9.</span> <span class="nav-text">第一要绕过域名的限制，第二只能执行如a(b(c()))这样的函数：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#可以通过买一个xxxbaidu-com这样的baidu-com结尾的域名来绕过第一步："><span class="nav-number">8.10.</span> <span class="nav-text">可以通过买一个xxxbaidu.com这样的baidu.com结尾的域名来绕过第一步：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#绕过第二步可以参考一叶飘零的总结https-skysec-top-2019-03-29-PHP-Parametric-Function-RCE"><span class="nav-number">8.11.</span> <span class="nav-text">绕过第二步可以参考一叶飘零的总结https://skysec.top/2019/03/29/PHP-Parametric-Function-RCE/:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#感觉做题还是要多读文档。"><span class="nav-number">8.12.</span> <span class="nav-text">感觉做题还是要多读文档。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#glob-协议："><span class="nav-number">8.13.</span> <span class="nav-text">glob://协议：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#说明：-5"><span class="nav-number">9.</span> <span class="nav-text">说明：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#代码示例："><span class="nav-number">9.1.</span> <span class="nav-text">代码示例：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#运行的结果如下：-3"><span class="nav-number">9.2.</span> <span class="nav-text">运行的结果如下：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#受allow-url-fopen，allow-url-include的影响。"><span class="nav-number">9.3.</span> <span class="nav-text">受allow_url_fopen，allow_url_include的影响。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#phar-协议以后再总结了。"><span class="nav-number">9.4.</span> <span class="nav-text">phar://协议以后再总结了。</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ljdd520</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">8.4k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
