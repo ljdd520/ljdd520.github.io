@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言由于经常用到selenium和chrome的无头浏览器因此在此总结一下，以备不时之需。 0x01 SeleniumSelenium是自动化测试工具，支持多种浏览器，爬虫中主要用来解决JavaScript渲染的问题可以用Selenium来完成网页的下拉，点击等等操作。可以完全模拟浏览器加载网页，点击按钮，就像人一样。如何安装pip3 install selenium用法详解1. 基本使用 —-s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="selenium的使用和chrome浏览器的options参数配置教程">
+<meta property="og:url" content="http://yoursite.com/2019/12/16/selenium的使用和chrome浏览器的options参数配置教程/index.html">
+<meta property="og:site_name" content="L&#39;s Blog">
+<meta property="og:description" content="前言由于经常用到selenium和chrome的无头浏览器因此在此总结一下，以备不时之需。 0x01 SeleniumSelenium是自动化测试工具，支持多种浏览器，爬虫中主要用来解决JavaScript渲染的问题可以用Selenium来完成网页的下拉，点击等等操作。可以完全模拟浏览器加载网页，点击按钮，就像人一样。如何安装pip3 install selenium用法详解1. 基本使用 —-s">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-12-16T15:53:02.355Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="selenium的使用和chrome浏览器的options参数配置教程">
+<meta name="twitter:description" content="前言由于经常用到selenium和chrome的无头浏览器因此在此总结一下，以备不时之需。 0x01 SeleniumSelenium是自动化测试工具，支持多种浏览器，爬虫中主要用来解决JavaScript渲染的问题可以用Selenium来完成网页的下拉，点击等等操作。可以完全模拟浏览器加载网页，点击按钮，就像人一样。如何安装pip3 install selenium用法详解1. 基本使用 —-s">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/12/16/selenium的使用和chrome浏览器的options参数配置教程/">
+
+
+
+
+
+  <title>selenium的使用和chrome浏览器的options参数配置教程 | L's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">L's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">share with you</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/16/selenium的使用和chrome浏览器的options参数配置教程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ljdd520">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="L's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">selenium的使用和chrome浏览器的options参数配置教程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-16T23:50:50+08:00">
+                2019-12-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/python-web/" itemprop="url" rel="index">
+                    <span itemprop="name">python-web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3.8k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  17
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>由于经常用到selenium和chrome的无头浏览器因此在此总结一下，以备不时之需。</p>
+<h5 id="0x01-Selenium"><a href="#0x01-Selenium" class="headerlink" title="0x01 Selenium"></a>0x01 Selenium</h5><h6 id="Selenium是自动化测试工具，支持多种浏览器，爬虫中主要用来解决JavaScript渲染的问题可以用Selenium来完成网页的下拉，点击等等操作。可以完全模拟浏览器加载网页，点击按钮，就像人一样。"><a href="#Selenium是自动化测试工具，支持多种浏览器，爬虫中主要用来解决JavaScript渲染的问题可以用Selenium来完成网页的下拉，点击等等操作。可以完全模拟浏览器加载网页，点击按钮，就像人一样。" class="headerlink" title="Selenium是自动化测试工具，支持多种浏览器，爬虫中主要用来解决JavaScript渲染的问题可以用Selenium来完成网页的下拉，点击等等操作。可以完全模拟浏览器加载网页，点击按钮，就像人一样。"></a>Selenium是自动化测试工具，支持多种浏览器，爬虫中主要用来解决JavaScript渲染的问题可以用Selenium来完成网页的下拉，点击等等操作。可以完全模拟浏览器加载网页，点击按钮，就像人一样。</h6><h5 id="如何安装"><a href="#如何安装" class="headerlink" title="如何安装"></a>如何安装</h5><h6 id="pip3-install-selenium"><a href="#pip3-install-selenium" class="headerlink" title="pip3 install selenium"></a>pip3 install selenium</h6><h5 id="用法详解"><a href="#用法详解" class="headerlink" title="用法详解"></a>用法详解</h5><h6 id="1-基本使用-—-selenium驱动chrome完成打开百度，输入关键字，点击回车的动作"><a href="#1-基本使用-—-selenium驱动chrome完成打开百度，输入关键字，点击回车的动作" class="headerlink" title="1. 基本使用 —-selenium驱动chrome完成打开百度，输入关键字，点击回车的动作"></a>1. 基本使用 —-selenium驱动chrome完成打开百度，输入关键字，点击回车的动作</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.keys <span class="keyword">import</span> Keys</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.support <span class="keyword">import</span> expected_conditions <span class="keyword">as</span> EC</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.support.wait <span class="keyword">import</span> WebDriverWait</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.chrome.options <span class="keyword">import</span> Options</span><br><span class="line"></span><br><span class="line">options = Options()</span><br><span class="line">options.add_argument(<span class="string">'--no-sandbox'</span>)</span><br><span class="line">options.add_argument(<span class="string">'--disable-dev-shm-usage'</span>)</span><br><span class="line">options.add_argument(<span class="string">'--headless'</span>)</span><br><span class="line">options.add_argument(<span class="string">'--disable-gpu'</span>)</span><br><span class="line"><span class="comment"># 打开浏览器,加了很多option，为了在命令行下可以正常调用Chrome，对于新版的用options instead of chrome_options</span></span><br><span class="line">browser = webdriver.Chrome(executable_path=<span class="string">'/usr/bin/chromedriver'</span>, chrome_options=options)</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="comment"># 打开url</span></span><br><span class="line">    browser.get(<span class="string">'http://www.baidu.com'</span>)</span><br><span class="line">    <span class="comment"># 找到id为kw的元素，并赋值给input</span></span><br><span class="line">    input = browser.find_element_by_id(<span class="string">'kw'</span>)</span><br><span class="line">    <span class="comment"># input向这个元素传入Python字符串</span></span><br><span class="line">    input.send_keys(<span class="string">'Python'</span>)</span><br><span class="line">    <span class="comment"># 向input这个元素传入回车</span></span><br><span class="line">    input.send_keys(Keys.ENTER)</span><br><span class="line">    <span class="comment"># 等待10秒</span></span><br><span class="line">    wait = WebDriverWait(browser,<span class="number">10</span>)</span><br><span class="line">    <span class="comment"># 一直等待，直到id= content_left的元素加载完毕</span></span><br><span class="line">    wait.until(EC.presence_of_element_located((By.ID,<span class="string">'content_left'</span>)))</span><br><span class="line">    <span class="comment"># 打印当前的url</span></span><br><span class="line">    print(browser.current_url)</span><br><span class="line">    <span class="comment"># 打印当前浏览器的cookie</span></span><br><span class="line">    print(browser.get_cookies())</span><br><span class="line">    <span class="comment"># 打印当前页面的源代码</span></span><br><span class="line">    print(browser.page_source)</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    <span class="comment"># 关闭浏览器</span></span><br><span class="line">    browser.close()</span><br></pre></td></tr></table></figure>
+
+<h6 id="2-设置使用的浏览器对象"><a href="#2-设置使用的浏览器对象" class="headerlink" title="2. 设置使用的浏览器对象"></a>2. 设置使用的浏览器对象</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line">browser = webdriver.Chrome(executable_path=<span class="string">'/usr/bin/chromedriver'</span>, chrome_options=options)</span><br><span class="line">browser = webdriver.Firefox()</span><br><span class="line">browser = webdriver.Edge()</span><br></pre></td></tr></table></figure>
+
+<h6 id="3-访问页面"><a href="#3-访问页面" class="headerlink" title="3. 访问页面"></a>3. 访问页面</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.keys <span class="keyword">import</span> Keys</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.support <span class="keyword">import</span> expected_conditions <span class="keyword">as</span> EC</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.support.wait <span class="keyword">import</span> WebDriverWait</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.chrome.options <span class="keyword">import</span> Options</span><br><span class="line"></span><br><span class="line">options = Options()</span><br><span class="line">options.add_argument(<span class="string">'--no-sandbox'</span>)</span><br><span class="line">options.add_argument(<span class="string">'--disable-dev-shm-usage'</span>)</span><br><span class="line">options.add_argument(<span class="string">'--headless'</span>)</span><br><span class="line">options.add_argument(<span class="string">'--disable-gpu'</span>)</span><br><span class="line">browser = webdriver.Chrome(executable_path=<span class="string">'/usr/bin/chromedriver'</span>, chrome_options=options)</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="comment"># 访问淘宝</span></span><br><span class="line">    browser.get(<span class="string">'http://www.taobao.com'</span>)</span><br><span class="line">    <span class="comment"># 返回页面源代码</span></span><br><span class="line">    print(browser.page_source)</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    browser.close()</span><br></pre></td></tr></table></figure>
+
+<h6 id="4-模拟点击"><a href="#4-模拟点击" class="headerlink" title="4. 模拟点击"></a>4. 模拟点击</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">browser.find_element_by_xpath(<span class="string">"//div[@id='pl_login_form']/div/div[2]/div[6]/a"</span>).click()</span><br></pre></td></tr></table></figure>
+
+<h6 id="查找单个元素"><a href="#查找单个元素" class="headerlink" title="查找单个元素"></a>查找单个元素</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.keys <span class="keyword">import</span> Keys</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.support <span class="keyword">import</span> expected_conditions <span class="keyword">as</span> EC</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.support.wait <span class="keyword">import</span> WebDriverWait</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.chrome.options <span class="keyword">import</span> Options</span><br><span class="line"></span><br><span class="line">options = Options()</span><br><span class="line">options.add_argument(<span class="string">'--no-sandbox'</span>)</span><br><span class="line">options.add_argument(<span class="string">'--disable-dev-shm-usage'</span>)</span><br><span class="line">options.add_argument(<span class="string">'--headless'</span>)</span><br><span class="line">options.add_argument(<span class="string">'--disable-gpu'</span>)</span><br><span class="line">browser = webdriver.Chrome(executable_path=<span class="string">'/usr/bin/chromedriver'</span>, chrome_options=options)</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    browser.get(<span class="string">'http://www.w3school.com.cn/css/index.asp'</span>)</span><br><span class="line">    input_first = browser.find_element_by_id(<span class="string">'intro'</span>)</span><br><span class="line">    input_second = browser.find_element_by_css_selector(<span class="string">'#intro'</span>)</span><br><span class="line">    input_third = browser.find_element_by_xpath(<span class="string">'//*[@id="intro"]'</span>)</span><br><span class="line">    print(input_first,input_second,input_third)</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    browser.close()</span><br></pre></td></tr></table></figure>
+
+<h6 id="拿到的结果如下："><a href="#拿到的结果如下：" class="headerlink" title="拿到的结果如下："></a>拿到的结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;selenium.webdriver.remote.webelement.WebElement (session=&quot;8ec7f274abebf925fa2e21f21651b845&quot;, element=&quot;f1155423-91de-404c-9bd0-cd02afe7804c&quot;)&gt; &lt;selenium.webdriver.remote.webelement.WebElement (session=&quot;8ec7f274abebf925fa2e21f21651b845&quot;, element=&quot;f1155423-91de-404c-9bd0-cd02afe7804c&quot;)&gt; &lt;selenium.webdriver.remote.webelement.WebElement (session=&quot;8ec7f274abebf925fa2e21f21651b845&quot;, element=&quot;f1155423-91de-404c-9bd0-cd02afe7804c&quot;)&gt;</span><br></pre></td></tr></table></figure>
+
+<h6 id="有以下查找元素的方法"><a href="#有以下查找元素的方法" class="headerlink" title="有以下查找元素的方法"></a>有以下查找元素的方法</h6><ul>
+<li>find_element_by_name</li>
+<li>find_element_by_xpath</li>
+<li>find_element_by_link_text</li>
+<li>find_element_by_partial_link_text</li>
+<li>find_element_by_tag_name</li>
+<li>find_element_by_class_name</li>
+<li>find_element_by_css_selector</li>
+<li>通用查找模式 find_element(By.ID,’intro’)</li>
+</ul>
+<h6 id="查早多个元素"><a href="#查早多个元素" class="headerlink" title="查早多个元素"></a>查早多个元素</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.keys <span class="keyword">import</span> Keys</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.support <span class="keyword">import</span> expected_conditions <span class="keyword">as</span> EC</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.support.wait <span class="keyword">import</span> WebDriverWait</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.chrome.options <span class="keyword">import</span> Options</span><br><span class="line"></span><br><span class="line">options = Options()</span><br><span class="line">options.add_argument(<span class="string">'--no-sandbox'</span>)</span><br><span class="line">options.add_argument(<span class="string">'--disable-dev-shm-usage'</span>)</span><br><span class="line">options.add_argument(<span class="string">'--headless'</span>)</span><br><span class="line">options.add_argument(<span class="string">'--disable-gpu'</span>)</span><br><span class="line">browser = webdriver.Chrome(executable_path=<span class="string">'/usr/bin/chromedriver'</span>, chrome_options=options)</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    browser.get(<span class="string">'http://www.taobao.com'</span>)</span><br><span class="line">    <span class="comment"># 注意是find_elements_XXX</span></span><br><span class="line">    lis = browser.find_elements_by_css_selector(<span class="string">'.service-bd li'</span>)</span><br><span class="line">    <span class="comment"># 和上面的方法的结果一样。这里用通用查找多个元素方法</span></span><br><span class="line">    lis = browser.find_elements(By.CSS_SELECTOR,<span class="string">'.service-bd li'</span>)</span><br><span class="line">    <span class="comment"># 返回一个列表</span></span><br><span class="line">    print(lis)</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    browser.close()</span><br></pre></td></tr></table></figure>
+
+<h6 id="有多种方法查找多个元素"><a href="#有多种方法查找多个元素" class="headerlink" title="有多种方法查找多个元素"></a>有多种方法查找多个元素</h6><ul>
+<li>find_elements_by_name</li>
+<li>find_elements_by_xpath</li>
+<li>find_elements_by_link_text</li>
+<li>find_elements_by_partial_link_text</li>
+<li>find_elements_by_tag_name</li>
+<li>find_elements_by_class_name</li>
+<li>find_elements_by_css_selector</li>
+<li>通用查找模式 find_elements(By.ID,’intro’)</li>
+</ul>
+<h5 id="元素交互操作"><a href="#元素交互操作" class="headerlink" title="元素交互操作"></a>元素交互操作</h5><h6 id="对获取的元素调用交互方法"><a href="#对获取的元素调用交互方法" class="headerlink" title="对获取的元素调用交互方法"></a>对获取的元素调用交互方法</h6><h6 id="我们用上面的find-element等方法的到了元素，那么怎么操作这些元素呢？"><a href="#我们用上面的find-element等方法的到了元素，那么怎么操作这些元素呢？" class="headerlink" title="我们用上面的find_element等方法的到了元素，那么怎么操作这些元素呢？"></a>我们用上面的find_element等方法的到了元素，那么怎么操作这些元素呢？</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.keys <span class="keyword">import</span> Keys</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.support <span class="keyword">import</span> expected_conditions <span class="keyword">as</span> EC</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.support.wait <span class="keyword">import</span> WebDriverWait</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.chrome.options <span class="keyword">import</span> Options</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">options = Options()</span><br><span class="line">options.add_argument(<span class="string">'--no-sandbox'</span>)</span><br><span class="line">options.add_argument(<span class="string">'--disable-dev-shm-usage'</span>)</span><br><span class="line">options.add_argument(<span class="string">'--headless'</span>)</span><br><span class="line">options.add_argument(<span class="string">'--disable-gpu'</span>)</span><br><span class="line">browser = webdriver.Chrome(executable_path=<span class="string">'/usr/bin/chromedriver'</span>, chrome_options=options)</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    browser.get(<span class="string">'http://www.taobao.com'</span>)</span><br><span class="line">    input = browser.find_element_by_css_selector(<span class="string">'#q'</span>)<span class="comment">#找到id='q'的input</span></span><br><span class="line">    input.send_keys(<span class="string">"iPhone"</span>)<span class="comment">#在这个input中输入iPhone</span></span><br><span class="line">    time.sleep(<span class="number">1</span>)<span class="comment">#等待1秒钟</span></span><br><span class="line">    input.clear()<span class="comment">#清空输入框</span></span><br><span class="line">    input.send_keys(<span class="string">"iPad"</span>)<span class="comment">#input输入iPad</span></span><br><span class="line">    button = browser.find_element_by_class_name(<span class="string">'btn-search'</span>)<span class="comment">#找到类名为‘btn-search’的元素</span></span><br><span class="line">    button.click()<span class="comment">#这个元素执行click函数</span></span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    browser.close()</span><br></pre></td></tr></table></figure>
+
+<h6 id="更多内容"><a href="#更多内容" class="headerlink" title="更多内容"></a><a href="https://selenium-python.readthedocs.io/api.html#module-selenium.webdriver.remote.webelement" target="_blank" rel="noopener">更多内容</a></h6><h5 id="交互动作-与元素交互动作不同"><a href="#交互动作-与元素交互动作不同" class="headerlink" title="交互动作 与元素交互动作不同"></a>交互动作 与元素交互动作不同</h5><h6 id="将动作附加到动作链中串行执行"><a href="#将动作附加到动作链中串行执行" class="headerlink" title="将动作附加到动作链中串行执行"></a>将动作附加到动作链中串行执行</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.keys <span class="keyword">import</span> Keys</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.support <span class="keyword">import</span> expected_conditions <span class="keyword">as</span> EC</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.support.wait <span class="keyword">import</span> WebDriverWait</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.chrome.options <span class="keyword">import</span> Options</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver <span class="keyword">import</span> ActionChains</span><br><span class="line"></span><br><span class="line">options = Options()</span><br><span class="line">options.add_argument(<span class="string">'--no-sandbox'</span>)</span><br><span class="line">options.add_argument(<span class="string">'--disable-dev-shm-usage'</span>)</span><br><span class="line">options.add_argument(<span class="string">'--headless'</span>)</span><br><span class="line">options.add_argument(<span class="string">'--disable-gpu'</span>)</span><br><span class="line">browser = webdriver.Chrome(executable_path=<span class="string">'/usr/bin/chromedriver'</span>, chrome_options=options)</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    browser.get(<span class="string">'http://www.runoob.com/try/try.php?filename=jqueryui-api-droppable'</span>)</span><br><span class="line">    browser.switch_to.frame(<span class="string">'iframeResult'</span>)</span><br><span class="line">    source = browser.find_element_by_css_selector(<span class="string">'#draggable'</span>)</span><br><span class="line">    target = browser.find_element_by_css_selector(<span class="string">'#droppable'</span>)</span><br><span class="line">    actions = ActionChains(browser)</span><br><span class="line">    actions.drag_and_drop(source,target)</span><br><span class="line">    actions.perform()</span><br><span class="line"><span class="keyword">finally</span>:</span><br><span class="line">    browser.close()</span><br></pre></td></tr></table></figure>
+
+<h6 id="更多内容-1"><a href="#更多内容-1" class="headerlink" title="更多内容"></a><a href="https://selenium-python.readthedocs.io/api.html#module-selenium.webdriver.common.action_chains" target="_blank" rel="noopener">更多内容</a></h6><h5 id="执行JavaScript"><a href="#执行JavaScript" class="headerlink" title="执行JavaScript"></a>执行JavaScript</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line">browser = webdirver.Chrome()</span><br><span class="line">browser.get(<span class="string">'http://www.zhihu.com/explore'</span>)</span><br><span class="line">browser.execute_script(<span class="string">'window.scrollTo(0,document.body.scrollHeight)'</span>)</span><br><span class="line">browser.execute_script(<span class="string">'alert("To Bottom")'</span>)</span><br></pre></td></tr></table></figure>
+
+<h5 id="获取元素信息"><a href="#获取元素信息" class="headerlink" title="获取元素信息"></a>获取元素信息</h5><h6 id="获取属性"><a href="#获取属性" class="headerlink" title="获取属性"></a>获取属性</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver <span class="keyword">import</span> ActionChains</span><br><span class="line">browser = webdriver.Chrome()</span><br><span class="line">url = <span class="string">'https://www.zhihu.com/explore'</span></span><br><span class="line">browser.get(url)</span><br><span class="line">logo = browser.find_element_by_id(<span class="string">'zh-top-link-logo'</span>)</span><br><span class="line">print(logo)</span><br><span class="line">print(logo.get_attribute(<span class="string">'class'</span>))</span><br></pre></td></tr></table></figure>
+
+<h5 id="获取文本值"><a href="#获取文本值" class="headerlink" title="获取文本值"></a>获取文本值</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line">browser = webdriver.Chrome()</span><br><span class="line">url = <span class="string">'http://www.zhihu.com/explore'</span></span><br><span class="line">browser.get(url)</span><br><span class="line">input = browser.find_element_by_class_name(<span class="string">'zu-top-add-question'</span>)</span><br><span class="line">print(input.text)</span><br></pre></td></tr></table></figure>
+
+<h5 id="获取ID、位置、标签名、size"><a href="#获取ID、位置、标签名、size" class="headerlink" title="获取ID、位置、标签名、size"></a>获取ID、位置、标签名、size</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line">browser = webdriver.Chrome()</span><br><span class="line">url = <span class="string">'http://www.zhihu.com/explore'</span></span><br><span class="line">browser.get(url)</span><br><span class="line">input = browser.find_element_by_class_name(<span class="string">'zu-top-add-question'</span>)</span><br><span class="line">print(input.id)</span><br><span class="line">print(input.location)</span><br><span class="line">print(input.tag_name)</span><br><span class="line">print(input.size)</span><br></pre></td></tr></table></figure>
+
+<h5 id="Frame"><a href="#Frame" class="headerlink" title="Frame"></a>Frame</h5><h6 id="网页可能存在不止一个frame"><a href="#网页可能存在不止一个frame" class="headerlink" title="网页可能存在不止一个frame"></a>网页可能存在不止一个frame</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdirver</span><br><span class="line"><span class="keyword">from</span> selenium.common.exceptions <span class="keyword">import</span> NoSuchElementException</span><br><span class="line"></span><br><span class="line">browser = webdriver.Chrome</span><br><span class="line">url = <span class="string">'http://www.runoob.com/try/try.php?filename=jqueryui-api-droppable'</span></span><br><span class="line">browser.get(url)</span><br><span class="line">browser.swithch_to.frame(<span class="string">'iframeResult'</span>)</span><br><span class="line">print(source)</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    logo = browser.find_element_by_class_name(<span class="string">'logo'</span>)</span><br><span class="line"><span class="keyword">except</span> NoSuchElementException:</span><br><span class="line">    print(<span class="string">'NO LOGO'</span>)<span class="comment">#子frame找不到父frame的元素</span></span><br><span class="line">browser.switch_to.parent_frame()</span><br><span class="line">logo = browser.find_element_by_class_name(<span class="string">'logo'</span>)</span><br><span class="line">print(logo)</span><br><span class="line">print(logo.text)</span><br></pre></td></tr></table></figure>
+
+<h5 id="等待"><a href="#等待" class="headerlink" title="等待"></a>等待</h5><h6 id="隐式等待"><a href="#隐式等待" class="headerlink" title="隐式等待"></a>隐式等待</h6><h6 id="当使用了隐式等待执行测试的时候，如果WebDriver没有在DOM中找到元素，将继续等待，超出设定时间后则抛出找不到元素的异常，换句话说，当查找元素或元素并没有立即出现的时候，隐式等待将等待一段时间在查找DOM，默认的时间是0"><a href="#当使用了隐式等待执行测试的时候，如果WebDriver没有在DOM中找到元素，将继续等待，超出设定时间后则抛出找不到元素的异常，换句话说，当查找元素或元素并没有立即出现的时候，隐式等待将等待一段时间在查找DOM，默认的时间是0" class="headerlink" title="当使用了隐式等待执行测试的时候，如果WebDriver没有在DOM中找到元素，将继续等待，超出设定时间后则抛出找不到元素的异常，换句话说，当查找元素或元素并没有立即出现的时候，隐式等待将等待一段时间在查找DOM，默认的时间是0"></a>当使用了隐式等待执行测试的时候，如果WebDriver没有在DOM中找到元素，将继续等待，超出设定时间后则抛出找不到元素的异常，换句话说，当查找元素或元素并没有立即出现的时候，隐式等待将等待一段时间在查找DOM，默认的时间是0</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdirver</span><br><span class="line">browser = webdirver.Chrome()</span><br><span class="line">browser.implicity_wait(<span class="number">10</span>)<span class="comment">#设置隐式等待10秒，意义：如果知乎网站没有打开，那么默认等待10秒，如果10秒之后还找不到元素，再抛出异常。如果网速特别慢，可以用这个办法</span></span><br><span class="line">browser.get(<span class="string">'https://www.zhihu.com/explore'</span>)</span><br><span class="line">input = browser.find_element_by_class_name(<span class="string">'zu-top=add-question'</span>)</span><br><span class="line">print(input)</span><br></pre></td></tr></table></figure>
+
+<h5 id="显式等待-非常常用"><a href="#显式等待-非常常用" class="headerlink" title="显式等待 非常常用"></a>显式等待 非常常用</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.support.ui <span class="keyword">import</span> WebDriverWait</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.support <span class="keyword">import</span> expected_conditions <span class="keyword">as</span> EC</span><br><span class="line"></span><br><span class="line">browser = webdriver.Chrome()</span><br><span class="line">browser.get(<span class="string">'https://www.taobao.com'</span>)</span><br><span class="line">wait = WebDriverWait(browser,<span class="number">10</span>)<span class="comment">#显式等待，更加常见，设置最长等待时间10秒</span></span><br><span class="line">input = wait.until(EC.presence_of_element_located((By.ID,<span class="string">'q'</span>)))<span class="comment">#等待条件是如果获取id是q的元素</span></span><br><span class="line">button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,<span class="string">'btn-search'</span>)))<span class="comment">#等待条件是获取class='btn-search'的按钮</span></span><br><span class="line">print(input,button)</span><br></pre></td></tr></table></figure>
+
+<h6 id="以下是expected-conditions常见操作"><a href="#以下是expected-conditions常见操作" class="headerlink" title="以下是expected_conditions常见操作"></a>以下是expected_conditions常见操作</h6><ul>
+<li>title_is 标题是某内容</li>
+<li>title_contains 标题包含某内容</li>
+<li>presence_of_element_located 元素加载出，传入定位元组，如（By.ID,’p’）</li>
+<li>visibility_of_element_located 元素可见，传入定位元组</li>
+<li>visibility_of 可见，传入元素对象</li>
+<li>presence_of_all_elements_located 所有元素加载出</li>
+<li>text_to_be_present_in_element 某个元素文本包含某文字</li>
+<li>text_to_be_present_in_element_value 某个元素值包含某文字</li>
+<li>frame_to_be_available_and_switch_to_it frame加载并切换</li>
+<li>invisibility_of_element_located 元素不可见</li>
+<li>element_to_be_cliable 元素可点击</li>
+<li>staleness_of 判断一个元素是否人在DOM，可判断页面是否已经刷新</li>
+<li>element_to_be_selected 元素可选择，传元素对象</li>
+<li>element_located_to_be_selected 元素可选择，传入定位元组</li>
+<li>element_selection_state_to_be 传入元素对象以及状态，相等返回True，否则返回False</li>
+<li>element_located_selection_state_to_be 传入定位元组以及状态，相等返回True，否则返回False</li>
+<li>alert_is_present 是否出现Alert</li>
+</ul>
+<h6 id="更多内容-2"><a href="#更多内容-2" class="headerlink" title="更多内容"></a><a href="https://selenium-python.readthedocs.io/api.html#module-selenium.webdriver.support.expected_conditions" target="_blank" rel="noopener">更多内容</a></h6><h5 id="浏览器的前进后退"><a href="#浏览器的前进后退" class="headerlink" title="浏览器的前进后退"></a>浏览器的前进后退</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">browser = webdriver.Chrome()</span><br><span class="line">browser.get(<span class="string">'http://www.baidu.com'</span>)</span><br><span class="line">browser.get(<span class="string">'http://www.taobao.com'</span>)</span><br><span class="line">browser.get(<span class="string">'http://www.python.com'</span>)</span><br><span class="line">browser.back()<span class="comment">#后退</span></span><br><span class="line">time.sleep(<span class="number">1</span>)</span><br><span class="line">browser.forward()<span class="comment">#前进</span></span><br><span class="line">browser.close()</span><br></pre></td></tr></table></figure>
+
+<h5 id="Cookies，如果做登陆后爬取非常有用"><a href="#Cookies，如果做登陆后爬取非常有用" class="headerlink" title="Cookies，如果做登陆后爬取非常有用"></a>Cookies，如果做登陆后爬取非常有用</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdirver</span><br><span class="line">browser = webdriver.Chrome()</span><br><span class="line">browser.get(<span class="string">'https://www.zhihu.com/explore'</span>)</span><br><span class="line">print(browser.get_cookies())</span><br><span class="line">browser.add_cookie(&#123;<span class="string">'name'</span>:<span class="string">'name'</span>,<span class="string">'domain'</span>:<span class="string">'www.zhihu.com'</span>,<span class="string">'value'</span>:<span class="string">'hello'</span>&#125;)</span><br><span class="line">print(browser.get_cookies())</span><br><span class="line">browser.delete_all_cookies()</span><br><span class="line">print(browser.get_cookies())</span><br></pre></td></tr></table></figure>
+
+<h5 id="选项卡管理"><a href="#选项卡管理" class="headerlink" title="选项卡管理"></a>选项卡管理</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">browser = webdirver.Chrome()</span><br><span class="line">browser.get(<span class="string">'https://www.baidu.com'</span>)</span><br><span class="line">browser.execute_script(<span class="string">'window.open()'</span>)<span class="comment">#新增选项卡</span></span><br><span class="line">print(browser.window_handles)<span class="comment">#返回浏览器窗口句柄</span></span><br><span class="line">browser.switch_to_window(browser.window_handles[<span class="number">1</span>])<span class="comment">#切换到第二个选项卡</span></span><br><span class="line">browser.get(<span class="string">'https://www.taobao.com'</span>)<span class="comment">#第二个选项卡打开淘宝</span></span><br><span class="line">time.sleep(<span class="number">1</span>)</span><br><span class="line">browser.switch_to_window(browser.window_handles[<span class="number">0</span>])<span class="comment">#切换到第一个选项卡</span></span><br><span class="line">browser.get(<span class="string">'http://python.org'</span>)<span class="comment">#第一个选项卡打开python.org</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line">browser = webdriver.Chrome()</span><br><span class="line">browser.get(<span class="string">'https://www.baidu.com'</span>)</span><br><span class="line">browser.find_element_by_id(<span class="string">'hello'</span>)<span class="comment">#不存在id=hello的元素，抛出异常NoSuchElementException</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="更多内容-3"><a href="#更多内容-3" class="headerlink" title="更多内容"></a><a href="https://selenium-python.readthedocs.io/api.html#module-selenium.common.exceptions" target="_blank" rel="noopener">更多内容</a></h6><h6 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h6><h6 id="https-selenium-python-readthedocs-io-api-html"><a href="#https-selenium-python-readthedocs-io-api-html" class="headerlink" title="https://selenium-python.readthedocs.io/api.html"></a><a href="https://selenium-python.readthedocs.io/api.html" target="_blank" rel="noopener">https://selenium-python.readthedocs.io/api.html</a></h6><h6 id="https-www-jianshu-com-p-6c82c965c014"><a href="#https-www-jianshu-com-p-6c82c965c014" class="headerlink" title="https://www.jianshu.com/p/6c82c965c014"></a><a href="https://www.jianshu.com/p/6c82c965c014" target="_blank" rel="noopener">https://www.jianshu.com/p/6c82c965c014</a></h6><h5 id="0x02-chrome浏览器的options参数"><a href="#0x02-chrome浏览器的options参数" class="headerlink" title="0x02 chrome浏览器的options参数"></a>0x02 chrome浏览器的options参数</h5><h6 id="1-背景"><a href="#1-背景" class="headerlink" title="1. 背景"></a>1. 背景</h6><h6 id="在使用selenium浏览器渲染技术，爬取网站信息时，默认情况下就是一个普通的纯净的chrome浏览器，而我们平时在使用浏览器时，经常就添加一些插件，扩展，代理之类的应用。相对应的，当我们用chrome浏览器爬取网站时，可能需要对这个chrome做一些特殊的配置，以满足爬虫的行为。"><a href="#在使用selenium浏览器渲染技术，爬取网站信息时，默认情况下就是一个普通的纯净的chrome浏览器，而我们平时在使用浏览器时，经常就添加一些插件，扩展，代理之类的应用。相对应的，当我们用chrome浏览器爬取网站时，可能需要对这个chrome做一些特殊的配置，以满足爬虫的行为。" class="headerlink" title="在使用selenium浏览器渲染技术，爬取网站信息时，默认情况下就是一个普通的纯净的chrome浏览器，而我们平时在使用浏览器时，经常就添加一些插件，扩展，代理之类的应用。相对应的，当我们用chrome浏览器爬取网站时，可能需要对这个chrome做一些特殊的配置，以满足爬虫的行为。"></a>在使用selenium浏览器渲染技术，爬取网站信息时，默认情况下就是一个普通的纯净的chrome浏览器，而我们平时在使用浏览器时，经常就添加一些插件，扩展，代理之类的应用。相对应的，当我们用chrome浏览器爬取网站时，可能需要对这个chrome做一些特殊的配置，以满足爬虫的行为。</h6><h6 id="常用的行为有："><a href="#常用的行为有：" class="headerlink" title="常用的行为有："></a>常用的行为有：</h6><ul>
+<li>禁止图片和视频的加载：提升网页加载速度。</li>
+<li>添加代理：用于翻墙访问某些页面，或者应对IP访问频率限制的反爬技术。</li>
+<li>使用移动头：访问移动端的站点，一般这种站点的反爬技术比较薄弱。</li>
+<li>添加扩展：像正常使用浏览器一样的功能。</li>
+<li>设置编码：应对中文站，防止乱码。</li>
+<li>阻止JavaScript执行。</li>
+<li>………</li>
+</ul>
+<h6 id="2-chromeOptions"><a href="#2-chromeOptions" class="headerlink" title="2. chromeOptions"></a>2. chromeOptions</h6><h6 id="chromeOptions-是一个配置-chrome-启动是属性的类。通过这个类，我们可以为chrome配置如下参数（这个部分可以通过selenium源码看到）："><a href="#chromeOptions-是一个配置-chrome-启动是属性的类。通过这个类，我们可以为chrome配置如下参数（这个部分可以通过selenium源码看到）：" class="headerlink" title="chromeOptions 是一个配置 chrome 启动是属性的类。通过这个类，我们可以为chrome配置如下参数（这个部分可以通过selenium源码看到）："></a>chromeOptions 是一个配置 chrome 启动是属性的类。通过这个类，我们可以为chrome配置如下参数（这个部分可以通过selenium源码看到）：</h6><ul>
+<li><p>设置 chrome 二进制文件位置 (binary_location)</p>
+</li>
+<li><p>添加启动参数 (add_argument)</p>
+</li>
+<li><p>添加扩展应用 (add_extension, add_encoded_extension)</p>
+</li>
+<li><p>添加实验性质的设置参数 (add_experimental_option)</p>
+</li>
+<li><p>设置调试器地址 (debugger_address)</p>
+</li>
+<li><p>源代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># .\Lib\site-packages\selenium\webdriver\chrome\options.py</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Options</span><span class="params">(object)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="comment"># 设置 chrome 二进制文件位置</span></span><br><span class="line">        self._binary_location = <span class="string">''</span></span><br><span class="line">        <span class="comment"># 添加启动参数</span></span><br><span class="line">        self._arguments = []</span><br><span class="line">        <span class="comment"># 添加扩展应用</span></span><br><span class="line">        self._extension_files = []</span><br><span class="line">        self._extensions = []</span><br><span class="line">        <span class="comment"># 添加实验性质的设置参数</span></span><br><span class="line">        self._experimental_options = &#123;&#125;</span><br><span class="line">        <span class="comment"># 设置调试器地址</span></span><br><span class="line">        self._debugger_address = <span class="literal">None</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用案例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置默认编码为 utf-8，也就是中文</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line">options = webdriver.ChromeOptions()</span><br><span class="line">options.add_argument(<span class="string">'lang=zh_CN.UTF-8'</span>)</span><br><span class="line">driver = webdriver.Chrome(chrome_options = options)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="3-常用配置"><a href="#3-常用配置" class="headerlink" title="3. 常用配置"></a>3. 常用配置</h6><ul>
+<li><a href="https://sites.google.com/a/chromium.org/chromedriver/capabilities" target="_blank" rel="noopener">官方网站参考</a><h6 id="3-1-设置编码格式"><a href="#3-1-设置编码格式" class="headerlink" title="3.1 设置编码格式"></a>3.1 设置编码格式</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置默认编码为 utf-8，也就是中文</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line">options = webdriver.ChromeOptions()</span><br><span class="line">options.add_argument(<span class="string">'lang=zh_CN.UTF-8'</span>)</span><br><span class="line">driver = webdriver.Chrome(chrome_options = options)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="3-2-模拟移动设备"><a href="#3-2-模拟移动设备" class="headerlink" title="3.2 模拟移动设备"></a>3.2 模拟移动设备</h6><ul>
+<li><a href="http://www.fynas.com/ua" target="_blank" rel="noopener">移动设备user-agent表格</a></li>
+<li>由于移动版网站的反爬虫的能力比较弱<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 通过设置user-agent，用来模拟移动设备</span></span><br><span class="line"><span class="comment"># 比如模拟 android QQ浏览器</span></span><br><span class="line">options.add_argument(<span class="string">'user-agent="MQQBrowser/26 Mozilla/5.0 (Linux; U; Android 2.3.7; zh-cn; MB200 Build/GRJ22; CyanogenMod-7) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1"'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 模拟iPhone 6</span></span><br><span class="line">options.add_argument(<span class="string">'user-agent="Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1"'</span>)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="3-3-禁止图片加载"><a href="#3-3-禁止图片加载" class="headerlink" title="3.3 禁止图片加载"></a>3.3 禁止图片加载</h6><ul>
+<li>不加载图片的情况，可以提升爬取速度。<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 禁止图片的加载</span></span><br><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"></span><br><span class="line">chrome_options = webdriver.ChromeOptions()</span><br><span class="line">prefs = &#123;<span class="string">"profile.managed_default_content_settings.images"</span>: <span class="number">2</span>&#125;</span><br><span class="line">chrome_options.add_experimental_option(<span class="string">"prefs"</span>, prefs)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动浏览器，并设置好wait</span></span><br><span class="line">browser = webdriver.Chrome(chrome_options=chrome_options)</span><br><span class="line">browser.set_window_size(configure.windowHeight, configure.windowWidth)   <span class="comment"># 根据桌面分辨率来定，主要是为了抓到验证码的截屏</span></span><br><span class="line">wait = WebDriverWait(browser, timeout = configure.timeoutMain)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="3-4-添加代理"><a href="#3-4-添加代理" class="headerlink" title="3.4. 添加代理"></a>3.4. 添加代理</h6><ul>
+<li>为selenium爬虫添加代理，这个地方尤其需要注意的是，在选择代理时，尽量选择静态IP，才能提升爬取的稳定性。因为如果选择selenium来做爬虫，说明网站的反爬能力比较高（要不然直接上scrapy了），对网页之间的连贯性，cookies，用户状态等有较高的监测。如果使用动态匿名IP，每个IP的存活时间是很短的（1~3分钟）。<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="comment"># 静态IP：102.23.1.105：2005</span></span><br><span class="line"><span class="comment"># 阿布云动态IP：http://D37EPSERV96VT4W2:CERU56DAEB345HU90@proxy.abuyun.com:9020</span></span><br><span class="line">PROXY = <span class="string">"proxy_host:proxy:port"</span></span><br><span class="line">options = webdriver.ChromeOptions()</span><br><span class="line">desired_capabilities = options.to_capabilities()</span><br><span class="line">desired_capabilities[<span class="string">'proxy'</span>] = &#123;</span><br><span class="line">    <span class="string">"httpProxy"</span>: PROXY,</span><br><span class="line">    <span class="string">"ftpProxy"</span>: PROXY,</span><br><span class="line">    <span class="string">"sslProxy"</span>: PROXY,</span><br><span class="line">    <span class="string">"noProxy"</span>: <span class="literal">None</span>,</span><br><span class="line">    <span class="string">"proxyType"</span>: <span class="string">"MANUAL"</span>,</span><br><span class="line">    <span class="string">"class"</span>: <span class="string">"org.openqa.selenium.Proxy"</span>,</span><br><span class="line">    <span class="string">"autodetect"</span>: <span class="literal">False</span></span><br><span class="line">&#125;</span><br><span class="line">driver = webdriver.Chrome(desired_capabilities = desired_capabilities)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="3-5-浏览器选项设置和添加浏览器扩展应用参考下面的链接："><a href="#3-5-浏览器选项设置和添加浏览器扩展应用参考下面的链接：" class="headerlink" title="3.5. 浏览器选项设置和添加浏览器扩展应用参考下面的链接："></a>3.5. 浏览器选项设置和添加浏览器扩展应用参考下面的链接：</h6><h6 id="https-blog-csdn-net-zwq912318834-article-details-78933910"><a href="#https-blog-csdn-net-zwq912318834-article-details-78933910" class="headerlink" title="https://blog.csdn.net/zwq912318834/article/details/78933910"></a><a href="https://blog.csdn.net/zwq912318834/article/details/78933910" target="_blank" rel="noopener">https://blog.csdn.net/zwq912318834/article/details/78933910</a></h6><h6 id="4-其他参数"><a href="#4-其他参数" class="headerlink" title="4. 其他参数"></a>4. 其他参数</h6><h6 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a><a href="http://blog.csdn.net/liaojianqiu0115/article/details/78353267" target="_blank" rel="noopener">参考文章</a></h6><h6 id="4-1-chrome地址栏命令"><a href="#4-1-chrome地址栏命令" class="headerlink" title="4.1. chrome地址栏命令"></a>4.1. chrome地址栏命令</h6><ul>
+<li>在Chrome的浏览器地址栏中输入以下命令，就会返回相应的结果。这些命令包括查看内存状态，浏览器状态，网络状态，DNS服务器状态，插件缓存等等。但是需要注意的是这些命令会不停的变动，所以不一定都是好用的。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">about:version - 显示当前版本</span><br><span class="line">about:memory - 显示本机浏览器内存使用状况</span><br><span class="line">about:plugins - 显示已安装插件</span><br><span class="line">about:histograms - 显示历史记录</span><br><span class="line">about:dns - 显示DNS状态</span><br><span class="line">about:cache - 显示缓存页面</span><br><span class="line">about:gpu -是否有硬件加速</span><br><span class="line">about:flags -开启一些插件 //使用后弹出这么些东西：“请小心，这些实验可能有风险”，不知会不会搞乱俺的配置啊！</span><br><span class="line">chrome://extensions/ - 查看已经安装的扩展</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="5-2-chrome实用参数"><a href="#5-2-chrome实用参数" class="headerlink" title="5.2. chrome实用参数　　"></a>5.2. chrome实用参数　　</h6><ul>
+<li>其他的一些关于Chrome的实用参数及简要的中文说明，使用方法同上4.5.4，当然也可以在shell中使用。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">–user-data-dir=”[PATH]” 指定用户文件夹User Data路径，可以把书签这样的用户数据保存在系统分区以外的分区。</span><br><span class="line">–disk-cache-dir=”[PATH]“ 指定缓存Cache路径</span><br><span class="line">–disk-cache-size= 指定Cache大小，单位Byte</span><br><span class="line">–first run 重置到初始状态，第一次运行</span><br><span class="line">–incognito 隐身模式启动</span><br><span class="line">–disable-javascript 禁用Javascript</span><br><span class="line">–omnibox-popup-count=”num” 将地址栏弹出的提示菜单数量改为num个。我都改为15个了。</span><br><span class="line">–user-agent=”xxxxxxxx” 修改HTTP请求头部的Agent字符串，可以通过about:version页面查看修改效果</span><br><span class="line">–disable-plugins 禁止加载所有插件，可以增加速度。可以通过about:plugins页面查看效果</span><br><span class="line">–disable-javascript 禁用JavaScript，如果觉得速度慢在加上这个</span><br><span class="line">–disable-java 禁用java</span><br><span class="line">–start-maximized 启动就最大化</span><br><span class="line">–no-sandbox 取消沙盒模式</span><br><span class="line">–single-process 单进程运行</span><br><span class="line">–process-per-tab 每个标签使用单独进程</span><br><span class="line">–process-per-site 每个站点使用单独进程</span><br><span class="line">–in-process-plugins 插件不启用单独进程</span><br><span class="line">–disable-popup-blocking 禁用弹出拦截</span><br><span class="line">–disable-plugins 禁用插件</span><br><span class="line">–disable-images 禁用图像</span><br><span class="line">–incognito 启动进入隐身模式</span><br><span class="line">–enable-udd-profiles 启用账户切换菜单</span><br><span class="line">–proxy-pac-url 使用pac代理 [via 1/2]</span><br><span class="line">–lang=zh-CN 设置语言为简体中文</span><br><span class="line">–disk-cache-dir 自定义缓存目录</span><br><span class="line">–disk-cache-size 自定义缓存最大值（单位byte）</span><br><span class="line">–media-cache-size 自定义多媒体缓存最大值（单位byte）</span><br><span class="line">–bookmark-menu 在工具 栏增加一个书签按钮</span><br><span class="line">–enable-sync 启用书签同步</span><br><span class="line">–single-process 单进程运行Google Chrome</span><br><span class="line">–start-maximized 启动Google Chrome就最大化</span><br><span class="line">–disable-java 禁止Java</span><br><span class="line">–no-sandbox 非沙盒模式运行</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="常用："><a href="#常用：" class="headerlink" title="常用："></a>常用：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">–single-process 单进程运行Google Chrome</span><br><span class="line">–start-maximized 启动Google Chrome就最大化</span><br><span class="line">–disable-java 禁止Java</span><br><span class="line">–no-sandbox 非沙盒模式运行</span><br></pre></td></tr></table></figure>
+
+<h6 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h6><h6 id="https-blog-csdn-net-zwq912318834-article-details-78933910-1"><a href="#https-blog-csdn-net-zwq912318834-article-details-78933910-1" class="headerlink" title="https://blog.csdn.net/zwq912318834/article/details/78933910"></a><a href="https://blog.csdn.net/zwq912318834/article/details/78933910" target="_blank" rel="noopener">https://blog.csdn.net/zwq912318834/article/details/78933910</a></h6>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/10/D-3CTF的赛后复现二/" rel="next" title="D^3CTF的赛后复现二">
+                <i class="fa fa-chevron-left"></i> D^3CTF的赛后复现二
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Ljdd520">
+            
+              <p class="site-author-name" itemprop="name">Ljdd520</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:yourname@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://blog.wonderkun.cc/" title="wonderkun" target="_blank">wonderkun</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#0x01-Selenium"><span class="nav-number">1.0.1.</span> <span class="nav-text">0x01 Selenium</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Selenium是自动化测试工具，支持多种浏览器，爬虫中主要用来解决JavaScript渲染的问题可以用Selenium来完成网页的下拉，点击等等操作。可以完全模拟浏览器加载网页，点击按钮，就像人一样。"><span class="nav-number">1.0.1.1.</span> <span class="nav-text">Selenium是自动化测试工具，支持多种浏览器，爬虫中主要用来解决JavaScript渲染的问题可以用Selenium来完成网页的下拉，点击等等操作。可以完全模拟浏览器加载网页，点击按钮，就像人一样。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#如何安装"><span class="nav-number">1.0.2.</span> <span class="nav-text">如何安装</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#pip3-install-selenium"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">pip3 install selenium</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#用法详解"><span class="nav-number">1.0.3.</span> <span class="nav-text">用法详解</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-基本使用-—-selenium驱动chrome完成打开百度，输入关键字，点击回车的动作"><span class="nav-number">1.0.3.1.</span> <span class="nav-text">1. 基本使用 —-selenium驱动chrome完成打开百度，输入关键字，点击回车的动作</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-设置使用的浏览器对象"><span class="nav-number">1.0.3.2.</span> <span class="nav-text">2. 设置使用的浏览器对象</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-访问页面"><span class="nav-number">1.0.3.3.</span> <span class="nav-text">3. 访问页面</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4-模拟点击"><span class="nav-number">1.0.3.4.</span> <span class="nav-text">4. 模拟点击</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#查找单个元素"><span class="nav-number">1.0.3.5.</span> <span class="nav-text">查找单个元素</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#拿到的结果如下："><span class="nav-number">1.0.3.6.</span> <span class="nav-text">拿到的结果如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#有以下查找元素的方法"><span class="nav-number">1.0.3.7.</span> <span class="nav-text">有以下查找元素的方法</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#查早多个元素"><span class="nav-number">1.0.3.8.</span> <span class="nav-text">查早多个元素</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#有多种方法查找多个元素"><span class="nav-number">1.0.3.9.</span> <span class="nav-text">有多种方法查找多个元素</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#元素交互操作"><span class="nav-number">1.0.4.</span> <span class="nav-text">元素交互操作</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#对获取的元素调用交互方法"><span class="nav-number">1.0.4.1.</span> <span class="nav-text">对获取的元素调用交互方法</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们用上面的find-element等方法的到了元素，那么怎么操作这些元素呢？"><span class="nav-number">1.0.4.2.</span> <span class="nav-text">我们用上面的find_element等方法的到了元素，那么怎么操作这些元素呢？</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#更多内容"><span class="nav-number">1.0.4.3.</span> <span class="nav-text">更多内容</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#交互动作-与元素交互动作不同"><span class="nav-number">1.0.5.</span> <span class="nav-text">交互动作 与元素交互动作不同</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#将动作附加到动作链中串行执行"><span class="nav-number">1.0.5.1.</span> <span class="nav-text">将动作附加到动作链中串行执行</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#更多内容-1"><span class="nav-number">1.0.5.2.</span> <span class="nav-text">更多内容</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#执行JavaScript"><span class="nav-number">1.0.6.</span> <span class="nav-text">执行JavaScript</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#获取元素信息"><span class="nav-number">1.0.7.</span> <span class="nav-text">获取元素信息</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#获取属性"><span class="nav-number">1.0.7.1.</span> <span class="nav-text">获取属性</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#获取文本值"><span class="nav-number">1.0.8.</span> <span class="nav-text">获取文本值</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#获取ID、位置、标签名、size"><span class="nav-number">1.0.9.</span> <span class="nav-text">获取ID、位置、标签名、size</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Frame"><span class="nav-number">1.0.10.</span> <span class="nav-text">Frame</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#网页可能存在不止一个frame"><span class="nav-number">1.0.10.1.</span> <span class="nav-text">网页可能存在不止一个frame</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#等待"><span class="nav-number">1.0.11.</span> <span class="nav-text">等待</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#隐式等待"><span class="nav-number">1.0.11.1.</span> <span class="nav-text">隐式等待</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#当使用了隐式等待执行测试的时候，如果WebDriver没有在DOM中找到元素，将继续等待，超出设定时间后则抛出找不到元素的异常，换句话说，当查找元素或元素并没有立即出现的时候，隐式等待将等待一段时间在查找DOM，默认的时间是0"><span class="nav-number">1.0.11.2.</span> <span class="nav-text">当使用了隐式等待执行测试的时候，如果WebDriver没有在DOM中找到元素，将继续等待，超出设定时间后则抛出找不到元素的异常，换句话说，当查找元素或元素并没有立即出现的时候，隐式等待将等待一段时间在查找DOM，默认的时间是0</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#显式等待-非常常用"><span class="nav-number">1.0.12.</span> <span class="nav-text">显式等待 非常常用</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#以下是expected-conditions常见操作"><span class="nav-number">1.0.12.1.</span> <span class="nav-text">以下是expected_conditions常见操作</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#更多内容-2"><span class="nav-number">1.0.12.2.</span> <span class="nav-text">更多内容</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#浏览器的前进后退"><span class="nav-number">1.0.13.</span> <span class="nav-text">浏览器的前进后退</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Cookies，如果做登陆后爬取非常有用"><span class="nav-number">1.0.14.</span> <span class="nav-text">Cookies，如果做登陆后爬取非常有用</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#选项卡管理"><span class="nav-number">1.0.15.</span> <span class="nav-text">选项卡管理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#异常处理"><span class="nav-number">1.0.16.</span> <span class="nav-text">异常处理</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#更多内容-3"><span class="nav-number">1.0.16.1.</span> <span class="nav-text">更多内容</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#参考资料"><span class="nav-number">1.0.16.2.</span> <span class="nav-text">参考资料</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-selenium-python-readthedocs-io-api-html"><span class="nav-number">1.0.16.3.</span> <span class="nav-text">https://selenium-python.readthedocs.io/api.html</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-www-jianshu-com-p-6c82c965c014"><span class="nav-number">1.0.16.4.</span> <span class="nav-text">https://www.jianshu.com/p/6c82c965c014</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x02-chrome浏览器的options参数"><span class="nav-number">1.0.17.</span> <span class="nav-text">0x02 chrome浏览器的options参数</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-背景"><span class="nav-number">1.0.17.1.</span> <span class="nav-text">1. 背景</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#在使用selenium浏览器渲染技术，爬取网站信息时，默认情况下就是一个普通的纯净的chrome浏览器，而我们平时在使用浏览器时，经常就添加一些插件，扩展，代理之类的应用。相对应的，当我们用chrome浏览器爬取网站时，可能需要对这个chrome做一些特殊的配置，以满足爬虫的行为。"><span class="nav-number">1.0.17.2.</span> <span class="nav-text">在使用selenium浏览器渲染技术，爬取网站信息时，默认情况下就是一个普通的纯净的chrome浏览器，而我们平时在使用浏览器时，经常就添加一些插件，扩展，代理之类的应用。相对应的，当我们用chrome浏览器爬取网站时，可能需要对这个chrome做一些特殊的配置，以满足爬虫的行为。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#常用的行为有："><span class="nav-number">1.0.17.3.</span> <span class="nav-text">常用的行为有：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-chromeOptions"><span class="nav-number">1.0.17.4.</span> <span class="nav-text">2. chromeOptions</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#chromeOptions-是一个配置-chrome-启动是属性的类。通过这个类，我们可以为chrome配置如下参数（这个部分可以通过selenium源码看到）："><span class="nav-number">1.0.17.5.</span> <span class="nav-text">chromeOptions 是一个配置 chrome 启动是属性的类。通过这个类，我们可以为chrome配置如下参数（这个部分可以通过selenium源码看到）：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-常用配置"><span class="nav-number">1.0.17.6.</span> <span class="nav-text">3. 常用配置</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-1-设置编码格式"><span class="nav-number">1.0.17.7.</span> <span class="nav-text">3.1 设置编码格式</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-2-模拟移动设备"><span class="nav-number">1.0.17.8.</span> <span class="nav-text">3.2 模拟移动设备</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-3-禁止图片加载"><span class="nav-number">1.0.17.9.</span> <span class="nav-text">3.3 禁止图片加载</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-4-添加代理"><span class="nav-number">1.0.17.10.</span> <span class="nav-text">3.4. 添加代理</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-5-浏览器选项设置和添加浏览器扩展应用参考下面的链接："><span class="nav-number">1.0.17.11.</span> <span class="nav-text">3.5. 浏览器选项设置和添加浏览器扩展应用参考下面的链接：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-blog-csdn-net-zwq912318834-article-details-78933910"><span class="nav-number">1.0.17.12.</span> <span class="nav-text">https://blog.csdn.net/zwq912318834/article/details/78933910</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4-其他参数"><span class="nav-number">1.0.17.13.</span> <span class="nav-text">4. 其他参数</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#参考文章"><span class="nav-number">1.0.17.14.</span> <span class="nav-text">参考文章</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4-1-chrome地址栏命令"><span class="nav-number">1.0.17.15.</span> <span class="nav-text">4.1. chrome地址栏命令</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#5-2-chrome实用参数"><span class="nav-number">1.0.17.16.</span> <span class="nav-text">5.2. chrome实用参数　　</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#常用："><span class="nav-number">1.0.17.17.</span> <span class="nav-text">常用：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#参考链接"><span class="nav-number">1.0.17.18.</span> <span class="nav-text">参考链接</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-blog-csdn-net-zwq912318834-article-details-78933910-1"><span class="nav-number">1.0.17.19.</span> <span class="nav-text">https://blog.csdn.net/zwq912318834/article/details/78933910</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ljdd520</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">90k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
