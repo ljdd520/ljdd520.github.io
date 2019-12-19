@@ -79,14 +79,21 @@
 
 
 
+<meta name="description" content="前言由于最近要给学弟们做个小测试，因此要出一个web题，由于最近学习了js原型链的污染，因此像把它作为一个思路来出题。 0x01 Prototype pollution attack这里我们需要使用原型污染(Prototype pollution attack)的攻击方法。说原型污染前我们先了解一下JS里的原型继承的原理。1234当谈到继承时，JavaScript 只有一种结构：对象。每个实例对象">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Defcamp(DCTF) 2018-chat Prototype pollution attack有感">
 <meta property="og:url" content="http://yoursite.com/2019/12/19/Defcamp-DCTF-2018-chat-Prototype-pollution-attack有感/index.html">
 <meta property="og:site_name" content="L&#39;s Blog">
+<meta property="og:description" content="前言由于最近要给学弟们做个小测试，因此要出一个web题，由于最近学习了js原型链的污染，因此像把它作为一个思路来出题。 0x01 Prototype pollution attack这里我们需要使用原型污染(Prototype pollution attack)的攻击方法。说原型污染前我们先了解一下JS里的原型继承的原理。1234当谈到继承时，JavaScript 只有一种结构：对象。每个实例对象">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-12-19T10:38:54.835Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/prototype-pollution-attack-1.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/prototype-pollution-attack-2.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/prototype-pollution-attack-3.PNG">
+<meta property="og:updated_time" content="2019-12-19T10:42:27.724Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Defcamp(DCTF) 2018-chat Prototype pollution attack有感">
+<meta name="twitter:description" content="前言由于最近要给学弟们做个小测试，因此要出一个web题，由于最近学习了js原型链的污染，因此像把它作为一个思路来出题。 0x01 Prototype pollution attack这里我们需要使用原型污染(Prototype pollution attack)的攻击方法。说原型污染前我们先了解一下JS里的原型继承的原理。1234当谈到继承时，JavaScript 只有一种结构：对象。每个实例对象">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/prototype-pollution-attack-1.PNG">
 
 
 
@@ -311,8 +318,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/web/" itemprop="url" rel="index">
-                    <span itemprop="name">web</span>
+                  <a href="/categories/javascript-web/" itemprop="url" rel="index">
+                    <span itemprop="name">javascript-web</span>
                   </a>
                 </span>
 
@@ -342,7 +349,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  0
+                  1.1k
                 </span>
               
 
@@ -358,7 +365,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1
+                  4
                 </span>
               
             </div>
@@ -379,7 +386,23 @@
       
 
       
-        
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>由于最近要给学弟们做个小测试，因此要出一个web题，由于最近学习了js原型链的污染，因此像把它作为一个思路来出题。</p>
+<h5 id="0x01-Prototype-pollution-attack"><a href="#0x01-Prototype-pollution-attack" class="headerlink" title="0x01 Prototype pollution attack"></a>0x01 Prototype pollution attack</h5><h6 id="这里我们需要使用原型污染-Prototype-pollution-attack-的攻击方法。"><a href="#这里我们需要使用原型污染-Prototype-pollution-attack-的攻击方法。" class="headerlink" title="这里我们需要使用原型污染(Prototype pollution attack)的攻击方法。"></a>这里我们需要使用原型污染(Prototype pollution attack)的攻击方法。</h6><h6 id="说原型污染前我们先了解一下JS里的原型继承的原理。"><a href="#说原型污染前我们先了解一下JS里的原型继承的原理。" class="headerlink" title="说原型污染前我们先了解一下JS里的原型继承的原理。"></a>说原型污染前我们先了解一下JS里的<code>原型继承</code>的原理。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">当谈到继承时，JavaScript 只有一种结构：对象。</span><br><span class="line">每个实例对象(object)都有一个私有属性(称之为 proto)指向它的原型对象(prototype)。</span><br><span class="line">该原型对象也有一个自己的原型对象 ，层层向上直到一个对象的原型对象为 null。</span><br><span class="line">根据定义，null 没有原型，并作为这个原型链中的最后一个环节。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">当我们o = new F 创建一个实例o的时候，会给o添加一个proto属性，通过protp会找到 F.prototype,也就是所属类的原型。</span><br><span class="line">当我们通过o访问一个属性的时候，比如o.name,会先在实例o上查找，没有的话js会通过proto去类的原型上找，由于原型也是一个对象，它也有proto属性，默认会找到Object的原型。</span><br><span class="line">所以，当我们的Child类想通过继承访问Super类上的属性/方法，可以通过设置Child的原型，能访问到Super的原型，就可以访问Super类的公用属性和方法了。</span><br></pre></td></tr></table></figure>
+
+<h6 id="上面两段是截取网上感觉说得比较好的解释。对于JS的原型链我们可以用c-c-里的继承辅助理解，但不同的是js是单继承的，所以只能形成链状，这不同于C-C-的多继承。"><a href="#上面两段是截取网上感觉说得比较好的解释。对于JS的原型链我们可以用c-c-里的继承辅助理解，但不同的是js是单继承的，所以只能形成链状，这不同于C-C-的多继承。" class="headerlink" title="上面两段是截取网上感觉说得比较好的解释。对于JS的原型链我们可以用c/c++里的继承辅助理解，但不同的是js是单继承的，所以只能形成链状，这不同于C/C++的多继承。"></a>上面两段是截取网上感觉说得比较好的解释。对于JS的原型链我们可以用c/c++里的继承辅助理解，但不同的是js是单继承的，所以只能形成链状，这不同于C/C++的多继承。</h6><h6 id="我们可以通过下面的例子理解一下"><a href="#我们可以通过下面的例子理解一下" class="headerlink" title="我们可以通过下面的例子理解一下:"></a>我们可以通过下面的例子理解一下:</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">a = &#123;&#125;</span><br><span class="line">&#123;&#125;</span><br><span class="line">b = &#123;&#125;</span><br><span class="line">&#123;&#125;</span><br><span class="line">b[&quot;__proto__&quot;]</span><br><span class="line">&#123;constructor: ƒ, __defineGetter__: ƒ, __defineSetter__: ƒ, hasOwnProperty: ƒ, __lookupGetter__: ƒ, …&#125;</span><br><span class="line">b[&quot;__proto__&quot;][&quot;admin&quot;] = true</span><br><span class="line">true</span><br><span class="line">b[&quot;admin&quot;]</span><br><span class="line">true</span><br><span class="line">a[&quot;admin&quot;]</span><br><span class="line">true</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/prototype-pollution-attack-1.PNG" alt></p>
+<h6 id="可以看到通过修改b-quot-proto-quot-的属性可以为a增加一个叫admin的属性。这里可以简单的把b-quot-proto-quot-理解为b-a-的父类，那么通过b-quot-proto-quot-quot-admin-quot-true为父类增加了一个属性，在使用a-quot-admin-quot-的使用首先会从自身的属性里查找admin，如果没有则向上级类查找，从而在父类中得到admin的值。这跟c-的继承原理颇为相似。"><a href="#可以看到通过修改b-quot-proto-quot-的属性可以为a增加一个叫admin的属性。这里可以简单的把b-quot-proto-quot-理解为b-a-的父类，那么通过b-quot-proto-quot-quot-admin-quot-true为父类增加了一个属性，在使用a-quot-admin-quot-的使用首先会从自身的属性里查找admin，如果没有则向上级类查找，从而在父类中得到admin的值。这跟c-的继承原理颇为相似。" class="headerlink" title="可以看到通过修改b[&quot;__proto__&quot;]的属性可以为a增加一个叫admin的属性。这里可以简单的把b[&quot;__proto__&quot;]理解为b(a)的父类，那么通过b[&quot;__proto__&quot;][&quot;admin&quot;] = true为父类增加了一个属性，在使用a[&quot;admin&quot;]的使用首先会从自身的属性里查找admin，如果没有则向上级类查找，从而在父类中得到admin的值。这跟c++的继承原理颇为相似。"></a>可以看到通过修改<code>b[&quot;__proto__&quot;]</code>的属性可以为a增加一个叫<code>admin</code>的属性。这里可以简单的把<code>b[&quot;__proto__&quot;]</code>理解为b(a)的父类，那么通过<code>b[&quot;__proto__&quot;][&quot;admin&quot;] = true</code>为父类增加了一个属性，在使用<code>a[&quot;admin&quot;]</code>的使用首先会从自身的属性里查找<code>admin</code>，如果没有则向上级类查找，从而在父类中得到admin的值。这跟c++的继承原理颇为相似。</h6><h6 id="我们在这个题目环境中，在helper-js里发现有个clone函数："><a href="#我们在这个题目环境中，在helper-js里发现有个clone函数：" class="headerlink" title="我们在这个题目环境中，在helper.js里发现有个clone函数："></a>我们在这个题目环境中，在<code>helper.js</code>里发现有个clone函数：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">clone: <span class="function"><span class="keyword">function</span>(<span class="params">obj</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> obj !== <span class="string">'object'</span> ||</span><br><span class="line">        obj === <span class="literal">null</span>) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> obj;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> newObj;</span><br><span class="line">    <span class="keyword">var</span> cloneDeep = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">Array</span>.isArray(obj)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (Buffer.isBuffer(obj)) &#123;</span><br><span class="line">            newObj = <span class="keyword">new</span> Buffer(obj);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (obj <span class="keyword">instanceof</span> <span class="built_in">Date</span>) &#123;</span><br><span class="line">            newObj = <span class="keyword">new</span> <span class="built_in">Date</span>(obj.getTime());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (obj <span class="keyword">instanceof</span> <span class="built_in">RegExp</span>) &#123;</span><br><span class="line">            newObj = <span class="keyword">new</span> <span class="built_in">RegExp</span>(obj);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">var</span> proto = <span class="built_in">Object</span>.getPrototypeOf(obj);</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">"\n[*] Object.getPrototypeOf(obj) = "</span> + <span class="built_in">JSON</span>.stringify(proto) + <span class="string">"\n"</span>)</span><br><span class="line">            <span class="keyword">if</span> (proto &amp;&amp;</span><br><span class="line">                proto.isImmutable) &#123;</span><br><span class="line"></span><br><span class="line">                newObj = obj;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                newObj = <span class="built_in">Object</span>.create(proto);</span><br><span class="line">                cloneDeep = <span class="literal">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        newObj = [];</span><br><span class="line">        cloneDeep = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (cloneDeep) &#123;</span><br><span class="line">        <span class="keyword">var</span> keys = <span class="built_in">Object</span>.getOwnPropertyNames(obj);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; keys.length; ++i) &#123;</span><br><span class="line">            <span class="keyword">var</span> key = keys[i];</span><br><span class="line">            <span class="keyword">var</span> descriptor = <span class="built_in">Object</span>.getOwnPropertyDescriptor(obj, key);</span><br><span class="line">            <span class="keyword">if</span> (descriptor &amp;&amp;</span><br><span class="line">                (descriptor.get ||</span><br><span class="line">                 descriptor.set)) &#123;</span><br><span class="line"></span><br><span class="line">                <span class="built_in">Object</span>.defineProperty(newObj, key, descriptor);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                newObj[key] = <span class="keyword">this</span>.clone(obj[key]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> newObj;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="他会对传入的对象取出key，value，然后clone出一个新的object返回。根据代码，它实行的是深度拷贝-deep-clone-，使用了for循环（keys-length）将所以的属性都拷贝一次（递归拷贝）。"><a href="#他会对传入的对象取出key，value，然后clone出一个新的object返回。根据代码，它实行的是深度拷贝-deep-clone-，使用了for循环（keys-length）将所以的属性都拷贝一次（递归拷贝）。" class="headerlink" title="他会对传入的对象取出key，value，然后clone出一个新的object返回。根据代码，它实行的是深度拷贝(deep clone)，使用了for循环（keys.length）将所以的属性都拷贝一次（递归拷贝）。"></a>他会对传入的对象取出key，value，然后clone出一个新的object返回。根据代码，它实行的是深度拷贝(deep clone)，使用了for循环（keys.length）将所以的属性都拷贝一次（递归拷贝）。</h6><h6 id="所以我们可以尝试污染掉inputUser-的上级父类-proto-。"><a href="#所以我们可以尝试污染掉inputUser-的上级父类-proto-。" class="headerlink" title="所以我们可以尝试污染掉inputUser = {...}的上级父类(proto)。"></a>所以我们可以尝试污染掉<code>inputUser = {...}</code>的上级父类(proto)。</h6><h6 id="题目中是newUser-helper-clone-JSON-parse-inUser-这样调用clone的，而JSON-parse跟-proto-会产生危险的反应，先上个例子："><a href="#题目中是newUser-helper-clone-JSON-parse-inUser-这样调用clone的，而JSON-parse跟-proto-会产生危险的反应，先上个例子：" class="headerlink" title="题目中是newUser = helper.clone(JSON.parse(inUser))这样调用clone的，而JSON.parse跟__proto__会产生危险的反应，先上个例子："></a>题目中是<code>newUser = helper.clone(JSON.parse(inUser))</code>这样调用clone的，而JSON.parse跟<code>__proto__</code>会产生危险的反应，先上个例子：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&gt;const plainObj = &#123;</span><br><span class="line">  __proto__: &#123; a: 1 &#125;,</span><br><span class="line">  b: 2</span><br><span class="line">&#125;;</span><br><span class="line">&lt;undefined</span><br><span class="line">&gt;plainObj</span><br><span class="line">&lt;&#123;b: 2&#125;</span><br><span class="line">&gt;plainObj.__proto__</span><br><span class="line">&lt;&#123;a: 1&#125;</span><br><span class="line">&gt;const jsonString = `&#123;</span><br><span class="line">  &quot;__proto__&quot;: &#123; &quot;a&quot;: 1 &#125;,</span><br><span class="line">  &quot;b&quot;: 2</span><br><span class="line">&#125;`;</span><br><span class="line">&lt;undefined</span><br><span class="line">&gt;const parsedObj = JSON.parse(jsonString);</span><br><span class="line">&lt;undefined</span><br><span class="line">&gt;parsedObj</span><br><span class="line">&lt;&#123;b: 2&#125;</span><br><span class="line">&gt;parsedObj.__proto__</span><br><span class="line">&lt;&#123;a: 1&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/prototype-pollution-attack-2.PNG" alt></p>
+<h6 id="可以看出在JSON-parse的时候把proto当成了属性处理，并没有过滤这个属性。所以我们可以通过这个方式来把我们需要的值添加到该对象的原型链上。"><a href="#可以看出在JSON-parse的时候把proto当成了属性处理，并没有过滤这个属性。所以我们可以通过这个方式来把我们需要的值添加到该对象的原型链上。" class="headerlink" title="可以看出在JSON.parse的时候把proto当成了属性处理，并没有过滤这个属性。所以我们可以通过这个方式来把我们需要的值添加到该对象的原型链上。"></a>可以看出在JSON.parse的时候把proto当成了属性处理，并没有过滤这个属性。所以我们可以通过这个方式来把我们需要的值添加到该对象的原型链上。</h6><h6 id="这里注意我们需要直接使用字符串，而不是构造好-，再用JSON-stringify-得到字符串，因为在stringify的时候会忽略-proto-。如："><a href="#这里注意我们需要直接使用字符串，而不是构造好-，再用JSON-stringify-得到字符串，因为在stringify的时候会忽略-proto-。如：" class="headerlink" title="这里注意我们需要直接使用字符串，而不是构造好{}，再用JSON.stringify()得到字符串，因为在stringify的时候会忽略__proto__。如："></a>这里注意我们需要直接使用字符串，而不是构造好{}，再用JSON.stringify()得到字符串，因为在stringify的时候会忽略<code>__proto__</code>。如：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> inputUser = &#123;</span><br><span class="line">  name: <span class="string">'admin'</span>,</span><br><span class="line">  __proto__: <span class="string">'&#123;"country": "\'$(ls)\'"&#125;'</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">JSON</span>.stringify(inputUser));</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/prototype-pollution-attack-3.PNG" alt></p>
+<h5 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h5><h6 id="https-delcoding-github-io-2018-09-defcamp-dctf-2018-writeup"><a href="#https-delcoding-github-io-2018-09-defcamp-dctf-2018-writeup" class="headerlink" title="https://delcoding.github.io/2018/09/defcamp-dctf-2018-writeup/"></a><a href="https://delcoding.github.io/2018/09/defcamp-dctf-2018-writeup/" target="_blank" rel="noopener">https://delcoding.github.io/2018/09/defcamp-dctf-2018-writeup/</a></h6><h6 id="https-www-jianshu-com-p-5336c6328b91"><a href="#https-www-jianshu-com-p-5336c6328b91" class="headerlink" title="https://www.jianshu.com/p/5336c6328b91"></a><a href="https://www.jianshu.com/p/5336c6328b91" target="_blank" rel="noopener">https://www.jianshu.com/p/5336c6328b91</a></h6><h6 id="https-rawsec-ml-en-defcamp-2018-quals-write-ups-211-chat-web"><a href="#https-rawsec-ml-en-defcamp-2018-quals-write-ups-211-chat-web" class="headerlink" title="https://rawsec.ml/en/defcamp-2018-quals-write-ups/#211-chat-web"></a><a href="https://rawsec.ml/en/defcamp-2018-quals-write-ups/#211-chat-web" target="_blank" rel="noopener">https://rawsec.ml/en/defcamp-2018-quals-write-ups/#211-chat-web</a></h6>
       
     </div>
     
@@ -463,8 +486,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -492,7 +524,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -552,6 +584,22 @@
       </section>
 
       
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#0x01-Prototype-pollution-attack"><span class="nav-number">1.0.1.</span> <span class="nav-text">0x01 Prototype pollution attack</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#这里我们需要使用原型污染-Prototype-pollution-attack-的攻击方法。"><span class="nav-number">1.0.1.1.</span> <span class="nav-text">这里我们需要使用原型污染(Prototype pollution attack)的攻击方法。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#说原型污染前我们先了解一下JS里的原型继承的原理。"><span class="nav-number">1.0.1.2.</span> <span class="nav-text">说原型污染前我们先了解一下JS里的原型继承的原理。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#上面两段是截取网上感觉说得比较好的解释。对于JS的原型链我们可以用c-c-里的继承辅助理解，但不同的是js是单继承的，所以只能形成链状，这不同于C-C-的多继承。"><span class="nav-number">1.0.1.3.</span> <span class="nav-text">上面两段是截取网上感觉说得比较好的解释。对于JS的原型链我们可以用c/c++里的继承辅助理解，但不同的是js是单继承的，所以只能形成链状，这不同于C/C++的多继承。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们可以通过下面的例子理解一下"><span class="nav-number">1.0.1.4.</span> <span class="nav-text">我们可以通过下面的例子理解一下:</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#可以看到通过修改b-quot-proto-quot-的属性可以为a增加一个叫admin的属性。这里可以简单的把b-quot-proto-quot-理解为b-a-的父类，那么通过b-quot-proto-quot-quot-admin-quot-true为父类增加了一个属性，在使用a-quot-admin-quot-的使用首先会从自身的属性里查找admin，如果没有则向上级类查找，从而在父类中得到admin的值。这跟c-的继承原理颇为相似。"><span class="nav-number">1.0.1.5.</span> <span class="nav-text">可以看到通过修改b[&quot;__proto__&quot;]的属性可以为a增加一个叫admin的属性。这里可以简单的把b[&quot;__proto__&quot;]理解为b(a)的父类，那么通过b[&quot;__proto__&quot;][&quot;admin&quot;] = true为父类增加了一个属性，在使用a[&quot;admin&quot;]的使用首先会从自身的属性里查找admin，如果没有则向上级类查找，从而在父类中得到admin的值。这跟c++的继承原理颇为相似。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们在这个题目环境中，在helper-js里发现有个clone函数："><span class="nav-number">1.0.1.6.</span> <span class="nav-text">我们在这个题目环境中，在helper.js里发现有个clone函数：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#他会对传入的对象取出key，value，然后clone出一个新的object返回。根据代码，它实行的是深度拷贝-deep-clone-，使用了for循环（keys-length）将所以的属性都拷贝一次（递归拷贝）。"><span class="nav-number">1.0.1.7.</span> <span class="nav-text">他会对传入的对象取出key，value，然后clone出一个新的object返回。根据代码，它实行的是深度拷贝(deep clone)，使用了for循环（keys.length）将所以的属性都拷贝一次（递归拷贝）。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#所以我们可以尝试污染掉inputUser-的上级父类-proto-。"><span class="nav-number">1.0.1.8.</span> <span class="nav-text">所以我们可以尝试污染掉inputUser = {...}的上级父类(proto)。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#题目中是newUser-helper-clone-JSON-parse-inUser-这样调用clone的，而JSON-parse跟-proto-会产生危险的反应，先上个例子："><span class="nav-number">1.0.1.9.</span> <span class="nav-text">题目中是newUser = helper.clone(JSON.parse(inUser))这样调用clone的，而JSON.parse跟__proto__会产生危险的反应，先上个例子：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#可以看出在JSON-parse的时候把proto当成了属性处理，并没有过滤这个属性。所以我们可以通过这个方式来把我们需要的值添加到该对象的原型链上。"><span class="nav-number">1.0.1.10.</span> <span class="nav-text">可以看出在JSON.parse的时候把proto当成了属性处理，并没有过滤这个属性。所以我们可以通过这个方式来把我们需要的值添加到该对象的原型链上。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#这里注意我们需要直接使用字符串，而不是构造好-，再用JSON-stringify-得到字符串，因为在stringify的时候会忽略-proto-。如："><span class="nav-number">1.0.1.11.</span> <span class="nav-text">这里注意我们需要直接使用字符串，而不是构造好{}，再用JSON.stringify()得到字符串，因为在stringify的时候会忽略__proto__。如：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#参考链接"><span class="nav-number">1.0.2.</span> <span class="nav-text">参考链接</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#https-delcoding-github-io-2018-09-defcamp-dctf-2018-writeup"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">https://delcoding.github.io/2018/09/defcamp-dctf-2018-writeup/</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-www-jianshu-com-p-5336c6328b91"><span class="nav-number">1.0.2.2.</span> <span class="nav-text">https://www.jianshu.com/p/5336c6328b91</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-rawsec-ml-en-defcamp-2018-quals-write-ups-211-chat-web"><span class="nav-number">1.0.2.3.</span> <span class="nav-text">https://rawsec.ml/en/defcamp-2018-quals-write-ups/#211-chat-web</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
 
       
 
@@ -579,7 +627,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">95.8k</span>
+    <span title="Site words total count">96.9k</span>
   
 </div>
 
