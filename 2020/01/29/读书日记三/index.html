@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言每天一小步，进步一大步。java 反射 0x01 java.lang.Class类getClass()方法Object类有一个getClass()方法，它返回对的引用类对象的类对象。以下代码显示如何获取对Test类的Class对象的引用：12345678910111213package com.example.demo;class Perso&amp;#123;	&amp;#125;public class">
+<meta property="og:type" content="article">
+<meta property="og:title" content="读书日记三">
+<meta property="og:url" content="http://yoursite.com/2020/01/29/读书日记三/index.html">
+<meta property="og:site_name" content="L&#39;s Blog">
+<meta property="og:description" content="前言每天一小步，进步一大步。java 反射 0x01 java.lang.Class类getClass()方法Object类有一个getClass()方法，它返回对的引用类对象的类对象。以下代码显示如何获取对Test类的Class对象的引用：12345678910111213package com.example.demo;class Perso&amp;#123;	&amp;#125;public class">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-01-29T09:23:59.333Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="读书日记三">
+<meta name="twitter:description" content="前言每天一小步，进步一大步。java 反射 0x01 java.lang.Class类getClass()方法Object类有一个getClass()方法，它返回对的引用类对象的类对象。以下代码显示如何获取对Test类的Class对象的引用：12345678910111213package com.example.demo;class Perso&amp;#123;	&amp;#125;public class">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/01/29/读书日记三/">
+
+
+
+
+
+  <title>读书日记三 | L's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">L's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">share with you</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/29/读书日记三/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ljdd520">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="L's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">读书日记三</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-01-29T17:20:34+08:00">
+                2020-01-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/读书日记/" itemprop="url" rel="index">
+                    <span itemprop="name">读书日记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4.6k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  23
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>每天一小步，进步一大步。java 反射</p>
+<h5 id="0x01-java-lang-Class类"><a href="#0x01-java-lang-Class类" class="headerlink" title="0x01 java.lang.Class类"></a>0x01 java.lang.Class类</h5><h6 id="getClass-方法"><a href="#getClass-方法" class="headerlink" title="getClass()方法"></a>getClass()方法</h6><h6 id="Object类有一个getClass-方法，它返回对的引用类对象的类对象。"><a href="#Object类有一个getClass-方法，它返回对的引用类对象的类对象。" class="headerlink" title="Object类有一个getClass()方法，它返回对的引用类对象的类对象。"></a>Object类有一个<code>getClass()</code>方法，它返回对的引用类对象的类对象。</h6><h6 id="以下代码显示如何获取对Test类的Class对象的引用："><a href="#以下代码显示如何获取对Test类的Class对象的引用：" class="headerlink" title="以下代码显示如何获取对Test类的Class对象的引用："></a>以下代码显示如何获取对Test类的Class对象的引用：</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Perso</span></span>&#123;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test11</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		Perso perso=<span class="keyword">new</span> Perso();</span><br><span class="line">		Class&lt;?&gt; personClass=perso.getClass();</span><br><span class="line">		System.out.println(personClass);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="结果如下："><a href="#结果如下：" class="headerlink" title="结果如下："></a>结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">class com.example.demo.Perso</span><br></pre></td></tr></table></figure>
+
+<h6 id="forName-方法"><a href="#forName-方法" class="headerlink" title="forName()方法"></a>forName()方法</h6><h6 id="Class类forName-static方法返回对Class对象的引用。"><a href="#Class类forName-static方法返回对Class对象的引用。" class="headerlink" title="Class类forName()static方法返回对Class对象的引用。"></a>Class类<code>forName()</code>static方法返回对Class对象的引用。</h6><h6 id="它的重载方法是"><a href="#它的重载方法是" class="headerlink" title="它的重载方法是"></a>它的重载方法是</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Class&lt;?&gt;   forName(String  className)</span><br><span class="line">Class&lt;?&gt;   forName(String name,  boolean initialize, ClassLoader loader)</span><br></pre></td></tr></table></figure>
+
+<h6 id="forName-方法的第一个版本接受完全该类的限定名作为参数，并加载该类，并返回其对象引用。"><a href="#forName-方法的第一个版本接受完全该类的限定名作为参数，并加载该类，并返回其对象引用。" class="headerlink" title="forName()方法的第一个版本接受完全该类的限定名作为参数，并加载该类，并返回其对象引用。"></a><code>forName()</code>方法的第一个版本接受完全该类的限定名作为参数，并加载该类，并返回其对象引用。</h6><h6 id="如果类已经加载，它将返回对Class对象的引用。"><a href="#如果类已经加载，它将返回对Class对象的引用。" class="headerlink" title="如果类已经加载，它将返回对Class对象的引用。"></a>如果类已经加载，它将返回对Class对象的引用。</h6><h6 id="第二版本方法可以控制是否初始化或不初始化该类在加载时。-我们也可以传入类加载器。"><a href="#第二版本方法可以控制是否初始化或不初始化该类在加载时。-我们也可以传入类加载器。" class="headerlink" title="第二版本方法可以控制是否初始化或不初始化该类在加载时。 我们也可以传入类加载器。"></a>第二版本方法可以控制是否初始化或不初始化该类在加载时。 我们也可以传入类加载器。</h6><h6 id="下面的代码显示了如何加载一个类并获取对它的Class对象的引用。"><a href="#下面的代码显示了如何加载一个类并获取对它的Class对象的引用。" class="headerlink" title="下面的代码显示了如何加载一个类并获取对它的Class对象的引用。"></a>下面的代码显示了如何加载一个类并获取对它的Class对象的引用。</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span> </span>&#123;</span><br><span class="line">	<span class="keyword">static</span> &#123;</span><br><span class="line">		System.out.println(<span class="string">"Loading class MyClass..."</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test11</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			String className = <span class="string">"MyClass"</span>;</span><br><span class="line">			<span class="keyword">boolean</span> initialize = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">			ClassLoader cLoader = Test11.class.getClassLoader();</span><br><span class="line">			Class&lt;?&gt; c = Class.forName(className, initialize, cLoader);</span><br><span class="line">			</span><br><span class="line">			className = <span class="string">"MyClass"</span>;</span><br><span class="line">			System.out.println(<span class="string">"about to load"</span>);</span><br><span class="line">			c = Class.forName(className);</span><br><span class="line">		&#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">			System.out.println(e.getMessage());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="Java类反射"><a href="#Java类反射" class="headerlink" title="Java类反射"></a>Java类反射</h6><h6 id="我们可以使用Java反射来获取关于类的信息，例如作为其包名称，其访问修饰符等。"><a href="#我们可以使用Java反射来获取关于类的信息，例如作为其包名称，其访问修饰符等。" class="headerlink" title="我们可以使用Java反射来获取关于类的信息，例如作为其包名称，其访问修饰符等。"></a>我们可以使用Java反射来获取关于类的信息，例如作为其包名称，其访问修饰符等。</h6><h6 id="要获得简单的类名，请使用-Class-中的-getSimpleName-方法。"><a href="#要获得简单的类名，请使用-Class-中的-getSimpleName-方法。" class="headerlink" title="要获得简单的类名，请使用 Class 中的 getSimpleName()方法。"></a>要获得简单的类名，请使用 Class 中的 getSimpleName()方法。</h6><h6 id="String-simpleName-c-getSimpleName"><a href="#String-simpleName-c-getSimpleName" class="headerlink" title="String simpleName = c.getSimpleName();"></a><code>String simpleName = c.getSimpleName();</code></h6><h6 id="类的修饰符是关键字之前的关键字类在类声明中，如-abstract-，-public-。"><a href="#类的修饰符是关键字之前的关键字类在类声明中，如-abstract-，-public-。" class="headerlink" title="类的修饰符是关键字之前的关键字类在类声明中，如 abstract ， public 。"></a>类的修饰符是关键字之前的关键字类在类声明中，如 abstract ， public 。</h6><h6 id="Class-中的-getModifiers-方法返回类的所有修饰符。"><a href="#Class-中的-getModifiers-方法返回类的所有修饰符。" class="headerlink" title="Class 中的 getModifiers()方法返回类的所有修饰符。"></a>Class 中的 getModifiers()方法返回类的所有修饰符。</h6><h6 id="getModifiers-方法返回一个整数。我们必须调用-java-lang-reflect-Modifier-toString-int-modifiers-以获得修饰符的文本形式。"><a href="#getModifiers-方法返回一个整数。我们必须调用-java-lang-reflect-Modifier-toString-int-modifiers-以获得修饰符的文本形式。" class="headerlink" title="getModifiers()方法返回一个整数。我们必须调用 java.lang.reflect.Modifier.toString(int modifiers)以获得修饰符的文本形式。"></a>getModifiers()方法返回一个整数。我们必须调用 java.lang.reflect.Modifier.toString(int modifiers)以获得修饰符的文本形式。</h6><h6 id="要获取超类的名称，请使用-Class-中的-getSuperclass-方法。"><a href="#要获取超类的名称，请使用-Class-中的-getSuperclass-方法。" class="headerlink" title="要获取超类的名称，请使用 Class 中的 getSuperclass()方法。"></a>要获取超类的名称，请使用 Class 中的 getSuperclass()方法。</h6><h6 id="如果对Object类调用getSuperclass-方法，它将返回null，因为它没有超类。"><a href="#如果对Object类调用getSuperclass-方法，它将返回null，因为它没有超类。" class="headerlink" title="如果对Object类调用getSuperclass()方法，它将返回null，因为它没有超类。"></a>如果对Object类调用getSuperclass()方法，它将返回null，因为它没有超类。</h6><h6 id="要获取类实现的所有接口的名称，请使用-getInterfaces-。"><a href="#要获取类实现的所有接口的名称，请使用-getInterfaces-。" class="headerlink" title="要获取类实现的所有接口的名称，请使用 getInterfaces()。"></a>要获取类实现的所有接口的名称，请使用 getInterfaces()。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Class[] interfaces = c.getInterfaces();</span><br></pre></td></tr></table></figure>
+
+<h6 id="例子："><a href="#例子：" class="headerlink" title="例子："></a>例子：</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.Serializable;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Modifier;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.TypeVariable;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span>&lt;<span class="title">T</span>&gt; <span class="keyword">implements</span> <span class="title">Cloneable</span>, <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id = -<span class="number">1</span>;</span><br><span class="line">	<span class="keyword">private</span> String name = <span class="string">"Unknown"</span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">MyClass</span><span class="params">(<span class="keyword">int</span> id, String name)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.id = id;</span><br><span class="line">		<span class="keyword">this</span>.name = name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Object <span class="title">clone</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">super</span>.clone();</span><br><span class="line">		&#125; <span class="keyword">catch</span> (CloneNotSupportedException e) &#123;</span><br><span class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e.getMessage());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">"MyClass: id="</span> + <span class="keyword">this</span>.id + <span class="string">", name="</span> + <span class="keyword">this</span>.name;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test11</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// Print the class declaration for the Class class</span></span><br><span class="line">		String classDesciption = getClassDescription(MyClass.class);</span><br><span class="line">		System.out.println(classDesciption);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getClassDescription</span><span class="params">(Class&lt;?&gt; c)</span> </span>&#123;</span><br><span class="line">		StringBuilder classDesc = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">		<span class="keyword">int</span> modifierBits = <span class="number">0</span>;</span><br><span class="line">		String keyword = <span class="string">""</span>;</span><br><span class="line">		<span class="keyword">if</span> (c.isInterface()) &#123;</span><br><span class="line">			modifierBits = c.getModifiers() &amp; Modifier.interfaceModifiers();</span><br><span class="line">			<span class="keyword">if</span> (c.isAnnotation()) &#123;</span><br><span class="line">				keyword = <span class="string">"@interface"</span>;</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				keyword = <span class="string">"interface"</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (c.isEnum()) &#123;</span><br><span class="line">			modifierBits = c.getModifiers() &amp; Modifier.classModifiers();</span><br><span class="line">			keyword = <span class="string">"enum"</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		modifierBits = c.getModifiers() &amp; Modifier.classModifiers();</span><br><span class="line">		keyword = <span class="string">"class"</span>;</span><br><span class="line"></span><br><span class="line">		String modifiers = Modifier.toString(modifierBits);</span><br><span class="line">		classDesc.append(modifiers);</span><br><span class="line">		classDesc.append(<span class="string">" "</span> + keyword);</span><br><span class="line">		String simpleName = c.getSimpleName();</span><br><span class="line">		classDesc.append(<span class="string">" "</span> + simpleName);</span><br><span class="line"></span><br><span class="line">		String genericParms = getGenericTypeParams(c);</span><br><span class="line">		classDesc.append(genericParms);</span><br><span class="line"></span><br><span class="line">		Class&lt;?&gt; superClass = c.getSuperclass();</span><br><span class="line">		<span class="keyword">if</span> (superClass != <span class="keyword">null</span>) &#123;</span><br><span class="line">			String superClassSimpleName = superClass.getSimpleName();</span><br><span class="line">			classDesc.append(<span class="string">"  extends "</span> + superClassSimpleName);</span><br><span class="line">		&#125;</span><br><span class="line">		String interfaces = Test11.getClassInterfaces(c);</span><br><span class="line">		<span class="keyword">if</span> (interfaces != <span class="keyword">null</span>) &#123;</span><br><span class="line">			classDesc.append(<span class="string">"  implements "</span> + interfaces);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> classDesc.toString();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getClassInterfaces</span><span class="params">(Class&lt;?&gt; c)</span> </span>&#123;</span><br><span class="line">		Class&lt;?&gt;[] interfaces = c.getInterfaces();</span><br><span class="line">		String interfacesList = <span class="keyword">null</span>;</span><br><span class="line">		<span class="keyword">if</span> (interfaces.length &gt; <span class="number">0</span>) &#123;</span><br><span class="line">			String[] interfaceNames = <span class="keyword">new</span> String[interfaces.length];</span><br><span class="line">			<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; interfaces.length; i++) &#123;</span><br><span class="line">				interfaceNames[i] = interfaces[i].getSimpleName();</span><br><span class="line">			&#125;</span><br><span class="line">			interfacesList = String.join(<span class="string">", "</span>, interfaceNames);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> interfacesList;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getGenericTypeParams</span><span class="params">(Class&lt;?&gt; c)</span> </span>&#123;</span><br><span class="line">		StringBuilder sb = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">		TypeVariable&lt;?&gt;[] typeParms = c.getTypeParameters();</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (typeParms.length &gt; <span class="number">0</span>) &#123;</span><br><span class="line">			String[] paramNames = <span class="keyword">new</span> String[typeParms.length];</span><br><span class="line">			<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; typeParms.length; i++) &#123;</span><br><span class="line">				paramNames[i] = typeParms[i].getTypeName();</span><br><span class="line">			&#125;</span><br><span class="line">			sb.append(<span class="string">"&lt;"</span>);</span><br><span class="line">			String parmsList = String.join(<span class="string">","</span>, paramNames);</span><br><span class="line">			sb.append(parmsList);</span><br><span class="line">			sb.append(<span class="string">"&gt;"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> sb.toString();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="结果如下：-1"><a href="#结果如下：-1" class="headerlink" title="结果如下："></a>结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">class MyClass&lt;T&gt;  extends Object  implements Cloneable, Serializable</span><br></pre></td></tr></table></figure>
+
+<h6 id="java字段反射"><a href="#java字段反射" class="headerlink" title="java字段反射"></a>java字段反射</h6><h6 id="我们可以使用java-lang-reflect-Field类来获取关于类中的字段的信息。"><a href="#我们可以使用java-lang-reflect-Field类来获取关于类中的字段的信息。" class="headerlink" title="我们可以使用java.lang.reflect.Field类来获取关于类中的字段的信息。"></a>我们可以使用java.lang.reflect.Field类来获取关于类中的字段的信息。</h6><h6 id="以下四种方法在Class类可以返回关于字段的-Field-对象。"><a href="#以下四种方法在Class类可以返回关于字段的-Field-对象。" class="headerlink" title="以下四种方法在Class类可以返回关于字段的 Field 对象。"></a>以下四种方法在Class类可以返回关于字段的 Field 对象。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Field[] getFields()</span><br><span class="line">Field[] getDeclaredFields()</span><br><span class="line">Field getField(String name)</span><br><span class="line">Field getDeclaredField(String name)</span><br></pre></td></tr></table></figure>
+
+<h6 id="getFields-方法返回所有可访问的公共字段在类中声明或继承自超类。"><a href="#getFields-方法返回所有可访问的公共字段在类中声明或继承自超类。" class="headerlink" title="getFields()方法返回所有可访问的公共字段在类中声明或继承自超类。"></a><code>getFields()</code>方法返回所有可访问的公共字段在类中声明或继承自超类。</h6><h6 id="getDeclaredFields-方法返回所有字段只出现在类的声明中-不是从继承的字段-。"><a href="#getDeclaredFields-方法返回所有字段只出现在类的声明中-不是从继承的字段-。" class="headerlink" title="getDeclaredFields()方法返回所有字段只出现在类的声明中(不是从继承的字段)。"></a><code>getDeclaredFields()</code>方法返回所有字段只出现在类的声明中(不是从继承的字段)。</h6><h6 id="getField-String-name-和getDeclaredField-String-name-通过字段名获取Field对象。"><a href="#getField-String-name-和getDeclaredField-String-name-通过字段名获取Field对象。" class="headerlink" title="getField(String name)和getDeclaredField(String name)通过字段名获取Field对象。"></a><code>getField(String name)</code>和<code>getDeclaredField(String name)</code>通过字段名获取<code>Field</code>对象。</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Modifier;</span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MySuperClass</span> </span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">int</span> super_id = -<span class="number">1</span>;</span><br><span class="line">	<span class="keyword">public</span> String super_name = <span class="string">"Unknown"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span> <span class="keyword">extends</span> <span class="title">MySuperClass</span> </span>&#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">int</span> id = -<span class="number">1</span>;</span><br><span class="line">	<span class="keyword">public</span> String name = <span class="string">"Unkown"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test12</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		Class&lt;MyClass&gt; c = MyClass.class;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// Print declared fields</span></span><br><span class="line">		ArrayList&lt;String&gt; fieldsDesciption = getDeclaredFieldsList(c);</span><br><span class="line"></span><br><span class="line">		System.out.println(<span class="string">"Declared Fields for "</span> + c.getName());</span><br><span class="line">		<span class="keyword">for</span> (String desc : fieldsDesciption) &#123;</span><br><span class="line">			System.out.println(desc);</span><br><span class="line">		&#125;</span><br><span class="line">		fieldsDesciption = getFieldsList(c);</span><br><span class="line"></span><br><span class="line">		System.out.println(<span class="string">"\nAccessible Fields for "</span> + c.getName());</span><br><span class="line">		<span class="keyword">for</span> (String desc : fieldsDesciption) &#123;</span><br><span class="line">			System.out.println(desc);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ArrayList&lt;String&gt; <span class="title">getFieldsList</span><span class="params">(Class&lt;?&gt; c)</span> </span>&#123;</span><br><span class="line">		Field[] fields = c.getFields();</span><br><span class="line">		ArrayList&lt;String&gt; fieldsList = getFieldsDesciption(fields);</span><br><span class="line">		<span class="keyword">return</span> fieldsList;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ArrayList&lt;String&gt; <span class="title">getDeclaredFieldsList</span><span class="params">(Class&lt;?&gt; c)</span> </span>&#123;</span><br><span class="line">		Field[] fields = c.getDeclaredFields();</span><br><span class="line">		ArrayList&lt;String&gt; fieldsList = getFieldsDesciption(fields);</span><br><span class="line">		<span class="keyword">return</span> fieldsList;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ArrayList&lt;String&gt; <span class="title">getFieldsDesciption</span><span class="params">(Field[] fields)</span> </span>&#123;</span><br><span class="line">		ArrayList&lt;String&gt; fieldList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> (Field f : fields) &#123;</span><br><span class="line">			<span class="keyword">int</span> mod = f.getModifiers() &amp; Modifier.fieldModifiers();</span><br><span class="line">			String modifiers = Modifier.toString(mod);</span><br><span class="line"></span><br><span class="line">			Class&lt;?&gt; type = f.getType();</span><br><span class="line">			String typeName = type.getSimpleName();</span><br><span class="line"></span><br><span class="line">			String fieldName = f.getName();</span><br><span class="line"></span><br><span class="line">			fieldList.add(modifiers + <span class="string">"  "</span> + typeName + <span class="string">"  "</span> + fieldName);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">return</span> fieldList;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="结果如下：-2"><a href="#结果如下：-2" class="headerlink" title="结果如下："></a>结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Declared Fields for com.example.demo.MyClass</span><br><span class="line">public  int  id</span><br><span class="line">public  String  name</span><br><span class="line"></span><br><span class="line">Accessible Fields for com.example.demo.MyClass</span><br><span class="line">public  int  id</span><br><span class="line">public  String  name</span><br><span class="line">public  int  super_id</span><br><span class="line">public  String  super_name</span><br></pre></td></tr></table></figure>
+
+<h6 id="java方法反射"><a href="#java方法反射" class="headerlink" title="java方法反射"></a>java方法反射</h6><h6 id="java-lang-reflect-Method类的实例表示一个方法。-java-lang-reflect-Constructor类的实例表示一个构造函数。"><a href="#java-lang-reflect-Method类的实例表示一个方法。-java-lang-reflect-Constructor类的实例表示一个构造函数。" class="headerlink" title="java.lang.reflect.Method类的实例表示一个方法。 java.lang.reflect.Constructor类的实例表示一个构造函数。"></a><code>java.lang.reflect.Method</code>类的实例表示一个方法。 <code>java.lang.reflect.Constructor</code>类的实例表示一个构造函数。</h6><h6 id="方法和构造方法继承自一个通用的抽象超类可执行。"><a href="#方法和构造方法继承自一个通用的抽象超类可执行。" class="headerlink" title="方法和构造方法继承自一个通用的抽象超类可执行。"></a><code>方法</code>和<code>构造方法</code>继承自一个通用的抽象超类<code>可执行</code>。</h6><h6 id="可执行文件中的参数由Parameter类的对象表示"><a href="#可执行文件中的参数由Parameter类的对象表示" class="headerlink" title="可执行文件中的参数由Parameter类的对象表示"></a>可执行文件中的参数由<code>Parameter</code>类的对象表示</h6><h6 id="Executable类中的getParameters-方法获取所有参数作为Parameter的数组。"><a href="#Executable类中的getParameters-方法获取所有参数作为Parameter的数组。" class="headerlink" title="Executable类中的getParameters()方法获取所有参数作为Parameter的数组。"></a><code>Executable</code>类中的getParameters()方法获取所有参数作为<code>Parameter</code>的数组。</h6><h6 id="默认情况下，参数名称不存储在类文件中。参数类的名称将类似于arg0，arg1等。我们可以通过编译源来保存类文件中的实际参数名代码使用-parameters选项与javac编译器。"><a href="#默认情况下，参数名称不存储在类文件中。参数类的名称将类似于arg0，arg1等。我们可以通过编译源来保存类文件中的实际参数名代码使用-parameters选项与javac编译器。" class="headerlink" title="默认情况下，参数名称不存储在类文件中。参数类的名称将类似于arg0，arg1等。我们可以通过编译源来保存类文件中的实际参数名代码使用-parameters选项与javac编译器。"></a>默认情况下，参数名称不存储在类文件中。参数类的名称将类似于arg0，arg1等。我们可以通过编译源来保存类文件中的实际参数名代码使用<code>-parameters</code>选项与<code>javac</code>编译器。</h6><h6 id="可执行文件中的getExceptionTypes-方法类返回一个由Executable抛出的异常数组。"><a href="#可执行文件中的getExceptionTypes-方法类返回一个由Executable抛出的异常数组。" class="headerlink" title="可执行文件中的getExceptionTypes()方法类返回一个由Executable抛出的异常数组。"></a>可执行文件中的<code>getExceptionTypes()</code>方法类返回一个由Executable抛出的异常数组。</h6><h6 id="Executable类的getModifiers-方法将修饰符作为int返回。"><a href="#Executable类的getModifiers-方法将修饰符作为int返回。" class="headerlink" title="Executable类的getModifiers()方法将修饰符作为int返回。"></a>Executable类的getModifiers()方法将修饰符作为int返回。</h6><h6 id="来自Executable类的getTypeParameters-方法返回一个TypeVariable数组，该数组表示通用方法或构造函数的类型参数。"><a href="#来自Executable类的getTypeParameters-方法返回一个TypeVariable数组，该数组表示通用方法或构造函数的类型参数。" class="headerlink" title="来自Executable类的getTypeParameters()方法返回一个TypeVariable数组，该数组表示通用方法或构造函数的类型参数。"></a>来自Executable类的getTypeParameters()方法返回一个TypeVariable数组，该数组表示通用方法或构造函数的类型参数。</h6><h6 id="例子：-1"><a href="#例子：-1" class="headerlink" title="例子："></a>例子：</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Constructor;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Executable;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Modifier;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Parameter;</span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">MyClass</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> j, String s)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">MyClass</span><span class="params">(T t)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getInt</span><span class="params">(String a)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test12</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] argv)</span> </span>&#123;</span><br><span class="line">		Class&lt;MyClass&gt; cls = MyClass.class;</span><br><span class="line">		</span><br><span class="line">		<span class="keyword">for</span> (Method m : cls.getMethods()) &#123;</span><br><span class="line">			System.out.println(m.getName());</span><br><span class="line">			System.out.println(getModifiers(m));</span><br><span class="line">			System.out.println(getParameters(m));</span><br><span class="line">			System.out.println(getExceptionList(m));</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ArrayList&lt;String&gt; <span class="title">getParameters</span><span class="params">(Executable exec)</span> </span>&#123;</span><br><span class="line">		Parameter[] parms = exec.getParameters();</span><br><span class="line">		ArrayList&lt;String&gt; parmList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; parms.length; i++) &#123;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">int</span> mod = parms[i].getModifiers() &amp; Modifier.parameterModifiers();</span><br><span class="line">			String modifiers = Modifier.toString(mod);</span><br><span class="line">			String parmType = parms[i].getType().getSimpleName();</span><br><span class="line">			String parmName = parms[i].getName();</span><br><span class="line">			String temp = modifiers + <span class="string">"  "</span> + parmType + <span class="string">"  "</span> + parmName;</span><br><span class="line">			<span class="keyword">if</span> (temp.trim().length() == <span class="number">0</span>) &#123;</span><br><span class="line">				<span class="keyword">continue</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			parmList.add(temp.trim());</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> parmList;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ArrayList&lt;String&gt; <span class="title">getExceptionList</span><span class="params">(Executable exec)</span> </span>&#123;</span><br><span class="line">		ArrayList&lt;String&gt; exceptionList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">		<span class="keyword">for</span> (Class&lt;?&gt; c : exec.getExceptionTypes()) &#123;</span><br><span class="line">			exceptionList.add(c.getSimpleName());</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> exceptionList;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getModifiers</span><span class="params">(Executable exec)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">int</span> mod = exec.getModifiers();</span><br><span class="line">		<span class="keyword">if</span> (exec <span class="keyword">instanceof</span> Method) &#123;</span><br><span class="line">			mod = mod &amp; Modifier.methodModifiers();</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (exec <span class="keyword">instanceof</span> Constructor) &#123;</span><br><span class="line">			mod = mod &amp; Modifier.constructorModifiers();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> Modifier.toString(mod);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="结果如下：-3"><a href="#结果如下：-3" class="headerlink" title="结果如下："></a>结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">getInt</span><br><span class="line">public</span><br><span class="line">[String  a]</span><br><span class="line">[]</span><br><span class="line">wait</span><br><span class="line">public final native</span><br><span class="line">[long  arg0]</span><br><span class="line">[InterruptedException]</span><br><span class="line">wait</span><br><span class="line">public final</span><br><span class="line">[long  arg0, int  arg1]</span><br><span class="line">[InterruptedException]</span><br><span class="line">wait</span><br><span class="line">public final</span><br><span class="line">[]</span><br><span class="line">[InterruptedException]</span><br><span class="line">equals</span><br><span class="line">public</span><br><span class="line">[Object  arg0]</span><br><span class="line">[]</span><br><span class="line">toString</span><br><span class="line">public</span><br><span class="line">[]</span><br><span class="line">[]</span><br><span class="line">hashCode</span><br><span class="line">public native</span><br><span class="line">[]</span><br><span class="line">[]</span><br><span class="line">getClass</span><br><span class="line">public final native</span><br><span class="line">[]</span><br><span class="line">[]</span><br><span class="line">notify</span><br><span class="line">public final native</span><br><span class="line">[]</span><br><span class="line">[]</span><br><span class="line">notifyAll</span><br><span class="line">public final native</span><br><span class="line">[]</span><br><span class="line">[]</span><br></pre></td></tr></table></figure>
+
+<h6 id="反射方法"><a href="#反射方法" class="headerlink" title="反射方法"></a>反射方法</h6><h6 id="以下四个方法在Class类中返回有关联的方法的信息"><a href="#以下四个方法在Class类中返回有关联的方法的信息" class="headerlink" title="以下四个方法在Class类中返回有关联的方法的信息"></a>以下四个方法在Class类中返回有关联的方法的信息</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Method[]  getMethods()</span><br><span class="line">Method[]  getDeclaredMethods()</span><br><span class="line">Method getMethod(String name,  Class...  parameterTypes)</span><br><span class="line">Method getDeclaredMethod(String name,  Class...  parameterTypes)</span><br></pre></td></tr></table></figure>
+
+<h6 id="getMethods-方法返回该类的所有可访问的公共方法无论从类中还是继承自超类。"><a href="#getMethods-方法返回该类的所有可访问的公共方法无论从类中还是继承自超类。" class="headerlink" title="getMethods()方法返回该类的所有可访问的公共方法无论从类中还是继承自超类。"></a><code>getMethods()</code>方法返回该类的所有可访问的公共方法无论从类中还是继承自超类。</h6><h6 id="getDeclaredMethods-方法返回所有只在中声明的方法该类-不包括从超类继承的方法-。"><a href="#getDeclaredMethods-方法返回所有只在中声明的方法该类-不包括从超类继承的方法-。" class="headerlink" title="getDeclaredMethods()方法返回所有只在中声明的方法该类(不包括从超类继承的方法)。"></a><code>getDeclaredMethods()</code>方法返回所有只在中声明的方法该类(不包括从超类继承的方法)。</h6><h6 id="getMethod（String-name，Class-…-parameterTypes）和getDeclaredMethod（String-name，Class-…-parameterTypes）通过方法名和参数类型获取Method对象。"><a href="#getMethod（String-name，Class-…-parameterTypes）和getDeclaredMethod（String-name，Class-…-parameterTypes）通过方法名和参数类型获取Method对象。" class="headerlink" title="getMethod（String name，Class … parameterTypes）和getDeclaredMethod（String name，Class … parameterTypes）通过方法名和参数类型获取Method对象。"></a>getMethod（String name，Class … parameterTypes）和getDeclaredMethod（String name，Class … parameterTypes）通过方法名和参数类型获取Method对象。</h6><h6 id="Method类中的getReturnType-方法返回包含有关返回类型信息的Class对象。"><a href="#Method类中的getReturnType-方法返回包含有关返回类型信息的Class对象。" class="headerlink" title="Method类中的getReturnType()方法返回包含有关返回类型信息的Class对象。"></a>Method类中的getReturnType()方法返回包含有关返回类型信息的Class对象。</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Constructor;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Executable;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Modifier;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Parameter;</span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">MyClass</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> j, String s)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">MyClass</span><span class="params">(T t)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getInt</span><span class="params">(String a)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test12</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    Class&lt;MyClass&gt; c = MyClass.class;</span><br><span class="line"></span><br><span class="line">    ArrayList&lt;String&gt; methodsDesciption = getDeclaredMethodsList(c);</span><br><span class="line">    System.out.println(<span class="string">"Declared Methods  for "</span> + c.getName());</span><br><span class="line">    <span class="keyword">for</span> (String desc : methodsDesciption) &#123;</span><br><span class="line">      System.out.println(desc);</span><br><span class="line">    &#125;</span><br><span class="line">    methodsDesciption = getMethodsList(c);</span><br><span class="line">    System.out.println(<span class="string">"\nMethods for  "</span> + c.getName());</span><br><span class="line">    <span class="keyword">for</span> (String desc : methodsDesciption) &#123;</span><br><span class="line">      System.out.println(desc);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ArrayList&lt;String&gt; <span class="title">getMethodsList</span><span class="params">(Class&lt;?&gt; c)</span> </span>&#123;</span><br><span class="line">    Method[] methods = c.getMethods();</span><br><span class="line">    ArrayList&lt;String&gt; methodsList = getMethodsDesciption(methods);</span><br><span class="line">    <span class="keyword">return</span> methodsList;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ArrayList&lt;String&gt; <span class="title">getDeclaredMethodsList</span><span class="params">(Class&lt;?&gt; c)</span> </span>&#123;</span><br><span class="line">    Method[] methods = c.getDeclaredMethods();</span><br><span class="line">    ArrayList&lt;String&gt; methodsList = getMethodsDesciption(methods);</span><br><span class="line">    <span class="keyword">return</span> methodsList;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ArrayList&lt;String&gt; <span class="title">getMethodsDesciption</span><span class="params">(Method[] methods)</span> </span>&#123;</span><br><span class="line">    ArrayList&lt;String&gt; methodList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (Method m : methods) &#123;</span><br><span class="line">      String modifiers = getModifiers(m);</span><br><span class="line"></span><br><span class="line">      Class&lt;?&gt; returnType = m.getReturnType();</span><br><span class="line">      String returnTypeName = returnType.getSimpleName();</span><br><span class="line"></span><br><span class="line">      String methodName = m.getName();</span><br><span class="line"></span><br><span class="line">      String params = getParameters(m).toString();</span><br><span class="line"></span><br><span class="line">      String throwsClause = getExceptionList(m).toString();</span><br><span class="line"></span><br><span class="line">      methodList.add(modifiers + <span class="string">"  "</span> + returnTypeName + <span class="string">"  "</span> + methodName</span><br><span class="line">          + <span class="string">"("</span> + params + <span class="string">") "</span> + throwsClause);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> methodList;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ArrayList&lt;String&gt; <span class="title">getParameters</span><span class="params">(Executable exec)</span> </span>&#123;</span><br><span class="line">    Parameter[] parms = exec.getParameters();</span><br><span class="line">    ArrayList&lt;String&gt; parmList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; parms.length; i++) &#123;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">int</span> mod = parms[i].getModifiers() &amp; Modifier.parameterModifiers();</span><br><span class="line">      String modifiers = Modifier.toString(mod);</span><br><span class="line">      String parmType = parms[i].getType().getSimpleName();</span><br><span class="line">      String parmName = parms[i].getName();</span><br><span class="line">      String temp = modifiers + <span class="string">"  "</span> + parmType + <span class="string">"  "</span> + parmName;</span><br><span class="line">      <span class="keyword">if</span> (temp.trim().length() == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      parmList.add(temp.trim());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> parmList;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ArrayList&lt;String&gt; <span class="title">getExceptionList</span><span class="params">(Executable exec)</span> </span>&#123;</span><br><span class="line">    ArrayList&lt;String&gt; exceptionList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span> (Class&lt;?&gt; c : exec.getExceptionTypes()) &#123;</span><br><span class="line">      exceptionList.add(c.getSimpleName());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> exceptionList;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getModifiers</span><span class="params">(Executable exec)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> mod = exec.getModifiers();</span><br><span class="line">    <span class="keyword">if</span> (exec <span class="keyword">instanceof</span> Method) &#123;</span><br><span class="line">      mod = mod &amp; Modifier.methodModifiers();</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (exec <span class="keyword">instanceof</span> Constructor) &#123;</span><br><span class="line">      mod = mod &amp; Modifier.constructorModifiers();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> Modifier.toString(mod);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="结果如下：-4"><a href="#结果如下：-4" class="headerlink" title="结果如下："></a>结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Declared Methods  for com.example.demo.MyClass</span><br><span class="line">public  int  getInt([String  a]) []</span><br><span class="line"></span><br><span class="line">Methods for  com.example.demo.MyClass</span><br><span class="line">public  int  getInt([String  a]) []</span><br><span class="line">public final native  void  wait([long  arg0]) [InterruptedException]</span><br><span class="line">public final  void  wait([long  arg0, int  arg1]) [InterruptedException]</span><br><span class="line">public final  void  wait([]) [InterruptedException]</span><br><span class="line">public  boolean  equals([Object  arg0]) []</span><br><span class="line">public  String  toString([]) []</span><br><span class="line">public native  int  hashCode([]) []</span><br><span class="line">public final native  Class  getClass([]) []</span><br><span class="line">public final native  void  notify([]) []</span><br><span class="line">public final native  void  notifyAll([]) []</span><br></pre></td></tr></table></figure>
+
+<h6 id="java构造函数反射"><a href="#java构造函数反射" class="headerlink" title="java构造函数反射"></a>java构造函数反射</h6><h6 id="以下四种方法来自Class类获取有关构造函数的信息："><a href="#以下四种方法来自Class类获取有关构造函数的信息：" class="headerlink" title="以下四种方法来自Class类获取有关构造函数的信息："></a>以下四种方法来自<code>Class</code>类获取有关构造函数的信息：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Constructor[] getConstructors()</span><br><span class="line">Constructor[]  getDeclaredConstructors()</span><br><span class="line">Constructor&lt;T&gt; getConstructor(Class...  parameterTypes)</span><br><span class="line">Constructor&lt;T&gt; getDeclaredConstructor(Class...  parameterTypes)</span><br></pre></td></tr></table></figure>
+
+<h6 id="getConstructors-方法返回当前和超类的所有公共构造函数。"><a href="#getConstructors-方法返回当前和超类的所有公共构造函数。" class="headerlink" title="getConstructors()方法返回当前和超类的所有公共构造函数。"></a><code>getConstructors()</code>方法返回当前和超类的所有公共构造函数。</h6><h6 id="getDeclaredConstructors-方法返回当前类的所有声明的构造函数。"><a href="#getDeclaredConstructors-方法返回当前类的所有声明的构造函数。" class="headerlink" title="getDeclaredConstructors()方法返回当前类的所有声明的构造函数。"></a><code>getDeclaredConstructors()</code>方法返回当前类的所有声明的构造函数。</h6><h6 id="getConstructor（Class-…-parameterTypes）和getDeclaredConstructor（Class-…-parameterTypes）通过参数类型获取构造函数对象。"><a href="#getConstructor（Class-…-parameterTypes）和getDeclaredConstructor（Class-…-parameterTypes）通过参数类型获取构造函数对象。" class="headerlink" title="getConstructor（Class … parameterTypes）和getDeclaredConstructor（Class … parameterTypes）通过参数类型获取构造函数对象。"></a>getConstructor（Class … parameterTypes）和getDeclaredConstructor（Class … parameterTypes）通过参数类型获取构造函数对象。</h6><h6 id="以下代码显示了如何对构造函数执行反射。"><a href="#以下代码显示了如何对构造函数执行反射。" class="headerlink" title="以下代码显示了如何对构造函数执行反射。"></a>以下代码显示了如何对构造函数执行反射。</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Constructor;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Executable;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Modifier;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Parameter;</span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">MyClass</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> j, String s)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">MyClass</span><span class="params">(T t)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getInt</span><span class="params">(String a)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test12</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    Class&lt;MyClass&gt; c = MyClass.class;</span><br><span class="line"></span><br><span class="line">    System.out.println(<span class="string">"Constructors for "</span> + c.getName());</span><br><span class="line">    Constructor&lt;?&gt;[] constructors = c.getConstructors();</span><br><span class="line">    ArrayList&lt;String&gt; constructDescList = getConstructorsDesciption(constructors);</span><br><span class="line">    <span class="keyword">for</span> (String desc : constructDescList) &#123;</span><br><span class="line">      System.out.println(desc);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ArrayList&lt;String&gt; <span class="title">getConstructorsDesciption</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">      Constructor&lt;?&gt;[] constructors)</span> </span>&#123;</span><br><span class="line">    ArrayList&lt;String&gt; constructorList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span> (Constructor&lt;?&gt; constructor : constructors) &#123;</span><br><span class="line">      String modifiers = getModifiers(constructor);</span><br><span class="line"></span><br><span class="line">      String constructorName = constructor.getName();</span><br><span class="line"></span><br><span class="line">      constructorList.add(modifiers + <span class="string">"  "</span> + constructorName + <span class="string">"("</span></span><br><span class="line">          + getParameters(constructor) + <span class="string">") "</span> + getExceptionList(constructor));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> constructorList;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ArrayList&lt;String&gt; <span class="title">getParameters</span><span class="params">(Executable exec)</span> </span>&#123;</span><br><span class="line">    Parameter[] parms = exec.getParameters();</span><br><span class="line">    ArrayList&lt;String&gt; parmList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; parms.length; i++) &#123;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">int</span> mod = parms[i].getModifiers() &amp; Modifier.parameterModifiers();</span><br><span class="line">      String modifiers = Modifier.toString(mod);</span><br><span class="line">      String parmType = parms[i].getType().getSimpleName();</span><br><span class="line">      String parmName = parms[i].getName();</span><br><span class="line">      String temp = modifiers + <span class="string">"  "</span> + parmType + <span class="string">"  "</span> + parmName;</span><br><span class="line">      <span class="keyword">if</span> (temp.trim().length() == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      parmList.add(temp.trim());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> parmList;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ArrayList&lt;String&gt; <span class="title">getExceptionList</span><span class="params">(Executable exec)</span> </span>&#123;</span><br><span class="line">    ArrayList&lt;String&gt; exceptionList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span> (Class&lt;?&gt; c : exec.getExceptionTypes()) &#123;</span><br><span class="line">      exceptionList.add(c.getSimpleName());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> exceptionList;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getModifiers</span><span class="params">(Executable exec)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> mod = exec.getModifiers();</span><br><span class="line">    <span class="keyword">if</span> (exec <span class="keyword">instanceof</span> Method) &#123;</span><br><span class="line">      mod = mod &amp; Modifier.methodModifiers();</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (exec <span class="keyword">instanceof</span> Constructor) &#123;</span><br><span class="line">      mod = mod &amp; Modifier.constructorModifiers();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> Modifier.toString(mod);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="结果如下：-5"><a href="#结果如下：-5" class="headerlink" title="结果如下："></a>结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Constructors for com.example.demo.MyClass</span><br><span class="line">public  com.example.demo.MyClass([int  i, int  j, String  s]) []</span><br><span class="line">public  com.example.demo.MyClass([Object  t]) []</span><br></pre></td></tr></table></figure>
+
+<h5 id="0x06-java反射对象创建"><a href="#0x06-java反射对象创建" class="headerlink" title="0x06 java反射对象创建"></a>0x06 java反射对象创建</h5><h6 id="Java反射-Java反射对象创建"><a href="#Java反射-Java反射对象创建" class="headerlink" title="Java反射 - Java反射对象创建"></a>Java反射 - Java反射对象创建</h6><h6 id="我们可以使用反射动态创建类的对象。通过调用其中一个构造函数。"><a href="#我们可以使用反射动态创建类的对象。通过调用其中一个构造函数。" class="headerlink" title="我们可以使用反射动态创建类的对象。通过调用其中一个构造函数。"></a>我们可以使用反射动态创建类的对象。通过调用其中一个构造函数。</h6><h6 id="然后我们可以访问对象的字段的值，设置它们的值，并调用它们的方法。"><a href="#然后我们可以访问对象的字段的值，设置它们的值，并调用它们的方法。" class="headerlink" title="然后我们可以访问对象的字段的值，设置它们的值，并调用它们的方法。"></a>然后我们可以访问对象的字段的值，设置它们的值，并调用它们的方法。</h6><h6 id="有两种方法来创建对象"><a href="#有两种方法来创建对象" class="headerlink" title="有两种方法来创建对象:"></a>有两种方法来创建对象:</h6><ul>
+<li>使用no-args构造函数</li>
+<li>使用带参数的构造函数<h6 id="无参数构造函数"><a href="#无参数构造函数" class="headerlink" title="无参数构造函数"></a>无参数构造函数</h6><h6 id="如果你有一个Class对象的引用，你可以创建一个对象该类对Class类使用newInstance-方法。"><a href="#如果你有一个Class对象的引用，你可以创建一个对象该类对Class类使用newInstance-方法。" class="headerlink" title="如果你有一个Class对象的引用，你可以创建一个对象该类对Class类使用newInstance()方法。"></a>如果你有一个<code>Class</code>对象的引用，你可以创建一个对象该类对Class类使用<code>newInstance()</code>方法。</h6><h6 id="此方法不使用参数，并且是等效的使用new运算符的类的no-args构造函数。"><a href="#此方法不使用参数，并且是等效的使用new运算符的类的no-args构造函数。" class="headerlink" title="此方法不使用参数，并且是等效的使用new运算符的类的no-args构造函数。"></a>此方法不使用参数，并且是等效的使用new运算符的类的no-args构造函数。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MyClass m  = myObject.newInstance();</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">MyClass</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"called"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test12</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InstantiationException </span>&#123;</span><br><span class="line">		Class&lt;MyClass&gt; personClass = MyClass.class;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			MyClass p = personClass.newInstance();</span><br><span class="line">			System.out.println(p);</span><br><span class="line">		&#125; <span class="keyword">catch</span> (InstantiationException | IllegalAccessException e) &#123;</span><br><span class="line">			System.out.println(e.getMessage());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="结果如下：-6"><a href="#结果如下：-6" class="headerlink" title="结果如下："></a>结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">called</span><br><span class="line">com.example.demo.MyClass@2ff4acd0</span><br></pre></td></tr></table></figure>
+
+<h6 id="带参数的构造函数"><a href="#带参数的构造函数" class="headerlink" title="带参数的构造函数"></a>带参数的构造函数</h6><h6 id="您可以通过调用特定的构造函数使用反射创建对象。它涉及两个步骤。"><a href="#您可以通过调用特定的构造函数使用反射创建对象。它涉及两个步骤。" class="headerlink" title="您可以通过调用特定的构造函数使用反射创建对象。它涉及两个步骤。"></a>您可以通过调用特定的构造函数使用反射创建对象。它涉及两个步骤。</h6><ul>
+<li>获取构造函数的实例</li>
+<li>调用newInstance来调用它<h6 id="你可以得到这个构造函数的引用，如下所示"><a href="#你可以得到这个构造函数的引用，如下所示" class="headerlink" title="你可以得到这个构造函数的引用，如下所示:"></a>你可以得到这个构造函数的引用，如下所示:</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Constructor&lt;MyClass&gt; cons  = myClass.getConstructor(int.class, String.class);</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="然后调用带有参数的newInstance-方法来创建一个对象。"><a href="#然后调用带有参数的newInstance-方法来创建一个对象。" class="headerlink" title="然后调用带有参数的newInstance()方法来创建一个对象。"></a>然后调用带有参数的<code>newInstance()</code>方法来创建一个对象。</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Constructor;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.InvocationTargetException;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">MyClass</span><span class="params">(<span class="keyword">int</span> i, String s)</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"called"</span>);</span><br><span class="line">		System.out.println(i);</span><br><span class="line">		System.out.println(s);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test12</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InstantiationException </span>&#123;</span><br><span class="line">		Class&lt;MyClass&gt; myClass = MyClass.class;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			Constructor&lt;MyClass&gt; cons = myClass.getConstructor(<span class="keyword">int</span>.class, String.class);</span><br><span class="line">			MyClass chris = cons.newInstance(<span class="number">1</span>, <span class="string">"abc"</span>);</span><br><span class="line">			System.out.println(chris);</span><br><span class="line">		&#125; <span class="keyword">catch</span> (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException</span><br><span class="line">				| IllegalArgumentException | InvocationTargetException e) &#123;</span><br><span class="line">			System.out.println(e.getMessage());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="结果如下：-7"><a href="#结果如下：-7" class="headerlink" title="结果如下："></a>结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">called</span><br><span class="line">1</span><br><span class="line">abc</span><br><span class="line">com.example.demo.MyClass@2ff4acd0</span><br></pre></td></tr></table></figure>
+
+<h6 id="调用方法"><a href="#调用方法" class="headerlink" title="调用方法"></a>调用方法</h6><h6 id="我们可以通过方法引用使用反射调用方法。"><a href="#我们可以通过方法引用使用反射调用方法。" class="headerlink" title="我们可以通过方法引用使用反射调用方法。"></a>我们可以通过方法引用使用反射调用方法。</h6><h6 id="要调用方法，请调用方法引用的-invoke-方法。"><a href="#要调用方法，请调用方法引用的-invoke-方法。" class="headerlink" title="要调用方法，请调用方法引用的 invoke()方法。"></a>要调用方法，请调用方法引用的 invoke()方法。</h6><h6 id="它的第一个参数是它来自和的对象第二个参数是同一顺序中所有参数的varargs作为方法的声明。"><a href="#它的第一个参数是它来自和的对象第二个参数是同一顺序中所有参数的varargs作为方法的声明。" class="headerlink" title="它的第一个参数是它来自和的对象第二个参数是同一顺序中所有参数的varargs作为方法的声明。"></a>它的第一个参数是它来自和的对象第二个参数是同一顺序中所有参数的varargs作为方法的声明。</h6><h6 id="在静态方法的情况下，我们只需要为第一个参数指定null。"><a href="#在静态方法的情况下，我们只需要为第一个参数指定null。" class="headerlink" title="在静态方法的情况下，我们只需要为第一个参数指定null。"></a>在静态方法的情况下，我们只需要为第一个参数指定null。</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.InvocationTargetException;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">MyClass</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String n)</span> </span>&#123;</span><br><span class="line">		System.out.println(n);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test12</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		Class&lt;MyClass&gt; myClass = MyClass.class;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			MyClass p = myClass.newInstance();</span><br><span class="line">			Method setName = myClass.getMethod(<span class="string">"setName"</span>, String.class);</span><br><span class="line">			setName.invoke(p, <span class="string">"abc"</span>);</span><br><span class="line">		&#125; <span class="keyword">catch</span> (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException</span><br><span class="line">				| IllegalArgumentException | InvocationTargetException e) &#123;</span><br><span class="line">			System.out.println(e.getMessage());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="结果如下：-8"><a href="#结果如下：-8" class="headerlink" title="结果如下："></a>结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">abc</span><br></pre></td></tr></table></figure>
+
+<h5 id="0x08-java反射字段访问"><a href="#0x08-java反射字段访问" class="headerlink" title="0x08 java反射字段访问"></a>0x08 java反射字段访问</h5><h6 id="Java反射-Java反射字段访问"><a href="#Java反射-Java反射字段访问" class="headerlink" title="Java反射 - Java反射字段访问"></a>Java反射 - Java反射字段访问</h6><h6 id="我们可以使用反射在两个步骤中获取或设置字段。"><a href="#我们可以使用反射在两个步骤中获取或设置字段。" class="headerlink" title="我们可以使用反射在两个步骤中获取或设置字段。"></a>我们可以使用反射在两个步骤中获取或设置字段。</h6><ul>
+<li>获取字段的引用。</li>
+<li>要读取字段的值，请在字段上调用getXxx()方法，其中Xxx是字段的数据类型。</li>
+<li>要设置字段的值，请调用相应的setXxx()方法。<h6 id="以相同的方式访问静态和实例字段。"><a href="#以相同的方式访问静态和实例字段。" class="headerlink" title="以相同的方式访问静态和实例字段。"></a>以相同的方式访问静态和实例字段。</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span> </span>&#123;</span><br><span class="line">	<span class="keyword">public</span> String name = <span class="string">"Unknown"</span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">MyClass</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">"name="</span> + <span class="keyword">this</span>.name;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test12</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		Class&lt;MyClass&gt; ppClass = MyClass.class;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			MyClass p = ppClass.newInstance();</span><br><span class="line">			Field name = ppClass.getField(<span class="string">"name"</span>);</span><br><span class="line">			String nameValue = (String) name.get(p);</span><br><span class="line">			System.out.println(<span class="string">"Current name is "</span> + nameValue);</span><br><span class="line">			name.set(p, <span class="string">"abc"</span>);</span><br><span class="line">			nameValue = (String) name.get(p);</span><br><span class="line">			System.out.println(<span class="string">"New  name is "</span> + nameValue);</span><br><span class="line">		&#125; <span class="keyword">catch</span> (InstantiationException | IllegalAccessException | NoSuchFieldException | SecurityException</span><br><span class="line">				| IllegalArgumentException e) &#123;</span><br><span class="line">			System.out.println(e.getMessage());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="结果如下：-9"><a href="#结果如下：-9" class="headerlink" title="结果如下："></a>结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Current name is Unknown</span><br><span class="line">New  name is abc</span><br></pre></td></tr></table></figure>
+
+<h6 id="绕过辅助功能检查"><a href="#绕过辅助功能检查" class="headerlink" title="绕过辅助功能检查"></a>绕过辅助功能检查</h6><h6 id="使用反射访问类的非可访问字段，方法和构造函数从-AccessibleObject-类调用-setAccessible-boolean-flag-方法。"><a href="#使用反射访问类的非可访问字段，方法和构造函数从-AccessibleObject-类调用-setAccessible-boolean-flag-方法。" class="headerlink" title="使用反射访问类的非可访问字段，方法和构造函数从 AccessibleObject 类调用 setAccessible(boolean flag)方法。"></a>使用反射访问类的非可访问字段，方法和构造函数从 AccessibleObject 类调用 setAccessible(boolean flag)方法。</h6><h6 id="我们需要使用true参数调用此方法，以使该字段，方法和构造函数可访问。"><a href="#我们需要使用true参数调用此方法，以使该字段，方法和构造函数可访问。" class="headerlink" title="我们需要使用true参数调用此方法，以使该字段，方法和构造函数可访问。"></a>我们需要使用true参数调用此方法，以使该字段，方法和构造函数可访问。</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> String name = <span class="string">"Unknown"</span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">MyClass</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">"name="</span> + <span class="keyword">this</span>.name;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test12</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		Class&lt;MyClass&gt; ppClass = MyClass.class;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			MyClass p = ppClass.newInstance();</span><br><span class="line">			Field name = ppClass.getDeclaredField(<span class="string">"name"</span>);</span><br><span class="line">			name.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">			String nameValue = (String) name.get(p);</span><br><span class="line">			System.out.println(<span class="string">"Current name is "</span> + nameValue);</span><br><span class="line">			name.set(p, <span class="string">"abc"</span>);</span><br><span class="line">			nameValue = (String) name.get(p);</span><br><span class="line">			System.out.println(<span class="string">"New  name is "</span> + nameValue);</span><br><span class="line">		&#125; <span class="keyword">catch</span> (InstantiationException | IllegalAccessException | NoSuchFieldException | SecurityException</span><br><span class="line">				| IllegalArgumentException e) &#123;</span><br><span class="line">			System.out.println(e.getMessage());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="结果如下：-10"><a href="#结果如下：-10" class="headerlink" title="结果如下："></a>结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Current name is Unknown</span><br><span class="line">New  name is abc</span><br></pre></td></tr></table></figure>
+
+<h5 id="0x09-java数组反射"><a href="#0x09-java数组反射" class="headerlink" title="0x09 java数组反射"></a>0x09 java数组反射</h5><h6 id="Java反射-Java数组反射"><a href="#Java反射-Java数组反射" class="headerlink" title="Java反射 - Java数组反射"></a>Java反射 - Java数组反射</h6><h6 id="我们可以使用Class类中的isArray-方法来检查类是否是数组。"><a href="#我们可以使用Class类中的isArray-方法来检查类是否是数组。" class="headerlink" title="我们可以使用Class类中的isArray()方法来检查类是否是数组。"></a>我们可以使用Class类中的isArray()方法来检查类是否是数组。</h6><h6 id="我们可以创建一个数组，使用反射通过读取和修改其元素的值java-lang-reflect-Array类。"><a href="#我们可以创建一个数组，使用反射通过读取和修改其元素的值java-lang-reflect-Array类。" class="headerlink" title="我们可以创建一个数组，使用反射通过读取和修改其元素的值java.lang.reflect.Array类。"></a>我们可以创建一个数组，使用反射通过读取和修改其元素的值<code>java.lang.reflect.Array</code>类。</h6><h6 id="Array类的getLength-方法获取数组的长度。"><a href="#Array类的getLength-方法获取数组的长度。" class="headerlink" title="Array类的getLength()方法获取数组的长度。"></a>Array类的<code>getLength()</code>方法获取数组的长度。</h6><h6 id="Array类中的所有方法都是静态的。"><a href="#Array类中的所有方法都是静态的。" class="headerlink" title="Array类中的所有方法都是静态的。"></a>Array类中的所有方法都是静态的。</h6><h6 id="要创建数组，请使用Array类中的重载静态方法newInstance-。"><a href="#要创建数组，请使用Array类中的重载静态方法newInstance-。" class="headerlink" title="要创建数组，请使用Array类中的重载静态方法newInstance()。"></a>要创建数组，请使用Array类中的重载静态方法newInstance()。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Object newInstance(Class&lt;?&gt; componentType,  int  arrayLength)</span><br><span class="line">Object newInstance(Class&lt;?&gt; componentType,  int... dimensions)</span><br></pre></td></tr></table></figure>
+
+<h6 id="第一个方法根据指定的组件类型和数组长度创建一个数组。"><a href="#第一个方法根据指定的组件类型和数组长度创建一个数组。" class="headerlink" title="第一个方法根据指定的组件类型和数组长度创建一个数组。"></a>第一个方法根据指定的组件类型和数组长度创建一个数组。</h6><h6 id="第二个版本创建指定组件类型和尺寸的数组。"><a href="#第二个版本创建指定组件类型和尺寸的数组。" class="headerlink" title="第二个版本创建指定组件类型和尺寸的数组。"></a>第二个版本创建指定组件类型和尺寸的数组。</h6><h6 id="newInstance-方法的返回类型是Object，我们需要将它转换为实际的数组类型。"><a href="#newInstance-方法的返回类型是Object，我们需要将它转换为实际的数组类型。" class="headerlink" title="newInstance()方法的返回类型是Object，我们需要将它转换为实际的数组类型。"></a>newInstance()方法的返回类型是Object，我们需要将它转换为实际的数组类型。</h6><h6 id="下面的代码创建一个长度为5的int数组。"><a href="#下面的代码创建一个长度为5的int数组。" class="headerlink" title="下面的代码创建一个长度为5的int数组。"></a>下面的代码创建一个长度为5的<code>int</code>数组。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int[] ids = (int[])Array.newInstance(int.class, 5);</span><br></pre></td></tr></table></figure>
+
+<h6 id="下面的代码创建一个长度为5乘3的int数组。"><a href="#下面的代码创建一个长度为5乘3的int数组。" class="headerlink" title="下面的代码创建一个长度为5乘3的int数组。"></a>下面的代码创建一个长度为5乘3的<code>int</code>数组。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int[][] matrix = (int[][])Array.newInstance(int.class, 5, 3);</span><br></pre></td></tr></table></figure>
+
+<h6 id="以下代码显示了如何动态创建数组并操作其元素。"><a href="#以下代码显示了如何动态创建数组并操作其元素。" class="headerlink" title="以下代码显示了如何动态创建数组并操作其元素。"></a>以下代码显示了如何动态创建数组并操作其元素。</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Array;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test12</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			Object my = Array.newInstance(<span class="keyword">int</span>.class, <span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">			<span class="keyword">int</span> n1 = Array.getInt(my, <span class="number">0</span>);</span><br><span class="line">			<span class="keyword">int</span> n2 = Array.getInt(my, <span class="number">1</span>);</span><br><span class="line">			System.out.println(<span class="string">"n1 = "</span> + n1 + <span class="string">",n2="</span> + n2);</span><br><span class="line">			</span><br><span class="line">			Array.set(my, <span class="number">0</span>, <span class="number">11</span>);</span><br><span class="line">			Array.set(my, <span class="number">1</span>, <span class="number">12</span>);</span><br><span class="line">			</span><br><span class="line">			n1=Array.getInt(my, <span class="number">0</span>);</span><br><span class="line">			n2=Array.getInt(my, <span class="number">1</span>);</span><br><span class="line">			System.out.println(<span class="string">"n1 = "</span> + n1 + <span class="string">",n2="</span> + n2);</span><br><span class="line">		&#125; <span class="keyword">catch</span> (NegativeArraySizeException | IllegalArgumentException | ArrayIndexOutOfBoundsException e) &#123;</span><br><span class="line">			System.out.println(e.getMessage());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="结果如下：-11"><a href="#结果如下：-11" class="headerlink" title="结果如下："></a>结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">n1 = 0,n2=0</span><br><span class="line">n1 = 11,n2=12</span><br></pre></td></tr></table></figure>
+
+<h6 id="获取数组的维度"><a href="#获取数组的维度" class="headerlink" title="获取数组的维度"></a>获取数组的维度</h6><h6 id="Java支持array数组。"><a href="#Java支持array数组。" class="headerlink" title="Java支持array数组。"></a>Java支持array数组。</h6><h6 id="类中的getComponentType-方法返回数组的元素类型的Class对象。"><a href="#类中的getComponentType-方法返回数组的元素类型的Class对象。" class="headerlink" title="类中的getComponentType()方法返回数组的元素类型的Class对象。"></a>类中的<code>getComponentType()</code>方法返回数组的元素类型的Class对象。</h6><h6 id="以下代码说明了如何获取数组的维度。"><a href="#以下代码说明了如何获取数组的维度。" class="headerlink" title="以下代码说明了如何获取数组的维度。"></a>以下代码说明了如何获取数组的维度。</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test12</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">int</span>[][][] intArray = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">1</span>][<span class="number">2</span>][<span class="number">3</span>];</span><br><span class="line"></span><br><span class="line">		System.out.println(<span class="string">"int[][][] dimension is "</span> + getArrayDimension(intArray));</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">getArrayDimension</span><span class="params">(Object array)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">int</span> dimension = <span class="number">0</span>;</span><br><span class="line">		Class&lt;?&gt; c = array.getClass();</span><br><span class="line">		<span class="keyword">if</span> (!c.isArray()) &#123;</span><br><span class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Object is not  an  array"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">while</span> (c.isArray()) &#123;</span><br><span class="line">			dimension++;</span><br><span class="line">			c = c.getComponentType();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> dimension;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="结果如下：-12"><a href="#结果如下：-12" class="headerlink" title="结果如下："></a>结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int[][][] dimension is 3</span><br></pre></td></tr></table></figure>
+
+<h6 id="展开数组"><a href="#展开数组" class="headerlink" title="展开数组"></a>展开数组</h6><h6 id="Java数组是一个固定长度的数据结构。"><a href="#Java数组是一个固定长度的数据结构。" class="headerlink" title="Java数组是一个固定长度的数据结构。"></a>Java数组是一个固定长度的数据结构。</h6><h6 id="要放大数组，我们可以创建一个更大尺寸的数组，并将旧数组元素复制到新数组元素。"><a href="#要放大数组，我们可以创建一个更大尺寸的数组，并将旧数组元素复制到新数组元素。" class="headerlink" title="要放大数组，我们可以创建一个更大尺寸的数组，并将旧数组元素复制到新数组元素。"></a>要放大数组，我们可以创建一个更大尺寸的数组，并将旧数组元素复制到新数组元素。</h6><h6 id="以下代码显示如何使用反射展开数组。"><a href="#以下代码显示如何使用反射展开数组。" class="headerlink" title="以下代码显示如何使用反射展开数组。"></a>以下代码显示如何使用反射展开数组。</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.demo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Array;</span><br><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test12</span> </span>&#123;</span><br><span class="line">	  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">	    <span class="keyword">int</span>[] ids = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">2</span>];</span><br><span class="line">	    System.out.println(ids.length);</span><br><span class="line">	    System.out.println(Arrays.toString(ids));</span><br><span class="line"></span><br><span class="line">	    ids = (<span class="keyword">int</span>[]) expandBy(ids, <span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">	    ids[<span class="number">2</span>] = <span class="number">3</span>;</span><br><span class="line">	    System.out.println(ids.length);</span><br><span class="line">	    System.out.println(Arrays.toString(ids));</span><br><span class="line">	  &#125;</span><br><span class="line"></span><br><span class="line">	  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title">expandBy</span><span class="params">(Object oldArray, <span class="keyword">int</span> increment)</span> </span>&#123;</span><br><span class="line">	    Object newArray = <span class="keyword">null</span>;</span><br><span class="line">	    <span class="keyword">int</span> oldLength = Array.getLength(oldArray);</span><br><span class="line">	    <span class="keyword">int</span> newLength = oldLength + increment;</span><br><span class="line">	    Class&lt;?&gt; c = oldArray.getClass();</span><br><span class="line">	    newArray = Array.newInstance(c.getComponentType(), newLength);</span><br><span class="line">	    System.arraycopy(oldArray, <span class="number">0</span>, newArray, <span class="number">0</span>, oldLength);</span><br><span class="line">	    <span class="keyword">return</span> newArray;</span><br><span class="line">	  &#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="结果如下：-13"><a href="#结果如下：-13" class="headerlink" title="结果如下："></a>结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">2</span><br><span class="line">[0, 0]</span><br><span class="line">4</span><br><span class="line">[0, 0, 3, 0]</span><br></pre></td></tr></table></figure>
+
+<h5 id="0x10-参考链接"><a href="#0x10-参考链接" class="headerlink" title="0x10 参考链接"></a>0x10 参考链接</h5><h6 id="https-www-w3cschool-cn-java-java-array-reflection-html"><a href="#https-www-w3cschool-cn-java-java-array-reflection-html" class="headerlink" title="https://www.w3cschool.cn/java/java-array-reflection.html"></a><a href="https://www.w3cschool.cn/java/java-array-reflection.html" target="_blank" rel="noopener">https://www.w3cschool.cn/java/java-array-reflection.html</a></h6>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/01/29/读书日记二/" rel="next" title="读书日记二">
+                <i class="fa fa-chevron-left"></i> 读书日记二
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/01/29/读书日记四/" rel="prev" title="读书日记四">
+                读书日记四 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Ljdd520">
+            
+              <p class="site-author-name" itemprop="name">Ljdd520</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:yourname@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://blog.wonderkun.cc/" title="wonderkun" target="_blank">wonderkun</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#0x01-java-lang-Class类"><span class="nav-number">1.0.1.</span> <span class="nav-text">0x01 java.lang.Class类</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#getClass-方法"><span class="nav-number">1.0.1.1.</span> <span class="nav-text">getClass()方法</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Object类有一个getClass-方法，它返回对的引用类对象的类对象。"><span class="nav-number">1.0.1.2.</span> <span class="nav-text">Object类有一个getClass()方法，它返回对的引用类对象的类对象。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#以下代码显示如何获取对Test类的Class对象的引用："><span class="nav-number">1.0.1.3.</span> <span class="nav-text">以下代码显示如何获取对Test类的Class对象的引用：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结果如下："><span class="nav-number">1.0.1.4.</span> <span class="nav-text">结果如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#forName-方法"><span class="nav-number">1.0.1.5.</span> <span class="nav-text">forName()方法</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Class类forName-static方法返回对Class对象的引用。"><span class="nav-number">1.0.1.6.</span> <span class="nav-text">Class类forName()static方法返回对Class对象的引用。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#它的重载方法是"><span class="nav-number">1.0.1.7.</span> <span class="nav-text">它的重载方法是</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#forName-方法的第一个版本接受完全该类的限定名作为参数，并加载该类，并返回其对象引用。"><span class="nav-number">1.0.1.8.</span> <span class="nav-text">forName()方法的第一个版本接受完全该类的限定名作为参数，并加载该类，并返回其对象引用。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#如果类已经加载，它将返回对Class对象的引用。"><span class="nav-number">1.0.1.9.</span> <span class="nav-text">如果类已经加载，它将返回对Class对象的引用。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#第二版本方法可以控制是否初始化或不初始化该类在加载时。-我们也可以传入类加载器。"><span class="nav-number">1.0.1.10.</span> <span class="nav-text">第二版本方法可以控制是否初始化或不初始化该类在加载时。 我们也可以传入类加载器。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#下面的代码显示了如何加载一个类并获取对它的Class对象的引用。"><span class="nav-number">1.0.1.11.</span> <span class="nav-text">下面的代码显示了如何加载一个类并获取对它的Class对象的引用。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Java类反射"><span class="nav-number">1.0.1.12.</span> <span class="nav-text">Java类反射</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们可以使用Java反射来获取关于类的信息，例如作为其包名称，其访问修饰符等。"><span class="nav-number">1.0.1.13.</span> <span class="nav-text">我们可以使用Java反射来获取关于类的信息，例如作为其包名称，其访问修饰符等。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#要获得简单的类名，请使用-Class-中的-getSimpleName-方法。"><span class="nav-number">1.0.1.14.</span> <span class="nav-text">要获得简单的类名，请使用 Class 中的 getSimpleName()方法。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#String-simpleName-c-getSimpleName"><span class="nav-number">1.0.1.15.</span> <span class="nav-text">String simpleName = c.getSimpleName();</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#类的修饰符是关键字之前的关键字类在类声明中，如-abstract-，-public-。"><span class="nav-number">1.0.1.16.</span> <span class="nav-text">类的修饰符是关键字之前的关键字类在类声明中，如 abstract ， public 。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Class-中的-getModifiers-方法返回类的所有修饰符。"><span class="nav-number">1.0.1.17.</span> <span class="nav-text">Class 中的 getModifiers()方法返回类的所有修饰符。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#getModifiers-方法返回一个整数。我们必须调用-java-lang-reflect-Modifier-toString-int-modifiers-以获得修饰符的文本形式。"><span class="nav-number">1.0.1.18.</span> <span class="nav-text">getModifiers()方法返回一个整数。我们必须调用 java.lang.reflect.Modifier.toString(int modifiers)以获得修饰符的文本形式。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#要获取超类的名称，请使用-Class-中的-getSuperclass-方法。"><span class="nav-number">1.0.1.19.</span> <span class="nav-text">要获取超类的名称，请使用 Class 中的 getSuperclass()方法。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#如果对Object类调用getSuperclass-方法，它将返回null，因为它没有超类。"><span class="nav-number">1.0.1.20.</span> <span class="nav-text">如果对Object类调用getSuperclass()方法，它将返回null，因为它没有超类。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#要获取类实现的所有接口的名称，请使用-getInterfaces-。"><span class="nav-number">1.0.1.21.</span> <span class="nav-text">要获取类实现的所有接口的名称，请使用 getInterfaces()。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#例子："><span class="nav-number">1.0.1.22.</span> <span class="nav-text">例子：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结果如下：-1"><span class="nav-number">1.0.1.23.</span> <span class="nav-text">结果如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#java字段反射"><span class="nav-number">1.0.1.24.</span> <span class="nav-text">java字段反射</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们可以使用java-lang-reflect-Field类来获取关于类中的字段的信息。"><span class="nav-number">1.0.1.25.</span> <span class="nav-text">我们可以使用java.lang.reflect.Field类来获取关于类中的字段的信息。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#以下四种方法在Class类可以返回关于字段的-Field-对象。"><span class="nav-number">1.0.1.26.</span> <span class="nav-text">以下四种方法在Class类可以返回关于字段的 Field 对象。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#getFields-方法返回所有可访问的公共字段在类中声明或继承自超类。"><span class="nav-number">1.0.1.27.</span> <span class="nav-text">getFields()方法返回所有可访问的公共字段在类中声明或继承自超类。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#getDeclaredFields-方法返回所有字段只出现在类的声明中-不是从继承的字段-。"><span class="nav-number">1.0.1.28.</span> <span class="nav-text">getDeclaredFields()方法返回所有字段只出现在类的声明中(不是从继承的字段)。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#getField-String-name-和getDeclaredField-String-name-通过字段名获取Field对象。"><span class="nav-number">1.0.1.29.</span> <span class="nav-text">getField(String name)和getDeclaredField(String name)通过字段名获取Field对象。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结果如下：-2"><span class="nav-number">1.0.1.30.</span> <span class="nav-text">结果如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#java方法反射"><span class="nav-number">1.0.1.31.</span> <span class="nav-text">java方法反射</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#java-lang-reflect-Method类的实例表示一个方法。-java-lang-reflect-Constructor类的实例表示一个构造函数。"><span class="nav-number">1.0.1.32.</span> <span class="nav-text">java.lang.reflect.Method类的实例表示一个方法。 java.lang.reflect.Constructor类的实例表示一个构造函数。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#方法和构造方法继承自一个通用的抽象超类可执行。"><span class="nav-number">1.0.1.33.</span> <span class="nav-text">方法和构造方法继承自一个通用的抽象超类可执行。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#可执行文件中的参数由Parameter类的对象表示"><span class="nav-number">1.0.1.34.</span> <span class="nav-text">可执行文件中的参数由Parameter类的对象表示</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Executable类中的getParameters-方法获取所有参数作为Parameter的数组。"><span class="nav-number">1.0.1.35.</span> <span class="nav-text">Executable类中的getParameters()方法获取所有参数作为Parameter的数组。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#默认情况下，参数名称不存储在类文件中。参数类的名称将类似于arg0，arg1等。我们可以通过编译源来保存类文件中的实际参数名代码使用-parameters选项与javac编译器。"><span class="nav-number">1.0.1.36.</span> <span class="nav-text">默认情况下，参数名称不存储在类文件中。参数类的名称将类似于arg0，arg1等。我们可以通过编译源来保存类文件中的实际参数名代码使用-parameters选项与javac编译器。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#可执行文件中的getExceptionTypes-方法类返回一个由Executable抛出的异常数组。"><span class="nav-number">1.0.1.37.</span> <span class="nav-text">可执行文件中的getExceptionTypes()方法类返回一个由Executable抛出的异常数组。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Executable类的getModifiers-方法将修饰符作为int返回。"><span class="nav-number">1.0.1.38.</span> <span class="nav-text">Executable类的getModifiers()方法将修饰符作为int返回。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#来自Executable类的getTypeParameters-方法返回一个TypeVariable数组，该数组表示通用方法或构造函数的类型参数。"><span class="nav-number">1.0.1.39.</span> <span class="nav-text">来自Executable类的getTypeParameters()方法返回一个TypeVariable数组，该数组表示通用方法或构造函数的类型参数。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#例子：-1"><span class="nav-number">1.0.1.40.</span> <span class="nav-text">例子：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结果如下：-3"><span class="nav-number">1.0.1.41.</span> <span class="nav-text">结果如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#反射方法"><span class="nav-number">1.0.1.42.</span> <span class="nav-text">反射方法</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#以下四个方法在Class类中返回有关联的方法的信息"><span class="nav-number">1.0.1.43.</span> <span class="nav-text">以下四个方法在Class类中返回有关联的方法的信息</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#getMethods-方法返回该类的所有可访问的公共方法无论从类中还是继承自超类。"><span class="nav-number">1.0.1.44.</span> <span class="nav-text">getMethods()方法返回该类的所有可访问的公共方法无论从类中还是继承自超类。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#getDeclaredMethods-方法返回所有只在中声明的方法该类-不包括从超类继承的方法-。"><span class="nav-number">1.0.1.45.</span> <span class="nav-text">getDeclaredMethods()方法返回所有只在中声明的方法该类(不包括从超类继承的方法)。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#getMethod（String-name，Class-…-parameterTypes）和getDeclaredMethod（String-name，Class-…-parameterTypes）通过方法名和参数类型获取Method对象。"><span class="nav-number">1.0.1.46.</span> <span class="nav-text">getMethod（String name，Class … parameterTypes）和getDeclaredMethod（String name，Class … parameterTypes）通过方法名和参数类型获取Method对象。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Method类中的getReturnType-方法返回包含有关返回类型信息的Class对象。"><span class="nav-number">1.0.1.47.</span> <span class="nav-text">Method类中的getReturnType()方法返回包含有关返回类型信息的Class对象。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结果如下：-4"><span class="nav-number">1.0.1.48.</span> <span class="nav-text">结果如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#java构造函数反射"><span class="nav-number">1.0.1.49.</span> <span class="nav-text">java构造函数反射</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#以下四种方法来自Class类获取有关构造函数的信息："><span class="nav-number">1.0.1.50.</span> <span class="nav-text">以下四种方法来自Class类获取有关构造函数的信息：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#getConstructors-方法返回当前和超类的所有公共构造函数。"><span class="nav-number">1.0.1.51.</span> <span class="nav-text">getConstructors()方法返回当前和超类的所有公共构造函数。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#getDeclaredConstructors-方法返回当前类的所有声明的构造函数。"><span class="nav-number">1.0.1.52.</span> <span class="nav-text">getDeclaredConstructors()方法返回当前类的所有声明的构造函数。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#getConstructor（Class-…-parameterTypes）和getDeclaredConstructor（Class-…-parameterTypes）通过参数类型获取构造函数对象。"><span class="nav-number">1.0.1.53.</span> <span class="nav-text">getConstructor（Class … parameterTypes）和getDeclaredConstructor（Class … parameterTypes）通过参数类型获取构造函数对象。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#以下代码显示了如何对构造函数执行反射。"><span class="nav-number">1.0.1.54.</span> <span class="nav-text">以下代码显示了如何对构造函数执行反射。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结果如下：-5"><span class="nav-number">1.0.1.55.</span> <span class="nav-text">结果如下：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x06-java反射对象创建"><span class="nav-number">1.0.2.</span> <span class="nav-text">0x06 java反射对象创建</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Java反射-Java反射对象创建"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">Java反射 - Java反射对象创建</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们可以使用反射动态创建类的对象。通过调用其中一个构造函数。"><span class="nav-number">1.0.2.2.</span> <span class="nav-text">我们可以使用反射动态创建类的对象。通过调用其中一个构造函数。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#然后我们可以访问对象的字段的值，设置它们的值，并调用它们的方法。"><span class="nav-number">1.0.2.3.</span> <span class="nav-text">然后我们可以访问对象的字段的值，设置它们的值，并调用它们的方法。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#有两种方法来创建对象"><span class="nav-number">1.0.2.4.</span> <span class="nav-text">有两种方法来创建对象:</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#无参数构造函数"><span class="nav-number">1.0.2.5.</span> <span class="nav-text">无参数构造函数</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#如果你有一个Class对象的引用，你可以创建一个对象该类对Class类使用newInstance-方法。"><span class="nav-number">1.0.2.6.</span> <span class="nav-text">如果你有一个Class对象的引用，你可以创建一个对象该类对Class类使用newInstance()方法。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#此方法不使用参数，并且是等效的使用new运算符的类的no-args构造函数。"><span class="nav-number">1.0.2.7.</span> <span class="nav-text">此方法不使用参数，并且是等效的使用new运算符的类的no-args构造函数。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结果如下：-6"><span class="nav-number">1.0.2.8.</span> <span class="nav-text">结果如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#带参数的构造函数"><span class="nav-number">1.0.2.9.</span> <span class="nav-text">带参数的构造函数</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#您可以通过调用特定的构造函数使用反射创建对象。它涉及两个步骤。"><span class="nav-number">1.0.2.10.</span> <span class="nav-text">您可以通过调用特定的构造函数使用反射创建对象。它涉及两个步骤。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#你可以得到这个构造函数的引用，如下所示"><span class="nav-number">1.0.2.11.</span> <span class="nav-text">你可以得到这个构造函数的引用，如下所示:</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#然后调用带有参数的newInstance-方法来创建一个对象。"><span class="nav-number">1.0.2.12.</span> <span class="nav-text">然后调用带有参数的newInstance()方法来创建一个对象。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结果如下：-7"><span class="nav-number">1.0.2.13.</span> <span class="nav-text">结果如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#调用方法"><span class="nav-number">1.0.2.14.</span> <span class="nav-text">调用方法</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们可以通过方法引用使用反射调用方法。"><span class="nav-number">1.0.2.15.</span> <span class="nav-text">我们可以通过方法引用使用反射调用方法。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#要调用方法，请调用方法引用的-invoke-方法。"><span class="nav-number">1.0.2.16.</span> <span class="nav-text">要调用方法，请调用方法引用的 invoke()方法。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#它的第一个参数是它来自和的对象第二个参数是同一顺序中所有参数的varargs作为方法的声明。"><span class="nav-number">1.0.2.17.</span> <span class="nav-text">它的第一个参数是它来自和的对象第二个参数是同一顺序中所有参数的varargs作为方法的声明。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#在静态方法的情况下，我们只需要为第一个参数指定null。"><span class="nav-number">1.0.2.18.</span> <span class="nav-text">在静态方法的情况下，我们只需要为第一个参数指定null。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结果如下：-8"><span class="nav-number">1.0.2.19.</span> <span class="nav-text">结果如下：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x08-java反射字段访问"><span class="nav-number">1.0.3.</span> <span class="nav-text">0x08 java反射字段访问</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Java反射-Java反射字段访问"><span class="nav-number">1.0.3.1.</span> <span class="nav-text">Java反射 - Java反射字段访问</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们可以使用反射在两个步骤中获取或设置字段。"><span class="nav-number">1.0.3.2.</span> <span class="nav-text">我们可以使用反射在两个步骤中获取或设置字段。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#以相同的方式访问静态和实例字段。"><span class="nav-number">1.0.3.3.</span> <span class="nav-text">以相同的方式访问静态和实例字段。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结果如下：-9"><span class="nav-number">1.0.3.4.</span> <span class="nav-text">结果如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#绕过辅助功能检查"><span class="nav-number">1.0.3.5.</span> <span class="nav-text">绕过辅助功能检查</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#使用反射访问类的非可访问字段，方法和构造函数从-AccessibleObject-类调用-setAccessible-boolean-flag-方法。"><span class="nav-number">1.0.3.6.</span> <span class="nav-text">使用反射访问类的非可访问字段，方法和构造函数从 AccessibleObject 类调用 setAccessible(boolean flag)方法。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们需要使用true参数调用此方法，以使该字段，方法和构造函数可访问。"><span class="nav-number">1.0.3.7.</span> <span class="nav-text">我们需要使用true参数调用此方法，以使该字段，方法和构造函数可访问。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结果如下：-10"><span class="nav-number">1.0.3.8.</span> <span class="nav-text">结果如下：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x09-java数组反射"><span class="nav-number">1.0.4.</span> <span class="nav-text">0x09 java数组反射</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Java反射-Java数组反射"><span class="nav-number">1.0.4.1.</span> <span class="nav-text">Java反射 - Java数组反射</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们可以使用Class类中的isArray-方法来检查类是否是数组。"><span class="nav-number">1.0.4.2.</span> <span class="nav-text">我们可以使用Class类中的isArray()方法来检查类是否是数组。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们可以创建一个数组，使用反射通过读取和修改其元素的值java-lang-reflect-Array类。"><span class="nav-number">1.0.4.3.</span> <span class="nav-text">我们可以创建一个数组，使用反射通过读取和修改其元素的值java.lang.reflect.Array类。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Array类的getLength-方法获取数组的长度。"><span class="nav-number">1.0.4.4.</span> <span class="nav-text">Array类的getLength()方法获取数组的长度。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Array类中的所有方法都是静态的。"><span class="nav-number">1.0.4.5.</span> <span class="nav-text">Array类中的所有方法都是静态的。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#要创建数组，请使用Array类中的重载静态方法newInstance-。"><span class="nav-number">1.0.4.6.</span> <span class="nav-text">要创建数组，请使用Array类中的重载静态方法newInstance()。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#第一个方法根据指定的组件类型和数组长度创建一个数组。"><span class="nav-number">1.0.4.7.</span> <span class="nav-text">第一个方法根据指定的组件类型和数组长度创建一个数组。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#第二个版本创建指定组件类型和尺寸的数组。"><span class="nav-number">1.0.4.8.</span> <span class="nav-text">第二个版本创建指定组件类型和尺寸的数组。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#newInstance-方法的返回类型是Object，我们需要将它转换为实际的数组类型。"><span class="nav-number">1.0.4.9.</span> <span class="nav-text">newInstance()方法的返回类型是Object，我们需要将它转换为实际的数组类型。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#下面的代码创建一个长度为5的int数组。"><span class="nav-number">1.0.4.10.</span> <span class="nav-text">下面的代码创建一个长度为5的int数组。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#下面的代码创建一个长度为5乘3的int数组。"><span class="nav-number">1.0.4.11.</span> <span class="nav-text">下面的代码创建一个长度为5乘3的int数组。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#以下代码显示了如何动态创建数组并操作其元素。"><span class="nav-number">1.0.4.12.</span> <span class="nav-text">以下代码显示了如何动态创建数组并操作其元素。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结果如下：-11"><span class="nav-number">1.0.4.13.</span> <span class="nav-text">结果如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#获取数组的维度"><span class="nav-number">1.0.4.14.</span> <span class="nav-text">获取数组的维度</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Java支持array数组。"><span class="nav-number">1.0.4.15.</span> <span class="nav-text">Java支持array数组。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#类中的getComponentType-方法返回数组的元素类型的Class对象。"><span class="nav-number">1.0.4.16.</span> <span class="nav-text">类中的getComponentType()方法返回数组的元素类型的Class对象。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#以下代码说明了如何获取数组的维度。"><span class="nav-number">1.0.4.17.</span> <span class="nav-text">以下代码说明了如何获取数组的维度。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结果如下：-12"><span class="nav-number">1.0.4.18.</span> <span class="nav-text">结果如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#展开数组"><span class="nav-number">1.0.4.19.</span> <span class="nav-text">展开数组</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Java数组是一个固定长度的数据结构。"><span class="nav-number">1.0.4.20.</span> <span class="nav-text">Java数组是一个固定长度的数据结构。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#要放大数组，我们可以创建一个更大尺寸的数组，并将旧数组元素复制到新数组元素。"><span class="nav-number">1.0.4.21.</span> <span class="nav-text">要放大数组，我们可以创建一个更大尺寸的数组，并将旧数组元素复制到新数组元素。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#以下代码显示如何使用反射展开数组。"><span class="nav-number">1.0.4.22.</span> <span class="nav-text">以下代码显示如何使用反射展开数组。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结果如下：-13"><span class="nav-number">1.0.4.23.</span> <span class="nav-text">结果如下：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x10-参考链接"><span class="nav-number">1.0.5.</span> <span class="nav-text">0x10 参考链接</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#https-www-w3cschool-cn-java-java-array-reflection-html"><span class="nav-number">1.0.5.1.</span> <span class="nav-text">https://www.w3cschool.cn/java/java-array-reflection.html</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ljdd520</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">141k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
